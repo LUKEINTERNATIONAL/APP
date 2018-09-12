@@ -17,39 +17,64 @@ function autoSelectGuardian(clickedBtn) {
 }
 
 function submitEncounter() {
-  var url = apiProtocol+'://'+apiURL+':'+apiPort+'/api/v1/people';
-	
+  var url = apiProtocol+'://'+apiURL+':'+apiPort+'/api/v1/encounters';
+
+  var YesNoConcepts = {}
+  YesNoConcepts['Yes'] = 1065;
+  YesNoConcepts['No'] = 1066;
+  
+  	
   var encounter = {
     encounter_type_name: 'HIV RECEPTION',
     encounter_type_id:  51,
-    patient_id: 1222,
+    patient_id: 13,
     encounter_datetime: null
   }
 
   var obs = {
-    encounter_id: 122,
+    encounter_id: null,
     observations: [
-      { concept_id: 1805, value_coded: yesNo_Hash['HIV Reception']['Patient present?'] },
-      { concept_id: 2122, value_coded: yesNo_Hash['HIV Reception']['Guardian present?'] }
+      { concept_id: 1805, value_coded: YesNoConcepts[yesNo_Hash['HIV Reception']['Patient present?']] },
+      { concept_id: 2122, value_coded: YesNoConcepts[yesNo_Hash['HIV Reception']['Guardian present?']] }
     ]
   }; 
   
-  console.log(obs)
-  /*
 	showStatus();
-  var parametersPassed = JSON.stringify(obs);
+  var parametersPassed = JSON.stringify(encounter);
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 201) {
       var obj = JSON.parse(this.responseText);
-			createPatient(obj['person_id']);
+      obs.encounter_id = obj['encounter_id'];
+			createObs(obs);
     }
   };
   xhttp.open("POST", url, true);
   xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
   xhttp.setRequestHeader('Content-type', "application/json");
-  xhttp.send(parametersPassed);*/
+  xhttp.send(parametersPassed);
 }
+
+function createObs(observations){
+  var url = apiProtocol+'://'+apiURL+':'+apiPort+'/api/v1/observations';
+
+  var parametersPassed = JSON.stringify(observations);
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 201) {
+      var obj = JSON.parse(this.responseText);
+			document.location = "../patient_dashboard.html?patient_id=" + 10;
+    }
+  };
+  xhttp.open("POST", url, true);
+  xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+  xhttp.setRequestHeader('Content-type', "application/json");
+  xhttp.send(parametersPassed);
+
+}
+
+
+
 
 
 function changeSubmitFuction() {
