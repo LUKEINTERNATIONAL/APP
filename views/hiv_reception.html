@@ -1,0 +1,78 @@
+
+
+<script type="text/javascript" src="/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js" defer="true"></script>
+<script type="text/javascript" src="/touchscreentoolkit/lib/javascripts/standard.js" defer="true"></script>
+<script type="text/javascript" src="/apps/core/assets/js/jquery.min.js"></script>
+
+<script type="text/javascript" src="/apps/core/assets/js/yes_no_ctrls.js"></script>
+<link rel="stylesheet" href="/apps/core/assets/css/yes_no_ctrls.css" type="text/css">
+
+<script>
+
+function autoSelectGuardian(clickedBtn) {
+  if(clickedBtn.id.match(/No/i)) {
+    var e = document.getElementById('btn_yes_1');
+    buttonClicked(e,'HIV Reception','Guardian present?');
+  }
+}
+
+function submitEncounter() {
+  var url = apiProtocol+'://'+apiURL+':'+apiPort+'/api/v1/people';
+	
+  var encounter = {
+    encounter_type_name: 'HIV RECEPTION',
+    encounter_type_id:  51,
+    patient_id: 1222,
+    encounter_datetime: null
+  }
+
+  var obs = {
+    encounter_id: 122,
+    observations: [
+      { concept_id: 1805, value_coded: yesNo_Hash['HIV Reception']['Patient present?'] },
+      { concept_id: 2122, value_coded: yesNo_Hash['HIV Reception']['Guardian present?'] }
+    ]
+  }; 
+  
+  console.log(obs)
+  /*
+	showStatus();
+  var parametersPassed = JSON.stringify(obs);
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 201) {
+      var obj = JSON.parse(this.responseText);
+			createPatient(obj['person_id']);
+    }
+  };
+  xhttp.open("POST", url, true);
+  xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+  xhttp.setRequestHeader('Content-type', "application/json");
+  xhttp.send(parametersPassed);*/
+}
+
+
+function changeSubmitFuction() {
+  var nextButton =  document.getElementById('nextButton');
+  nextButton.setAttribute("onmousedown","submitEncounter();");
+}
+
+</script>
+
+<body id="mateme">
+  <div id="container">
+    <div id="content">
+
+
+      <form onsubmit="submitEncounter();">
+
+        <input type="text" name="summary"
+          tt_onLoad="__$('keyboard').style.display = 'none';changeSubmitFuction();buildYesNoUI('HIV Reception', 'Patient present?,1805,autoSelectGuardian#Guardian present?,2122');" 
+          tt_pageStyleClass= "NoControls" helpText="HIV reception" optional = "true"/>
+
+      </form>
+
+   </div>
+ </div>
+</body>
+
