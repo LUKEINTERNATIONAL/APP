@@ -6,6 +6,7 @@
 
 <script type="text/javascript" src="/apps/core/assets/js/yes_no_ctrls.js"></script>
 <link rel="stylesheet" href="/apps/core/assets/css/yes_no_ctrls.css" type="text/css">
+<script type="text/javascript" src="/apps/core/assets/js/post_parameters.js"></script>
 
 <script>
 
@@ -16,13 +17,7 @@ function autoSelectGuardian(clickedBtn) {
   }
 }
 
-function submitEncounter() {
-  var url = apiProtocol+'://'+apiURL+':'+apiPort+'/api/v1/encounters';
-
-  var YesNoConcepts = {}
-  YesNoConcepts['Yes'] = 1065;
-  YesNoConcepts['No'] = 1066;
-  
+function submitHIVreception() {
   	
   var encounter = {
     encounter_type_name: 'HIV RECEPTION',
@@ -31,46 +26,24 @@ function submitEncounter() {
     encounter_datetime: null
   }
 
+  submitEncounter(encounter, "postVitalsObs");
+}
+
+function postVitalsObs(encounter_id) {
+
   var obs = {
-    encounter_id: null,
+    encounter_id: encounter_id,
     observations: [
       { concept_id: 1805, value_coded: YesNoConcepts[yesNo_Hash['HIV Reception']['Patient present?']] },
       { concept_id: 2122, value_coded: YesNoConcepts[yesNo_Hash['HIV Reception']['Guardian present?']] }
     ]
   }; 
-  
-	showStatus();
-  var parametersPassed = JSON.stringify(encounter);
-  var xhttp = new XMLHttpRequest();
-  xhttp.onreadystatechange = function() {
-    if (this.readyState == 4 && this.status == 201) {
-      var obj = JSON.parse(this.responseText);
-      obs.encounter_id = obj['encounter_id'];
-			createObs(obs);
-    }
-  };
-  xhttp.open("POST", url, true);
-  xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
-  xhttp.setRequestHeader('Content-type', "application/json");
-  xhttp.send(parametersPassed);
+
+  createObs(obs, "nextPage")  
 }
 
-function createObs(observations){
-  var url = apiProtocol+'://'+apiURL+':'+apiPort+'/api/v1/observations';
-
-  var parametersPassed = JSON.stringify(observations);
-  var xhttp = new XMLHttpRequest();
-  xhttp.onreadystatechange = function() {
-    if (this.readyState == 4 && this.status == 201) {
-      var obj = JSON.parse(this.responseText);
-			document.location = "../patient_dashboard.html?patient_id=" + 10;
-    }
-  };
-  xhttp.open("POST", url, true);
-  xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
-  xhttp.setRequestHeader('Content-type', "application/json");
-  xhttp.send(parametersPassed);
-
+function nextPage(){
+  alert("Done");
 }
 
 
@@ -79,7 +52,7 @@ function createObs(observations){
 
 function changeSubmitFuction() {
   var nextButton =  document.getElementById('nextButton');
-  nextButton.setAttribute("onmousedown","submitEncounter();");
+  nextButton.setAttribute("onmousedown","submitHIVreception();");
 }
 
 </script>
