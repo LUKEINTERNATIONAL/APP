@@ -1,76 +1,22 @@
-
-
-<script type="text/javascript" src="/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js" defer="true"></script>
-<script type="text/javascript" src="/touchscreentoolkit/lib/javascripts/standard.js" defer="true"></script>
-<script type="text/javascript" src="/apps/core/assets/js/jquery.min.js"></script>
-
-<script type="text/javascript" src="/apps/core/assets/js/yes_no_ctrls.js"></script>
-<link rel="stylesheet" href="/apps/core/assets/css/yes_no_ctrls.css" type="text/css">
-<script type="text/javascript" src="/apps/core/assets/js/post_parameters.js"></script>
-
-<script>
-
-function autoSelectGuardian(clickedBtn) {
-  if(clickedBtn.id.match(/No/i)) {
-    var e = document.getElementById('btn_yes_1');
-    buttonClicked(e,'HIV Reception','Guardian present?');
-  }
-}
-
-function submitHIVreception() {
-  	
-  var encounter = {
-    encounter_type_name: 'HIV RECEPTION',
-    encounter_type_id:  51,
-    patient_id: 13,
-    encounter_datetime: null
-  }
-
-  submitEncounter(encounter, "postVitalsObs");
-}
-
-function postVitalsObs(encounter_id) {
-
-  var obs = {
-    encounter_id: encounter_id,
-    observations: [
-      { concept_id: 1805, value_coded: YesNoConcepts[yesNo_Hash['HIV Reception']['Patient present?']] },
-      { concept_id: 2122, value_coded: YesNoConcepts[yesNo_Hash['HIV Reception']['Guardian present?']] }
-    ]
-  }; 
-
-  createObs(obs, "nextPage")  
-}
-
-function nextPage(){
-  alert("Done");
-}
-
-
-
-
-
-function changeSubmitFuction() {
-  var nextButton =  document.getElementById('nextButton');
-  nextButton.setAttribute("onmousedown","submitHIVreception();");
-}
-
-</script>
-
-<body id="mateme">
-  <div id="container">
-    <div id="content">
-
-
-      <form onsubmit="submitEncounter();">
-
-        <input type="text" name="summary"
-          tt_onLoad="__$('keyboard').style.display = 'none';changeSubmitFuction();buildYesNoUI('HIV Reception', 'Patient present?,1805,autoSelectGuardian#Guardian present?,2122');" 
-          tt_pageStyleClass= "NoControls" helpText="HIV reception" optional = "true"/>
-
-      </form>
-
-   </div>
- </div>
-</body>
-
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <title>HIV RECEPTION</title>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <link rel="stylesheet" href="/apps/core/assets/css/bootstrap/bootstrap.min.css">
+      <link rel="stylesheet" href="/apps/core/assets/css/maindashboard/header.css">
+      <link rel="stylesheet" href="/apps/core/assets/css/maindashboard/footer.css">
+      <link rel="stylesheet" href="/apps/core/assets/css/custom.css">
+      <script src="/apps/core/assets/js/jquery.min.js"></script>
+      <script src="/apps/core/assets/js/bootstrap/bootstrap.min.js"></script>
+      <script type="text/javascript"> 
+      $(document).ready(function(){
+        
+      });             
+    </script>
+   </head>
+   <body>
+         
+   </body>
+</html>
