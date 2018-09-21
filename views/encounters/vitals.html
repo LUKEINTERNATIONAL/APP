@@ -1,0 +1,573 @@
+
+<script type="text/javascript" src="/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js" defer="true"></script>
+<script type="text/javascript" src="/touchscreentoolkit/lib/javascripts/standard.js" defer="true"></script>
+<script type="text/javascript" src="/apps/core/assets/js/jquery.min.js"></script>
+
+<link rel="stylesheet" href="/apps/core/assets/css/vitals-keypad.css" type="text/css">
+<script type="text/javascript" src="/apps/core/assets/js/vitals-keypad.js"></script>
+<script type="text/javascript" src="/apps/core/assets/js/post_parameters.js"></script>
+
+<style>
+
+.main-table-div {
+  display: table;
+  width: 100%;
+}
+
+.main-table-div-row {
+  display: table-row;
+}
+
+.main-table-div-cell {
+  display: table-cell;
+}
+
+.cell-left {
+  float: left;
+  width: 12%;
+  padding-left: 10%;
+}
+
+.cell-right {
+	border-style: solid !important;
+	border-width: 0px 0px 0px 1px;
+	width: 85%;
+  vertical-align: top;
+}
+
+.table-main {
+  display: table;
+  width: 100%;
+  overflow: auto;
+}
+
+.table-main-row {
+  display: table-row;
+  border-collapse: separate;
+}
+
+.table-main-cell {
+/*  display: table-cell;
+  border-style: solid;
+  border-width: 1px;
+  text-align: center;
+
+  padding: 10px;
+  box-shadow: 5px 10px;
+
+  height: 20px;
+  width: 30px; */
+}
+
+.separator {
+  border-style: none;
+  padding-bottom: 300px;
+}
+
+.app-btn {
+	padding-bottom: 5px;
+	float: left;
+	text-align: center;
+	margin-right: auto;
+	margin-left: auto;
+	display: block;
+	margin: 5px;
+	border: 1px solid #2e6da4;
+	cursor: pointer;
+	box-shadow: inset 2px -4px 2px 0px;
+	background-color: white;
+	border-radius: 7px;
+	border: solid black 3px;
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+	-moz-box-shadow: inset 0 0 10px #000000;
+	-webkit-box-shadow: inset 0 0 10px #000000;
+	box-shadow: inset 0 0 10px #000000;
+	text-decoration: none;
+
+	
+	width: 110px;
+	height: 80px;
+}
+
+.btn-icons {
+	height: 40px;
+	width: 40px;
+}
+
+img {
+  -webkit-user-drag: none;
+  -khtml-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
+  user-drag: none;
+}
+
+.button-diabled {
+  color: currentColor;
+  cursor: not-allowed;
+  opacity: 0.2;
+  text-decoration: none;
+}
+
+</style>
+
+
+<script>
+
+var vitalsEntered = {};
+
+function removeFromHash() {
+  var allButtons = document.getElementsByClassName('app-btn');
+  var currentVital = null;
+
+  for(var i = 0 ; i < allButtons.length; i++){
+    if(allButtons[i].getAttribute('class').trim() == "app-btn"){
+      vitalsEntered[allButtons[i].id] = null;
+      break;
+    }
+  }
+
+
+}
+
+function setEnterVital() {
+  var allButtons = document.getElementsByClassName('app-btn');
+  var currentVital = null;
+
+  for(var i = 0 ; i < allButtons.length; i++){
+    if(allButtons[i].getAttribute('class').trim() == "app-btn"){
+
+      var vital = document.getElementById('vitals-input').value.trim();
+      if(vital){
+        vitalsEntered[allButtons[i].id] = vital;
+        break;
+      }
+
+      if(vitalsEntered[allButtons[i].id]){
+        //document.getElementById('vitals-input').value = vitalsEntered[allButtons[i].id];
+        //break;
+      }
+
+    }
+  }
+
+}
+
+
+function buildVitalsPage() {
+  var inputFrame = document.getElementById("inputFrame" + tstCurrentPage);
+
+  var mainContainer = document.createElement('div');
+  mainContainer.setAttribute("class", "main-table-div");
+
+  var mainContainerRow = document.createElement('div');
+  mainContainerRow.setAttribute("class", "main-table-div-row");
+  mainContainer.appendChild(mainContainerRow);
+
+  var cells = ['left','right'];
+  for(var i = 0 ; i < cells.length; i++){
+    var mainContainerCell = document.createElement('div');
+    mainContainerCell.setAttribute("class", "main-table-div-cell cell-" + cells[i]);
+
+    if(cells[i] == 'left') {
+      buildVitalsButtons(mainContainerCell);
+    }
+
+    mainContainerRow.appendChild(mainContainerCell);
+  }
+
+  inputFrame.appendChild(mainContainer);
+}
+
+function buildVitalsButtons(element) {
+  var buttons = [
+		["Weight","weight.png"],
+		["Height","height.png"],
+		["BP","bp.png"],
+		["Temp","temp.png"],
+		["SPO2","spo2.png"],
+		["Pulse","pulse-rate.png"]
+ 	];
+ 
+  var btnCont = document.createElement('div')
+  btnCont.setAttribute('class',"table-main");  
+  for(var i = 0; i < buttons.length; i++){
+    var btnContRow = document.createElement('div')
+    btnContRow.setAttribute('class',"table-main-row");
+    btnCont.appendChild(btnContRow);  
+    var cell = document.createElement('div');
+    cell.setAttribute('class',"table-main-cell separator");
+    cell.innerHTML = '&nbsp;'
+
+
+    var btnContRow = document.createElement('div')
+    btnContRow.setAttribute('class',"table-main-row");
+    var cell = document.createElement('div');
+    btnContRow.appendChild(cell);
+    cell.setAttribute('class',"table-main-cell");
+    buildBTN(cell, buttons[i], i);
+    btnCont.appendChild(btnContRow);  
+  }
+   
+  element.appendChild(btnCont);
+}
+
+function buildBTN(element, name, i) {
+  var a = document.createElement('a');
+  if(i == 0){
+    a.setAttribute("class", "app-btn");
+  }else{
+    a.setAttribute("class", "app-btn button-diabled");
+  }
+
+  a.setAttribute("href", "#");
+
+	var img = document.createElement('img');
+	img.setAttribute("src","../../assets/images/vitals/" + name[1])	
+	img.setAttribute("class", "btn-icons");
+
+	var span = document.createElement('span');
+	span.appendChild(img);
+
+
+  a.innerHTML = span.innerHTML;
+  a.innerHTML += "<br />" + name[0];
+  a.setAttribute("onmousedown","setVital(this)");
+  a.setAttribute("id","vitals-" + name[0]);
+  element.appendChild(a);
+
+  if(!vitalsEntered["vitals-" + name[0]])
+    vitalsEntered["vitals-" + name[0]] = null;
+
+}
+
+function setVital(e) {
+  var validInput = validateUserInput();
+
+  if(!validInput)
+    return;
+
+  setEnterVital();
+  
+  var allButtons = document.getElementsByClassName("app-btn");
+  for(var i = 0 ; i < allButtons.length; i++){
+    allButtons[i].setAttribute("class","app-btn button-diabled");
+  }
+
+  e.setAttribute("class","app-btn");
+  document.getElementById("vitals-input").value = vitalsEntered[e.id];
+}
+
+function validateUserInput() {
+  var allButtons = document.getElementsByClassName("app-btn");
+  var activeInput = null;
+
+  for(var i = 0 ; i < allButtons.length; i++){
+    if(allButtons[i].getAttribute("class").trim() == "app-btn"){
+      activeInput = allButtons[i];
+      break;
+    }
+  }
+
+  var data = document.getElementById("vitals-input").value;
+  var validation_result = false;
+
+  if(activeInput.id.match(/weight/i)){
+    validation_result = validateWeight(data);
+  }else if(activeInput.id.match(/height/i)){
+    validation_result = validateHeight(data);
+  }else if(activeInput.id.match(/bp/i)){
+    validation_result = validateBP(data);
+  }else if(activeInput.id.match(/Temp/i)){
+    validation_result = validateTemp(data);
+  }else if(activeInput.id.match(/SPO2/i)){
+    validation_result = validateSPO2(data);
+  }else if(activeInput.id.match(/Pulse/i)){
+    validation_result = validatePulse(data);
+  }else{
+    validation_result = true;
+  }
+  
+  
+  return validation_result;
+}
+
+function validatePulse(pulse){
+  if(pulse.trim().length < 1)
+    return true;
+
+  if(!isNumeric(pulse)){
+    showMessage("Not a valid Pulse Rate.<br />Please enter a valid reading.");
+    return false;
+  }
+
+  return true;
+}
+
+function validateSPO2(spo2){
+  if(spo2.trim().length < 1)
+    return true;
+
+  if(!isNumeric(spo2)){
+    showMessage("Not a valid Blood oxygen saturation.<br />Please enter a valid reading.");
+    return false;
+  }
+
+  return true;
+}
+
+function validateTemp(temp){
+  if(temp.trim().length < 1)
+    return true;
+
+  if(!isNumeric(temp)){
+    showMessage("Not a valid temp - please enter a valid temp reading.");
+    return false;
+  }
+
+  return true;
+}
+
+
+function validateWeight(weight){
+  if(weight.trim().length < 1)
+    return true;
+
+  if(!(weight.indexOf("/") ==-1)){
+    showMessage("Please remove /.");
+    return false;
+  }
+
+  if(!(weight.indexOf("%") ==-1)){
+    showMessage("Please remove %.");
+    return false;
+  }
+  
+  if(!(weight.indexOf(".") !=-1)){
+    showMessage("Please include a decimal.<br />For example; " + weight + ".0");
+    return false;
+  }
+
+  if(!isNumeric(weight)){
+    showMessage("Not a valid weight - please enter a valid weight.");
+    return false;
+  }
+
+  return true;
+}
+
+function validateHeight(height){
+  if(height.trim().length < 1)
+    return true;
+
+
+  if(!(height.indexOf(".") ==-1)){
+    showMessage("Please remove decimal(s).");
+    return false;
+  }
+
+  if(!(height.indexOf("/") ==-1)){
+    showMessage("Please remove /.");
+    return false;
+  }
+
+  if(!(height.indexOf("%") ==-1)){
+    showMessage("Please remove %.");
+    return false;
+  }
+  
+  if(!isNumeric(height)){
+    showMessage("Not a valid height - please enter a valid height.");
+    return false;
+  }
+
+  if(!isNumeric(height)){
+    showMessage("Not a valid height - please enter a valid height.");
+    return false;
+  }
+
+  return true;
+}
+
+function validateBP(bp) {
+  if(bp.trim().length < 1)
+    return true;
+
+  if(!(bp.indexOf(".") ==-1)){
+    showMessage("Please remove decimal(s).");
+    return false;
+  }
+
+  if(!(bp.indexOf("%") ==-1)){
+    showMessage("Please remove %.");
+    return false;
+  }
+  
+  if((bp.indexOf("/") ==-1)){
+    showMessage("Not a valid BP reading.<br />Please add '/' in between the numbers.");
+    return false;
+  }
+
+  if(bp.split("/").length != 2){
+    showMessage("Not a valid BP reading.");
+    return false;
+  }
+
+  bp_diastolic = bp.split("/")[1];
+  bp_systolic = bp.split("/")[0];
+
+  if(!isNumeric(bp_systolic)){
+    showMessage("Not a valid systolic reading.");
+    return false;
+  }
+
+  if(!isNumeric(bp_diastolic)){
+    showMessage("Not a valid diastolic reading.");
+    return false;
+  }
+
+  
+
+  return true;
+}
+
+
+
+/* .................................... validation helpers .......... */
+function isNumeric(n) {
+  return !isNaN(parseFloat(n)) && isFinite(n);
+}
+
+
+function changeNextBtn() {
+  var nextBtn = document.getElementById('nextButton');
+  nextBtn.setAttribute("onmousedown","validateEntries();");
+  nextBtn.setAttribute("onclick","");
+}
+
+function validateEntries() {
+
+  confirmIfWeightIsEntered();
+
+  try {
+    if(vitalsEntered["vitals-Weight"].length < 1){
+      showMessage("Weight readings are a requirement");
+      return;
+    }
+  }catch(e){
+    showMessage("Weight readings are a requirement");
+    return;
+  }
+
+  var nextBtn = document.getElementById('nextButton');
+  nextBtn.setAttribute("onmousedown","gotoNextPage();");
+  gotoNextPage();
+}
+
+function confirmIfWeightIsEntered() {
+  var e = document.getElementById("vitals-Weight");
+  setVital(e);
+}
+
+function submitVitals() {
+  var encounter = {
+    encounter_type_name: 'Vitals',
+    encounter_type_id:  6,
+    patient_id: 50,
+    encounter_datetime: null
+  }
+
+  submitEncounter(encounter, "postVitalsObs");
+}
+
+function postVitalsObs(encounter_id) {
+
+  var vitals_observations = [];
+
+  for(var name in vitalsEntered){
+    var vital = vitalsEntered[name];
+    vname = null;
+
+    try{
+      if(vital.length > 0){
+        vname = name;
+      }
+    }catch(e){
+    }
+
+    if(!vname)
+      continue;
+
+    if(name.match(/weight/i)) {
+      vitals_observations.push({concept_id: 5089, value_numeric: vital, value_modifier: "kg"})
+    }else if(name.match(/height/i)) {
+      vitals_observations.push({concept_id: 5090,  value_numeric: vital, value_modifier: "cm"})
+    }else if(name.match(/BP/i)) {
+      var bp_systolic = vital.split("/")[0];
+      var bp_diastolic = vital.split("/")[1];
+
+      vitals_observations.push({concept_id: 5085,  value_numeric: bp_systolic})
+      vitals_observations.push({concept_id: 5086,  value_numeric: bp_diastolic})
+    }else if(name.match(/Temp/i)) {
+      vitals_observations.push({concept_id: 5088,  value_numeric: vital, value_modifier: "°C"})
+    }else if(name.match(/SPO2/i)) {
+      vitals_observations.push({concept_id: 5092,  value_numeric: vital, value_modifier: "o2"})
+    }else if(name.match(/Pulse/i)) {
+      vitals_observations.push({concept_id: 5087,  value_numeric: vital})
+    } 
+  }
+
+  var obs = {
+    encounter_id: encounter_id,
+    observations: vitals_observations
+  };
+
+  if(vitals_observations.length > 0)
+    createObs(obs, "nextPage")
+
+  
+}
+
+function nextPage() {
+  alert("Done");
+}
+
+function changeNextBtnToSubmit() {
+  var nextBtn = document.getElementById('nextButton');
+  nextBtn.setAttribute("onmousedown","submitVitals();");
+  nextBtn.setAttribute("onclick","");
+}
+
+function resetNextButton() {
+  var nextBtn = document.getElementById('nextButton');
+  nextBtn.setAttribute("onmousedown","gotoNextPage();");
+}
+
+</script>
+
+<body id="mateme">
+  <div id="container">
+    <div id="content">
+
+
+      <form onsubmit="submitEncounter();">
+
+        <input type="text" name="summary"
+          tt_onLoad="__$('keyboard').style.display = 'none';changeNextBtn();buildVitalsPage();buildKeyPad();" 
+          tt_pageStyleClass= "NoControls" helpText="Vitals" optional = "true"/>
+
+        <input type="text" name="summary"
+          tt_onLoad="__$('keyboard').style.display = 'none';changeNextBtnToSubmit();buildVitalSummary();" 
+          tt_pageStyleClass= "NoControls" helpText="Summary" optional = "true"
+          tt_onUnLoad="resetNextButton();" />
+
+      
+
+      </form>
+
+   </div>
+ </div>
+</body>
+
