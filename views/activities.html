@@ -1,0 +1,46 @@
+
+
+<script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js" defer="true"></script>
+<script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/standard.js" defer="true"></script>
+<script type="text/javascript" src="/assets/js/jquery.min.js"></script>
+
+<script type="text/javascript" src="/assets/js/yes_no_ctrls.js"></script>
+<link rel="stylesheet" href="/assets/css/yes_no_ctrls.css" type="text/css">
+<script type="text/javascript" src="/assets/js/post_parameters.js"></script>
+<script type="text/javascript" src="/assets/js/generic_ajaxrequest.js"></script>
+
+<style>
+
+.inputFrameClass {
+  width: 96% !important;
+}
+
+</style>
+
+<script>
+
+var patientID = sessionStorage.getItem("patientID");
+var programID = sessionStorage.getItem("programID");
+var tt_cancel_destination = "/";
+
+</script>
+
+<body id="mateme">
+  <div id="container">
+    <div id="content">
+
+
+      <form action="post">
+
+        <select id="stage_4_conditions" tt_pageStyleClass="NoKeyboard NoInput small" 
+          multiple="multiple" helpText="Activities" name="activities">
+          <option value="vitals">Vitals</option>
+          <option value="hiv_reception">HIV Reception</option>
+        </select>
+
+      </form>
+
+   </div>
+ </div>
+</body>
+
