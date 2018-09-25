@@ -1,5 +1,6 @@
 <!--script src="https://code.jquery.com/jquery-3.1.1.min.js"></script-->
 <script src="/apps/ART/assets/js/Highcharts-6.1.3/code/highcharts.js"></script>
+<script src="/apps/ART/assets/js/Highcharts-6.1.3/code/highcharts-3d.js"></script>
 <script src="/apps/ART/assets/js/Highcharts-6.1.3/code/modules/exporting.js"></script>
 <script src="/apps/ART/assets/js/Highcharts-6.1.3/code/modules/export-data.js"></script>
 
@@ -66,7 +67,7 @@
     <div class="overview-main-container-cell" id="pie-chart">
     </div>
 
-    <div class="overview-main-container-cell">
+    <div class="overview-main-container-cell" style="width: 30%;">
       <table id="stats-table">
         <tr>
           <th>&nbsp;</th>
@@ -91,10 +92,12 @@ function buildPieChart() {
 // Build the chart
 Highcharts.chart('pie-chart', {
     chart: {
-        plotBackgroundColor: null,
-        plotBorderWidth: null,
-        plotShadow: false,
-        type: 'pie'
+        type: 'pie',
+        options3d: {
+            enabled: true,
+            alpha: 55,
+            beta: 0
+        }
     },
     title: {
         text: 'Encounters created: January, 2018'
@@ -112,15 +115,16 @@ Highcharts.chart('pie-chart', {
         pie: {
             allowPointSelect: true,
             cursor: 'pointer',
+            depth: 35,
             dataLabels: {
-                enabled: false
-            },
-            showInLegend: true
+                enabled: true,
+                format: '{point.name}'
+            }
         }
     },
     series: [{
-        name: 'Brands',
-        colorByPoint: true,
+        type: 'pie',
+        name: 'Encounters',
         data: encounters_created
     }]
 });
