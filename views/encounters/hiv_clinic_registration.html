@@ -32,6 +32,7 @@
                 padding-left:5px;
                 width:400px;
             }
+
             #header div {
                 font-weight:normal;
                 float:none;
@@ -347,7 +348,7 @@
                             intmonth = (parseInt(date_str.substring(5, 7).substring(1, 2)) - 1)
 
                         if (intday == 0)
-                        intday = parseInt(date_str.substring(8, 10).substring(1, 2))
+                            intday = parseInt(date_str.substring(8, 10).substring(1, 2))
 
                         return new Date(intyear, intmonth, intday);
                     }
@@ -1328,14 +1329,14 @@
                             observations: [
                                 { concept_id: 2552, value_coded: answers_hash["followup_agreement"] },
                                 { concept_id: 2122, value_coded: answers_hash["ever_received_art"] },
-                                { concept_id: 7751, value_coded: answers_hash["date_art_last_taken"] },
+                                { concept_id: 7751, value_datetime: answers_hash["date_art_last_taken"] },
                                 { concept_id: 7752, value_coded: answers_hash["taken_art_in_the_last_two_months"] },
                                 { concept_id: 6394, value_coded: answers_hash["taken_art_in_the_last_two_weeks"] },
                                 { concept_id: 7937, value_coded: answers_hash["ever_registered"] },
                                 { concept_id: 7750, value_coded: answers_hash["location_of_art_initiation"] },
                                 { concept_id: 1499, value_coded: answers_hash["drug_start_date"] },
-                                { concept_id: 2516, value_coded: answers_hash["date_art_started"] },
-                                { concept_id: 6981, value_coded: answers_hash["art_number_at_previous_location"] },
+                                { concept_id: 2516, value_datetime: answers_hash["date_art_started"] },
+                                { concept_id: 6981, value_text: answers_hash["art_number_at_previous_location"] },
                                 { concept_id: 6393, value_coded: answers_hash["has_transfer_letter"] },
                                 { concept_id: 5090, value_coded: answers_hash["height"]},
                                 { concept_id: 5089, value_coded: answers_hash["weight"]},
@@ -1426,6 +1427,57 @@
                         }
                     }
 
+                    function submitEncounterOnUnknownConfirmatoryDate(){
+                        var nextButton =  document.getElementById('nextButton');
+                        nextButton.onmousedown = function(){
+                            value = $('touchscreenInput'+tstCurrentPage).value;
+                            if (value.match(/UNKNOWN/i)){
+                                submitHIVClinicRegistration();
+                            } else{
+                                gotoNextPage();
+                            }
+                        }
+                    }
+
+                    function changeSubmitFunction(){
+                        var nextButton =  document.getElementById('nextButton');
+                        nextButton.onmousedown = function(){
+                            submitHIVClinicRegistration();
+                            alert("Form submitted")
+                        }
+                    }
+
+function showCategory2(category) {
+                        if (category.length < 1)
+                            return;
+
+                        var pos = checkCtrl(__$("content"));
+
+                        if (__$("category")) {
+                            document.body.removeChild(__$("category"));
+                        }
+
+                        var cat = document.createElement("div");
+                        cat.id = "category";
+                        cat.style.position = "absolute";
+                        cat.style.right = "10px";
+                        cat.style.top = (pos[2] + 2) + "px";
+                        cat.style.fontSize = "26px";
+                        cat.style.padding = "10px";
+                        cat.style.backgroundColor = "#9e9";
+                        cat.style.borderColor = "#7c7";
+                        cat.style.color = "#000";
+                        cat.style.opacity = "0.95";
+                        cat.style.zIndex = 100;
+                        cat.style.textAlign = "center";
+                        cat.style.borderRadius = "30px";
+                        cat.innerHTML = category;
+
+                        document.body.appendChild(cat);
+                    }
+
+
+                    setTimeout(function () {showCategory2('')}, 500);
                 </script>
 
                 <form  onsubmit="submitEncounter();">
@@ -1462,6 +1514,7 @@
                     </select>
 
                     <input condition="($('year_art_last_taken').value !='Unknown') && ($('month_art_last_taken').value != 'Unknown') && $('ever_received_art'). value == 'YES'" field_type="number" helpText="Day last taken ARVs<span style='font-size:0.7em;font-style:italic'> (Tsiku limene munamwa ma ARV komaliza ndi liti?)</span>" id="day_art_last_taken" name="day_art_last_taken" tt_onLoad="getDayOfMonthPicker($('year_art_last_taken').value, $('month_art_last_taken').value);$('nextButton').style.display = 'block'; validateDayARTTaken(); setNextButtonToGetDateARTLastTaken('date_art_last_taken')" tt_onUnLoad="updateTestDate();" type="text" validationCode="checkTestDate(this);" validationMessage="Date ARV last taken out of range" />
+                    <input allowFreeText="false" id="date_art_last_taken" name="observations[][value_datetime]" type="hidden" value_datetime="true" />
 
                     <select tt_onLoad="setNextButtonToGetInputValue('taken_art_in_the_last_two_months')" allowFreeText="false" condition="$('year_art_last_taken').value.toUpperCase() == 'UNKNOWN'" helpText="Taken ARV&apos;s in the last two months? <span style='font-size:0.7em;font-style:italic'>(Kodi mwamwa ma ARV m'miyezi iwiri yapitayi?)</span>" id="taken_art_in_last_two_months" name="observations[][value_coded_or_text]" tt_pageStyleClass="NoKeyboard">
                         <option value=''></option>
@@ -1486,7 +1539,7 @@
                         <option value="NO">No</option>
                     </select>
 
-                    <select ajaxURL="/programs/locations?q=" allowFreeText="true" condition="$('ever_registered_at_ART_clinic').value == 'YES' && $('ever_received_art').value == 'YES'" field_type="alpha" helpText="Location of ART initiation" id="location_of_art_initialization" name="observations[][value_coded_or_text]" tt_onLoad="showCategory2('when starting ART'); setNextButtonToGetInputValue('location_of_art_initiation')" tt_onUnLoad="hideCategory()"></select>
+                    <select objectType="location" ajaxURL="/locations?name=" allowFreeText="true" condition="$('ever_registered_at_ART_clinic').value == 'YES' && $('ever_received_art').value == 'YES'" field_type="alpha" helpText="Location of ART initiation" id="location_of_art_initialization" name="observations[][value_coded_or_text]" tt_onLoad="showCategory2('when starting ART'); setNextButtonToGetInputValue('location_of_art_initiation')" tt_onUnLoad="hideCategory()"></select>
 
                     <input absoluteMin="1890" condition="$('ever_received_art').value == 'YES' && $('ever_registered_at_ART_clinic').value == 'YES'" field_type="number" helpText="Year started ART" id="year_started_art" min="1940" name="year_started_art" tt_onLoad="showCategory2('when starting ART'); setAbsoluteMaxYearStartedART();" tt_onUnLoad="hideCategory()" tt_pageStyleClass="Numeric NumbersOnly" type="text" />
 
@@ -1499,6 +1552,8 @@
                         <option value="Over 2 years">Over 2 years</option>
                     </select>
 
+                    <input allowFreeText="false" id="drug_start_date" name="observations[][value_datetime]" type="hidden" value="" value_datetime="true" />
+                    <input allowFreeText="false" id="date_started_art" name="observations[][value_datetime]" type="hidden" value="" value_datetime="true" />
                     <select condition="everReceivedARTMonth() == 'true';" helpText="Month started ART" id="month_started_art" name="month_started_art" tt_onLoad="showCategory2('when starting ART'); __$('keyboard').style.display = 'none'; validateMonthStartedART();" tt_onUnLoad="hideCategory(); setUnkownStage();" validationMessage="Please enter a valid date">
                         <option value=""></option>
                         <option value="1">Jan</option>
@@ -1549,119 +1604,121 @@
 
                     <select allowFreeText="false" condition="showConditions() == true && age >= 15" helpText="Stage 4 Conditions" id="stage_4_conditions" multiple="multiple" name="observations[][value_coded_or_text_multiple][]" optional="true" tt_onLoad="showCategory2('when starting ART'); hideTextInput(); displayCountOfSelectedConditions(); setNextButtonToGetInputValue('who_stages_criteria_present');" tt_onUnLoad="hideCategory();setSelectedStageConditions(4); setNextButtonToGetInputValue('is_patient_breastfeeding');" tt_pageStyleClass="NoKeyboard NoInput small">
                         <option value=''></option>
-                        <option value="Cryptococcal meningitis or other extrapulmonary cryptococcosis">Cryptococcal meningitis or other extrapulmonary cryptococcosis</option>
-                        <option value="Candidiasis of oseophagus, trachea and bronchi or lungs">Candidiasis of oseophagus, trachea and bronchi or lungs</option>
-                        <option value="Extrapulmonary tuberculosis (EPTB)">Extrapulmonary tuberculosis (EPTB)</option>
-                        <option value="Kaposis sarcoma">Kaposis sarcoma</option>
-                        <option value="Bacterial pneumonia, severe recurrent">Bacterial pneumonia, severe recurrent</option>
-                        <option value="Non-typhoidal Salmonella bacteraemia, recurrent">Non-typhoidal Salmonella bacteraemia, recurrent</option>
-                        <option value="Symptomatic HIV-associated nephropathy or cardiomyopathy">Symptomatic HIV-associated nephropathy or cardiomyopathy</option>
-                        <option value="Cerebral or B-cell non Hodgkin lymphoma">Cerebral or B-cell non Hodgkin lymphoma</option>
-                        <option value="Pneumocystis pneumonia">Pneumocystis pneumonia</option>
-                        <option value="Chronic herpes simplex infection (orolabial, gential / anorectal >1 month or visceral at any site)">Chronic herpes simplex infection (orolabial, gential / anorectal >1 month or visceral at any site)</option>
-                        <option value="Cytomegalovirus infection (retinitis or infection or other organs)">Cytomegalovirus infection (retinitis or infection or other organs)</option>
-                        <option value="Toxoplasmosis of the brain">Toxoplasmosis of the brain</option>
-                        <option value="Invasive cancer of cervix">Invasive cancer of cervix</option>
-                        <option value="Unspecified stage 4 condition">Unspecified stage 4 condition</option>
-                        <option value="Other">Other</option>
+                        <option value="7548">Cryptococcal meningitis or other extrapulmonary cryptococcosis</option>
+                        <option value="5340">Candidiasis of oseophagus, trachea and bronchi or lungs</option>
+                        <option value="1547">Extrapulmonary tuberculosis (EPTB)</option>
+                        <option value="507">Kaposis sarcoma</option>
+                        <option value="1215">Bacterial pneumonia, severe recurrent</option>
+                        <option value="7959">Non-typhoidal Salmonella bacteraemia, recurrent</option>
+                        <option value="7957">Symptomatic HIV-associated nephropathy or cardiomyopathy</option>
+                        <option value="2587">Cerebral or B-cell non Hodgkin lymphoma</option>
+                        <option value="882">Pneumocystis pneumonia</option>
+                        <option value="5344">Chronic herpes simplex infection (orolabial, gential / anorectal >1 month or visceral at any site)</option>
+                        <option value="7551">Cytomegalovirus infection (retinitis or infection or other organs)</option>
+                        <option value="2583">Toxoplasmosis of the brain</option>
+                        <option value="2588">Invasive cancer of cervix</option>
+                        <option value="7040">Unspecified stage 4 condition</option>
+                        <option value="6408">Other</option>
                     </select>
 
                     <select allowFreeText="false" class="stage_4_conditions" condition="showConditions() == true && age <= 14" helpText="Stage 4 Conditions" id="stage_4_conditions" multiple="multiple" name="observations[][value_coded_or_text_multiple][]" optional="true" tt_onLoad="showCategory2('when starting ART'); preselectSevereWeightLossPaeds(); hideTextInput(); displayCountOfSelectedConditions(); setNextButtonToGetInputValue('who_stages_criteria_present');" tt_onUnLoad="hideCategory();setSelectedStageConditions(4);" tt_pageStyleClass="NoKeyboard NoInput small">
                         <option value=''></option>
-                        <option value="Pneumocystis pneumonia">Pneumocystis pneumonia</option>
-                        <option value="Candidiasis of oseophagus, trachea and bronchi or lungs">Candidiasis of oseophagus, trachea and bronchi or lungs</option>
-                        <option value="Extrapulmonary tuberculosis (EPTB)">Extrapulmonary tuberculosis (EPTB)</option>
-                        <option value="Kaposis sarcoma">Kaposis sarcoma</option>
-                        <option value="HIV encephalopathy">HIV encephalopathy</option>
-                        <option value="Cryptococcal meningitis or other extrapulmonary cryptococcosis">Cryptococcal meningitis or other extrapulmonary cryptococcosis</option>
-                        <option value="Disseminated non-tuberculosis mycobacterial infection">Disseminated non-tuberculosis mycobacterial infection</option>
-                        <option value="Cryptosporidiosis, chronic with diarroea">Cryptosporidiosis, chronic with diarroea</option>
-                        <option value="Isosporiasis >1 month">Isosporiasis >1 month</option>
-                        <option value="Disseminated mycosis (coccidiomycosis or histoplasmosis)">Disseminated mycosis (coccidiomycosis or histoplasmosis)</option>
-                        <option value="Symptomatic HIV-associated nephropathy or cardiomyopathy">Symptomatic HIV-associated nephropathy or cardiomyopathy</option>
-                        <option value="Progressive multifocal leukoencephalopathy">Progressive multifocal leukoencephalopathy</option>
-                        <option value="Cerebral or B-cell non Hodgkin lymphoma">Cerebral or B-cell non Hodgkin lymphoma</option>
-                        <option value="Severe unexplained wasting or malnutrition not responding to treatment (weight-for-height/ -age <70% or MUAC less than 11cm or oedema)">Severe unexplained wasting or malnutrition not responding to treatment (weight-for-height/ -age <70% or MUAC less than 11cm or oedema)</option>
-                        <option value="Bacterial infections, severe recurrent  (empyema, pyomyositis, meningitis, bone/joint infections but EXCLUDING pneumonia)">Bacterial infections, severe recurrent  (empyema, pyomyositis, meningitis, bone/joint infections but EXCLUDING pneumonia)</option>
-                        <option value="Chronic herpes simplex infection (orolabial or cutaneous >1 month or visceral at any site)">Chronic herpes simplex infection (orolabial or cutaneous >1 month or visceral at any site)</option>
-                        <option value="Cytomegalovirus infection: rentinitis or other organ (from age 1 month)">Cytomegalovirus infection: rentinitis or other organ (from age 1 month)</option>
-                        <option value="Toxoplasmosis of the brain (from age 1 month)">Toxoplasmosis of the brain (from age 1 month)</option>
-                        <option value="Recto-vaginal fistula, HIV-associated">Recto-vaginal fistula, HIV-associated</option>
+                        <option value="882">Pneumocystis pneumonia</option>
+                        <option value="5340">Candidiasis of oseophagus, trachea and bronchi or lungs</option>
+                        <option value="1547">Extrapulmonary tuberculosis (EPTB)</option>
+                        <option value="507">Kaposis sarcoma</option>
+                        <option value="1362">HIV encephalopathy</option>
+                        <option value="7548">Cryptococcal meningitis or other extrapulmonary cryptococcosis</option>
+                        <option value="2585">Disseminated non-tuberculosis mycobacterial infection</option>
+                        <option value="7549">Cryptosporidiosis, chronic with diarroea</option>
+                        <option value="7956">Isosporiasis >1 month</option>
+                        <option value="7550">Disseminated mycosis (coccidiomycosis or histoplasmosis)</option>
+                        <option value="7957">Symptomatic HIV-associated nephropathy or cardiomyopathy</option>
+                        <option value="5046">Progressive multifocal leukoencephalopathy</option>
+                        <option value="2587">Cerebral or B-cell non Hodgkin lymphoma</option>
+                        <option value="3068">Severe unexplained wasting or malnutrition not responding to treatment (weight-for-height/ -age <70% or MUAC less than 11cm or oedema)</option>
+                        <option value="2894">Bacterial infections, severe recurrent  (empyema, pyomyositis, meningitis, bone/joint infections but EXCLUDING pneumonia)</option>
+                        <option value="7960">Chronic herpes simplex infection (orolabial or cutaneous >1 month or visceral at any site)</option>
+                        <option value="7552">Cytomegalovirus infection: rentinitis or other organ (from age 1 month)</option>
+                        <option value="5048">Toxoplasmosis of the brain (from age 1 month)</option>
+                        <option value="7961">Recto-vaginal fistula, HIV-associated</option>
                     </select>
 
                     <select allowFreeText="false" condition="showConditions() == true && age >= 15" helpText="Stage 3 Conditions" id="stage_3_conditions" multiple="multiple" name="observations[][value_coded_or_text_multiple][]" optional="true" tt_onLoad="showCategory2('when starting ART'); preselectSevereWeightLoss(); disableSevereWeightLossInputForNormalBMI(); hideTextInput(); displayCountOfSelectedConditions(); setNextButtonToGetInputValue('who_stages_criteria_present');" tt_onUnLoad="hideCategory();setSelectedStageConditions(3);" tt_pageStyleClass="NoKeyboard NoInput small">
                         <option value=''></option>
-                        <option value="Severe weight loss >10% and/or BMI <18.5kg/m^2, unexplained">Severe weight loss >10% and/or BMI <18.5kg/m^2, unexplained</option>
-                        <option value="Diarrhoea, chronic (>1 month) unexplained">Diarrhoea, chronic (>1 month) unexplained</option>
-                        <option value="Fever, persistent unexplained, intermittent or constant, >1 month">Fever, persistent unexplained, intermittent or constant, >1 month</option>
-                        <option value="Pulmonary tuberculosis (current)">Pulmonary tuberculosis (current)</option>
-                        <option value="Tuberculosis (PTB or EPTB) within the last 2 years">Tuberculosis (PTB or EPTB) within the last 2 years</option>
-                        <option value="Oral candidiasis">Oral candidiasis</option>
+                        <option value="7540">Severe weight loss >10% and/or BMI <18.5kg/m^2, unexplained</option>
+                        <option value="5018">Diarrhoea, chronic (>1 month) unexplained</option>
+                        <option value="5027">Fever, persistent unexplained, intermittent or constant, >1 month</option>
+                        <option value="8206">Pulmonary tuberculosis (current)</option>
+                        <option value="7539">Tuberculosis (PTB or EPTB) within the last 2 years</option>
+                        <option value="5334">Oral candidiasis</option>
+                        <!--
                         <option value="Acute necrotizing ulcerative stomatitis, gingivitis or periodontitis">Acute necrotizing ulcerative stomatitis, gingivitis or periodontitis</option>
-                        <option value="Anaemia, unexplained < 8 g/dl">Anaemia, unexplained < 8 g/dl</option>
-                        <option value="Neutropaenia, unexplained < 500 /mm(cubed)">Neutropaenia, unexplained < 500 /mm(cubed)</option>
-                        <option value="Severe bacterial infections (pneumonia, empyema, pyomyositis, bone/joint, meningitis, bacteraemia)">Severe bacterial infections (pneumonia, empyema, pyomyositis, bone/joint, meningitis, bacteraemia)</option>
-                        <option value="Thrombocytopaenia, chronic < 50,000 /mm(cubed)">Thrombocytopaenia, chronic < 50,000 /mm(cubed)</option>
-                        <option value="Hepatitis B or C infection">Hepatitis B or C infection</option>
-                        <option value="Oral hairy leukoplakia">Oral hairy leukoplakia</option>
-                        <option value="Unspecified stage 3 condition">Unspecified stage 3 condition</option>
+                        -->
+                        <option value="2582">Anaemia, unexplained < 8 g/dl</option>
+                        <option value="7954">Neutropaenia, unexplained < 500 /mm(cubed)</option>
+                        <option value="7541">Severe bacterial infections (pneumonia, empyema, pyomyositis, bone/joint, meningitis, bacteraemia)</option>
+                        <option value="7955">Thrombocytopaenia, chronic < 50,000 /mm(cubed)</option>
+                        <option value="8205">Hepatitis B or C infection</option>
+                        <option value="5337">Oral hairy leukoplakia</option>
+                        <option value="7039">Unspecified stage 3 condition</option>
                     </select>
 
                     <select allowFreeText="false" class="stage_3_conditions" condition="showConditions() == true && age <= 14" helpText="Stage 3 Conditions" id="stage_3_conditions" multiple="multiple" name="observations[][value_coded_or_text_multiple][]" optional="true" tt_onLoad="showCategory2('when starting ART'); preselectModerateWeightLossPaeds(); hideTextInput(); displayCountOfSelectedConditions(); setNextButtonToGetInputValue('who_stages_criteria_present');" tt_onUnLoad="hideCategory();setSelectedStageConditions(3);" tt_pageStyleClass="NoKeyboard NoInput small">
                         <option value=''></option>
-                        <option value="Fever, persistent unexplained, intermittent or constant, >1 month">Fever, persistent unexplained, intermittent or constant, >1 month</option>
-                        <option value="Oral hairy leukoplakia">Oral hairy leukoplakia</option>
-                        <option value="Pulmonary tuberculosis (current)">Pulmonary tuberculosis (current)</option>
-                        <option value="Tuberculosis (PTB or EPTB) within the last 2 years">Tuberculosis (PTB or EPTB) within the last 2 years</option>
-                        <option value="Anaemia, unexplained < 8 g/dl">Anaemia, unexplained < 8 g/dl</option>
-                        <option value="Neutropaenia, unexplained < 500 /mm(cubed)">Neutropaenia, unexplained < 500 /mm(cubed)</option>
-                        <option value="Thrombocytopaenia, chronic < 50,000 /mm(cubed)">Thrombocytopaenia, chronic < 50,000 /mm(cubed)</option>
-                        <option value="Moderate unexplained wasting/malnutrition not responding to treatment (weight-for-height/ -age 70-79% or muac 11-12 cm)">Moderate unexplained wasting/malnutrition not responding to treatment (weight-for-height/ -age 70-79% or muac 11-12 cm)</option>
-                        <option value="Diarrhoea, persistent unexplained (14 days or more)">Diarrhoea, persistent unexplained (14 days or more)</option>
-                        <option value="Oral candidiasis (from age 2 months)">Oral candidiasis (from age 2 months)</option>
-                        <option value="Acute necrotizing ulcerative gingivitis or periodontitis">Acute necrotizing ulcerative gingivitis or periodontitis</option>
-                        <option value="Lymph node tuberculosis">Lymph node tuberculosis</option>
-                        <option value="Bacterial pneumonia, severe recurrent">Bacterial pneumonia, severe recurrent</option>
-                        <option value="Symptomatic lymphoid interstitial pneumonia">Symptomatic lymphoid interstitial pneumonia</option>
-                        <option value="Chronic HIV-associated lung disease, including bronchiectasis">Chronic HIV-associated lung disease, including bronchiectasis</option>
+                        <option value="5027">Fever, persistent unexplained, intermittent or constant, >1 month</option>
+                        <option value="5337">Oral hairy leukoplakia</option>
+                        <option value="8206">Pulmonary tuberculosis (current)</option>
+                        <option value="7539">Tuberculosis (PTB or EPTB) within the last 2 years</option>
+                        <option value="2582">Anaemia, unexplained < 8 g/dl</option>
+                        <option value="7954">Neutropaenia, unexplained < 500 /mm(cubed)</option>
+                        <option value="7955">Thrombocytopaenia, chronic < 50,000 /mm(cubed)</option>
+                        <option value="7543">Moderate unexplained wasting/malnutrition not responding to treatment (weight-for-height/ -age 70-79% or muac 11-12 cm)</option>
+                        <option value="7544">Diarrhoea, persistent unexplained (14 days or more)</option>
+                        <option value="7545">Oral candidiasis (from age 2 months)</option>
+                        <option value="7546">Acute necrotizing ulcerative gingivitis or periodontitis</option>
+                        <option value="7547">Lymph node tuberculosis</option>
+                        <option value="1215">Bacterial pneumonia, severe recurrent</option>
+                        <option value="5024">Symptomatic lymphoid interstitial pneumonia</option>
+                        <option value="2889">Chronic HIV-associated lung disease, including bronchiectasis</option>
                     </select>
 
                     <select allowFreeText="false" condition="showConditions() == true && age >= 15" helpText="Stage 2 Conditions" id="stage_2_conditions" multiple="multiple" name="observations[][value_coded_or_text_multiple][]" optional="true" tt_onLoad="showCategory2('when starting ART'); preselectModerateWeightLoss(); disableModerateWeightLossOptionForNormalBMI(); hideTextInput(); displayCountOfSelectedConditions(); setNextButtonToGetInputValue('who_stages_criteria_present');" tt_onUnLoad="hideCategory();setSelectedStageConditions(2);" tt_pageStyleClass="NoKeyboard NoInput small">
                         <option value=''></option>
-                        <option value="Moderate weight loss less than or equal to 10 percent, unexplained">Moderate weight loss less than or equal to 10 percent, unexplained</option>
-                        <option value="Respiratory tract infections, recurrent (sinusitis, tonsilitus, otitis media, pharyngitis)">Respiratory tract infections, recurrent (sinusitis, tonsilitus, otitis media, pharyngitis)</option>
-                        <option value="Seborrhoeic dermatitis">Seborrhoeic dermatitis</option>
-                        <option value="Papular pruritic eruptions / Fungal nail infections">Papular pruritic eruptions / Fungal nail infections</option>
-                        <option value="Herpes zoster">Herpes zoster</option>
-                        <option value="Angular cheilitis">Angular cheilitis</option>
-                        <option value="Oral ulcerations, recurrent">Oral ulcerations, recurrent</option>
-                        <option value="Unspecified stage 2 condition">Unspecified stage 2 condition</option>
+                        <option value="5332">Moderate weight loss less than or equal to 10 percent, unexplained</option>
+                        <option value="5012">Respiratory tract infections, recurrent (sinusitis, tonsilitus, otitis media, pharyngitis)</option>
+                        <option value="2578">Seborrhoeic dermatitis</option>
+                        <option value="7536">Papular pruritic eruptions / Fungal nail infections</option>
+                        <option value="836">Herpes zoster</option>
+                        <option value="2575">Angular cheilitis</option>
+                        <option value="2576">Oral ulcerations, recurrent</option>
+                        <option value="7038">Unspecified stage 2 condition</option>
                     </select>
 
                     <select allowFreeText="false" class="stage_2_conditions" condition="showConditions() == true && age <= 14" helpText="Stage 2 Conditions" id="stage_2_conditions" multiple="multiple" name="observations[][value_coded_or_text_multiple][]" optional="true" tt_onLoad="showCategory2('when starting ART'); hideTextInput(); displayCountOfSelectedConditions(); setNextButtonToGetInputValue('who_stages_criteria_present');" tt_onUnLoad="hideCategory();setSelectedStageConditions(2);" tt_pageStyleClass="NoKeyboard NoInput small">
                         <option value=''></option>
-                        <option value="Respiratory tract infections, recurrent (sinusitis, tonsilitus, otitis media, pharyngitis)">Respiratory tract infections, recurrent (sinusitis, tonsilitus, otitis media, pharyngitis)</option>
-                        <option value="Herpes zoster">Herpes zoster</option>
-                        <option value="Angular cheilitis">Angular cheilitis</option>
-                        <option value="Oral ulcerations, recurrent">Oral ulcerations, recurrent</option>
-                        <option value="Papular pruritic eruptions / Fungal nail infections">Papular pruritic eruptions / Fungal nail infections</option>
-                        <option value="Hepatosplenomegaly, persistent unexplained">Hepatosplenomegaly, persistent unexplained</option>
-                        <option value="Lineal gingival erythema">Lineal gingival erythema</option>
-                        <option value="Wart virus infection, extensive">Wart virus infection, extensive</option>
-                        <option value="Molluscum contagiosum, extensive">Molluscum contagiosum, extensive</option>
-                        <option value="Parotid enlargement, persistent unexplained">Parotid enlargement, persistent unexplained</option>
+                        <option value="5012">Respiratory tract infections, recurrent (sinusitis, tonsilitus, otitis media, pharyngitis)</option>
+                        <option value="836">Herpes zoster</option>
+                        <option value="2575">Angular cheilitis</option>
+                        <option value="2576">Oral ulcerations, recurrent</option>
+                        <option value="7536">Papular pruritic eruptions / Fungal nail infections</option>
+                        <option value="7537">Hepatosplenomegaly, persistent unexplained</option>
+                        <option value="2891">Lineal gingival erythema</option>
+                        <option value="6775">Wart virus infection, extensive</option>
+                        <option value="6776">Molluscum contagiosum, extensive</option>
+                        <option value="1210">Parotid enlargement, persistent unexplained</option>
                     </select>
 
                     <select allowFreeText="false" condition="showConditions() == true && age >= 15" helpText="Stage 1 Conditions" id="stage_1_conditions" multiple="multiple" name="observations[][value_coded_or_text_multiple][]" optional="true" tt_onLoad="hideCategory();setOptionsForContraindicationsPopup(); forceStageOneAvailabe(); hideTextInput(); displayCountOfSelectedConditions(); setNextButtonToGetInputValue('who_stages_criteria_present');" tt_onUnLoad="showCategory2('when starting ART');setSelectedStageConditions(1); resetStageDefiningConditions();" tt_pageStyleClass="NoKeyboard NoInput small">
                         <option value=''></option>
-                        <option value="Asymptomatic HIV infection">Asymptomatic HIV infection</option>
-                        <option value="Persistent generalized lymphadenopathy">Persistent generalized lymphadenopathy</option>
+                        <option value="5327">Asymptomatic HIV infection</option>
+                        <option value="5328">Persistent generalized lymphadenopathy</option>
                     </select>
 
                     <select allowFreeText="false" class="stage_1_conditions" condition="showConditions() == true && age <= 14" helpText="Stage 1 Conditions" id="stage_1_conditions" multiple="multiple" name="observations[][value_coded_or_text_multiple][]" optional="true" tt_onLoad="hideCategory();setOptionsForContraindicationsPopup(); forceStageOneAvailabePaeds(); hideTextInput(); displayCountOfSelectedConditions(); setNextButtonToGetInputValue('who_stages_criteria_present');" tt_onUnLoad="showCategory2('when starting ART');setSelectedStageConditions(1); resetStageDefiningConditions();" tt_pageStyleClass="NoKeyboard NoInput small">
                         <option value=''></option>
-                        <option value="Asymptomatic HIV infection">Asymptomatic HIV infection</option>
-                        <option value="Persistent generalized lymphadenopathy">Persistent generalized lymphadenopathy</option>
+                        <option value="5327">Asymptomatic HIV infection</option>
+                        <option value="5328">Persistent generalized lymphadenopathy</option>
                     </select>
 
                     <input allowFreeText="false" id="who_stage" name="observations[][value_coded_or_text]" type="hidden" value="" />
@@ -1679,7 +1736,7 @@
                         <option value="NO">No</option>
                     </select>
 
-                    <select ajaxURL="/programs/locations?q=" allowFreeText="true" condition="$('new_cd4_count_available').value == 'YES' && showConditions()" field_type="alpha" helpText="CD4 Count Location" id="cd4_count_location" name="observations[][value_coded_or_text]" tt_onLoad="showCategory2('when starting ART'); setNextButtonToGetInputValue('cd4_location');" tt_onUnLoad="hideCategory();"></select>
+                    <select objectType="location" ajaxURL="/locations?name=" allowFreeText="true" condition="$('new_cd4_count_available').value == 'YES' && showConditions()" field_type="alpha" helpText="CD4 Count Location" id="cd4_count_location" name="observations[][value_coded_or_text]" tt_onLoad="showCategory2('when starting ART'); setNextButtonToGetInputValue('cd4_location');" tt_onUnLoad="hideCategory();"></select>
 
                     <input absoluteMin="1890" condition="$('new_cd4_count_available').value == 'YES' && showConditions()" field_type="number" helpText="Year of CD4 count" id="year_of_cd4" min="1940" name="year_of_cd4" tt_onLoad="showCategory2('when starting ART'); setAbsoluteMaxCD4Year();" tt_onUnLoad="hideCategory();" tt_pageStyleClass="Numeric NumbersOnly" type="text" />
 
@@ -1739,9 +1796,9 @@
                         <option value="NOT DONE">Not done</option>
                     </select>
 
-                    <select tt_onLoad="setNextButtonToGetInputValue('confirmatory_hiv_test_location');" ajaxURL="/programs/locations?q=" allowFreeText="true" condition="$('type_of_confirmatory_hiv_test').value != 'NOT DONE'" field_type="alpha" helpText="Location of confirmatory HIV test" id="confirmatory_hiv_test_location" name="observations[][value_coded_or_text]"></select>
+                    <select objectType="location" tt_onLoad="setNextButtonToGetInputValue('confirmatory_hiv_test_location');" ajaxURL="/locations?name=" allowFreeText="true" condition="$('type_of_confirmatory_hiv_test').value != 'NOT DONE'" field_type="alpha" helpText="Location of confirmatory HIV test" id="confirmatory_hiv_test_location" name="observations[][value_coded_or_text]"></select>
 
-                    <input absoluteMax="2018" condition="$('type_of_confirmatory_hiv_test').value != 'NOT DONE'" field_type="number" helpText="Confirmatory HIV test year" id="confirmatory_hiv_test_year" name="year_confirmatory_hiv_test" tt_onLoad="changeNextButtonForConfirmatoryYear(); changeAbsoluteMinForConfirmatoryYear();" tt_pageStyleClass="Numeric NumbersOnly" type="text" />
+                    <input absoluteMax="2018" condition="$('type_of_confirmatory_hiv_test').value != 'NOT DONE'" field_type="number" helpText="Confirmatory HIV test year" id="confirmatory_hiv_test_year" name="year_confirmatory_hiv_test" tt_onLoad="changeNextButtonForConfirmatoryYear(); changeAbsoluteMinForConfirmatoryYear(); __$('Unknown').style.display = 'inline'; submitEncounterOnUnknownConfirmatoryDate();" tt_pageStyleClass="Numeric NumbersOnly" type="text" />
 
                     <select condition="$('type_of_confirmatory_hiv_test').value != 'NOT DONE' && $('confirmatory_hiv_test_year').value.toLowerCase() != 'unknown'" helpText="Confirmatory HIV test month" id="confirmatory_hiv_test_month" name="month_confirmatory_hiv_test" tt_onLoad="__$('keyboard').style.display = 'none'; validateConfirmatoryMonth();" validationMessage="Please enter a valid date">
                         <option value=""></option>
@@ -1757,10 +1814,10 @@
                         <option value="10">Oct</option>
                         <option value="11">Nov</option>
                         <option value="12">Dec</option>
-                        <option value="Unknown">Unknown</option>
+                        <!--<option value="Unknown">Unknown</option>-->
                     </select>
 
-                    <input condition="$('type_of_confirmatory_hiv_test').value != 'NOT DONE' && ($('confirmatory_hiv_test_year').value !='Unknown') && ($('confirmatory_hiv_test_month').value != 'Unknown');" field_type="number" helpText="Confirmatory HIV test day" id="confirmatory_hiv_test_day" name="day_confirmatory_hiv_test" tt_onLoad="getDayOfMonthPicker($('confirmatory_hiv_test_year').value, $('confirmatory_hiv_test_month').value);$('nextButton').style.display = 'block'; validateConfirmatoryDay(); setNextButtonToGetConfirmatoryTestDate('confirmatory_hiv_test_date')" tt_onUnLoad="updateConfirmDate();" type="text" validationCode="checkConfirmDate()" validationMessage="Confirmatory Test Date out of range  and 2018-09-18" />
+                    <input condition="$('type_of_confirmatory_hiv_test').value != 'NOT DONE' && ($('confirmatory_hiv_test_year').value !='Unknown') && ($('confirmatory_hiv_test_month').value != 'Unknown');" field_type="number" helpText="Confirmatory HIV test day" id="confirmatory_hiv_test_day" name="day_confirmatory_hiv_test" tt_onLoad="getDayOfMonthPicker($('confirmatory_hiv_test_year').value, $('confirmatory_hiv_test_month').value);$('nextButton').style.display = 'block'; validateConfirmatoryDay(); setNextButtonToGetConfirmatoryTestDate('confirmatory_hiv_test_date'); changeSubmitFunction();" tt_onUnLoad="updateConfirmDate();" type="text" validationCode="checkConfirmDate()" validationMessage="Confirmatory Test Date out of range  and 2018-09-18" />
 
                     <input allowFreeText="false" id="confirmatory_hiv_test_date" name="observations[][value_datetime]" type="hidden" value="" value_datetime="true" />
 
