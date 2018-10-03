@@ -471,6 +471,8 @@
                         }
                     }
 
+                    var cd4_count_modifier_global = "";
+
                     function updateCD4Count() {
                         var cd4_available = $('new_cd4_count_available').value == 'YES';
                         var cd4_count = cd4_available ? $('cd4_count').value : null;
@@ -511,24 +513,34 @@
                             if (cd4_count_numeric <= 250 && cd4_count_modifier != ">") {
 
                                 $('cd4_count_less_than_250').value = "YES";
+                                answers_hash["cd4_less_than_or_equal_to_250"] = "YES";
                             } else {
                                 $('cd4_count_less_than_250').value = "NO";
+                                answers_hash["cd4_less_than_or_equal_to_250"] = "NO";
                             }
 
                             if (cd4_count_numeric <= 350 && cd4_count_modifier != ">") {
                                 $('cd4_count_less_than_350').value = "YES";
+                                answers_hash["cd4_less_than_or_equal_to_350"] = "YES";
                             } else {
                                 $('cd4_count_less_than_350').value = "NO";
+                                answers_hash["cd4_less_than_or_equal_to_350"] = "YES";
                             }
 
                             if (cd4_count_numeric <= 500 && cd4_count_modifier != ">") {
                                 $('cd4_count_less_than_500').value = "YES";
+                                answers_hash["cd4_less_than_or_equal_to_500"] = "YES"
                             } else {
                                 $('cd4_count_less_than_500').value = "NO";
+                                answers_hash["cd4_less_than_or_equal_to_500"] = "no"
                             }
                         }
+
+                        cd4_count_modifier_global = cd4_count_modifier;
+                        answers_hash["cd4_count"] = cd4_count_numeric;
                     }
 
+                    var cd4_percent_modifier_global = "";
                     function updateCD4Percent() {
                         var cd4_percent_available = $('new_cd4_percent_available').value == 'YES';
                         var cd4_percent = cd4_percent_available ? $('cd4_percent').value : null;
@@ -559,9 +571,14 @@
 
                         if (cd4_percent_numeric == null || '' + cd4_percent_numeric == 'NaN') {
                             $('cd4_percent_less_than_25').value = "UNKNOWN";
+
+                            answers_hash["cd4_less_than_25"] = "UNKNOWN";
                         } else {
                             $('cd4_percent_less_than_25').value = (cd4_percent_numeric < 25) ? "YES" : "NO";
+                            answers_hash["cd4_percent_less_than_25"] = $('cd4_percent_less_than_25').value;
                         }
+                        cd4_percent_modifier_global = cd4_percent_modifier;
+                        answers_hash["cd4_percent"] = cd4_percent_numeric;
                     }
 
 
@@ -698,6 +715,7 @@
                         currentBmi = (currentWeight / (currentHeight * currentHeight) * 10000).toFixed(1);
                         try {
                             $('bmi').value = currentBmi;
+                            answers_hash["bmi"] = currentBmi;
                         } catch (e) {
                         }
                     }
@@ -941,6 +959,7 @@
 
 
                         $('reason_for_art_eligibility').value = reasonForArtEligibility;
+                        answers_hash["reason_for_art_eligibility"] = reasonForArtEligibility
                     }
 
                     function oldReasonForEligibility() {
@@ -1027,6 +1046,7 @@
                         }
 
                         $('reason_for_art_eligibility').value = reasonForArtEligibility;
+                        answers_hash["reason_for_art_eligibility"] = reasonForArtEligibility;
                     }
 
                     function summary() {
@@ -1114,7 +1134,6 @@
 
                     var whoStage = null;
 
-
                     function updateWhoStage() {
                         // Everyone is supposed to be HIV positive so start them at 1
                         whoStage = 1;
@@ -1136,6 +1155,8 @@
                         } else {
                             $('who_stage').value = whoStageConcept(whoStage, adultOrPeds);
                         }
+
+                        answers_hash["who_stage"] = $('who_stage').value;
                     }
 
                     function updateWhoStagePaeds() {
@@ -1385,9 +1406,7 @@
                             observations: [                               
                                 { concept_id: 7752, value_coded: answers_hash["taken_art_in_the_last_two_months"].trim().toUpperCase() == "YES" ? 1065: 1064 },
                                 { concept_id: 6394, value_coded: answers_hash["taken_art_in_the_last_two_weeks"].trim().toUpperCase() == "YES" ? 1065: 1064 },
-                                { concept_id: 6131, value_coded: (answers_hash["is_patient_pregnant"].length > 0 ? (answers_hash["is_patient_pregnant"].trim().toUpperCase() == "YES" ? 1065: 1064): "" ) },
-                                { concept_id: 7965, value_coded: (answers_hash["is_patient_breastfeeding"].length > 0 ? (answers_hash["is_patient_breastfeeding"].trim().toUpperCase() == "YES" ? 1065: 1064): "") },
-                                { concept_id: 2743, value_coded: answers_hash["who_stages_criteria_present"] },
+                                { concept_id: 2743, value_text: answers_hash["who_stages_criteria_present"] },
                                 { concept_id: 7562, value_text: answers_hash["who_stage"] },
                                 { concept_id: 8262, value_text: answers_hash["cd4_less_than_or_equal_to_250"] },
                                 { concept_id: 8207, value_text: answers_hash["cd4_less_than_or_equal_to_350"] },
@@ -1396,13 +1415,20 @@
                                 { concept_id: 7563, value_text: answers_hash["reason_for_art_eligibility"] },
                                 { concept_id: 6830, value_text: answers_hash["cd4_location"] },
                                 { concept_id: 6831, value_datetime: answers_hash["cd4_datetime"] },
-                                { concept_id: 5497, value_numeric: answers_hash["cd4_count"] },
-                                { concept_id: 730, value_text: answers_hash["cd4_percent"] }
+                                { concept_id: 5497, value_numeric: answers_hash["cd4_count"], value_modifier: cd4_count_modifier_global },
+                                { concept_id: 730, value_text: answers_hash["cd4_percent"], value_modifier: cd4_percent_modifier_global }
                             ]
                         };
 
+                        if (patientGender == "FEMALE"){
+                            obs.observations.push({ concept_id: 6131, value_coded: (answers_hash["is_patient_pregnant"].length > 0 ? (answers_hash["is_patient_pregnant"].trim().toUpperCase() == "YES" ? 1065: 1064): "" )})
+                            obs.observations.push({ concept_id: 7965, value_coded: (answers_hash["is_patient_breastfeeding"].length > 0 ? (answers_hash["is_patient_breastfeeding"].trim().toUpperCase() == "YES" ? 1065: 1064): "") })
+                        }
+
                         createObs(obs, "nextPage")
                     }
+
+
 
                     function nextPage(){
                         alert("Done");
