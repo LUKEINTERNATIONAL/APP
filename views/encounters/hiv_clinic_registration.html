@@ -156,8 +156,7 @@
 
                 <script>
                     var tt_cancel_destination = "/patients/show/"
-                    var patient_id = "1000"
-
+                    var patient_id = "1201";
 
                     var todayDate = createDates("2018", "9", "18");
                     var originaltestDate = ""
@@ -1308,6 +1307,30 @@
                         submitEncounter(encounter, "postHIVClinicRegistrationObs");
                     }
 
+                    function submitVitalsRegistration() {
+
+                        var encounter = {
+                            encounter_type_name: 'VITALS',
+                            encounter_type_id:  6,
+                            patient_id: patient_id,
+                            encounter_datetime: null
+                        }
+
+                        submitEncounter(encounter, "postVitalsObs");
+                    }
+
+                    function submitHIVStaging() {
+
+                        var encounter = {
+                            encounter_type_name: 'HIV STAGING',
+                            encounter_type_id:  52,
+                            patient_id: patient_id,
+                            encounter_datetime: null
+                        }
+
+                        submitEncounter(encounter, "postHIVStagingObs");
+                    }
+
                     var answers_hash = {
                         followup_agreement: "", ever_received_art: "", date_art_last_taken: "",
                         taken_art_in_the_last_two_months: "", taken_art_in_the_last_two_weeks: "",
@@ -1327,37 +1350,54 @@
                         var obs = {
                             encounter_id: encounter_id,
                             observations: [
-                                { concept_id: 2552, value_coded: answers_hash["followup_agreement"] },
-                                { concept_id: 2122, value_coded: answers_hash["ever_received_art"] },
+                                { concept_id: 2552, value_coded: answers_hash["followup_agreement"].trim().toUpperCase() == "YES" ? 1065: 1064 },
+                                { concept_id: 7937, value_coded: answers_hash["ever_registered"].trim().toUpperCase() == "YES" ? 1065: 1064 },
+                                { concept_id: 6393, value_coded: answers_hash["has_transfer_letter"].trim().toUpperCase() == "YES" ? 1065: 1064 },
+                                { concept_id: 7881, value_text: answers_hash["confirmatory_hiv_test_location"] },
+                                { concept_id: 7880, value_text: answers_hash["confirmatory_hiv_test_type"] },
+                                { concept_id: 8011, value_coded: answers_hash["send_sms"].trim().toUpperCase() == "YES" ? 1065: 1064 },
                                 { concept_id: 7751, value_datetime: answers_hash["date_art_last_taken"] },
-                                { concept_id: 7752, value_coded: answers_hash["taken_art_in_the_last_two_months"] },
-                                { concept_id: 6394, value_coded: answers_hash["taken_art_in_the_last_two_weeks"] },
-                                { concept_id: 7937, value_coded: answers_hash["ever_registered"] },
-                                { concept_id: 7750, value_coded: answers_hash["location_of_art_initiation"] },
-                                { concept_id: 1499, value_coded: answers_hash["drug_start_date"] },
+                                { concept_id: 7750, value_text: answers_hash["location_of_art_initiation"] },
+                                { concept_id: 1499, value_datetime: answers_hash["drug_start_date"] },
                                 { concept_id: 2516, value_datetime: answers_hash["date_art_started"] },
                                 { concept_id: 6981, value_text: answers_hash["art_number_at_previous_location"] },
-                                { concept_id: 6393, value_coded: answers_hash["has_transfer_letter"] },
-                                { concept_id: 5090, value_coded: answers_hash["height"]},
-                                { concept_id: 5089, value_coded: answers_hash["weight"]},
-                                { concept_id: 2137, value_coded: answers_hash["bmi"] },
-                                { concept_id: 6131, value_coded: answers_hash["is_patient_pregnant"] },
-                                { concept_id: 7965, value_coded: answers_hash["is_patient_breastfeeding"] },
+                            ]
+                        };
+
+                        createObs(obs, "nextPage")
+                    }
+
+                    function postVitalsObs(encounter_id){
+                        var obs = {
+                            encounter_id: encounter_id,
+                            observations: [
+                                { concept_id: 5090, value_numeric: answers_hash["height"]},
+                                { concept_id: 5089, value_numeric: answers_hash["weight"]},
+                                { concept_id: 2137, value_numeric: answers_hash["bmi"] }                            ]
+                        };
+
+                        createObs(obs, "nextPage")
+                    }
+
+                    function postHIVStagingObs(encounter_id){
+                        var obs = {
+                            encounter_id: encounter_id,
+                            observations: [                               
+                                { concept_id: 7752, value_coded: answers_hash["taken_art_in_the_last_two_months"].trim().toUpperCase() == "YES" ? 1065: 1064 },
+                                { concept_id: 6394, value_coded: answers_hash["taken_art_in_the_last_two_weeks"].trim().toUpperCase() == "YES" ? 1065: 1064 },
+                                { concept_id: 6131, value_coded: (answers_hash["is_patient_pregnant"].length > 0 ? (answers_hash["is_patient_pregnant"].trim().toUpperCase() == "YES" ? 1065: 1064): "" ) },
+                                { concept_id: 7965, value_coded: (answers_hash["is_patient_breastfeeding"].length > 0 ? (answers_hash["is_patient_breastfeeding"].trim().toUpperCase() == "YES" ? 1065: 1064): "") },
                                 { concept_id: 2743, value_coded: answers_hash["who_stages_criteria_present"] },
-                                { concept_id: 7562, value_coded: answers_hash["who_stage"] },
-                                { concept_id: 8262, value_coded: answers_hash["cd4_less_than_or_equal_to_250"] },
-                                { concept_id: 8207, value_coded: answers_hash["cd4_less_than_or_equal_to_350"] },
-                                { concept_id: 9389, value_coded: answers_hash["cd4_less_than_or_equal_to_500"] },
-                                { concept_id: 7032, value_coded: answers_hash["cd4_less_than_25"] },
-                                { concept_id: 7563, value_coded: answers_hash["reason_for_art_eligibility"] },
-                                { concept_id: 6830, value_coded: answers_hash["cd4_location"] },
-                                { concept_id: 6831, value_coded: answers_hash["cd4_datetime"] },
-                                { concept_id: 5497, value_coded: answers_hash["cd4_count"] },
-                                { concept_id: 7882, value_coded: answers_hash["confirmatory_hiv_test_date"] },
-                                { concept_id: 7881, value_coded: answers_hash["confirmatory_hiv_test_location"] },
-                                { concept_id: 7880, value_coded: answers_hash["confirmatory_hiv_test_type"] },
-                                { concept_id: 8011, value_coded: answers_hash["send_sms"] },
-                                { concept_id: 730, value_coded: answers_hash["cd4_percent"] }
+                                { concept_id: 7562, value_text: answers_hash["who_stage"] },
+                                { concept_id: 8262, value_text: answers_hash["cd4_less_than_or_equal_to_250"] },
+                                { concept_id: 8207, value_text: answers_hash["cd4_less_than_or_equal_to_350"] },
+                                { concept_id: 9389, value_text: answers_hash["cd4_less_than_or_equal_to_500"] },
+                                { concept_id: 7032, value_text: answers_hash["cd4_less_than_25"] },
+                                { concept_id: 7563, value_text: answers_hash["reason_for_art_eligibility"] },
+                                { concept_id: 6830, value_text: answers_hash["cd4_location"] },
+                                { concept_id: 6831, value_datetime: answers_hash["cd4_datetime"] },
+                                { concept_id: 5497, value_numeric: answers_hash["cd4_count"] },
+                                { concept_id: 730, value_text: answers_hash["cd4_percent"] }
                             ]
                         };
 
@@ -1433,6 +1473,8 @@
                             value = $('touchscreenInput'+tstCurrentPage).value;
                             if (value.match(/UNKNOWN/i)){
                                 submitHIVClinicRegistration();
+                                submitVitalsRegistration();
+                                submitHIVStaging();
                             } else{
                                 gotoNextPage();
                             }
@@ -1443,11 +1485,13 @@
                         var nextButton =  document.getElementById('nextButton');
                         nextButton.onmousedown = function(){
                             submitHIVClinicRegistration();
+                            submitVitalsRegistration();
+                            submitHIVStaging();
                             alert("Form submitted")
                         }
                     }
 
-function showCategory2(category) {
+                    function showCategory2(category) {
                         if (category.length < 1)
                             return;
 
@@ -1580,9 +1624,9 @@ function showCategory2(category) {
                         <option value="NO">No</option>
                     </select>
 
-                    <input  absoluteMax="228" absoluteMin="10" condition="showConditions()" field_type="number" helpText="Height (CM)" id="height" max="183.0" min="0.0" name="observations[][value_numeric]" tt_onLoad="showCategory2('when starting ART'); setNextButtonToGetInputValue('height') " tt_onUnLoad="hideCategory(); setNextButtonToGetInputValue('height')" tt_pageStyleClass="Numeric NumbersOnly" type="text" units="cm" validationMessage="You must enter numbers only (for example 157)" validationRule="^([0-9]+)|Unknown$" />
+                    <input id="height"  absoluteMax="228" absoluteMin="10" condition="showConditions()" field_type="number" helpText="Height (CM)" id="height" max="183.0" min="0.0" name="observations[][value_numeric]" tt_onLoad="showCategory2('when starting ART'); setNextButtonToGetInputValue('height') " tt_onUnLoad="hideCategory(); setNextButtonToGetInputValue('height')" tt_pageStyleClass="Numeric NumbersOnly" type="text" units="cm" validationMessage="You must enter numbers only (for example 157)" validationRule="^([0-9]+)|Unknown$" />
 
-                    <input absoluteMax="250" absoluteMin="0" condition="showConditions()" field_type="number" helpText="Weight (Kg)" id="weight" max="80.0" min="0.0" name="observations[][value_numeric]" tt_onLoad="showCategory2('when starting ART'); setNextButtonToGetInputValue('weight');" tt_onUnLoad="hideCategory();calculateBMI();" tt_pageStyleClass="Numeric NumbersOnlyWithDecimal" type="text" units="kg" validationMessage="You must enter a decimal between 0 and 9 (for example: 54<b>.6</b>)" validationRule="([0-9]+\.[0-9])|Unknown$" />
+                    <input id="weight" absoluteMax="250" absoluteMin="0" condition="showConditions()" field_type="number" helpText="Weight (Kg)" id="weight" max="80.0" min="0.0" name="observations[][value_numeric]" tt_onLoad="showCategory2('when starting ART'); setNextButtonToGetInputValue('weight');" tt_onUnLoad="hideCategory();calculateBMI();" tt_pageStyleClass="Numeric NumbersOnlyWithDecimal" type="text" units="kg" validationMessage="You must enter a decimal between 0 and 9 (for example: 54<b>.6</b>)" validationRule="([0-9]+\.[0-9])|Unknown$" />
 
                     <input id="bmi" name="observations[][value_numeric]" type="hidden" />
 
