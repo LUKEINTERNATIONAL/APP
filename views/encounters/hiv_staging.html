@@ -6,11 +6,17 @@
     <head>
         <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
         <title>Encounters New</title>
-        <script type="text/javascript" language="javascript" src="/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js" defer="true"/>
+        <script type="text/javascript" src="/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js" defer="true"></script>
+        <script type="text/javascript" src="/touchscreentoolkit/lib/javascripts/standard.js" defer="true"></script>
+        <script type="text/javascript" src="/apps/core/assets/js/jquery.min.js"></script>
+
+        <script type="text/javascript" src="/apps/core/assets/js/yes_no_ctrls.js"></script>
+        <link rel="stylesheet" href="/apps/core/assets/css/yes_no_ctrls.css" type="text/css"/>
+        <script type="text/javascript" src="/apps/core/assets/js/post_parameters.js"></script>
+
         <script type="text/javascript">
-            tstUsername = "admin";
-            tstCurrentDate = "2018-09-18";
             var tt_cancel_destination = null;
+            var patient_id = 2003
         </script>
 
 
@@ -325,6 +331,7 @@
                         }
                     }
 
+                    var cd4_count_modifier_global = "";
                     function updateCD4Count() {
                         var cd4_available = $('new_cd4_count_available').value == 'YES';
                         var cd4_count = cd4_available ? $('cd4_count').value : null;
@@ -360,24 +367,34 @@
 
                             if(cd4_count_numeric <= 250 && cd4_count_modifier != ">") {
                                 $('cd4_count_less_than_250').value = "YES";
+                                answers_hash["cd4_less_than_or_equal_to_250"] = "YES";
                             } else {
                                 $('cd4_count_less_than_250').value = "NO";
+                                answers_hash["cd4_less_than_or_equal_to_250"] = "NO";
                             }
 
                             if(cd4_count_numeric <= 350 && cd4_count_modifier != ">") {
                                 $('cd4_count_less_than_350').value = "YES";
+                                answers_hash["cd4_less_than_or_equal_to_350"] = "YES";
                             } else {
                                 $('cd4_count_less_than_350').value = "NO";
+                                answers_hash["cd4_less_than_or_equal_to_350"] = "YES";
                             }
 
                             if(cd4_count_numeric <= 500 && cd4_count_modifier != ">") {
                                 $('cd4_count_less_than_500').value = "YES";
+                                answers_hash["cd4_less_than_or_equal_to_500"] = "YES"
                             } else {
                                 $('cd4_count_less_than_500').value = "NO";
+                                answers_hash["cd4_less_than_or_equal_to_500"] = "NO"
                             }
                         }
+
+                        cd4_count_modifier_global = cd4_count_modifier;
+                        answers_hash["cd4_count"] = cd4_count_numeric;
                     }
 
+                    var cd4_percent_modifier_global = "";
                     function updateCD4Percent() {
                         var cd4_percent_available = $('new_cd4_percent_available').value == 'YES';
                         var cd4_percent = cd4_percent_available ? $('cd4_percent').value : null;
@@ -402,9 +419,14 @@
 
                         if (cd4_percent_numeric == null || ''+cd4_percent_numeric == 'NaN') {
                             $('cd4_percent_less_than_25').value = "UNKNOWN";
+                            answers_hash["cd4_less_than_25"] = "UNKNOWN";
                         } else {
                             $('cd4_percent_less_than_25').value = (cd4_percent_numeric < 25) ? "YES" : "NO";
+                            answers_hash["cd4_percent_less_than_25"] = $('cd4_percent_less_than_25').value;
                         }
+
+                        cd4_percent_modifier_global = cd4_percent_modifier;
+                        answers_hash["cd4_percent"] = cd4_percent_numeric;
                     }
 
                     // These are here in case you are looking up hard coded concept names
@@ -485,6 +507,8 @@
                         } else {
                             $('who_stage').value = whoStageConcept(whoStage, adultOrPeds);
                         }
+
+                        answers_hash["who_stage"] = $('who_stage').value;
                     }
 
                     function updateWhoStagePaeds() {
@@ -502,6 +526,7 @@
 
                         var adultOrPeds = "PEDS";
                         $('who_stage').value = whoStageConcept(whoStage, adultOrPeds);
+                        answers_hash["who_stage"] = $('who_stage').value;
                     }
 
                     function oldReasonForEligibility(){
@@ -583,6 +608,7 @@
                         }
 
                         $('reason_for_art_eligibility').value = reasonForArtEligibility;
+                        answers_hash["reason_for_art_eligibility"] = reasonForArtEligibility;
                     }
 
                     function updateReasonForArtEligibility() {
@@ -695,6 +721,7 @@
 
 
                         $('reason_for_art_eligibility').value = reasonForArtEligibility;
+                        answers_hash["reason_for_art_eligibility"] = reasonForArtEligibility
                     }
 
                     function checkPregnancyAndAge() {
@@ -958,75 +985,169 @@
 
 
                     setTimeout(function () {showCategory2('')}, 500);
-                    
+
+                    var answers_hash = {
+                        followup_agreement: "", ever_received_art: "", date_art_last_taken: "",
+                        taken_art_in_the_last_two_months: "", taken_art_in_the_last_two_weeks: "",
+                        ever_registered: "", drug_art_last_taken: "", location_of_art_initiation: "",
+                        drug_start_date: "", date_art_started: "", art_number_at_previous_location: "",
+                        has_transfer_letter: "",height: "", weight: "", bmi: "", is_patient_pregnant: "",
+                        is_patient_breastfeeding: "",
+                        who_stages_criteria_present: "", who_stage: "", cd4_less_than_or_equal_to_250: "",
+                        cd4_less_than_or_equal_to_350: "", cd4_less_than_or_equal_to_500: "",
+                        cd4_less_than_25: "", reason_for_art_eligibility: "", cd4_location: "",
+                        cd4_datetime: "", cd4_count: "", confirmatory_hiv_test_date: "",
+                        confirmatory_hiv_test_location: "", confirmatory_hiv_test_type: "",
+                        send_sms: "", cd4_percent: ""
+                    }
+
+                    var who_stage_concept_map = {
+                        "Cryptococcal meningitis or other extrapulmonary cryptococcosis": 7548,
+                        "Candidiasis of oseophagus, trachea and bronchi or lungs": 5340,
+                        "Extrapulmonary tuberculosis (EPTB)": 1547,
+                        "Kaposis sarcoma": 507,
+                        "Bacterial pneumonia, severe recurrent": 1215,
+                        "Non-typhoidal Salmonella bacteraemia, recurrent": 7959,
+                        "Symptomatic HIV-associated nephropathy or cardiomyopathy": 7957,
+                        "Cerebral or B-cell non Hodgkin lymphoma": 2587,
+                        "Pneumocystis pneumonia": 882,
+                        "Chronic herpes simplex infection (orolabial, gential / anorectal >1 month or visceral at any site)": 5344,
+                        "Cytomegalovirus infection (retinitis or infection or other organs)": 7551,
+                        "Toxoplasmosis of the brain": 2583,
+                        "Invasive cancer of cervix": 2588,
+                        "Unspecified stage 4 condition": 7040,
+                        "Other": 6408,
+                        "Pneumocystis pneumonia": 882,
+                        "Candidiasis of oseophagus, trachea and bronchi or lungs": 5340,
+                        "Extrapulmonary tuberculosis (EPTB)": 1547,
+                        "Kaposis sarcoma": 507,
+                        "HIV encephalopathy": 1362,
+                        "Cryptococcal meningitis or other extrapulmonary cryptococcosis": 7548,
+                        "Disseminated non-tuberculosis mycobacterial infection": 2585,
+                        "Cryptosporidiosis, chronic with diarroea": 7549,
+                        "Isosporiasis >1 month": 7956,
+                        "Disseminated mycosis (coccidiomycosis or histoplasmosis)": 7550,
+                        "Symptomatic HIV-associated nephropathy or cardiomyopathy": 7957,
+                        "Progressive multifocal leukoencephalopathy": 5046,
+                        "Cerebral or B-cell non Hodgkin lymphoma": 2587,
+                        "Severe unexplained wasting or malnutrition not responding to treatment (weight-for-height/ -age <70% or MUAC less than 11cm or oedema)": 3068,
+                        "Bacterial infections, severe recurrent  (empyema, pyomyositis, meningitis, bone/joint infections but EXCLUDING pneumonia)": 2894,
+                        "Chronic herpes simplex infection (orolabial or cutaneous >1 month or visceral at any site)": 7960,
+                        "Cytomegalovirus infection: rentinitis or other organ (from age 1 month)": 7552,
+                        "Toxoplasmosis of the brain (from age 1 month)": 5048,
+                        "Recto-vaginal fistula, HIV-associated": 7961,
+                        "Severe weight loss >10% and/or BMI <18.5kg/m^2, unexplained": 7540,
+                        "Diarrhoea, chronic (>1 month) unexplained": 5018,
+                        "Fever, persistent unexplained, intermittent or constant, >1 month": 5027,
+                        "Pulmonary tuberculosis (current)": 8206,
+                        "Tuberculosis (PTB or EPTB) within the last 2 years": 7539,
+                        "Oral candidiasis": 5334,
+                        "Anaemia, unexplained < 8 g/dl": 2582,
+                        "Neutropaenia, unexplained < 500 /mm(cubed)": 7954,
+                        "Severe bacterial infections (pneumonia, empyema, pyomyositis, bone/joint, meningitis, bacteraemia)": 7541,
+                        "Thrombocytopaenia, chronic < 50,000 /mm(cubed)": 7955,
+                        "Hepatitis B or C infection": 8205,
+                        "Oral hairy leukoplakia": 5337,
+                        "Unspecified stage 3 condition": 7039,
+                        "Fever, persistent unexplained, intermittent or constant, >1 month": 5027,
+                        "Oral hairy leukoplakia": 5337,
+                        "Pulmonary tuberculosis (current)": 8206,
+                        "Tuberculosis (PTB or EPTB) within the last 2 years": 7539,
+                        "Anaemia, unexplained < 8 g/dl": 2582,
+                        "Neutropaenia, unexplained < 500 /mm(cubed)": 7954,
+                        "Thrombocytopaenia, chronic < 50,000 /mm(cubed)": 7955,
+                        "Moderate unexplained wasting/malnutrition not responding to treatment (weight-for-height/ -age 70-79% or muac 11-12 cm)": 7543,
+                        "Diarrhoea, persistent unexplained (14 days or more)": 7544,
+                        "Oral candidiasis (from age 2 months)": 7545,
+                        "Acute necrotizing ulcerative gingivitis or periodontitis": 7546,
+                        "Lymph node tuberculosis": 7547,
+                        "Bacterial pneumonia, severe recurrent": 1215,
+                        "Symptomatic lymphoid interstitial pneumonia": 5024,
+                        "Chronic HIV-associated lung disease, including bronchiectasis": 2889,
+                        "Moderate weight loss less than or equal to 10 percent, unexplained": 5332,
+                        "Respiratory tract infections, recurrent (sinusitis, tonsilitus, otitis media, pharyngitis)": 5012,
+                        "Seborrhoeic dermatitis": 2578,
+                        "Papular pruritic eruptions / Fungal nail infections": 7536,
+                        "Herpes zoster": 836,
+                        "Angular cheilitis": 2575,
+                        "Oral ulcerations, recurrent": 2576,
+                        "Unspecified stage 2 condition": 7038,
+                        "Respiratory tract infections, recurrent (sinusitis, tonsilitus, otitis media, pharyngitis)": 5012,
+                        "Herpes zoster": 836,
+                        "Angular cheilitis": 2575,
+                        "Oral ulcerations, recurrent": 2576,
+                        "Papular pruritic eruptions / Fungal nail infections": 7536,
+                        "Hepatosplenomegaly, persistent unexplained": 7537,
+                        "Lineal gingival erythema": 2891,
+                        "Wart virus infection, extensive": 6775,
+                        "Molluscum contagiosum, extensive": 6776,
+                        "Parotid enlargement, persistent unexplained": 1210,
+                        "Asymptomatic HIV infection": 5327,
+                        "Persistent generalized lymphadenopathy": 5328
+                    }
+
+                    function submitHIVStaging() {
+
+                        var encounter = {
+                            encounter_type_name: 'HIV STAGING',
+                            encounter_type_id:  52,
+                            patient_id: patient_id,
+                            encounter_datetime: null
+                        }
+
+                        submitEncounter(encounter, "postHIVStagingObs");
+                    }
+
+                    function postHIVStagingObs(encounter_id){
+                        var obs = {
+                            encounter_id: encounter_id,
+                            observations: [
+                                { concept_id: 7562, value_text: answers_hash["who_stage"] },
+                                { concept_id: 8262, value_text: answers_hash["cd4_less_than_or_equal_to_250"] },
+                                { concept_id: 8207, value_text: answers_hash["cd4_less_than_or_equal_to_350"] },
+                                { concept_id: 9389, value_text: answers_hash["cd4_less_than_or_equal_to_500"] },
+                                { concept_id: 7032, value_text: answers_hash["cd4_less_than_25"] },
+                                { concept_id: 7563, value_text: answers_hash["reason_for_art_eligibility"] },
+                                { concept_id: 6830, value_text: answers_hash["cd4_location"] },
+                                { concept_id: 6831, value_datetime: answers_hash["cd4_datetime"] },
+                                { concept_id: 5497, value_numeric: answers_hash["cd4_count"], value_modifier: cd4_count_modifier_global },
+                                { concept_id: 730, value_text: answers_hash["cd4_percent"], value_modifier: cd4_percent_modifier_global }
+                            ]
+                        };
+
+
+                        for (condition in selected_stage_conditions) {
+                            if (selected_stage_conditions[condition].length > 0) {
+                                conditions = selected_stage_conditions[condition].split(';');
+                                for (i = 0; i < conditions.length; i++) {
+                                    obs.observations.push({ concept_id: 2743, value_coded: who_stage_concept_map[conditions[i]] })
+                                }
+                            }
+                        }
+
+
+                        createObs(obs, "nextPage")
+                    }
+
+
+                    function setNextButtonToGetInputValue(key){
+                        __$('nextButton').onmousedown = function(){
+                            value = __$('touchscreenInput' + tstCurrentPage).value;
+                            answers_hash[key] = value;
+                            gotoNextPage();
+                        }
+                    }
+
                 </script>
 
-                <form id='appointment' action="/encounters/create" method='post'>
-                    <input id="encounter_encounter_type_name" name="encounter[encounter_type_name]" type="hidden" value="HIV STAGING" />
-                    <input id="encounter_patient_id" name="encounter[patient_id]" type="hidden" value="" />
-                    <input id="encounter_encounter_datetime" name="encounter[encounter_datetime]" type="hidden" value="" />
-                    <input id="encounter_provider_id" name="encounter[provider_id]" type="hidden" value="1" />
+                <form onsubmit="submitEncounter();">
 
                     <input allowFreeText="false" id="calculated_who_stage_4" name="observations[][value_coded_or_text]" type="hidden" value="" />
-                    <input id="observations__value_numeric" name="observations[][value_numeric]" type="hidden" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="WHO STAGES CRITERIA PRESENT" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
-                    <input allowFreeText="false" id="who_stage" name="observations[][value_coded_or_text]" type="hidden" value="" />
-                    <input id="observations__value_numeric" name="observations[][value_numeric]" type="hidden" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="WHO STAGE" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
-                    <input allowFreeText="false" id="reason_for_art_eligibility" name="observations[][value_coded_or_text]" type="hidden" value="" />
-                    <input id="observations__value_numeric" name="observations[][value_numeric]" type="hidden" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="REASON FOR ART ELIGIBILITY" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
 
-                    <input id="observations__value_numeric" name="observations[][value_numeric]" type="hidden" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text" name="observations[][value_coded_or_text]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="WHO STAGES CRITERIA PRESENT" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
+                    <input allowFreeText="false" id="who_stage" name="observations[][value_coded_or_text]" type="hidden" value="" />
+
+                    <input allowFreeText="false" id="reason_for_art_eligibility" name="observations[][value_coded_or_text]" type="hidden" value="" />
+
                     <select allowFreeText="false" condition="showConditions() == true && age >= 15" helpText="Stage 4 Conditions" id="stage_4_conditions" multiple="multiple" name="observations[][value_coded_or_text_multiple][]" optional="true" tt_onLoad="showCategory2('HIV staging');checkEptb(); hideTextInput(); displayCountOfSelectedConditions();" tt_onUnLoad="setSelectedStageConditions(4);" tt_pageStyleClass="NoKeyboard NoInput small">
                         <option value=''></option>
                         <option value="Cryptococcal meningitis or other extrapulmonary cryptococcosis">Cryptococcal meningitis or other extrapulmonary cryptococcosis</option>
@@ -1046,20 +1167,6 @@
                         <option value="Other">Other</option>
                     </select>
 
-                    <input id="observations__value_numeric" name="observations[][value_numeric]" type="hidden" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text" name="observations[][value_coded_or_text]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="WHO STAGES CRITERIA PRESENT" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
                     <select allowFreeText="false" class="stage_4_conditions" condition="showConditions() == true && age <= 14" helpText="Stage 4 Conditions" id="stage_4_conditions" multiple="multiple" name="observations[][value_coded_or_text_multiple][]" optional="true" tt_onLoad="showCategory2('HIV staging');checkEptb(); hideTextInput(); displayCountOfSelectedConditions();" tt_onUnLoad="setSelectedStageConditions(4);" tt_pageStyleClass="NoKeyboard NoInput small">
                         <option value=''></option>
                         <option value="Pneumocystis pneumonia">Pneumocystis pneumonia</option>
@@ -1083,20 +1190,6 @@
                         <option value="Recto-vaginal fistula, HIV-associated">Recto-vaginal fistula, HIV-associated</option>
                     </select>
 
-                    <input id="observations__value_numeric" name="observations[][value_numeric]" type="hidden" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text" name="observations[][value_coded_or_text]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="WHO STAGES CRITERIA PRESENT" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
                     <select allowFreeText="false" condition="showConditions() == true && age >= 15" helpText="Stage 3 Conditions" id="stage_3_conditions" multiple="multiple" name="observations[][value_coded_or_text_multiple][]" optional="true" tt_onLoad="showCategory2('HIV staging');checkPtb();checkPastTb(); disableSevereWeightLossInputForNormalBMI(); hideTextInput(); displayCountOfSelectedConditions();" tt_onUnLoad="setSelectedStageConditions(3);" tt_pageStyleClass="NoKeyboard NoInput small">
                         <option value=''></option>
                         <option value="Severe weight loss >10% and/or BMI <18.5kg/m^2, unexplained">Severe weight loss >10% and/or BMI <18.5kg/m^2, unexplained</option>
@@ -1115,20 +1208,6 @@
                         <option value="Unspecified stage 3 condition">Unspecified stage 3 condition</option>
                     </select>
 
-                    <input id="observations__value_numeric" name="observations[][value_numeric]" type="hidden" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text" name="observations[][value_coded_or_text]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="WHO STAGES CRITERIA PRESENT" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
                     <select allowFreeText="false" class="stage_3_conditions" condition="showConditions() == true && age <= 14" helpText="Stage 3 Conditions" id="stage_3_conditions" multiple="multiple" name="observations[][value_coded_or_text_multiple][]" optional="true" tt_onLoad="showCategory2('HIV staging');checkPtb();checkPastTb(); hideTextInput(); displayCountOfSelectedConditions();" tt_onUnLoad="setSelectedStageConditions(3);" tt_pageStyleClass="NoKeyboard NoInput small">
                         <option value=''></option>
                         <option value="Fever, persistent unexplained, intermittent or constant, >1 month">Fever, persistent unexplained, intermittent or constant, >1 month</option>
@@ -1148,20 +1227,6 @@
                         <option value="Chronic HIV-associated lung disease, including bronchiectasis">Chronic HIV-associated lung disease, including bronchiectasis</option>
                     </select>
 
-                    <input id="observations__value_numeric" name="observations[][value_numeric]" type="hidden" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text" name="observations[][value_coded_or_text]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="WHO STAGES CRITERIA PRESENT" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
                     <select allowFreeText="false" condition="showConditions() == true && age >= 15" helpText="Stage 2 Conditions" id="stage_2_conditions" multiple="multiple" name="observations[][value_coded_or_text_multiple][]" optional="true" tt_onLoad="showCategory2('HIV staging'); disableModerateWeightLossOption(); hideTextInput(); displayCountOfSelectedConditions();" tt_onUnLoad="setSelectedStageConditions(2);" tt_pageStyleClass="NoKeyboard NoInput small">
                         <option value=''></option>
                         <option value="Moderate weight loss less than or equal to 10 percent, unexplained">Moderate weight loss less than or equal to 10 percent, unexplained</option>
@@ -1174,20 +1239,6 @@
                         <option value="Unspecified stage 2 condition">Unspecified stage 2 condition</option>
                     </select>
 
-                    <input id="observations__value_numeric" name="observations[][value_numeric]" type="hidden" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text" name="observations[][value_coded_or_text]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="WHO STAGES CRITERIA PRESENT" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
                     <select allowFreeText="false" class="stage_2_conditions" condition="showConditions() == true && age <= 14" helpText="Stage 2 Conditions" id="stage_2_conditions" multiple="multiple" name="observations[][value_coded_or_text_multiple][]" optional="true" tt_onLoad="showCategory2('HIV staging'); hideTextInput(); displayCountOfSelectedConditions();" tt_onUnLoad="setSelectedStageConditions(2);" tt_pageStyleClass="NoKeyboard NoInput small">
                         <option value=''></option>
                         <option value="Respiratory tract infections, recurrent (sinusitis, tonsilitus, otitis media, pharyngitis)">Respiratory tract infections, recurrent (sinusitis, tonsilitus, otitis media, pharyngitis)</option>
@@ -1202,40 +1253,12 @@
                         <option value="Parotid enlargement, persistent unexplained">Parotid enlargement, persistent unexplained</option>
                     </select>
 
-                    <input id="observations__value_numeric" name="observations[][value_numeric]" type="hidden" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text" name="observations[][value_coded_or_text]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="WHO STAGES CRITERIA PRESENT" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
                     <select allowFreeText="false" condition="age >= 15" helpText="Stage 1 Conditions" id="stage_1_conditions" multiple="multiple" name="observations[][value_coded_or_text_multiple][]" optional="true" tt_onLoad="showCategory2('HIV staging');setOptionsForContraindicationsPopup(); forceStageOneAvailabe(); hideTextInput(); displayCountOfSelectedConditions();" tt_onUnLoad="setSelectedStageConditions(1); resetStageDefiningConditions();" tt_pageStyleClass="NoKeyboard NoInput small">
                         <option value=''></option>
                         <option value="Asymptomatic HIV infection">Asymptomatic HIV infection</option>
                         <option value="Persistent generalized lymphadenopathy">Persistent generalized lymphadenopathy</option>
                     </select>
 
-                    <input id="observations__value_numeric" name="observations[][value_numeric]" type="hidden" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text" name="observations[][value_coded_or_text]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="WHO STAGES CRITERIA PRESENT" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
                     <select allowFreeText="false" class="stage_1_conditions" condition="age <= 14" helpText="Stage 1 Conditions" id="stage_1_conditions" multiple="multiple" name="observations[][value_coded_or_text_multiple][]" optional="true" tt_onLoad="showCategory2('HIV staging');setOptionsForContraindicationsPopup(); forceStageOneAvailabePaeds(); hideTextInput(); displayCountOfSelectedConditions();" tt_onUnLoad="setSelectedStageConditions(1); resetStageDefiningConditions();" tt_pageStyleClass="NoKeyboard NoInput small">
                         <option value=''></option>
                         <option value="Asymptomatic HIV infection">Asymptomatic HIV infection</option>
@@ -1248,111 +1271,25 @@
                         <option value="NO">No</option>
                     </select>
 
-                    <input condition="$('new_cd4_count_available').value == 'YES'" field_type="date" helpText="CD4 Count Date" id="cd4_count_date" max="2018-09-18" name="observations[][value_datetime]" tt_pageStyleClass="Date DatesOnly" type="text" />
-                    <input id="observations__value_numeric" name="observations[][value_numeric]" type="hidden" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_coded_or_text" name="observations[][value_coded_or_text]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="CD4 COUNT DATETIME" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
+                    <input tt_onLoad="setNextButtonToGetInputValue('cd4_datetime')" condition="$('new_cd4_count_available').value == 'YES'" field_type="date" helpText="CD4 Count Date" id="cd4_count_date" max="2018-09-18" name="observations[][value_datetime]" tt_pageStyleClass="Date DatesOnly" type="text" />
 
                     <input absoluteMin="0.0" condition="$('new_cd4_count_available').value == 'YES'" field_type="number" helpText="CD4 Count" id="cd4_count" max="1000" min="1" name="observations[][value_numeric]" tt_onLoad="updateCD4CountKeyPad();" tt_onUnLoad="updateCD4Count();" tt_pageStyleClass="Numeric NumbersOnly" type="text" units="cells/mm3" validationMessage="You must enter a modifier plus numbers only (for example =90)" validationRule="^(>|<|=)([0-9.]+)$|Unknown$" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text" name="observations[][value_coded_or_text]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="CD4 COUNT" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
 
                     <input allowFreeText="false" id="cd4_count_less_than_250" name="observations[][value_coded_or_text]" type="hidden" value="" />
-                    <input id="observations__value_numeric" name="observations[][value_numeric]" type="hidden" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="CD4 COUNT LESS THAN OR EQUAL TO 250" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
+
                     <input allowFreeText="false" id="cd4_count_less_than_350" name="observations[][value_coded_or_text]" type="hidden" value="" />
-                    <input id="observations__value_numeric" name="observations[][value_numeric]" type="hidden" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="CD4 COUNT LESS THAN OR EQUAL TO 350" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
+
                     <input allowFreeText="false" id="cd4_count_less_than_500" name="observations[][value_coded_or_text]" type="hidden" value="" />
                     <input id="observations__value_numeric" name="observations[][value_numeric]" type="hidden" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="CD4 COUNT LESS THAN OR EQUAL TO 500" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
-
 
                     <input id="new_cd4_percent_available" name="new_cd4_percent_available" type="hidden" value="" />
 
-
-
                     <input id="new_lymphocyte_count_available" name="new_lymphocyte_count_available" type="hidden" value="" />
-                    <input id="observations__value_numeric" name="observations[][value_numeric]" type="hidden" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="CD4 PERCENT LOCATION" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
-                    <select ajaxURL="/programs/locations?q=" allowFreeText="true" condition="$('new_cd4_percent_available').value == 'YES' || $('new_lymphocyte_count_available').value == 'YES' || ($('new_cd4_count_available').value == 'YES' && transferInPatient() == false)" field_type="alpha" helpText="CD4 count location" id="cd4_percent_location" name="observations[][value_coded_or_text]"></select>
+
+                    <select objectType="location" ajaxURL="/locations?name=" allowFreeText="true" tt_onLoad="setNextButtonToGetInputValue('cd4_location');" condition="$('new_cd4_percent_available').value == 'YES' || $('new_lymphocyte_count_available').value == 'YES' || ($('new_cd4_count_available').value == 'YES' && transferInPatient() == false)" field_type="alpha" helpText="CD4 count location" id="cd4_percent_location" name="observations[][value_coded_or_text]"></select>
 
                     <label for='summary'>Summary</label>
                     <input id="summary" name="summary" optional="true" tt_onLoad="summary();__$('keyboard').style.display = 'none';" tt_pageStyleClass="NoControls" type="text" />
-
-
-                    <input id="filter_provider" name="filter[provider]" type="hidden" />
 
                     <input name="commit" type="submit" value="Finish" />
                 </form>

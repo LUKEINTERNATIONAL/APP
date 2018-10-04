@@ -359,7 +359,7 @@
 
                         if (dateCreate(set_dob) == 'Invalid Date') {
                             if (set_dob.split('-')[1] == 'Unknown')
-                                return true
+                            return true
 
                             if (curr_date.getFullYear() == parseInt(dob_year)) {
                                 if ((curr_date.getMonth() + 1) < parseInt(dob_month)) {
@@ -532,7 +532,7 @@
                                 answers_hash["cd4_less_than_or_equal_to_500"] = "YES"
                             } else {
                                 $('cd4_count_less_than_500').value = "NO";
-                                answers_hash["cd4_less_than_or_equal_to_500"] = "no"
+                                answers_hash["cd4_less_than_or_equal_to_500"] = "NO"
                             }
                         }
 
@@ -1175,6 +1175,7 @@
 
                         var adultOrPeds = "PEDS";
                         $('who_stage').value = whoStageConcept(whoStage, adultOrPeds);
+                        answers_hash["who_stage"] = $('who_stage').value;
                     }
 
                     /*function resetStageDefiningConditions(){
@@ -1381,6 +1382,7 @@
                                 { concept_id: 7750, value_text: answers_hash["location_of_art_initiation"] },
                                 { concept_id: 1499, value_datetime: answers_hash["drug_start_date"] },
                                 { concept_id: 2516, value_datetime: answers_hash["date_art_started"] },
+                                { concept_id: 5497, value_numeric: answers_hash["cd4_count"], value_modifier: cd4_count_modifier_global },
                                 { concept_id: 6981, value_text: answers_hash["art_number_at_previous_location"] },
                             ]
                         };
@@ -1400,13 +1402,98 @@
                         createObs(obs, "nextPage")
                     }
 
+                    var who_stage_concept_map = {
+                        "Cryptococcal meningitis or other extrapulmonary cryptococcosis": 7548,
+                        "Candidiasis of oseophagus, trachea and bronchi or lungs": 5340,
+                        "Extrapulmonary tuberculosis (EPTB)": 1547,
+                        "Kaposis sarcoma": 507,
+                        "Bacterial pneumonia, severe recurrent": 1215,
+                        "Non-typhoidal Salmonella bacteraemia, recurrent": 7959,
+                        "Symptomatic HIV-associated nephropathy or cardiomyopathy": 7957,
+                        "Cerebral or B-cell non Hodgkin lymphoma": 2587,
+                        "Pneumocystis pneumonia": 882,
+                        "Chronic herpes simplex infection (orolabial, gential / anorectal >1 month or visceral at any site)": 5344,
+                        "Cytomegalovirus infection (retinitis or infection or other organs)": 7551,
+                        "Toxoplasmosis of the brain": 2583,
+                        "Invasive cancer of cervix": 2588,
+                        "Unspecified stage 4 condition": 7040,
+                        "Other": 6408,
+                        "Pneumocystis pneumonia": 882,
+                        "Candidiasis of oseophagus, trachea and bronchi or lungs": 5340,
+                        "Extrapulmonary tuberculosis (EPTB)": 1547,
+                        "Kaposis sarcoma": 507,
+                        "HIV encephalopathy": 1362,
+                        "Cryptococcal meningitis or other extrapulmonary cryptococcosis": 7548,
+                        "Disseminated non-tuberculosis mycobacterial infection": 2585,
+                        "Cryptosporidiosis, chronic with diarroea": 7549,
+                        "Isosporiasis >1 month": 7956,
+                        "Disseminated mycosis (coccidiomycosis or histoplasmosis)": 7550,
+                        "Symptomatic HIV-associated nephropathy or cardiomyopathy": 7957,
+                        "Progressive multifocal leukoencephalopathy": 5046,
+                        "Cerebral or B-cell non Hodgkin lymphoma": 2587,
+                        "Severe unexplained wasting or malnutrition not responding to treatment (weight-for-height/ -age <70% or MUAC less than 11cm or oedema)": 3068,
+                        "Bacterial infections, severe recurrent  (empyema, pyomyositis, meningitis, bone/joint infections but EXCLUDING pneumonia)": 2894,
+                        "Chronic herpes simplex infection (orolabial or cutaneous >1 month or visceral at any site)": 7960,
+                        "Cytomegalovirus infection: rentinitis or other organ (from age 1 month)": 7552,
+                        "Toxoplasmosis of the brain (from age 1 month)": 5048,
+                        "Recto-vaginal fistula, HIV-associated": 7961,
+                        "Severe weight loss >10% and/or BMI <18.5kg/m^2, unexplained": 7540,
+                        "Diarrhoea, chronic (>1 month) unexplained": 5018,
+                        "Fever, persistent unexplained, intermittent or constant, >1 month": 5027,
+                        "Pulmonary tuberculosis (current)": 8206,
+                        "Tuberculosis (PTB or EPTB) within the last 2 years": 7539,
+                        "Oral candidiasis": 5334,
+                        "Anaemia, unexplained < 8 g/dl": 2582,
+                        "Neutropaenia, unexplained < 500 /mm(cubed)": 7954,
+                        "Severe bacterial infections (pneumonia, empyema, pyomyositis, bone/joint, meningitis, bacteraemia)": 7541,
+                        "Thrombocytopaenia, chronic < 50,000 /mm(cubed)": 7955,
+                        "Hepatitis B or C infection": 8205,
+                        "Oral hairy leukoplakia": 5337,
+                        "Unspecified stage 3 condition": 7039,
+                        "Fever, persistent unexplained, intermittent or constant, >1 month": 5027,
+                        "Oral hairy leukoplakia": 5337,
+                        "Pulmonary tuberculosis (current)": 8206,
+                        "Tuberculosis (PTB or EPTB) within the last 2 years": 7539,
+                        "Anaemia, unexplained < 8 g/dl": 2582,
+                        "Neutropaenia, unexplained < 500 /mm(cubed)": 7954,
+                        "Thrombocytopaenia, chronic < 50,000 /mm(cubed)": 7955,
+                        "Moderate unexplained wasting/malnutrition not responding to treatment (weight-for-height/ -age 70-79% or muac 11-12 cm)": 7543,
+                        "Diarrhoea, persistent unexplained (14 days or more)": 7544,
+                        "Oral candidiasis (from age 2 months)": 7545,
+                        "Acute necrotizing ulcerative gingivitis or periodontitis": 7546,
+                        "Lymph node tuberculosis": 7547,
+                        "Bacterial pneumonia, severe recurrent": 1215,
+                        "Symptomatic lymphoid interstitial pneumonia": 5024,
+                        "Chronic HIV-associated lung disease, including bronchiectasis": 2889,
+                        "Moderate weight loss less than or equal to 10 percent, unexplained": 5332,
+                        "Respiratory tract infections, recurrent (sinusitis, tonsilitus, otitis media, pharyngitis)": 5012,
+                        "Seborrhoeic dermatitis": 2578,
+                        "Papular pruritic eruptions / Fungal nail infections": 7536,
+                        "Herpes zoster": 836,
+                        "Angular cheilitis": 2575,
+                        "Oral ulcerations, recurrent": 2576,
+                        "Unspecified stage 2 condition": 7038,
+                        "Respiratory tract infections, recurrent (sinusitis, tonsilitus, otitis media, pharyngitis)": 5012,
+                        "Herpes zoster": 836,
+                        "Angular cheilitis": 2575,
+                        "Oral ulcerations, recurrent": 2576,
+                        "Papular pruritic eruptions / Fungal nail infections": 7536,
+                        "Hepatosplenomegaly, persistent unexplained": 7537,
+                        "Lineal gingival erythema": 2891,
+                        "Wart virus infection, extensive": 6775,
+                        "Molluscum contagiosum, extensive": 6776,
+                        "Parotid enlargement, persistent unexplained": 1210,
+                        "Asymptomatic HIV infection": 5327,
+                        "Persistent generalized lymphadenopathy": 5328
+                    }
+
+
                     function postHIVStagingObs(encounter_id){
                         var obs = {
                             encounter_id: encounter_id,
                             observations: [                               
                                 { concept_id: 7752, value_coded: answers_hash["taken_art_in_the_last_two_months"].trim().toUpperCase() == "YES" ? 1065: 1064 },
                                 { concept_id: 6394, value_coded: answers_hash["taken_art_in_the_last_two_weeks"].trim().toUpperCase() == "YES" ? 1065: 1064 },
-                                { concept_id: 2743, value_text: answers_hash["who_stages_criteria_present"] },
                                 { concept_id: 7562, value_text: answers_hash["who_stage"] },
                                 { concept_id: 8262, value_text: answers_hash["cd4_less_than_or_equal_to_250"] },
                                 { concept_id: 8207, value_text: answers_hash["cd4_less_than_or_equal_to_350"] },
@@ -1424,6 +1511,16 @@
                             obs.observations.push({ concept_id: 6131, value_coded: (answers_hash["is_patient_pregnant"].length > 0 ? (answers_hash["is_patient_pregnant"].trim().toUpperCase() == "YES" ? 1065: 1064): "" )})
                             obs.observations.push({ concept_id: 7965, value_coded: (answers_hash["is_patient_breastfeeding"].length > 0 ? (answers_hash["is_patient_breastfeeding"].trim().toUpperCase() == "YES" ? 1065: 1064): "") })
                         }
+
+                        for (condition in selected_stage_conditions) {
+                            if (selected_stage_conditions[condition].length > 0) {
+                                conditions = selected_stage_conditions[condition].split(';');
+                                for (i = 0; i < conditions.length; i++) {
+                                    obs.observations.push({ concept_id: 2743, value_coded: who_stage_concept_map[conditions[i]] })
+                                }
+                            }
+                        }
+
 
                         createObs(obs, "nextPage")
                     }
@@ -1643,6 +1740,8 @@
 
                     <input tt_onLoad="setNextButtonToGetDateStartedART('date_art_started')" condition="everReceivedARTDay() == 'true';" field_type="number" helpText="Day started ART" id="day_started_art" name="day_started_art" tt_onLoad="showCategory2('when starting ART');getDayOfMonthPicker($('year_started_art').value, $('month_started_art').value);$('nextButton').style.display = 'block';validateDayStartedART();" tt_onUnLoad="hideCategory();updateStartDate();setUnkownStage();" type="text" validationCode="checkStartDate();" validationMessage="Date ART started out of range  and 2018-09-18" />
 
+                    <input allowFreeText="true" condition="$('ever_registered_at_ART_clinic').value == 'YES' && $('ever_received_art').value == 'YES'" field_type="alpha" helpText="ART number at previous location" id="previous_art_number" name="observations[][value_text]" tt_onLoad="showCategory2('when starting ART'); setNextButtonToGetInputValue('art_number_at_previous_location')" tt_onUnLoad="hideCategory()" type="text" />
+                    
                     <select tt_onLoad="setNextButtonToGetInputValue('has_transfer_letter')"  allowFreeText="false" condition="$('ever_registered_at_ART_clinic').value == 'YES' && $('ever_received_art').value == 'YES'" helpText="Has staging information?" id="has_transfer_letter" name="observations[][value_coded_or_text]" tt_onLoad="showCategory2('when starting ART')" tt_onUnLoad="hideCategory()" tt_onUnload="$('programs__states__state').value = 'Patient transferred in'" tt_pageStyleClass="NoKeyboard">
                         <option value=''></option>
                         <option value=""></option>
