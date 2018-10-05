@@ -16,7 +16,7 @@
 
         <script type="text/javascript">
             var tt_cancel_destination = null;
-            var patient_id = 2003
+            var patient_id = 1206;
         </script>
 
 
@@ -1106,12 +1106,10 @@
                                 { concept_id: 8262, value_text: answers_hash["cd4_less_than_or_equal_to_250"] },
                                 { concept_id: 8207, value_text: answers_hash["cd4_less_than_or_equal_to_350"] },
                                 { concept_id: 9389, value_text: answers_hash["cd4_less_than_or_equal_to_500"] },
-                                { concept_id: 7032, value_text: answers_hash["cd4_less_than_25"] },
                                 { concept_id: 7563, value_text: answers_hash["reason_for_art_eligibility"] },
                                 { concept_id: 6830, value_text: answers_hash["cd4_location"] },
                                 { concept_id: 6831, value_datetime: answers_hash["cd4_datetime"] },
-                                { concept_id: 5497, value_numeric: answers_hash["cd4_count"], value_modifier: cd4_count_modifier_global },
-                                { concept_id: 730, value_text: answers_hash["cd4_percent"], value_modifier: cd4_percent_modifier_global }
+                                { concept_id: 5497, value_numeric: answers_hash["cd4_count"], value_modifier: cd4_count_modifier_global }
                             ]
                         };
 
@@ -1129,12 +1127,24 @@
                         createObs(obs, "nextPage")
                     }
 
+                    function nextPage(){
+                        alert("Done");
+                    }
+
 
                     function setNextButtonToGetInputValue(key){
                         __$('nextButton').onmousedown = function(){
                             value = __$('touchscreenInput' + tstCurrentPage).value;
                             answers_hash[key] = value;
                             gotoNextPage();
+                        }
+                    }
+
+                    function changeSubmitFunction(){
+                        var nextButton =  document.getElementById('nextButton');
+                        nextButton.onmousedown = function(){
+                            submitHIVStaging();
+                            alert("Form submitted")
                         }
                     }
 
@@ -1289,7 +1299,7 @@
                     <select objectType="location" ajaxURL="/locations?name=" allowFreeText="true" tt_onLoad="setNextButtonToGetInputValue('cd4_location');" condition="$('new_cd4_percent_available').value == 'YES' || $('new_lymphocyte_count_available').value == 'YES' || ($('new_cd4_count_available').value == 'YES' && transferInPatient() == false)" field_type="alpha" helpText="CD4 count location" id="cd4_percent_location" name="observations[][value_coded_or_text]"></select>
 
                     <label for='summary'>Summary</label>
-                    <input id="summary" name="summary" optional="true" tt_onLoad="summary();__$('keyboard').style.display = 'none';" tt_pageStyleClass="NoControls" type="text" />
+                    <input id="summary" name="summary" optional="true" tt_onLoad="summary();__$('keyboard').style.display = 'none'; changeSubmitFunction();" tt_pageStyleClass="NoControls" type="text" />
 
                     <input name="commit" type="submit" value="Finish" />
                 </form>
