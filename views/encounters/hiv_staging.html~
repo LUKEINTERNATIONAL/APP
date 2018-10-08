@@ -1,0 +1,1621 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+        <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+        <title>Encounters New</title>
+        <script type="text/javascript" language="javascript" src="/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js" defer="true"/>
+        <script type="text/javascript">
+            tstUsername = "admin";
+            tstCurrentDate = "2018-09-18";
+            var tt_cancel_destination = null;
+        </script>
+
+
+        <style type="text/css">
+            #tab {
+                height:312px;
+            }
+            #barcode {
+                background:transparent none repeat scroll 0 0;
+                border-color:-moz-use-text-color -moz-use-text-color silver;
+                border-style:none none solid;
+                border-width:medium medium 1px;
+                font-family:"Nimbus Sans L","Arial Narrow",sans-serif;
+                font-size:2.2em;
+                padding-left:5px;
+                width:400px;
+            }
+            #header div {
+                font-weight:normal;
+                float:none;
+                clear:both;
+            }
+
+            .summary{
+                position:relative;
+                float:center;
+                width:100%;
+                padding-left:10px;
+                padding-right:10px;
+            }
+
+            .summary td , th{
+                border-style:solid;
+                border-width:thin;
+                padding:5px;
+            }
+
+            .summary tbody{
+                position:relative;
+                height:500px;
+                overflow:auto;
+                overflow-x: hidden;
+            }
+
+            .summary>tbody tr {
+                position:relative;
+                height:12px;
+            }
+            .summary>thead tr {
+                position:relative;
+                height:12px;
+            }
+
+            #regimen-change-popup-div {
+                display: none;
+                background-color: #F4F4F4;
+                border: 2px solid #E0E0E0;
+                border-radius: 15px;
+                height: 270px;
+                padding: 5px;
+                position: absolute;
+                margin-top: 100px;
+                width: 600px;
+                margin-left: 18%;
+                z-index: 991;
+            }
+
+            #regimen-change-cover{
+                display: none;
+                position: absolute;
+                background-color: black;
+                width: 100%;
+                height: 102%;
+                left: 0%;
+                top: 0%;
+                z-index: 990;
+                opacity: 0.65;
+            }
+
+            #btnContainer {
+                width: 99.9%;
+            }
+
+            .btns {
+                -moz-user-select: none;
+                background-image: none;
+                border: 1px solid transparent;
+                border-radius: 4px;
+                cursor: pointer;
+                display: inline-block;
+                font-size: 16px;
+                font-weight: bolder;
+                line-height: 2.29;
+                margin-bottom: 0;
+                padding: 6px 56px;
+                text-align: center;
+                vertical-align: middle;
+                white-space: nowrap;
+                background-color: #337ab7;
+                border-color: #2e6da4;
+                color: #fff;
+                float: right;
+                margin-top: -5px;
+            }
+
+            #yesBtn{
+                -webkit-box-sizing: border-box;
+                -moz-box-sizing: border-box;
+                box-sizing: border-box;
+                bottom: 0px;
+            }
+
+            #noBtn{
+                -webkit-box-sizing: border-box;
+                -moz-box-sizing: border-box;
+                box-sizing: border-box;
+                bottom: 0px;
+                margin-right: 27px;
+            }
+
+            .disabled_check {
+                padding-left: 52px;
+            }
+
+            .tt_controls_clinical_notes_optional #space { display:inline; }
+
+            .tt_controls_cd4_count #char {
+                display: none;
+            }
+
+            .tt_controls_cd4_percent #char {
+                display: none;
+            }
+
+            .tt_controls_lymphocyte_count #char {
+                display: none;
+            }
+
+            .tt_controls_cd4_count #qwerty{ display: none; }
+
+            .tt_controls_cd4_count #equals{ display: inline; }
+
+            .tt_controls_cd4_count #lessthan, .tt_controls_cd4_count #greaterthan {
+                position: absolute;
+                right: 65%;
+            }
+
+            .tt_controls_cd4_count #greaterthan {
+                position: absolute;
+                right: 65%;
+                top: 5px;
+            }
+
+            .tt_controls_cd4_count #lessthan {
+                top: 145px;
+            }
+
+            #tt_page_hcc_number .inputFrameClass {
+                top:auto;
+            }
+
+            #tt_page_hcc_number .touchscreenTextInput{
+                width: 98% !important;
+            }
+
+            .tt_controls_month_of_cd4_count .keyboard{
+                display: none;
+            }
+
+            .NoKeyboard .options {
+                height: 591px !important;
+            }
+
+            .small .options li { font-size:1.1em; }
+            .tt_controls_cd4_count #lessthan, .tt_controls_cd4_count #greaterthan { display:block; float:right }
+            .tt_controls_cd4_percent #lessthan, .tt_controls_cd4_percent #greaterthan { display:block; float:right }
+
+            .my_button {
+                -moz-user-select: none;
+                background-image: none;
+                border: 1px solid transparent;
+                border-radius: 4px;
+                cursor: pointer;
+                display: inline-block;
+                font-size: 16px;
+                font-weight: bolder;
+                line-height: 2.29;
+                margin-bottom: 0;
+                padding: 6px 56px;
+                text-align: center;
+                vertical-align: middle;
+                white-space: nowrap;
+                background-color: #337ab7;
+                border-color: #2e6da4;
+                color: #fff;
+                float: right;
+                margin-top: -5px;
+            }
+
+
+            #popup-div {
+                display: none;
+                background-color: #F4F4F4;
+                border: 2px solid #E0E0E0;
+                border-radius: 15px;
+                height: 185px;
+                padding: 5px;
+                position: absolute;
+                margin-top: 100px;
+                width: 630px;
+                margin-left: 18%;
+                z-index: 991;
+            }
+
+            #popup-header{
+                border-bottom: 2px solid #7D9EC0;
+                margin-left: -5px;
+                width: 101.5%;
+                background-color: #FFFFFF;
+                margin-top: -5px;
+                padding-top: 5px;
+                border-radius: 15px 15px 0 0;
+                font-size: 14pt;
+                font-weight: bolder;
+            }
+
+            #cover{
+                display: none;
+                position: absolute;
+                background-color: black;
+                width: 100%;
+                height: 102%;
+                left: 0%;
+                top: 0%;
+                z-index: 990;
+                opacity: 0.65;
+            }
+
+            #yes, #no {
+                -webkit-box-sizing: border-box;
+                -moz-box-sizing: border-box;
+                box-sizing: border-box;
+                bottom: 0px;
+            }
+
+            #yes {
+                margin-right: 13px;
+            }
+
+        </style>
+    </head>
+    <body id="mateme">
+        <div id="container">
+            <div id="content">
+                <script type="text/javascript">
+
+                    var tt_cancel_destination = "";
+                    var age = 136;
+                    var ageInMonths = 1637;
+                    var firstPositiveHivTestType = "HIV rapid test";
+                    var cd4_count_numeric, cd4_count_estimate, cd4_count_modifier;
+                    var selected_stage_conditions = {};
+                    var retrospective_entry = false
+                    var tstCurrentDate = '2018-09-18'
+                    var currentBMI = parseFloat('21.9');
+                    currentBMI = parseFloat(currentBMI);
+                    var currentWeight = '58.9'
+                    var median_weight_height = [];
+
+                    function resetPad() {
+                        curr_page = tstCurrentPage - 1
+                        buttons = document.getElementsByClassName("keyboardButton");
+                        for(i = 0; i < buttons.length ; i++) {
+                            buttons[i].disabled = false;
+                        }
+                        $("clearButton").setAttribute("onmousedown","clearInput();");
+                        $("backButton").setAttribute("onmousedown",";gotoPage(" + curr_page + ", null, true);");
+                        $("nextButton").setAttribute("onmousedown","gotoNextPage();");
+                    }
+
+                    function resetKeyPad() {
+                        buttons = document.getElementsByClassName("keyboardButton");
+                        for(i = 0; i < buttons.length ; i++) {
+                            if (buttons[i].id == "equals" || buttons[i].id == "greaterthan" || buttons[i].id == "lessthan") {
+                                buttons[i].disabled = true;
+                            }else{
+                                buttons[i].disabled = false;
+                            }
+                        }
+                    }
+
+                    function updateCD4CountKeyPad() {
+                        curr_page = tstCurrentPage - 1
+                        buttons = document.getElementsByClassName("keyboardButton");
+                        $("clearButton").setAttribute("onmousedown","clearInput();updateCD4CountKeyPad();");
+                        $("backButton").setAttribute("onmousedown",";gotoPage(" + curr_page + ", null, true);resetPad();");
+                        $("nextButton").setAttribute("onmousedown","gotoNextPage();resetPad();");
+
+                        for(i = 0; i < buttons.length ; i++) {
+                            if (buttons[i].id == "equals" || buttons[i].id == "greaterthan" || buttons[i].id == "lessthan") {
+                                buttons[i].disabled = false;
+                                if( buttons[i].id == "equals"){
+                                    buttons[i].setAttribute("onmousedown","press('=');resetKeyPad();");
+                                }else if( buttons[i].id == "lessthan") {
+                                    buttons[i].setAttribute("onmousedown","press('<');resetKeyPad();");
+                                }else if( buttons[i].id == "greaterthan") {
+                                    buttons[i].setAttribute("onmousedown","press('>');resetKeyPad();");
+                                }
+                            }else{
+                                buttons[i].disabled = true;
+                            }
+                        }
+                    }
+
+                    function updateCD4Count() {
+                        var cd4_available = $('new_cd4_count_available').value == 'YES';
+                        var cd4_count = cd4_available ? $('cd4_count').value : null;
+                        var cd4_count_modifier = '';
+
+                        try {
+                            cd4_count_numeric = parseInt(cd4_count.match(/[0-9](.*)/i)[0]);
+                        } catch(e) { cd4_count_numeric = null; }
+
+                        if (cd4_count_numeric == null || ''+cd4_count_numeric == 'NaN') {
+                            try {
+                                var matches = cd4_count.match(/^(\<|\>)([0-9\.]+)$/)
+                                cd4_count_modifier = matches[1];
+                                cd4_count_estimate = parseInt(matches[2]);
+                                cd4_count_numeric = cd4_count_estimate;
+                                if (cd4_count_modifier == '<') cd4_count_numeric -= 1;
+                                if (cd4_count_modifier == '>') cd4_count_numeric += 1;
+                            } catch(e) {
+                                cd4_count_modifier = null;
+                                cd4_count_estimate = null;
+                                cd4_count_numeric = null;
+                            }
+                        } else {
+                            var matches = cd4_count.match(/^(=|\<|\>)([0-9\.]+)$/)
+                            cd4_count_modifier = matches[1];
+                        }
+
+                        if (cd4_count_numeric == null || ''+cd4_count_numeric == 'NaN') {
+                            $('cd4_count_less_than_250').value = "UNKNOWN";
+                            $('cd4_count_less_than_350').value = "UNKNOWN";
+                            $('cd4_count_less_than_500').value = "UNKNOWN";
+                        } else {
+
+                            if(cd4_count_numeric <= 250 && cd4_count_modifier != ">") {
+                                $('cd4_count_less_than_250').value = "YES";
+                            } else {
+                                $('cd4_count_less_than_250').value = "NO";
+                            }
+
+                            if(cd4_count_numeric <= 350 && cd4_count_modifier != ">") {
+                                $('cd4_count_less_than_350').value = "YES";
+                            } else {
+                                $('cd4_count_less_than_350').value = "NO";
+                            }
+
+                            if(cd4_count_numeric <= 500 && cd4_count_modifier != ">") {
+                                $('cd4_count_less_than_500').value = "YES";
+                            } else {
+                                $('cd4_count_less_than_500').value = "NO";
+                            }
+                        }
+                    }
+
+                    function updateCD4Percent() {
+                        var cd4_percent_available = $('new_cd4_percent_available').value == 'YES';
+                        var cd4_percent = cd4_percent_available ? $('cd4_percent').value : null;
+                        var cd4_percent_numeric, cd4_percent_estimate, cd4_percent_modifier;
+
+                        try { cd4_percent_numeric = parseInt(cd4_percent); } catch(e) { cd4_percent_numeric = null; }
+
+                        if (cd4_percent_numeric == null || ''+cd4_percent_numeric == 'NaN') {
+                            try {
+                                var matches = cd4_percent.match(/^(\<|\>)([0-9\.]+)$/)
+                                cd4_percent_modifier = matches[1];
+                                cd4_percent_estimate = parseInt(matches[2]);
+                                cd4_percent_numeric = cd4_percent_estimate;
+                                if (cd4_percent_modifier == '<') cd4_percent_numeric -= 1;
+                                if (cd4_percent_modifier == '>') cd4_percent_numeric += 1;
+                            } catch(e) {
+                                cd4_percent_modifier = null;
+                                cd4_percent_estimate = null;
+                                cd4_percent_numeric = null;
+                            }
+                        }
+
+                        if (cd4_percent_numeric == null || ''+cd4_percent_numeric == 'NaN') {
+                            $('cd4_percent_less_than_25').value = "UNKNOWN";
+                        } else {
+                            $('cd4_percent_less_than_25').value = (cd4_percent_numeric < 25) ? "YES" : "NO";
+                        }
+                    }
+
+                    // These are here in case you are looking up hard coded concept names
+                    // WHO STAGE I ADULT
+                    // WHO STAGE II ADULT
+                    // WHO STAGE III ADULT
+                    // WHO STAGE IV ADULT
+                    // WHO STAGE I PEDS
+                    // WHO STAGE II PEDS
+                    // WHO STAGE III PEDS
+                    // WHO STAGE IV PEDS
+                    function whoStageConcept(stage, adultOrPeds) {
+                        try {
+                            selected_stage_three_conditions = selected_stage_conditions[3].split(';');
+                        } catch(e) {
+                            selected_stage_three_conditions = null;
+                        }
+
+                        if (selected_stage_three_conditions) {
+                            conditions_found = 0;
+                            severe_weight_loss = false;
+
+                            for (i = 0 ; i < selected_stage_three_conditions.length ; i++) {
+                                if (selected_stage_three_conditions[i] == 'Severe weight loss >10% and/or BMI <18.5kg/m^2, unexplained') {
+                                    severe_weight_loss = true;
+                                } else if (selected_stage_three_conditions[i] == 'Diarrhoea, chronic (>1 month) unexplained') {
+                                    conditions_found++;
+                                } else if (selected_stage_three_conditions[i] == 'Fever, persistent unexplained, intermittent or constant, >1 month') {
+                                    conditions_found++;
+                                }
+                            }
+
+                            if (conditions_found > 0 && severe_weight_loss) {
+
+                                selected_stage_conditions[4] = 'HIV wasting syndrome (severe weight loss + persistent fever or severe weight loss + chronic diarrhoea)';
+                                $('calculated_who_stage_4').value = selected_stage_conditions[4];
+
+
+                                return  "WHO STAGE " + numeral(4) + " " + adultOrPeds;
+                            }
+                        }
+
+                        return "WHO STAGE " + numeral(stage) + " " + adultOrPeds;
+                    }
+
+                    function numeral(num) {
+                        switch(num) {
+                            case 1:
+                                return "I";
+                            case 2:
+                                return "II";
+                            case 3:
+                                return "III";
+                            case 4:
+                                return "IV";
+                        }
+                    }
+
+                    var whoStage = null;
+
+
+                    function updateWhoStage() {
+                        // Everyone is supposed to be HIV positive so start them at 1
+                        whoStage = 1;
+                        for (var i=1; i<=4; i++) {
+                            try {
+                                if ( $("stage_" + i + "_conditions").value != '') whoStage = i;
+                            } catch(e) {
+
+                            }
+
+                        }
+
+                        var adultOrPeds = (age > 14) ? "ADULT" : "PEDS";
+
+                        if (ageInMonths < 12 && firstPositiveHivTestType == "HIV rapid test") {
+                            $('who_stage').value = "PRESUMED SEVERE HIV";
+                        } else {
+                            $('who_stage').value = whoStageConcept(whoStage, adultOrPeds);
+                        }
+                    }
+
+                    function updateWhoStagePaeds() {
+                        // Everyone is supposed to be HIV positive so start them at 1
+                        whoStage = 1;
+                        for (var i=1; i<=4; i++) {
+                            try {
+
+                                if ( jQuery(".stage_" + i + "_conditions")[0].value != '') whoStage = i;
+                            } catch(e) {
+
+                            }
+
+                        }
+
+                        var adultOrPeds = "PEDS";
+                        $('who_stage').value = whoStageConcept(whoStage, adultOrPeds);
+                    }
+
+                    function oldReasonForEligibility(){
+                        var reasonForArtEligibility = "NONE";
+                        // Lymphocyte thresholds for ages 0-15
+                        var lymphocyteThresholds = [4000, 4000, 4000, 3000, 3000, 2500, 2000, 2000, 2000, 2000, 2000, 2000, 2000, 2000, 2000, 2000];
+
+                        var lymphocyteCountAvailable = false;
+
+                        if ($('new_lymphocyte_count_available')) {
+                            lymphocyteCountAvailable = $('new_lymphocyte_count_available').value == 'YES';
+                        }
+
+                        var lymphocyteCount = lymphocyteCountAvailable ? $('lymphocyte_count').value : null;
+                        var lymphocyteCountNumeric = null;
+
+                        try { lymphocyteCountNumeric = parseInt(lymphocyteCount); } catch(e) { }
+
+                        if (age > 14) {
+                            if (whoStage >= 3) {
+                                reasonForArtEligibility = whoStageConcept(whoStage, "ADULT");
+                            } else if ($('cd4_count_less_than_250').value == "YES") {
+                                reasonForArtEligibility = "CD4 count less than or equal to 250"
+                            } else {
+                                if ($('pregnant') && $('pregnant').value == "YES" && $('cd4_count_less_than_250').value == "YES") {
+                                    reasonForArtEligibility = "CD4 count less than or equal to 250";
+                                } else if (whoStage == 1 && lymphocyteCount < 1200 && lymphocyteCount != null) {
+                                    reasonForArtEligibility = "LYMPHOCYTE COUNT BELOW THRESHOLD WITH WHO STAGE 1";
+                                } else if (whoStage == 2 && lymphocyteCount < 1200 && lymphocyteCount != null) {
+                                    reasonForArtEligibility = "LYMPHOCYTE COUNT BELOW THRESHOLD WITH WHO STAGE 2";
+                                } //else if ($('pregnant') && $('pregnant').value == "YES") {
+                                //reasonForArtEligibility = "PATIENT PREGNANT";
+                                //} else if ($('breast_feeding') && $('breast_feeding').value == "YES") {
+                                //reasonForArtEligibility = "BREASTFEEDING";
+                                //}
+                            }
+                        } else {
+                            var presumedSevereHivConditions = "";
+                            if ($('presumed_severe_hiv_conditions')) presumedSevereHivConditions = selectedValues($('presumed_severe_hiv_conditions'));
+                            var presumedSevereHiv = false;
+
+                            if (firstPositiveHivTestType == "HIV rapid test") {
+                                if (
+                                presumedSevereHivConditions.indexOf("Pneumocystis pneumonia") > -1 ||
+                                    presumedSevereHivConditions.indexOf("Candidiasis of oseophagus, trachea and bronchi or lungs") > -1 ||
+                                    presumedSevereHivConditions.indexOf("Cryptococcal meningitis") > -1 ||
+                                    presumedSevereHivConditions.indexOf("Severe unexplained wasting or malnutrition not responding to treatment (weight-for-height/ -age <70% or MUAC <11cm or oedema)") > -1 ||
+                                    presumedSevereHivConditions.indexOf("Toxoplasmosis of the brain (from age 1 month)") > -1) {
+                                    presumedSevereHiv = true;
+                                } else if (
+                                ((presumedSevereHivConditions.indexOf("Oral candidiasis") > -1) && (presumedSevereHivConditions.indexOf("Severe sepsis") > -1)) ||
+                                    ((presumedSevereHivConditions.indexOf("Oral candidiasis") > -1) && (presumedSevereHivConditions.indexOf("Severe pneumonia") > -1)) ||
+                                    ((presumedSevereHivConditions.indexOf("Severe pneumonia") > -1) && (presumedSevereHivConditions.indexOf("Severe sepsis") > -1))) {
+                                    presumedSevereHiv = true;
+                                }
+                            }
+
+                            try {
+                                if (ageInMonths < 12 && firstPositiveHivTestType == "HIV rapid test" && presumedSevereHiv) {
+                                    reasonForArtEligibility = "PRESUMED SEVERE HIV";
+                                } else if (whoStage >= 3) {
+                                    reasonForArtEligibility = whoStageConcept(whoStage, "PEDS");
+                                } else if (ageInMonths < 12 && firstPositiveHivTestType == "HIV DNA POLYMERASE CHAIN REACTION") {
+                                    reasonForArtEligibility = "HIV DNA POLYMERASE CHAIN REACTION";
+                                } else if (ageInMonths < 24) {
+                                    reasonForArtEligibility = "HIV infected";
+                                } else if (cd4_count_numeric <= 750 && (ageInMonths >= 24 && ageInMonths < 56) && (whoStage) <= 2) {
+                                    reasonForArtEligibility = "CD4 COUNT LESS THAN OR EQUAL TO 750";
+                                } else if ($('cd4_count_less_than_250') && $('cd4_count_less_than_250').value == "YES" && (whoStage) <= 2) {
+                                    reasonForArtEligibility = "CD4 COUNT LESS THAN OR EQUAL TO 250";
+                                } else if (lymphocyteCount && (lymphocyteCount < lymphocyteThresholds[age]) && lymphocyteCount != null) {
+                                    reasonForArtEligibility = "LYMPHOCYTE COUNT BELOW THRESHOLD WITH WHO STAGE 2";
+                                }// else if ($('pregnant') && $('pregnant').value == "YES") {
+                                //  reasonForArtEligibility = "PATIENT PREGNANT";
+                                //} else if ($('breast_feeding') && $('breast_feeding').value == "YES") {
+                                //  reasonForArtEligibility = "BREASTFEEDING";
+                                //}
+                            } catch (e) {}
+                        }
+
+                        $('reason_for_art_eligibility').value = reasonForArtEligibility;
+                    }
+
+                    function updateReasonForArtEligibility() {
+
+                        if (tstCurrentDate < '2011-07-01') {
+                            oldReasonForEligibility();
+                            return
+                        }
+
+                        var reasonForArtEligibility = "NONE";
+                        // Lymphocyte thresholds for ages 0-15
+                        var lymphocyteThresholds = [4000, 4000, 4000, 3000, 3000, 2500, 2000, 2000, 2000, 2000, 2000, 2000, 2000, 2000, 2000, 2000];
+
+                        var lymphocyteCountAvailable = false;
+
+                        if ($('new_lymphocyte_count_available')) {
+                            lymphocyteCountAvailable = $('new_lymphocyte_count_available').value == 'YES';
+                        }
+
+                        var lymphocyteCount = lymphocyteCountAvailable ? $('lymphocyte_count').value : null;
+                        var lymphocyteCountNumeric = null;
+
+                        try { lymphocyteCountNumeric = parseInt(lymphocyteCount); } catch(e) { }
+
+                        if (age > 14) {
+                            if (whoStage >= 3) {
+                                reasonForArtEligibility = whoStageConcept(whoStage, "ADULT");
+                            }
+
+                            else if (tstCurrentDate >= '2014-04-01' && $('cd4_count_less_than_250').value == "YES") {
+                                reasonForArtEligibility = "CD4 count less than or equal to 250"
+                            }
+
+                            else if (tstCurrentDate < '2014-04-01' && $('cd4_count_less_than_350').value == "YES"){
+                                reasonForArtEligibility = "CD4 COUNT LESS THAN OR EQUAL TO 350";
+                            }
+
+                            else if (tstCurrentDate >= '2014-04-01' && $('cd4_count_less_than_350').value == "YES"){
+                                reasonForArtEligibility = "CD4 COUNT LESS THAN OR EQUAL TO 350";
+                            }
+
+                            else if (tstCurrentDate >= '2014-04-01' && $('cd4_count_less_than_500').value == "YES"){
+                                reasonForArtEligibility = "CD4 COUNT LESS THAN OR EQUAL TO 500";
+                            }
+
+                            else {
+                                if (whoStage == 1 && lymphocyteCount < 1200 && lymphocyteCount != null) {
+                                    reasonForArtEligibility = "LYMPHOCYTE COUNT BELOW THRESHOLD WITH WHO STAGE 1";
+                                } else if (whoStage == 2 && lymphocyteCount < 1200 && lymphocyteCount != null) {
+                                    reasonForArtEligibility = "LYMPHOCYTE COUNT BELOW THRESHOLD WITH WHO STAGE 2";
+                                } else if ($('pregnant') && $('pregnant').value == "YES") {
+                                    reasonForArtEligibility = "PATIENT PREGNANT";
+                                } else if ($('breast_feeding') && $('breast_feeding').value == "YES") {
+                                    reasonForArtEligibility = "BREASTFEEDING";
+                                }
+                            }
+                        } else {
+                            var presumedSevereHivConditions = "";
+                            if ($('presumed_severe_hiv_conditions')) presumedSevereHivConditions = selectedValues($('presumed_severe_hiv_conditions'));
+                            var presumedSevereHiv = false;
+
+                            if (firstPositiveHivTestType == "HIV rapid test") {
+                                if (
+                                presumedSevereHivConditions.indexOf("Pneumocystis pneumonia") > -1 ||
+                                    presumedSevereHivConditions.indexOf("Candidiasis of oseophagus, trachea and bronchi or lungs") > -1 ||
+                                    presumedSevereHivConditions.indexOf("Cryptococcal meningitis") > -1 ||
+                                    presumedSevereHivConditions.indexOf("Severe unexplained wasting or malnutrition not responding to treatment (weight-for-height/ -age <70% or MUAC less than 11cm or oedema)") > -1 ||
+                                    presumedSevereHivConditions.indexOf("Toxoplasmosis of the brain (from age 1 month)") > -1) {
+                                    presumedSevereHiv = true;
+                                } else if (
+                                ((presumedSevereHivConditions.indexOf("Oral candidiasis") > -1) && (presumedSevereHivConditions.indexOf("Severe sepsis") > -1)) ||
+                                    ((presumedSevereHivConditions.indexOf("Oral candidiasis") > -1) && (presumedSevereHivConditions.indexOf("Severe pneumonia") > -1)) ||
+                                    ((presumedSevereHivConditions.indexOf("Severe pneumonia") > -1) && (presumedSevereHivConditions.indexOf("Severe sepsis") > -1))) {
+                                    presumedSevereHiv = true;
+                                }
+                            }
+
+                            try {
+                                if (ageInMonths < 12 && firstPositiveHivTestType == "HIV rapid test" && presumedSevereHiv) {
+                                    reasonForArtEligibility = "PRESUMED SEVERE HIV";
+                                } else if (whoStage >= 3) {
+                                    reasonForArtEligibility = whoStageConcept(whoStage, "PEDS");
+                                } else if (ageInMonths < 12 && firstPositiveHivTestType.toUpperCase() == "HIV DNA POLYMERASE CHAIN REACTION") {
+                                    reasonForArtEligibility = "HIV DNA POLYMERASE CHAIN REACTION";
+                                } else if (ageInMonths < 24) {
+                                    reasonForArtEligibility = "HIV infected";
+                                } else if (cd4_count_numeric <= 750 && (ageInMonths >= 24 && ageInMonths < 56) && (whoStage) <= 2) {
+                                    reasonForArtEligibility = "CD4 COUNT LESS THAN OR EQUAL TO 750";
+                                } else if ($('cd4_count_less_than_500') && $('cd4_count_less_than_500').value == "YES" && (whoStage) <= 2) {
+                                    reasonForArtEligibility = "CD4 COUNT LESS THAN OR EQUAL TO 500";
+                                } else if (lymphocyteCount && (lymphocyteCount < lymphocyteThresholds[age]) && lymphocyteCount != null) {
+                                    reasonForArtEligibility = "LYMPHOCYTE COUNT BELOW THRESHOLD WITH WHO STAGE 2";
+                                } else if ($('pregnant') && $('pregnant').value == "YES") {
+                                    reasonForArtEligibility = "PATIENT PREGNANT";
+                                } else if ($('breast_feeding') && $('breast_feeding').value == "YES") {
+                                    reasonForArtEligibility = "BREASTFEEDING";
+                                } else if (tstCurrentDate >= '2014-04-01' && age > 5 && $('cd4_count_less_than_500').value == "YES"){
+                                    reasonForArtEligibility = "CD4 COUNT LESS THAN OR EQUAL TO 500";
+                                } else if (tstCurrentDate >= '2014-04-01' && age <= 5){
+                                    reasonForArtEligibility = "HIV infected";
+                                }
+                            } catch (e) {}
+                        }
+
+
+                        if (reasonForArtEligibility == "NONE"){
+                            reasonForArtEligibility = "Asymptomatic";
+                        }
+                        //reasonForArtEligibility = "HIV infected";
+
+
+                        $('reason_for_art_eligibility').value = reasonForArtEligibility;
+                    }
+
+                    function checkPregnancyAndAge() {
+                        var patientAge = "136";
+                        var pregnancyStatus = $('pregnant').value;
+
+                        if ((patientAge < 12 || patientAge > 55) && pregnancyStatus == "YES") {
+                            return "true";
+                        } else {
+                            return "false";
+                        }
+                    }
+
+                    function checkBreastfeedingAndAge() {
+                        var patientAge = "136";
+                        var breastfeedingStatus = $('breast_feeding').value;
+
+                        if ((patientAge < 12 || patientAge > 55) && breastfeedingStatus == "YES") {
+                            return "true";
+                        } else {
+                            return "false";
+                        }
+                    }
+
+
+                    function resetStageDefiningConditions(){
+                        selected_stage_conditions = JSON.parse(JSON.stringify(selected_stage_conditions_copy))
+                        stage_defining_conditions = __$('touchscreenInput' + tstCurrentPage).value;
+
+                        if (stage_defining_conditions.length > 0){
+                            if (stage_defining_conditions.match(/Asymptomatic HIV infection/i)){
+                                if (selected_stage_conditions[4]) delete selected_stage_conditions[4]; //Delete Stage 4 conditions
+                                if (selected_stage_conditions[3]) delete selected_stage_conditions[3]; //Delete Stage 3 conditions
+                                if (selected_stage_conditions[2]) delete selected_stage_conditions[2]; //Delete Stage 2 conditions
+                            }
+                        }
+                    }
+
+                    function summary() {
+                        if (age >= 15 ){
+                            updateWhoStage();
+                        }else{
+                            updateWhoStagePaeds() //This is a hack. Take note
+                        }
+
+                        updateReasonForArtEligibility();
+                        var conditions = selectedConditions();
+                        var display = "<div><span class='title'>WHO Stage: " + $('who_stage').value.sub('WHO STAGE','') + "</span></div>";
+                        display += "<div><span class='title'>Condition on starting ART: " + $('reason_for_art_eligibility').value + "</span></div>";
+
+                        $('inputFrame'+tstCurrentPage).innerHTML = '<div id="summary">' + display + '</div>' ;
+                        $("clearButton").style.display = "none";
+
+                        if (conditions.length > 0) {
+                            $('inputFrame'+tstCurrentPage).innerHTML += '<div id="selected_stage_conditions"><hr /><br />' + conditions + '</div>' ;
+                        }
+                    }
+
+                    function selectedValues(element) {
+                        selected_values = [];
+                        for (i = 0 ; i < element.options.length ; i++) {
+                            if (element.options[i].selected){
+                                selected_values.push(element.options[i].value);
+                            }
+                        }
+
+                        try {
+                            return selected_values.join(',');
+                        } catch(e) {
+                            return null;
+                        }
+                    }
+
+                    function showPresumed() {
+                        try {
+                            age_in_months = parseInt("1637");
+                            if (age_in_months < 12) {
+                                return true;
+                            }
+                        } catch(e) {
+                            return false;
+                        }
+
+                        return false;
+                    }
+
+                    function transferInPatient() {
+                        transfer_in = "false";
+                        if (transfer_in == 'true') {
+                            return true;
+                        }
+
+                        return false;
+                    }
+
+                    function selectedConditions() {
+                        html = "<ul><h3>Selected stage defining conditions</h3>"
+                        for (condition in selected_stage_conditions) {
+                            if (selected_stage_conditions[condition].length > 0) {
+                                conditions = selected_stage_conditions[condition].split(';');
+                                for (i = 0 ; i < conditions.length ; i++) {
+                                    html += '<li>' + conditions[i] + '</li>'
+                                }
+                            }
+                        }
+                        if (html == "<ul><h3>Selected stage defining conditions</h3>") return '';
+                        return html + '</ul>';
+                    }
+
+                    var selected_stage_conditions_copy = {}
+
+                    function setSelectedStageConditions(stage) {
+                        selected_stage_conditions[stage] = $("touchscreenInput" + tstCurrentPage).value;
+                        selected_stage_conditions_copy[stage] = $("touchscreenInput" + tstCurrentPage).value;
+                    }
+
+                    function showConditions() {
+                        try {
+                            cond = selected_stage_conditions[1].split(';');
+
+                        }catch(e) {
+                            cond = []
+                        }
+
+                        for (i = 0 ; i < cond.length ; i++) {
+                            if(cond[i] == 'Asymptomatic HIV infection' || cond[i] == 'Asymptomatic') {
+                                return false;
+                            }
+                        }
+                        return true;
+                    }
+                    function checkPtb(){
+                        return
+
+                    }
+
+                    function checkPastTb(){
+                        return
+
+                    }
+
+                    function checkEptb(){
+                        return
+
+                    }
+                    function denyStaging(){
+                        jQuery.ajax({
+                            type: "POST",
+                            url: "/patients/set_deny_hiv_staging_sessions",
+                            data: "patient_id="+790,
+                            success: function(next_url){
+                                next_task = next_url;
+                                window.location = next_task;
+                            }
+                        });
+                    }
+
+                    function allowStaging(){
+                        jQuery.ajax({
+                            type: "POST",
+                            url: "/patients/set_allow_hiv_staging_sessions",
+                            data: "patient_id="+790,
+                            success: function(){
+                                window.location = "/encounters/new/hiv_staging?action=show&controller=encounter_types&encounter_type='HIV staging'&id=show&patient_id=790&repeat=no"
+                            }
+                        });
+                    }
+
+                    var assigned_hcc_number = []
+
+                    function hcc_number(){
+                        suggest_hcc_number = "true"
+                        inputElement = $('tt_page_hcc_number').getElementsByTagName("input")[0]
+                        prefix = document.createElement("span")
+                        style = document.createAttribute("style")
+                        style.value = "position: absolute; z-index: 100; left: 47px; font-size: 44px;"
+                        prefix.setAttributeNode(style)
+                        inputElement.setAttribute("style","text-align:right;width:924px;")
+                        prefix.innerHTML = "abc-HCC"
+                        inputElement.parentNode.insertBefore(prefix, inputElement)
+                        style.value+= 'left:35px;'
+                        prefix.setAttributeNode(style)
+
+                        if (suggest_hcc_number=="true"){
+                            new Ajax.Request("/patients/next_available_hcc_number",{method:'get',onSuccess: function(transport){
+                                    id = transport.responseText || "1";
+                                    inputElement.value = id
+                                }})
+                        }
+                    }
+
+                    function validNumber(){
+                        selected_number = parseFloat(($('tt_page_hcc_number').getElementsByTagName("input")[0].value))
+
+                        for(i = 0 ; i < assigned_hcc_number.length ; i++){
+                            if(assigned_hcc_number[i] == selected_number){
+                                return false
+                            }
+                        }
+                        return true
+                    }
+
+                    function loadAssignedNumbers(){
+                        new Ajax.Request("/patients/assigned_hcc_number",{method:'get',onSuccess: function(transport){
+                                hcc_numbers = transport.responseText || null;
+                                if (hcc_numbers == "[]")
+                                    hcc_numbers = []
+
+                                assigned_arv_number = eval(hcc_numbers)
+                            }})
+                    }
+
+                    //window.setInterval("updateReasonForArtEligibility();", 350);
+
+                    function preselectSevereWeightLossPaeds(){
+                        currentWeight = parseFloat(currentWeight);
+                        current_weight_percentile = (currentWeight/(median_weight_height[0])*100);
+                        severe_weight_loss_text = "Severe unexplained wasting or malnutrition not responding to treatment (weight-for-height/ -age <70% or MUAC less than 11cm or oedema)";
+
+                        if (current_weight_percentile < 70){
+                            severe_weight_loss_option_input = jQuery("li[tstvalue='Severe unexplained wasting or malnutrition not responding to treatment (weight-for-height/ -age <70% or MUAC less than 11cm or oedema)']")[0];
+                            severe_weight_loss_option_id = severe_weight_loss_option_input.id;
+                            weight_loss_input = document.getElementById('optionValue' + severe_weight_loss_option_id);
+                            current_input_values = $('touchscreenInput'+tstCurrentPage).value.split(';');
+                            if (current_input_values.indexOf(severe_weight_loss_text) == -1){
+                                updateTouchscreenInputForSelect(weight_loss_input); //Run this only when the option is not selected;
+                            }
+                        }
+
+                    }
+
+                </script>
+
+                <form id='appointment' action="/encounters/create" method='post'>
+                    <input id="encounter_encounter_type_name" name="encounter[encounter_type_name]" type="hidden" value="HIV STAGING" />
+                    <input id="encounter_patient_id" name="encounter[patient_id]" type="hidden" value="790" />
+                    <input id="encounter_encounter_datetime" name="encounter[encounter_datetime]" type="hidden" value="" />
+                    <input id="encounter_provider_id" name="encounter[provider_id]" type="hidden" value="1" />
+
+                    <input allowFreeText="false" id="calculated_who_stage_4" name="observations[][value_coded_or_text]" type="hidden" value="" />
+                    <input id="observations__value_numeric" name="observations[][value_numeric]" type="hidden" />
+                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
+                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
+                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
+                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
+                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
+                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
+                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
+                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
+                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
+                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
+                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="WHO STAGES CRITERIA PRESENT" />
+                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="790" />
+                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
+                    <input allowFreeText="false" id="who_stage" name="observations[][value_coded_or_text]" type="hidden" value="" />
+                    <input id="observations__value_numeric" name="observations[][value_numeric]" type="hidden" />
+                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
+                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
+                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
+                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
+                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
+                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
+                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
+                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
+                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
+                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
+                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="WHO STAGE" />
+                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="790" />
+                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
+                    <input allowFreeText="false" id="reason_for_art_eligibility" name="observations[][value_coded_or_text]" type="hidden" value="" />
+                    <input id="observations__value_numeric" name="observations[][value_numeric]" type="hidden" />
+                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
+                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
+                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
+                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
+                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
+                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
+                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
+                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
+                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
+                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
+                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="REASON FOR ART ELIGIBILITY" />
+                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="790" />
+                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
+
+
+
+
+                    <input id="observations__value_numeric" name="observations[][value_numeric]" type="hidden" />
+                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
+                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
+                    <input id="observations__value_coded_or_text" name="observations[][value_coded_or_text]" type="hidden" />
+                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
+                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
+                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
+                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
+                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
+                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
+                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
+                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="WHO STAGES CRITERIA PRESENT" />
+                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="790" />
+                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
+                    <select allowFreeText="false" condition="showConditions() == true && age >= 15" helpText="Stage 4 Conditions" id="stage_4_conditions" multiple="multiple" name="observations[][value_coded_or_text_multiple][]" optional="true" tt_onLoad="showCategory2('HIV staging');checkEptb(); hideTextInput(); displayCountOfSelectedConditions();" tt_onUnLoad="setSelectedStageConditions(4);" tt_pageStyleClass="NoKeyboard NoInput small">
+                        <option value=''></option>
+                        <option value="Cryptococcal meningitis or other extrapulmonary cryptococcosis">Cryptococcal meningitis or other extrapulmonary cryptococcosis</option>
+                        <option value="Candidiasis of oseophagus, trachea and bronchi or lungs">Candidiasis of oseophagus, trachea and bronchi or lungs</option>
+                        <option value="Extrapulmonary tuberculosis (EPTB)">Extrapulmonary tuberculosis (EPTB)</option>
+                        <option value="Kaposis sarcoma">Kaposis sarcoma</option>
+                        <option value="Bacterial pneumonia, severe recurrent">Bacterial pneumonia, severe recurrent</option>
+                        <option value="Non-typhoidal Salmonella bacteraemia, recurrent">Non-typhoidal Salmonella bacteraemia, recurrent</option>
+                        <option value="Symptomatic HIV-associated nephropathy or cardiomyopathy">Symptomatic HIV-associated nephropathy or cardiomyopathy</option>
+                        <option value="Cerebral or B-cell non Hodgkin lymphoma">Cerebral or B-cell non Hodgkin lymphoma</option>
+                        <option value="Pneumocystis pneumonia">Pneumocystis pneumonia</option>
+                        <option value="Chronic herpes simplex infection (orolabial, gential / anorectal >1 month or visceral at any site)">Chronic herpes simplex infection (orolabial, gential / anorectal >1 month or visceral at any site)</option>
+                        <option value="Cytomegalovirus infection (retinitis or infection or other organs)">Cytomegalovirus infection (retinitis or infection or other organs)</option>
+                        <option value="Toxoplasmosis of the brain">Toxoplasmosis of the brain</option>
+                        <option value="Invasive cancer of cervix">Invasive cancer of cervix</option>
+                        <option value="Unspecified stage 4 condition">Unspecified stage 4 condition</option>
+                        <option value="Other">Other</option>
+                    </select>
+
+                    <input id="observations__value_numeric" name="observations[][value_numeric]" type="hidden" />
+                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
+                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
+                    <input id="observations__value_coded_or_text" name="observations[][value_coded_or_text]" type="hidden" />
+                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
+                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
+                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
+                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
+                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
+                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
+                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
+                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="WHO STAGES CRITERIA PRESENT" />
+                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="790" />
+                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
+                    <select allowFreeText="false" class="stage_4_conditions" condition="showConditions() == true && age <= 14" helpText="Stage 4 Conditions" id="stage_4_conditions" multiple="multiple" name="observations[][value_coded_or_text_multiple][]" optional="true" tt_onLoad="showCategory2('HIV staging');checkEptb(); hideTextInput(); displayCountOfSelectedConditions();" tt_onUnLoad="setSelectedStageConditions(4);" tt_pageStyleClass="NoKeyboard NoInput small">
+                        <option value=''></option>
+                        <option value="Pneumocystis pneumonia">Pneumocystis pneumonia</option>
+                        <option value="Candidiasis of oseophagus, trachea and bronchi or lungs">Candidiasis of oseophagus, trachea and bronchi or lungs</option>
+                        <option value="Extrapulmonary tuberculosis (EPTB)">Extrapulmonary tuberculosis (EPTB)</option>
+                        <option value="Kaposis sarcoma">Kaposis sarcoma</option>
+                        <option value="HIV encephalopathy">HIV encephalopathy</option>
+                        <option value="Cryptococcal meningitis or other extrapulmonary cryptococcosis">Cryptococcal meningitis or other extrapulmonary cryptococcosis</option>
+                        <option value="Disseminated non-tuberculosis mycobacterial infection">Disseminated non-tuberculosis mycobacterial infection</option>
+                        <option value="Cryptosporidiosis, chronic with diarroea">Cryptosporidiosis, chronic with diarroea</option>
+                        <option value="Isosporiasis >1 month">Isosporiasis >1 month</option>
+                        <option value="Disseminated mycosis (coccidiomycosis or histoplasmosis)">Disseminated mycosis (coccidiomycosis or histoplasmosis)</option>
+                        <option value="Symptomatic HIV-associated nephropathy or cardiomyopathy">Symptomatic HIV-associated nephropathy or cardiomyopathy</option>
+                        <option value="Progressive multifocal leukoencephalopathy">Progressive multifocal leukoencephalopathy</option>
+                        <option value="Cerebral or B-cell non Hodgkin lymphoma">Cerebral or B-cell non Hodgkin lymphoma</option>
+                        <option value="Severe unexplained wasting or malnutrition not responding to treatment (weight-for-height/ -age <70% or MUAC less than 11cm or oedema)">Severe unexplained wasting or malnutrition not responding to treatment (weight-for-height/ -age <70% or MUAC less than 11cm or oedema)</option>
+                        <option value="Bacterial infections, severe recurrent  (empyema, pyomyositis, meningitis, bone/joint infections but EXCLUDING pneumonia)">Bacterial infections, severe recurrent  (empyema, pyomyositis, meningitis, bone/joint infections but EXCLUDING pneumonia)</option>
+                        <option value="Chronic herpes simplex infection (orolabial or cutaneous >1 month or visceral at any site)">Chronic herpes simplex infection (orolabial or cutaneous >1 month or visceral at any site)</option>
+                        <option value="Cytomegalovirus infection: rentinitis or other organ (from age 1 month)">Cytomegalovirus infection: rentinitis or other organ (from age 1 month)</option>
+                        <option value="Toxoplasmosis of the brain (from age 1 month)">Toxoplasmosis of the brain (from age 1 month)</option>
+                        <option value="Recto-vaginal fistula, HIV-associated">Recto-vaginal fistula, HIV-associated</option>
+                    </select>
+
+                    <input id="observations__value_numeric" name="observations[][value_numeric]" type="hidden" />
+                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
+                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
+                    <input id="observations__value_coded_or_text" name="observations[][value_coded_or_text]" type="hidden" />
+                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
+                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
+                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
+                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
+                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
+                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
+                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
+                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="WHO STAGES CRITERIA PRESENT" />
+                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="790" />
+                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
+                    <select allowFreeText="false" condition="showConditions() == true && age >= 15" helpText="Stage 3 Conditions" id="stage_3_conditions" multiple="multiple" name="observations[][value_coded_or_text_multiple][]" optional="true" tt_onLoad="showCategory2('HIV staging');checkPtb();checkPastTb(); disableSevereWeightLossInputForNormalBMI(); hideTextInput(); displayCountOfSelectedConditions();" tt_onUnLoad="setSelectedStageConditions(3);" tt_pageStyleClass="NoKeyboard NoInput small">
+                        <option value=''></option>
+                        <option value="Severe weight loss >10% and/or BMI <18.5kg/m^2, unexplained">Severe weight loss >10% and/or BMI <18.5kg/m^2, unexplained</option>
+                        <option value="Diarrhoea, chronic (>1 month) unexplained">Diarrhoea, chronic (>1 month) unexplained</option>
+                        <option value="Fever, persistent unexplained, intermittent or constant, >1 month">Fever, persistent unexplained, intermittent or constant, >1 month</option>
+                        <option value="Pulmonary tuberculosis (current)">Pulmonary tuberculosis (current)</option>
+                        <option value="Tuberculosis (PTB or EPTB) within the last 2 years">Tuberculosis (PTB or EPTB) within the last 2 years</option>
+                        <option value="Oral candidiasis">Oral candidiasis</option>
+                        <option value="Acute necrotizing ulcerative stomatitis, gingivitis or periodontitis">Acute necrotizing ulcerative stomatitis, gingivitis or periodontitis</option>
+                        <option value="Anaemia, unexplained < 8 g/dl">Anaemia, unexplained < 8 g/dl</option>
+                        <option value="Neutropaenia, unexplained < 500 /mm(cubed)">Neutropaenia, unexplained < 500 /mm(cubed)</option>
+                        <option value="Severe bacterial infections (pneumonia, empyema, pyomyositis, bone/joint, meningitis, bacteraemia)">Severe bacterial infections (pneumonia, empyema, pyomyositis, bone/joint, meningitis, bacteraemia)</option>
+                        <option value="Thrombocytopaenia, chronic < 50,000 /mm(cubed)">Thrombocytopaenia, chronic < 50,000 /mm(cubed)</option>
+                        <option value="Hepatitis B or C infection">Hepatitis B or C infection</option>
+                        <option value="Oral hairy leukoplakia">Oral hairy leukoplakia</option>
+                        <option value="Unspecified stage 3 condition">Unspecified stage 3 condition</option>
+                    </select>
+
+                    <input id="observations__value_numeric" name="observations[][value_numeric]" type="hidden" />
+                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
+                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
+                    <input id="observations__value_coded_or_text" name="observations[][value_coded_or_text]" type="hidden" />
+                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
+                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
+                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
+                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
+                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
+                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
+                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
+                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="WHO STAGES CRITERIA PRESENT" />
+                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="790" />
+                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
+                    <select allowFreeText="false" class="stage_3_conditions" condition="showConditions() == true && age <= 14" helpText="Stage 3 Conditions" id="stage_3_conditions" multiple="multiple" name="observations[][value_coded_or_text_multiple][]" optional="true" tt_onLoad="showCategory2('HIV staging');checkPtb();checkPastTb(); hideTextInput(); displayCountOfSelectedConditions();" tt_onUnLoad="setSelectedStageConditions(3);" tt_pageStyleClass="NoKeyboard NoInput small">
+                        <option value=''></option>
+                        <option value="Fever, persistent unexplained, intermittent or constant, >1 month">Fever, persistent unexplained, intermittent or constant, >1 month</option>
+                        <option value="Oral hairy leukoplakia">Oral hairy leukoplakia</option>
+                        <option value="Pulmonary tuberculosis (current)">Pulmonary tuberculosis (current)</option>
+                        <option value="Tuberculosis (PTB or EPTB) within the last 2 years">Tuberculosis (PTB or EPTB) within the last 2 years</option>
+                        <option value="Anaemia, unexplained < 8 g/dl">Anaemia, unexplained < 8 g/dl</option>
+                        <option value="Neutropaenia, unexplained < 500 /mm(cubed)">Neutropaenia, unexplained < 500 /mm(cubed)</option>
+                        <option value="Thrombocytopaenia, chronic < 50,000 /mm(cubed)">Thrombocytopaenia, chronic < 50,000 /mm(cubed)</option>
+                        <option value="Moderate unexplained wasting/malnutrition not responding to treatment (weight-for-height/ -age 70-79% or muac 11-12 cm)">Moderate unexplained wasting/malnutrition not responding to treatment (weight-for-height/ -age 70-79% or muac 11-12 cm)</option>
+                        <option value="Diarrhoea, persistent unexplained (14 days or more)">Diarrhoea, persistent unexplained (14 days or more)</option>
+                        <option value="Oral candidiasis (from age 2 months)">Oral candidiasis (from age 2 months)</option>
+                        <option value="Acute necrotizing ulcerative gingivitis or periodontitis">Acute necrotizing ulcerative gingivitis or periodontitis</option>
+                        <option value="Lymph node tuberculosis">Lymph node tuberculosis</option>
+                        <option value="Bacterial pneumonia, severe recurrent">Bacterial pneumonia, severe recurrent</option>
+                        <option value="Symptomatic lymphoid interstitial pneumonia">Symptomatic lymphoid interstitial pneumonia</option>
+                        <option value="Chronic HIV-associated lung disease, including bronchiectasis">Chronic HIV-associated lung disease, including bronchiectasis</option>
+                    </select>
+
+                    <input id="observations__value_numeric" name="observations[][value_numeric]" type="hidden" />
+                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
+                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
+                    <input id="observations__value_coded_or_text" name="observations[][value_coded_or_text]" type="hidden" />
+                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
+                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
+                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
+                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
+                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
+                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
+                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
+                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="WHO STAGES CRITERIA PRESENT" />
+                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="790" />
+                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
+                    <select allowFreeText="false" condition="showConditions() == true && age >= 15" helpText="Stage 2 Conditions" id="stage_2_conditions" multiple="multiple" name="observations[][value_coded_or_text_multiple][]" optional="true" tt_onLoad="showCategory2('HIV staging'); disableModerateWeightLossOption(); hideTextInput(); displayCountOfSelectedConditions();" tt_onUnLoad="setSelectedStageConditions(2);" tt_pageStyleClass="NoKeyboard NoInput small">
+                        <option value=''></option>
+                        <option value="Moderate weight loss less than or equal to 10 percent, unexplained">Moderate weight loss less than or equal to 10 percent, unexplained</option>
+                        <option value="Respiratory tract infections, recurrent (sinusitis, tonsilitus, otitis media, pharyngitis)">Respiratory tract infections, recurrent (sinusitis, tonsilitus, otitis media, pharyngitis)</option>
+                        <option value="Seborrhoeic dermatitis">Seborrhoeic dermatitis</option>
+                        <option value="Papular pruritic eruptions / Fungal nail infections">Papular pruritic eruptions / Fungal nail infections</option>
+                        <option value="Herpes zoster">Herpes zoster</option>
+                        <option value="Angular cheilitis">Angular cheilitis</option>
+                        <option value="Oral ulcerations, recurrent">Oral ulcerations, recurrent</option>
+                        <option value="Unspecified stage 2 condition">Unspecified stage 2 condition</option>
+                    </select>
+
+                    <input id="observations__value_numeric" name="observations[][value_numeric]" type="hidden" />
+                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
+                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
+                    <input id="observations__value_coded_or_text" name="observations[][value_coded_or_text]" type="hidden" />
+                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
+                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
+                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
+                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
+                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
+                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
+                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
+                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="WHO STAGES CRITERIA PRESENT" />
+                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="790" />
+                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
+                    <select allowFreeText="false" class="stage_2_conditions" condition="showConditions() == true && age <= 14" helpText="Stage 2 Conditions" id="stage_2_conditions" multiple="multiple" name="observations[][value_coded_or_text_multiple][]" optional="true" tt_onLoad="showCategory2('HIV staging'); hideTextInput(); displayCountOfSelectedConditions();" tt_onUnLoad="setSelectedStageConditions(2);" tt_pageStyleClass="NoKeyboard NoInput small">
+                        <option value=''></option>
+                        <option value="Respiratory tract infections, recurrent (sinusitis, tonsilitus, otitis media, pharyngitis)">Respiratory tract infections, recurrent (sinusitis, tonsilitus, otitis media, pharyngitis)</option>
+                        <option value="Herpes zoster">Herpes zoster</option>
+                        <option value="Angular cheilitis">Angular cheilitis</option>
+                        <option value="Oral ulcerations, recurrent">Oral ulcerations, recurrent</option>
+                        <option value="Papular pruritic eruptions / Fungal nail infections">Papular pruritic eruptions / Fungal nail infections</option>
+                        <option value="Hepatosplenomegaly, persistent unexplained">Hepatosplenomegaly, persistent unexplained</option>
+                        <option value="Lineal gingival erythema">Lineal gingival erythema</option>
+                        <option value="Wart virus infection, extensive">Wart virus infection, extensive</option>
+                        <option value="Molluscum contagiosum, extensive">Molluscum contagiosum, extensive</option>
+                        <option value="Parotid enlargement, persistent unexplained">Parotid enlargement, persistent unexplained</option>
+                    </select>
+
+                    <input id="observations__value_numeric" name="observations[][value_numeric]" type="hidden" />
+                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
+                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
+                    <input id="observations__value_coded_or_text" name="observations[][value_coded_or_text]" type="hidden" />
+                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
+                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
+                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
+                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
+                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
+                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
+                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
+                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="WHO STAGES CRITERIA PRESENT" />
+                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="790" />
+                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
+                    <select allowFreeText="false" condition="age >= 15" helpText="Stage 1 Conditions" id="stage_1_conditions" multiple="multiple" name="observations[][value_coded_or_text_multiple][]" optional="true" tt_onLoad="showCategory2('HIV staging');setOptionsForContraindicationsPopup(); forceStageOneAvailabe(); hideTextInput(); displayCountOfSelectedConditions();" tt_onUnLoad="setSelectedStageConditions(1); resetStageDefiningConditions();" tt_pageStyleClass="NoKeyboard NoInput small">
+                        <option value=''></option>
+                        <option value="Asymptomatic HIV infection">Asymptomatic HIV infection</option>
+                        <option value="Persistent generalized lymphadenopathy">Persistent generalized lymphadenopathy</option>
+                    </select>
+
+                    <input id="observations__value_numeric" name="observations[][value_numeric]" type="hidden" />
+                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
+                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
+                    <input id="observations__value_coded_or_text" name="observations[][value_coded_or_text]" type="hidden" />
+                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
+                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
+                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
+                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
+                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
+                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
+                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
+                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="WHO STAGES CRITERIA PRESENT" />
+                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="790" />
+                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
+                    <select allowFreeText="false" class="stage_1_conditions" condition="age <= 14" helpText="Stage 1 Conditions" id="stage_1_conditions" multiple="multiple" name="observations[][value_coded_or_text_multiple][]" optional="true" tt_onLoad="showCategory2('HIV staging');setOptionsForContraindicationsPopup(); forceStageOneAvailabePaeds(); hideTextInput(); displayCountOfSelectedConditions();" tt_onUnLoad="setSelectedStageConditions(1); resetStageDefiningConditions();" tt_pageStyleClass="NoKeyboard NoInput small">
+                        <option value=''></option>
+                        <option value="Asymptomatic HIV infection">Asymptomatic HIV infection</option>
+                        <option value="Persistent generalized lymphadenopathy">Persistent generalized lymphadenopathy</option>
+                    </select>
+
+                    <label for='new_cd4_count_available'>Recent CD4 count results available?</label>
+                    <select id="new_cd4_count_available" name="new_cd4_count_available" tt_pageStyleClass="NoKeyboard">
+                        <option value="YES">Yes</option>
+                        <option value="NO">No</option>
+                    </select>
+
+                    <input condition="$('new_cd4_count_available').value == 'YES'" field_type="date" helpText="CD4 Count Date" id="cd4_count_date" max="2018-09-18" name="observations[][value_datetime]" tt_pageStyleClass="Date DatesOnly" type="text" />
+                    <input id="observations__value_numeric" name="observations[][value_numeric]" type="hidden" />
+                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
+                    <input id="observations__value_coded_or_text" name="observations[][value_coded_or_text]" type="hidden" />
+                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
+                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
+                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
+                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
+                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
+                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
+                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
+                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
+                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="CD4 COUNT DATETIME" />
+                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="790" />
+                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
+
+                    <input absoluteMin="0.0" condition="$('new_cd4_count_available').value == 'YES'" field_type="number" helpText="CD4 Count" id="cd4_count" max="1000" min="1" name="observations[][value_numeric]" tt_onLoad="updateCD4CountKeyPad();" tt_onUnLoad="updateCD4Count();" tt_pageStyleClass="Numeric NumbersOnly" type="text" units="cells/mm3" validationMessage="You must enter a modifier plus numbers only (for example =90)" validationRule="^(>|<|=)([0-9.]+)$|Unknown$" />
+                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
+                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
+                    <input id="observations__value_coded_or_text" name="observations[][value_coded_or_text]" type="hidden" />
+                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
+                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
+                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
+                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
+                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
+                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
+                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
+                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
+                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="CD4 COUNT" />
+                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="790" />
+                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
+
+                    <input allowFreeText="false" id="cd4_count_less_than_250" name="observations[][value_coded_or_text]" type="hidden" value="" />
+                    <input id="observations__value_numeric" name="observations[][value_numeric]" type="hidden" />
+                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
+                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
+                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
+                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
+                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
+                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
+                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
+                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
+                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
+                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
+                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="CD4 COUNT LESS THAN OR EQUAL TO 250" />
+                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="790" />
+                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
+                    <input allowFreeText="false" id="cd4_count_less_than_350" name="observations[][value_coded_or_text]" type="hidden" value="" />
+                    <input id="observations__value_numeric" name="observations[][value_numeric]" type="hidden" />
+                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
+                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
+                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
+                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
+                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
+                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
+                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
+                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
+                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
+                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
+                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="CD4 COUNT LESS THAN OR EQUAL TO 350" />
+                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="790" />
+                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
+                    <input allowFreeText="false" id="cd4_count_less_than_500" name="observations[][value_coded_or_text]" type="hidden" value="" />
+                    <input id="observations__value_numeric" name="observations[][value_numeric]" type="hidden" />
+                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
+                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
+                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
+                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
+                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
+                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
+                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
+                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
+                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
+                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
+                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="CD4 COUNT LESS THAN OR EQUAL TO 500" />
+                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="790" />
+                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
+
+
+                    <input id="new_cd4_percent_available" name="new_cd4_percent_available" type="hidden" value="" />
+
+
+
+                    <input id="new_lymphocyte_count_available" name="new_lymphocyte_count_available" type="hidden" value="" />
+
+
+
+
+                    <input id="observations__value_numeric" name="observations[][value_numeric]" type="hidden" />
+                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
+                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
+                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
+                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
+                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
+                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
+                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
+                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
+                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
+                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
+                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="CD4 PERCENT LOCATION" />
+                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="790" />
+                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
+                    <select ajaxURL="/programs/locations?q=" allowFreeText="true" condition="$('new_cd4_percent_available').value == 'YES' || $('new_lymphocyte_count_available').value == 'YES' || ($('new_cd4_count_available').value == 'YES' && transferInPatient() == false)" field_type="alpha" helpText="CD4 count location" id="cd4_percent_location" name="observations[][value_coded_or_text]"></select>
+
+                    <label for='summary'>Summary</label>
+                    <input id="summary" name="summary" optional="true" tt_onLoad="summary();__$('keyboard').style.display = 'none';" tt_pageStyleClass="NoControls" type="text" />
+
+
+                    <input id="filter_provider" name="filter[provider]" type="hidden" />
+
+                    <input name="commit" type="submit" value="Finish" />
+                </form>
+
+
+
+                <div id="popup-div">
+                    <div id="popup-header">
+                        <center>CONTRADICTING STAGE DEFINING CONDITIONS</center>
+                    </div><br />
+                    <div>
+
+                        <div style="padding-top: 65px;">
+                            <span id="yes" onclick="recordNotification('CONTRADICTING STAGE DEFINING CONDITIONS','Keep Asymptomatic');continueProcess();"
+                                  class="my_button" style="position: relative;">Keep 'Asymptomatic'</span>
+                            <span id="no" onclick="recordNotification('CONTRADICTING STAGE DEFINING CONDITIONS','Keep other conditions');hidePopup();"
+                                  class="my_button" style=" position: relative; right: 20px;">Keep 'Other' conditions</span>
+                        </div>
+                    </div>
+                </div>
+                <div id="cover"></div>
+
+                <script type="text/javascript">
+
+                    function setOptionsForContraindicationsPopup(){
+                        //stage_4_conditions, stage_3_conditions, stage_2_conditions;
+                        if (age >= 15){
+                            stageFourConditions = __$('stage_4_conditions').value;
+                            stageThreeConditions = __$('stage_3_conditions').value;
+                            stageTwoConditions = __$('stage_2_conditions').value;
+                        }else{
+                            stageFourConditions = jQuery('.stage_4_conditions')[0].value;
+                            stageThreeConditions = jQuery('.stage_3_conditions')[0].value;
+                            stageTwoConditions = jQuery('.stage_2_conditions')[0].value;
+                        }
+
+
+                        asymptomatic_option_input = jQuery("[tstvalue='Asymptomatic HIV infection']")[0];
+                        if (stageFourConditions.length > 0 || stageThreeConditions.length > 0 || stageTwoConditions.length > 0){
+                            asymptomatic_option_input.onmouseup = function(){
+                                showContraindicatingConditionsConfirmationPopup();
+                            }
+                        }
+                    }
+
+                    function showContraindicatingConditionsConfirmationPopup(){
+                        document.getElementById("popup-div").style.display = 'inline';
+                        document.getElementById("cover").style.display = 'inline';
+                    }
+
+                    function hidePopup(){
+                        clearInput();
+                        document.getElementById("popup-div").style.display = 'none';
+                        document.getElementById("cover").style.display = 'none';
+                    }
+
+                    function continueProcess(){
+                        $('stage_4_conditions').value = '';
+                        $('stage_3_conditions').value = '';
+                        $('stage_2_conditions').value = '';
+                        jQuery("#popup-div").hide();
+                        jQuery("#cover").hide();
+                    }
+
+                    function forceStageOneAvailabe(){
+                        stage_four_conditions = $('stage_4_conditions');
+                        stage_three_conditions = $('stage_3_conditions');
+                        stage_two_conditions = $('stage_2_conditions');
+
+                        __$('touchscreenInput' + tstCurrentPage).setAttribute("optional", "true");
+
+                        if ((stage_four_conditions.value.length == 0) && (stage_three_conditions.value.length == 0) && stage_two_conditions.value.length == 0){
+                            __$('touchscreenInput' + tstCurrentPage).removeAttribute("optional");
+                        }
+                    }
+
+                    function forceStageOneAvailabePaeds(){
+                        stage_four_conditions = jQuery('.stage_4_conditions')[0];
+                        stage_three_conditions = jQuery('.stage_3_conditions')[0];
+                        stage_two_conditions = jQuery('.stage_2_conditions')[0];
+
+                        __$('touchscreenInput' + tstCurrentPage).setAttribute("optional", "true");
+
+                        if ((stage_four_conditions.value.length == 0) && (stage_three_conditions.value.length == 0) && stage_two_conditions.value.length == 0){
+                            __$('touchscreenInput' + tstCurrentPage).removeAttribute("optional");
+                        }
+                    }
+
+                    function disableModerateWeightLossOption(){
+                        moderate_wight_loss_option_input = jQuery("[tstvalue='Moderate weight loss less than or equal to 10 percent, unexplained']")[0];
+                        moderate_wight_loss_option_id = moderate_wight_loss_option_input.id;
+
+                        weight_loss_input = document.getElementById('optionValue' + moderate_wight_loss_option_id);
+                        severe_weight_loss = "Severe weight loss >10% and/or BMI <18.5kg/m^2, unexplained";
+
+                        if (selected_stage_conditions[3]){
+                            selected_stage_three_conditions = selected_stage_conditions[3].split(';');
+                            if (selected_stage_three_conditions.indexOf(severe_weight_loss) != -1){
+                                //weight_loss_input.style.backgroundColor = '#CDBA96';
+                                //moderate_wight_loss_option_input.style.backgroundColor = '#CDBA96';
+                                moderate_weight_loss_text = weight_loss_input.innerHTML;
+                                weight_loss_input.innerHTML = "<span class='disabled_check'>" + moderate_weight_loss_text + " ( Severe weight loss already selected )</span>"
+                                moderate_wight_loss_option_input.onclick = null;
+                                moderate_wight_loss_option_input.onmousedown = null;
+                                moderate_wight_loss_option_input.onmouseup = null;
+
+                                img_input = moderate_wight_loss_option_input.getElementsByTagName("img")[0];
+                                img_input.src = '';
+                                img_input.alt = '';
+
+
+                                if(weight_loss_input.getAttribute('style').match(/lightblue/i)) {
+                                    updateTouchscreenInputForSelect(__$('optionValue' + "0"), weight_loss_input);
+                                    displayCountOfSelectedConditions();
+                                }else{
+                                    displayCountOfSelectedConditions();
+                                }
+
+                            }else{
+                                disableModerateWeightLossOptionForNormalBMI();
+                            }
+                        }
+
+                    }
+
+                    function disableSevereWeightLossInputForNormalBMI(){
+                        severe_weight_loss_option_input = jQuery("[tstvalue='Severe weight loss >10% and/or BMI <18.5kg/m^2, unexplained']")[0];
+                        severe_weight_loss_option_id = severe_weight_loss_option_input.id;
+
+                        weight_loss_input = document.getElementById('optionValue' + severe_weight_loss_option_id);
+                        severe_weight_loss = "Severe weight loss >10% and/or BMI <18.5kg/m^2, unexplained";
+
+                        if (currentBMI > 18.5){
+                            document.getElementById('currentBMI').innerHTML = currentBMI;
+                            weight_loss_input.setAttribute('onmousedown','alertOnNormalBMI()');
+                            //weight_loss_input.style.backgroundColor = '#CDBA96';
+                            //severe_weight_loss_option_input.style.backgroundColor = '#CDBA96';
+                            //moderate_weight_loss_text = weight_loss_input.innerHTML;
+                            //weight_loss_input.innerHTML = moderate_weight_loss_text + " <i>( BMI is " + currentBMI + "  )</i>"
+                            /*severe_weight_loss_option_input.onclick = null;
+                      severe_weight_loss_option_input.onmousedown = null;
+                      severe_weight_loss_option_input.onmouseup = null;*/
+
+                            //img_input = severe_weight_loss_option_input.getElementsByTagName("img")[0];
+                            //img_input.src = '';
+                            //img_input.alt = '';
+                        }
+                    }
+
+                    function disableModerateWeightLossOptionForNormalBMI(){
+                        moderate_weight_loss_option_input = jQuery("[tstvalue='Moderate weight loss less than or equal to 10 percent, unexplained']")[0];
+                        moderate_wight_loss_option_id = moderate_weight_loss_option_input.id;
+
+                        weight_loss_input = document.getElementById('optionValue' + moderate_weight_loss_option_input.id);
+                        //severe_weight_loss = "Severe weight loss >10% and/or BMI <18.5kg/m^2, unexplained";
+
+                        if (currentBMI > 18.5){
+                            document.getElementById('currentBMI').innerHTML = currentBMI;
+                            weight_loss_input.setAttribute('onmousedown','alertOnNormalBMI()');
+                            //moderate_weight_loss_text = weight_loss_input.innerHTML;
+                            //weight_loss_input.innerHTML = moderate_weight_loss_text + " <i>( BMI is " + currentBMI + "  )</i>";
+                            //moderate_weight_loss_option_input.onclick = null;
+                            //moderate_weight_loss_option_input.onmousedown = null;
+                            //moderate_weight_loss_option_input.onmouseup = null;
+
+                            //img_input = moderate_weight_loss_option_input.getElementsByTagName("img")[0];
+                            //img_input.src = '';
+                            //img_input.alt = '';
+                        }
+
+                    }
+
+                    function hideTextInput(){
+                        jQuery('#touchscreenInput' + tstCurrentPage).hide();
+                    }
+
+                    function displayCountOfSelectedConditions(){
+                        jQuery('#helpText' + tstCurrentPage + ' > #count-selected').remove();
+                        jQuery('#helpText' + tstCurrentPage).append("<span id='count-selected'>&nbsp;</span>")
+
+                        if ($("touchscreenInput" + tstCurrentPage).value.length > 0){
+                            selectedValuesCount = $("touchscreenInput" + tstCurrentPage).value.split(";").length;
+                        }else{
+                            selectedValuesCount = 0;
+                        }
+
+                        jQuery('#helpText' + tstCurrentPage + ' > #count-selected').html('&nbsp;(' + selectedValuesCount + ' selected)');
+                        liOptions = document.getElementsByTagName("li");
+                        for (var i=0; i<=liOptions.length - 1; i++){
+                            addEvent(liOptions[i], "click", function() {
+                                if ($("touchscreenInput" + tstCurrentPage).value.length > 0){
+                                    selectedValuesCount = $("touchscreenInput" + tstCurrentPage).value.split(";").length;
+                                }else{
+                                    selectedValuesCount = 0
+                                }
+                                jQuery('#helpText' + tstCurrentPage + ' > #count-selected').html('&nbsp;(' + selectedValuesCount + ' selected)');
+
+                            });
+
+                        }
+                    }
+
+                    function addEvent(obj, evType, fn) {
+                        if (obj.addEventListener) {
+                            obj.addEventListener(evType, fn, false);
+                            return true;
+                        } else if (obj.attachEvent) {
+                            var r = obj.attachEvent("on" + evType, fn);
+                            return r;
+                        } else {
+                            alert("Handler could not be attached");
+                        }
+                    }
+
+
+                    function alertOnNormalBMI(){
+                        try {
+                            severe_weight_loss_option_id = severe_weight_loss_option_input.id;
+                        }catch(e){
+                            severe_weight_loss_option_input = jQuery("[tstvalue='Moderate weight loss less than or equal to 10 percent, unexplained']")[0];
+                            severe_weight_loss_option_id = severe_weight_loss_option_input.id;
+                        }
+
+                        weight_loss_input = document.getElementById('optionValue' + severe_weight_loss_option_id);
+
+                        if(weight_loss_input.getAttribute('style').match(/lightblue/i)) {
+                            //selectCondition();
+                            displayCountOfSelectedConditions();
+                            return;
+                        }
+
+                        document.getElementById("regimen-change-popup-div").style.display = 'inline';
+                        document.getElementById("regimen-change-cover").style.display = 'inline';
+                    }
+
+                    function closeAlertOnNormalBMI(){
+                        document.getElementById("regimen-change-popup-div").style.display = 'none';
+                        document.getElementById("regimen-change-cover").style.display = 'none';
+                    }
+
+                    function selectCondition() {
+                        severe_weight_loss_option_input = jQuery("[tstvalue='Severe weight loss >10% and/or BMI <18.5kg/m^2, unexplained']")[0];
+
+                        try {
+                            severe_weight_loss_option_id = severe_weight_loss_option_input.id;
+                        }catch(e){
+                            severe_weight_loss_option_input = jQuery("[tstvalue='Moderate weight loss less than or equal to 10 percent, unexplained']")[0];
+                            severe_weight_loss_option_id = severe_weight_loss_option_input.id;
+                        }
+
+                        weight_loss_input = document.getElementById('optionValue' + severe_weight_loss_option_id);
+                        updateTouchscreenInputForSelect(__$('optionValue' + "0"), weight_loss_input);
+                        displayCountOfSelectedConditions();
+                        closeAlertOnNormalBMI();
+                    }
+                </script>
+
+                <script language="javascript" type="text/javascript" src="/javascripts/show_category_hack.js" defer="true"></script>
+
+
+
+
+                <div id="regimen-change-cover"></div>
+                <div id="regimen-change-popup-div">
+
+                    <table style="width: 99.9%; margin-bottom: 95px;">
+                        <tr>
+                            <td style="text-align: center; font-weight: bold; color: green;
+                                border-style: solid; border-width: 0px 0px 2px 0px;">
+                                Notice
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: center; font-weight: bold; color: black;">
+                                Patient has a BMI of:&nbsp;<span id="currentBMI"></span><p>
+                                    Are you sure with your selection?</p>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <div id="btnContainer">
+                        <input type="button" class="btns" id="yesBtn" onmousedown="selectCondition();" value="Yes, select condition" />
+                        <input type="button" class="btns" id="noBtn" onmousedown="closeAlertOnNormalBMI();" value="No" />
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+    </body>
+
+</html>
