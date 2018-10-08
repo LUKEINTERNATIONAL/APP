@@ -6,14 +6,19 @@
     <head>
         <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
         <title>Encounters New</title>
+        <script type="text/javascript" src="/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js" defer="true"></script>
+        <script type="text/javascript" src="/touchscreentoolkit/lib/javascripts/standard.js" defer="true"></script>
         <script type="text/javascript" src="/apps/core/assets/js/jquery.min.js"></script>
-        <script type="text/javascript" src="/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js" defer="true"/>
+
+        <script type="text/javascript" src="/apps/core/assets/js/yes_no_ctrls.js"></script>
+        <link rel="stylesheet" href="/apps/core/assets/css/yes_no_ctrls.css" type="text/css"/>
+        <script type="text/javascript" src="/apps/core/assets/js/post_parameters.js"></script>
 
         <script type="text/javascript">
-            tstUsername = "admin";
-            tstCurrentDate = "2018-09-19";
             var tt_cancel_destination = null;
+            var patient_id = 1206;
         </script>
+
 
         <style type="text/css">
             #tab {
@@ -265,86 +270,83 @@
             .switch label {
                 font-weight: bold;
             }
+
+            .summary {
+                margin:20px;
+                font-size:1.6em;
+            }
+
+            .title, .recommendation {
+                margin-right:10px;
+                font-weight:bold;
+            }
+            .recommendation {
+                font-style:italic;
+            }
+            .warning {
+                color:red;
+            }
+
+            .pills_remaing{
+                left:25px;
+                position:inherit;
+            }
+
+            #char { display:none; }
+
+            #notes{background-color:red;}
+
+            .tt_controls_clinical_notes_optional #space { display:inline; }
+
+            .custom-helptext{
+                position: absolute;
+                left:36%;
+                top: 30%;
+            }
+
+            .FastTrackBtn{
+                text-decoration: none;
+                border:1px solid #25729a;
+                -webkit-border-radius: 3px;
+                -moz-border-radius: 3px;
+                font-family:arial, helvetica, sans-serif;
+                padding: 10px 10px 10px 10px;
+                text-shadow: -1px -1px 0 rgba(0,0,0,0.3);
+                text-align: center;
+            }
+
+            .labelText {
+                font-size: 23px;
+                vertical-align: middle;
+                padding-left: 20px;
+            }
+
+            #divcontent {
+                background-color: #fff;
+                border: 2px solid #ccf;
+                border-radius: 10px;
+                height: 84%;
+                margin: 10px;
+                overflow: hidden;
+                width: 98%;
+            }
+
+            #divScroller {
+                height: 97%;
+                margin: 10px;
+                overflow: auto;
+                width: 98%;
+            }
+
+            .disabled-li{
+                text-decoration: line-through;
+                color: gray !important;
+            }
         </style>
     </head>
     <body id="mateme">
         <div id="container">
             <div id="content">
-                <style type="text/css">
-                    .summary {
-                        margin:20px;
-                        font-size:1.6em;
-                    }
-
-                    .title, .recommendation {
-                        margin-right:10px;
-                        font-weight:bold;
-                    }
-                    .recommendation {
-                        font-style:italic;
-                    }
-                    .warning {
-                        color:red;
-                    }
-
-                    .pills_remaing{
-                        left:25px;
-                        position:inherit;
-                    }
-
-                    #char { display:none; }
-
-                    #notes{background-color:red;}
-
-                    .tt_controls_clinical_notes_optional #space { display:inline; }
-
-                    .custom-helptext{
-                        position: absolute;
-                        left:36%;
-                        top: 30%;
-                    }
-
-                    .FastTrackBtn{
-                        text-decoration: none;
-                        border:1px solid #25729a;
-                        -webkit-border-radius: 3px;
-                        -moz-border-radius: 3px;
-                        font-family:arial, helvetica, sans-serif;
-                        padding: 10px 10px 10px 10px;
-                        text-shadow: -1px -1px 0 rgba(0,0,0,0.3);
-                        text-align: center;
-                    }
-
-                    .labelText {
-                        font-size: 23px;
-                        vertical-align: middle;
-                        padding-left: 20px;
-                    }
-
-                    #divcontent {
-                        background-color: #fff;
-                        border: 2px solid #ccf;
-                        border-radius: 10px;
-                        height: 84%;
-                        margin: 10px;
-                        overflow: hidden;
-                        width: 98%;
-                    }
-
-                    #divScroller {
-                        height: 97%;
-                        margin: 10px;
-                        overflow: auto;
-                        width: 98%;
-                    }
-
-                    .disabled-li{
-                        text-decoration: line-through;
-                        color: gray !important;
-                    }
-                </style>
-
-
 
                 <script>
 
@@ -1374,413 +1376,107 @@
                         jQuery('#helpText' + tstCurrentPage).center();
                     }
 
+
+
+                    var answers_hash = {
+                        peripheral_neuropathy: "", jaundice: "", lipodystrophy: "",
+                        kidney_failure: "", psychosis: "", gynaecomastia: "",
+                        anemia: "", routine_tuberculosis_screening: "", night_sweats: "",
+                        Weight_loss: "", last_arv_drugs_taken: "", side_effects: "",
+                        on_tb_treatment: "", tb_status: ""
+                    }
+
+                    function submitHIVClinicConsultation() {
+
+                        var encounter = {
+                            encounter_type_name: 'HIV CLINIC CONSULTATION',
+                            encounter_type_id:  53,
+                            patient_id: patient_id,
+                            encounter_datetime: null
+                        }
+
+                        submitEncounter(encounter, "postHIVClinicConsultationObs");
+                    }
+
+                    function postHIVClinicRegistrationObs(encounter_id) {
+                        var obs = {
+                            encounter_id: encounter_id,
+                            observations: [
+                                { concept_id: 2552, value_coded: answers_hash["followup_agreement"].trim().toUpperCase() == "YES" ? 1065: 1064 },
+                                { concept_id: 7937, value_coded: answers_hash["ever_registered"].trim().toUpperCase() == "YES" ? 1065: 1064 },
+                                { concept_id: 6393, value_coded: answers_hash["has_transfer_letter"].trim().toUpperCase() == "YES" ? 1065: 1064 },
+                                { concept_id: 7881, value_text: answers_hash["confirmatory_hiv_test_location"] },
+                                { concept_id: 7880, value_text: answers_hash["confirmatory_hiv_test_type"] },
+                                { concept_id: 8011, value_coded: answers_hash["send_sms"].trim().toUpperCase() == "YES" ? 1065: 1064 },
+                                { concept_id: 7751, value_datetime: answers_hash["date_art_last_taken"] },
+                                { concept_id: 7750, value_text: answers_hash["location_of_art_initiation"] },
+                                { concept_id: 1499, value_datetime: answers_hash["drug_start_date"] },
+                                { concept_id: 2516, value_datetime: answers_hash["date_art_started"] },
+                                { concept_id: 5497, value_numeric: answers_hash["cd4_count"], value_modifier: cd4_count_modifier_global },
+                                { concept_id: 6981, value_text: answers_hash["art_number_at_previous_location"] },
+                            ]
+                        };
+
+                        createObs(obs, "nextPage")
+                    }
+
+                    function nextPage(){
+                        alert("Done");
+                    }
+
                 </script>
 
                 <form action="/encounters/create" method='post'>
-                    <input id="encounter_encounter_type_name" name="encounter[encounter_type_name]" type="hidden" value="HIV CLINIC CONSULTATION" />
-                    <input id="encounter_patient_id" name="encounter[patient_id]" type="hidden" value="" />
-                    <input id="encounter_encounter_datetime" name="encounter[encounter_datetime]" type="hidden" value="" />
-                    <input id="encounter_provider_id" name="encounter[provider_id]" type="hidden" value="1" />
-
 
                     <input allowFreeText="false" id="Peripheral neuropathy" name="observations[][value_coded_or_text]" type="hidden" value="Peripheral neuropathy" />
-                    <input id="observations__value_numeric" name="observations[][value_numeric]" type="hidden" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="MALAWI ART SIDE EFFECTS" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
-
 
                     <input allowFreeText="false" id="Peripheral neuropathy_child_concept" name="observations[][value_coded_or_text]" parent_concept_name="MALAWI ART SIDE EFFECTS" type="hidden" value="" />
-                    <input id="observations__value_numeric" name="observations[][value_numeric]" type="hidden" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" value="MALAWI ART SIDE EFFECTS" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="Peripheral neuropathy" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
-
 
                     <input allowFreeText="false" id="Jaundice" name="observations[][value_coded_or_text]" type="hidden" value="Jaundice" />
-                    <input id="observations__value_numeric" name="observations[][value_numeric]" type="hidden" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="MALAWI ART SIDE EFFECTS" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
-
 
                     <input allowFreeText="false" id="Jaundice_child_concept" name="observations[][value_coded_or_text]" parent_concept_name="MALAWI ART SIDE EFFECTS" type="hidden" value="" />
-                    <input id="observations__value_numeric" name="observations[][value_numeric]" type="hidden" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" value="MALAWI ART SIDE EFFECTS" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="Jaundice" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
-
 
                     <input allowFreeText="false" id="Lipodystrophy" name="observations[][value_coded_or_text]" type="hidden" value="Lipodystrophy" />
-                    <input id="observations__value_numeric" name="observations[][value_numeric]" type="hidden" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="MALAWI ART SIDE EFFECTS" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
-
 
                     <input allowFreeText="false" id="Lipodystrophy_child_concept" name="observations[][value_coded_or_text]" parent_concept_name="MALAWI ART SIDE EFFECTS" type="hidden" value="" />
-                    <input id="observations__value_numeric" name="observations[][value_numeric]" type="hidden" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" value="MALAWI ART SIDE EFFECTS" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="Lipodystrophy" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
 
                     <input allowFreeText="false" id="Kidney Failure" name="observations[][value_coded_or_text]" type="hidden" value="Kidney Failure" />
-                    <input id="observations__value_numeric" name="observations[][value_numeric]" type="hidden" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="MALAWI ART SIDE EFFECTS" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
-
 
                     <input allowFreeText="false" id="Kidney Failure_child_concept" name="observations[][value_coded_or_text]" parent_concept_name="MALAWI ART SIDE EFFECTS" type="hidden" value="" />
-                    <input id="observations__value_numeric" name="observations[][value_numeric]" type="hidden" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" value="MALAWI ART SIDE EFFECTS" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="Kidney Failure" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
 
                     <input allowFreeText="false" id="Psychosis" name="observations[][value_coded_or_text]" type="hidden" value="Psychosis" />
-                    <input id="observations__value_numeric" name="observations[][value_numeric]" type="hidden" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="MALAWI ART SIDE EFFECTS" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
-
 
                     <input allowFreeText="false" id="Psychosis_child_concept" name="observations[][value_coded_or_text]" parent_concept_name="MALAWI ART SIDE EFFECTS" type="hidden" value="" />
-                    <input id="observations__value_numeric" name="observations[][value_numeric]" type="hidden" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" value="MALAWI ART SIDE EFFECTS" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="Psychosis" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
 
                     <input allowFreeText="false" id="Gynaecomastia" name="observations[][value_coded_or_text]" type="hidden" value="Gynaecomastia" />
-                    <input id="observations__value_numeric" name="observations[][value_numeric]" type="hidden" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="MALAWI ART SIDE EFFECTS" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
-
 
                     <input allowFreeText="false" id="Gynaecomastia_child_concept" name="observations[][value_coded_or_text]" parent_concept_name="MALAWI ART SIDE EFFECTS" type="hidden" value="" />
-                    <input id="observations__value_numeric" name="observations[][value_numeric]" type="hidden" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" value="MALAWI ART SIDE EFFECTS" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="Gynaecomastia" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
 
                     <input allowFreeText="false" id="Anemia" name="observations[][value_coded_or_text]" type="hidden" value="Anemia" />
-                    <input id="observations__value_numeric" name="observations[][value_numeric]" type="hidden" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="MALAWI ART SIDE EFFECTS" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
-
 
                     <input allowFreeText="false" id="Anemia_child_concept" name="observations[][value_coded_or_text]" parent_concept_name="MALAWI ART SIDE EFFECTS" type="hidden" value="" />
-                    <input id="observations__value_numeric" name="observations[][value_numeric]" type="hidden" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" value="MALAWI ART SIDE EFFECTS" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="Anemia" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
 
                     <input allowFreeText="false" id="Cough of any duration" name="observations[][value_coded_or_text]" type="hidden" value="Cough of any duration" />
-                    <input id="observations__value_numeric" name="observations[][value_numeric]" type="hidden" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="ROUTINE TUBERCULOSIS SCREENING" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
-
 
                     <input allowFreeText="false" id="Cough of any duration_child_concept" name="observations[][value_coded_or_text]" parent_concept_name="ROUTINE TUBERCULOSIS SCREENING" type="hidden" value="" />
-                    <input id="observations__value_numeric" name="observations[][value_numeric]" type="hidden" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" value="ROUTINE TUBERCULOSIS SCREENING" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="Cough of any duration" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
-
 
                     <input allowFreeText="false" id="Fever" name="observations[][value_coded_or_text]" type="hidden" value="Fever" />
-                    <input id="observations__value_numeric" name="observations[][value_numeric]" type="hidden" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="ROUTINE TUBERCULOSIS SCREENING" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
+
                     <input allowFreeText="false" id="Fever_child_concept" name="observations[][value_coded_or_text]" parent_concept_name="ROUTINE TUBERCULOSIS SCREENING" type="hidden" value="" />
-                    <input id="observations__value_numeric" name="observations[][value_numeric]" type="hidden" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" value="ROUTINE TUBERCULOSIS SCREENING" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="Fever" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
 
 
                     <input allowFreeText="false" id="Night sweats" name="observations[][value_coded_or_text]" type="hidden" value="Night sweats" />
-                    <input id="observations__value_numeric" name="observations[][value_numeric]" type="hidden" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="ROUTINE TUBERCULOSIS SCREENING" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
 
 
                     <input allowFreeText="false" id="Night sweats_child_concept" name="observations[][value_coded_or_text]" parent_concept_name="ROUTINE TUBERCULOSIS SCREENING" type="hidden" value="" />
-                    <input id="observations__value_numeric" name="observations[][value_numeric]" type="hidden" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" value="ROUTINE TUBERCULOSIS SCREENING" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="Night sweats" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
 
                     <input allowFreeText="false" id="Weight loss / Failure to thrive / malnutrition" name="observations[][value_coded_or_text]" type="hidden" value="Weight loss / Failure to thrive / malnutrition" />
-                    <input id="observations__value_numeric" name="observations[][value_numeric]" type="hidden" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="ROUTINE TUBERCULOSIS SCREENING" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
-
 
                     <input allowFreeText="false" id="Weight loss / Failure to thrive / malnutrition_child_concept" name="observations[][value_coded_or_text]" parent_concept_name="ROUTINE TUBERCULOSIS SCREENING" type="hidden" value="" />
-                    <input id="observations__value_numeric" name="observations[][value_numeric]" type="hidden" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" value="ROUTINE TUBERCULOSIS SCREENING" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="Weight loss / Failure to thrive / malnutrition" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
-
 
                     <input allowFreeText="false" id="tb_status_hack" name="observations[][value_coded_or_text]" type="hidden" value="" />
-                    <input id="observations__value_numeric" name="observations[][value_numeric]" type="hidden" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="TB STATUS" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
 
                     <!-- FOR TRANSFER IN PATIENT -->
-                    <input id="observations__value_numeric" name="observations[][value_numeric]" type="hidden" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="LAST ART DRUGS TAKEN" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
-
 
                     <select allowFreeText="false" condition="everReceivedARTAnswer == 'YES'" helpText="Last ARV drugs taken <span style='font-size:0.7em;font-style:italic'>(Ntundu wa ma ARV amene munamwa komaliza)</span>" id="last_art_drugs_taken" name="observations[][value_coded_or_text]" tt_onLoad="showCategory2('Transfer-In patient'); addCustomRegimenButton(); lastOtherDrugs = ''; $('otherMedications').value = '';" tt_onUnLoad="updateLastARVDrugs(); removeCustomRegimenButton();" tt_pageStyleClass="NoKeyboard">
                         <option value=''></option>
@@ -1800,380 +1496,50 @@
 
 
                     <input condition="parseInt($('last_art_drugs_taken').value.trim().match(/\d+/)) == parseInt(5)" field_type="number" helpText="Total tabs of TDF/3TC/EFV brought to clinic" id="TDF/3TC/EFV" name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show(); showCategory2('Transfer-In patient');" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text" name="observations[][value_coded_or_text]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="TDF/3TC/EFV" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
 
 
                     <input condition="parseInt($('last_art_drugs_taken').value.trim().match(/\d+/)) == parseInt(11)" field_type="number" helpText="Total tabs of AZT/3TC brought to clinic" id="AZT/3TC " name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show(); showCategory2('Transfer-In patient');" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text" name="observations[][value_coded_or_text]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="AZT/3TC" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
 
 
                     <input condition="parseInt($('last_art_drugs_taken').value.trim().match(/\d+/)) == parseInt(11)" field_type="number" helpText="Total tabs of LPV/r brought to clinic" id=" LPV/r" name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show(); showCategory2('Transfer-In patient');" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text" name="observations[][value_coded_or_text]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="LPV/r" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
-
 
                     <input condition="parseInt($('last_art_drugs_taken').value.trim().match(/\d+/)) == parseInt(0)" field_type="number" helpText="Total tabs of ABC/3TC brought to clinic" id="ABC/3TC " name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show(); showCategory2('Transfer-In patient');" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text" name="observations[][value_coded_or_text]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="ABC/3TC" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
-
 
                     <input condition="parseInt($('last_art_drugs_taken').value.trim().match(/\d+/)) == parseInt(0)" field_type="number" helpText="Total tabs of NVP brought to clinic" id=" NVP" name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show(); showCategory2('Transfer-In patient');" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text" name="observations[][value_coded_or_text]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="NVP" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
-
 
                     <input condition="parseInt($('last_art_drugs_taken').value.trim().match(/\d+/)) == parseInt(6)" field_type="number" helpText="Total tabs of TDF/3TC brought to clinic" id="TDF/3TC " name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show(); showCategory2('Transfer-In patient');" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text" name="observations[][value_coded_or_text]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="TDF/3TC" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
 
                     <input condition="parseInt($('last_art_drugs_taken').value.trim().match(/\d+/)) == parseInt(6)" field_type="number" helpText="Total tabs of NVP brought to clinic" id=" NVP" name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show(); showCategory2('Transfer-In patient');" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text" name="observations[][value_coded_or_text]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="NVP" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
 
                     <input condition="parseInt($('last_art_drugs_taken').value.trim().match(/\d+/)) == parseInt(12)" field_type="number" helpText="Total tabs of Darunavir brought to clinic" id="Darunavir" name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show(); showCategory2('Transfer-In patient');" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text" name="observations[][value_coded_or_text]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="Darunavir" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
 
                     <input condition="parseInt($('last_art_drugs_taken').value.trim().match(/\d+/)) == parseInt(12)" field_type="number" helpText="Total tabs of Ritonavir brought to clinic" id="Ritonavir" name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show(); showCategory2('Transfer-In patient');" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text" name="observations[][value_coded_or_text]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="Ritonavir" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
 
                     <input condition="parseInt($('last_art_drugs_taken').value.trim().match(/\d+/)) == parseInt(12)" field_type="number" helpText="Total tabs of ETV brought to clinic" id=" ETV " name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show(); showCategory2('Transfer-In patient');" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text" name="observations[][value_coded_or_text]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="ETV" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
 
                     <input condition="parseInt($('last_art_drugs_taken').value.trim().match(/\d+/)) == parseInt(12)" field_type="number" helpText="Total tabs of RAL brought to clinic" id=" RAL" name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show(); showCategory2('Transfer-In patient');" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text" name="observations[][value_coded_or_text]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="RAL" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
-
 
                     <input condition="parseInt($('last_art_drugs_taken').value.trim().match(/\d+/)) == parseInt(7)" field_type="number" helpText="Total tabs of TDF/3TC brought to clinic" id="TDF/3TC " name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show(); showCategory2('Transfer-In patient');" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text" name="observations[][value_coded_or_text]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="TDF/3TC" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
 
                     <input condition="parseInt($('last_art_drugs_taken').value.trim().match(/\d+/)) == parseInt(7)" field_type="number" helpText="Total tabs of ATV/r brought to clinic" id=" ATV/r" name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show(); showCategory2('Transfer-In patient');" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text" name="observations[][value_coded_or_text]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="ATV/r" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
-
 
                     <input condition="parseInt($('last_art_drugs_taken').value.trim().match(/\d+/)) == parseInt(2)" field_type="number" helpText="Total tabs of AZT/3TC/NVP brought to clinic" id="AZT/3TC/NVP" name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show(); showCategory2('Transfer-In patient');" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text" name="observations[][value_coded_or_text]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="AZT/3TC/NVP" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
 
                     <input condition="parseInt($('last_art_drugs_taken').value.trim().match(/\d+/)) == parseInt(8)" field_type="number" helpText="Total tabs of AZT/3TC brought to clinic" id="AZT/3TC " name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show(); showCategory2('Transfer-In patient');" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text" name="observations[][value_coded_or_text]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="AZT/3TC" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
 
                     <input condition="parseInt($('last_art_drugs_taken').value.trim().match(/\d+/)) == parseInt(8)" field_type="number" helpText="Total tabs of ATV/r brought to clinic" id=" ATV/r" name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show(); showCategory2('Transfer-In patient');" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text" name="observations[][value_coded_or_text]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="ATV/r" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
 
                     <input condition="parseInt($('last_art_drugs_taken').value.trim().match(/\d+/)) == parseInt(9)" field_type="number" helpText="Total tabs of ABC/3TC brought to clinic" id="ABC/3TC " name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show(); showCategory2('Transfer-In patient');" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text" name="observations[][value_coded_or_text]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="ABC/3TC" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
 
                     <input condition="parseInt($('last_art_drugs_taken').value.trim().match(/\d+/)) == parseInt(9)" field_type="number" helpText="Total tabs of LPV/r brought to clinic" id=" LPV/r" name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show(); showCategory2('Transfer-In patient');" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text" name="observations[][value_coded_or_text]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="LPV/r" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
-
 
                     <input condition="parseInt($('last_art_drugs_taken').value.trim().match(/\d+/)) == parseInt(4)" field_type="number" helpText="Total tabs of AZT/3TC brought to clinic" id="AZT/3TC " name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show(); showCategory2('Transfer-In patient');" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text" name="observations[][value_coded_or_text]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="AZT/3TC" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
 
                     <input condition="parseInt($('last_art_drugs_taken').value.trim().match(/\d+/)) == parseInt(4)" field_type="number" helpText="Total tabs of EFV brought to clinic" id=" EFV" name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show(); showCategory2('Transfer-In patient');" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text" name="observations[][value_coded_or_text]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="EFV" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
 
                     <input condition="parseInt($('last_art_drugs_taken').value.trim().match(/\d+/)) == parseInt(10)" field_type="number" helpText="Total tabs of TDF/3TC brought to clinic" id="TDF/3TC " name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show(); showCategory2('Transfer-In patient');" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text" name="observations[][value_coded_or_text]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="TDF/3TC" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
 
                     <input condition="parseInt($('last_art_drugs_taken').value.trim().match(/\d+/)) == parseInt(10)" field_type="number" helpText="Total tabs of LPV/r brought to clinic" id=" LPV/r" name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show(); showCategory2('Transfer-In patient');" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text" name="observations[][value_coded_or_text]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="LPV/r" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
-
-                    <input id="observations__value_numeric" name="observations[][value_numeric]" type="hidden" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text" name="observations[][value_coded_or_text]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="LAST ART DRUGS TAKEN" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
-
 
                     <select allowFreeText="false" condition="$('last_art_drugs_taken').value.trim().toUpperCase() == 'OTHER'" field_type="number" helpText="Last ARV drugs taken <span style='font-size:0.7em;font-style:italic'>(Ntundu wa ma ARV amene munamwa komaliza)</span>" id="otherMedications" multiple="multiple" name="observations[][value_coded_or_text_multiple][]" tt_onLoad="jQuery('#Unknown').show(); showCategory2('Transfer-In patient');" tt_onUnLoad="updateLastOtherMedications();" tt_pageStyleClass="NoKeyboard">
                         <option value=''></option>
@@ -2202,388 +1568,53 @@
 
 
                     <input condition="lastOtherDrugs.split(';').indexOf('ABC/3TC (Abacavir and Lamivudine 60/30mg tablet)') != -1" field_type="number" helpText="Total tabs of ABC/3TC (Abacavir and Lamivudine 60/30mg tablet) brought to clinic" id="ABC/3TC (Abacavir and Lamivudine 60/30mg tablet)" name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show(); showCategory2('Transfer-In patient');" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text" name="observations[][value_coded_or_text]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="Abacavir Lamivudine" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
-
 
                     <input condition="lastOtherDrugs.split(';').indexOf('ABC/3TC (Abacavir and Lamivudine 600/300mg tablet)') != -1" field_type="number" helpText="Total tabs of ABC/3TC (Abacavir and Lamivudine 600/300mg tablet) brought to clinic" id="ABC/3TC (Abacavir and Lamivudine 600/300mg tablet)" name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show(); showCategory2('Transfer-In patient');" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text" name="observations[][value_coded_or_text]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="Abacavir Lamivudine" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
 
                     <input condition="lastOtherDrugs.split(';').indexOf('ATV/r (Atazanavir 300mg/Ritonavir 100mg)') != -1" field_type="number" helpText="Total tabs of ATV/r (Atazanavir 300mg/Ritonavir 100mg) brought to clinic" id="ATV/r (Atazanavir 300mg/Ritonavir 100mg)" name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show(); showCategory2('Transfer-In patient');" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text" name="observations[][value_coded_or_text]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="Atazanavir Ritonavir" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
-
 
                     <input condition="lastOtherDrugs.split(';').indexOf('AZT/3TC (Zidovudine and Lamivudine 300/150mg)') != -1" field_type="number" helpText="Total tabs of AZT/3TC (Zidovudine and Lamivudine 300/150mg) brought to clinic" id="AZT/3TC (Zidovudine and Lamivudine 300/150mg)" name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show(); showCategory2('Transfer-In patient');" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text" name="observations[][value_coded_or_text]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="Zidovudine and Lamivudine" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
-
 
                     <input condition="lastOtherDrugs.split(';').indexOf('AZT/3TC (Zidovudine and Lamivudine 60/30 tablet)') != -1" field_type="number" helpText="Total tabs of AZT/3TC (Zidovudine and Lamivudine 60/30 tablet) brought to clinic" id="AZT/3TC (Zidovudine and Lamivudine 60/30 tablet)" name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show(); showCategory2('Transfer-In patient');" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text" name="observations[][value_coded_or_text]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="Zidovudine and Lamivudine" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
-
 
                     <input condition="lastOtherDrugs.split(';').indexOf('AZT/3TC/NVP (300/150/200mg tablet)') != -1" field_type="number" helpText="Total tabs of AZT/3TC/NVP (300/150/200mg tablet) brought to clinic" id="AZT/3TC/NVP (300/150/200mg tablet)" name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show(); showCategory2('Transfer-In patient');" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text" name="observations[][value_coded_or_text]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="Zidovudine lamivudine and nevirapine" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
-
 
                     <input condition="lastOtherDrugs.split(';').indexOf('AZT/3TC/NVP (60/30/50mg tablet)') != -1" field_type="number" helpText="Total tabs of AZT/3TC/NVP (60/30/50mg tablet) brought to clinic" id="AZT/3TC/NVP (60/30/50mg tablet)" name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show(); showCategory2('Transfer-In patient');" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text" name="observations[][value_coded_or_text]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="Zidovudine lamivudine and nevirapine" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
-
 
                     <input condition="lastOtherDrugs.split(';').indexOf('Darunavir 600mg') != -1" field_type="number" helpText="Total tabs of Darunavir 600mg brought to clinic" id="Darunavir 600mg" name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show(); showCategory2('Transfer-In patient');" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text" name="observations[][value_coded_or_text]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="Darunavir" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
-
 
                     <input condition="lastOtherDrugs.split(';').indexOf('Dolutegravir (50mg tablet)') != -1" field_type="number" helpText="Total tabs of Dolutegravir (50mg tablet) brought to clinic" id="Dolutegravir (50mg tablet)" name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show(); showCategory2('Transfer-In patient');" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text" name="observations[][value_coded_or_text]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="Dolutegravir" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
-
 
                     <input condition="lastOtherDrugs.split(';').indexOf('EFV (Efavirenz 200mg tablet)') != -1" field_type="number" helpText="Total tabs of EFV (Efavirenz 200mg tablet) brought to clinic" id="EFV (Efavirenz 200mg tablet)" name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show(); showCategory2('Transfer-In patient');" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text" name="observations[][value_coded_or_text]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="Efavirenz" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
-
 
                     <input condition="lastOtherDrugs.split(';').indexOf('EFV (Efavirenz 600mg tablet)') != -1" field_type="number" helpText="Total tabs of EFV (Efavirenz 600mg tablet) brought to clinic" id="EFV (Efavirenz 600mg tablet)" name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show(); showCategory2('Transfer-In patient');" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text" name="observations[][value_coded_or_text]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="Efavirenz" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
-
 
                     <input condition="lastOtherDrugs.split(';').indexOf('Etravirine 100mg') != -1" field_type="number" helpText="Total tabs of Etravirine 100mg brought to clinic" id="Etravirine 100mg" name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show(); showCategory2('Transfer-In patient');" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text" name="observations[][value_coded_or_text]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="Etravirine" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
-
 
                     <input condition="lastOtherDrugs.split(';').indexOf('LPV/r (Lopinavir and Ritonavir 100/25mg tablet)') != -1" field_type="number" helpText="Total tabs of LPV/r (Lopinavir and Ritonavir 100/25mg tablet) brought to clinic" id="LPV/r (Lopinavir and Ritonavir 100/25mg tablet)" name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show(); showCategory2('Transfer-In patient');" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text" name="observations[][value_coded_or_text]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="Lopinavir and Ritonavir" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
-
 
                     <input condition="lastOtherDrugs.split(';').indexOf('LPV/r (Lopinavir and Ritonavir 200/50mg tablet)') != -1" field_type="number" helpText="Total tabs of LPV/r (Lopinavir and Ritonavir 200/50mg tablet) brought to clinic" id="LPV/r (Lopinavir and Ritonavir 200/50mg tablet)" name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show(); showCategory2('Transfer-In patient');" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text" name="observations[][value_coded_or_text]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="Lopinavir and Ritonavir" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
 
                     <input condition="lastOtherDrugs.split(';').indexOf('LPV/r pellets') != -1" field_type="number" helpText="Total tabs of LPV/r pellets brought to clinic" id="LPV/r pellets" name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show(); showCategory2('Transfer-In patient');" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text" name="observations[][value_coded_or_text]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="Lopinavir and Ritonavir pellets" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
 
                     <input condition="lastOtherDrugs.split(';').indexOf('NVP (Nevirapine 200 mg tablet)') != -1" field_type="number" helpText="Total tabs of NVP (Nevirapine 200 mg tablet) brought to clinic" id="NVP (Nevirapine 200 mg tablet)" name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show(); showCategory2('Transfer-In patient');" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text" name="observations[][value_coded_or_text]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="Nevirapine" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
 
                     <input condition="lastOtherDrugs.split(';').indexOf('NVP (Nevirapine 50 mg tablet)') != -1" field_type="number" helpText="Total tabs of NVP (Nevirapine 50 mg tablet) brought to clinic" id="NVP (Nevirapine 50 mg tablet)" name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show(); showCategory2('Transfer-In patient');" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text" name="observations[][value_coded_or_text]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="Nevirapine" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
 
                     <input condition="lastOtherDrugs.split(';').indexOf('RAL (Raltegravir 400mg)') != -1" field_type="number" helpText="Total tabs of RAL (Raltegravir 400mg) brought to clinic" id="RAL (Raltegravir 400mg)" name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show(); showCategory2('Transfer-In patient');" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text" name="observations[][value_coded_or_text]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="Raltegravir 400mg" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
 
                     <input condition="lastOtherDrugs.split(';').indexOf('Ritonavir 100mg') != -1" field_type="number" helpText="Total tabs of Ritonavir 100mg brought to clinic" id="Ritonavir 100mg" name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show(); showCategory2('Transfer-In patient');" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text" name="observations[][value_coded_or_text]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="Ritonavir" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
 
                     <input condition="lastOtherDrugs.split(';').indexOf('TDF/3TC (Tenofavir and Lamivudine 300/300mg tablet') != -1" field_type="number" helpText="Total tabs of TDF/3TC (Tenofavir and Lamivudine 300/300mg tablet brought to clinic" id="TDF/3TC (Tenofavir and Lamivudine 300/300mg tablet" name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show(); showCategory2('Transfer-In patient');" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text" name="observations[][value_coded_or_text]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="Tenofavir Lamivudine" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
 
                     <input condition="lastOtherDrugs.split(';').indexOf('TDF/3TC/EFV (300/300/600mg tablet)') != -1" field_type="number" helpText="Total tabs of TDF/3TC/EFV (300/300/600mg tablet) brought to clinic" id="TDF/3TC/EFV (300/300/600mg tablet)" name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show(); showCategory2('Transfer-In patient');" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text" name="observations[][value_coded_or_text]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="Tenofovir Lamivudine Efavirenz" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
-
 
                     <!-- TRANSFER IN END -->
 
                     <input allowFreeText="false" id="pregnant" name="observations[][value_coded_or_text]" type="hidden" value="NO" />
-                    <input id="observations__value_numeric" name="observations[][value_numeric]" type="hidden" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="IS PATIENT PREGNANT?" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
 
                     <input conditions="true" helpText="Potential Side effects (select all that apply)" id="side_effects" name="advanced_side_effects" optional="true" tt_onLoad="showCategory2('Clinic consultation'); advancedSideEffects(); __$('keyboard').style.display = 'none';" tt_pageStyleClass="NoControls" type="text" />
 
-                    <input id="observations__value_numeric" name="observations[][value_numeric]" type="hidden" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="TB TREATMENT" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
                     <select allowFreeText="false" helpText="On TB Treatment?" id="tb_treatment_question" name="observations[][value_coded_or_text]" tt_onLoad="showCategory2('Clinic consultation');" tt_onUnLoad="showCategory2('Clinic consultation'); hideTBStatusQuestion();" tt_pageStyleClass="NoKeyboard">
                         <option value=''></option>
                         <option value=""></option>
@@ -2594,20 +1625,6 @@
 
                     <input condition="__$('tb_treatment_question').value == 'No'" helpText="TB associated symptoms" id="routine_tb_screening" name="advanced_tb_symptoms" optional="true" tt_onLoad="showCategory2('Clinic consultation'); advancedTBSymptoms(); __$('keyboard').style.display = 'none';" tt_pageStyleClass="NoControls" type="text" />
 
-                    <input id="observations__value_numeric" name="observations[][value_numeric]" type="hidden" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="TB STATUS" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
                     <select allowFreeText="false" condition="true && __$('tb_treatment_question').value.toUpperCase() == 'NO'
                             && tbSymptomsHashSelects() == 'YES'" helpText="TB Status" id="tb_status" name="observations[][value_coded_or_text]" tt_onLoad="showCategory2('Clinic consultation');checkTbHivStatus(); checkAndSelectTBSuspected(); checkAndSelectConfirmedTBOnTreatment();" tt_pageStyleClass="NoKeyboard">
                         <option value=''></option>
@@ -2618,29 +1635,12 @@
 
                     <input id="filter_provider" name="filter[provider]" type="hidden" />
 
-
                     <input allowFreeText="false" id="fast-track-input" name="observations[][value_coded_or_text]" type="hidden" value="" />
-                    <input id="observations__value_numeric" name="observations[][value_numeric]" type="hidden" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="FAST" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="" />
 
                     <input name="commit" type="submit" value="Finish" />
 
                     <script src="/javascripts/fastTrackOptionsPopup.js?version=1537348107" type="text/javascript"></script>
                 </form>
-
-
 
                 <div id="fast_track_reminder" style="display:none;">
                     <div id="fast_track_reminder_header">
