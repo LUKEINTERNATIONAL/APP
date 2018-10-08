@@ -1398,22 +1398,44 @@
                         submitEncounter(encounter, "postHIVClinicConsultationObs");
                     }
 
-                    function postHIVClinicRegistrationObs(encounter_id) {
+                    function postHIVClinicConsultationObs(encounter_id) {
+                        var malawi_art_side_effects_concept_id = 7755;
+                        var routine_tb_screening_concept_id = 8259;
+                        var peripheral_neuropathy_concept_id = 821;
+                        var jaundice_concept_id = 215;
+                        var lipodystrophy_concept_id = 2148;
+                        var kidney_failure_concept_id = 9242;
+                        var psychosis_concept_id = 219;
+                        var gynaecomastia_concept_id = 9440;
+                        var anemia_concept_id = 3;
+
+
+                        var cough_of_any_duration_concept_id = 8261;
+                        var fever_concept_id = 5945;
+                        var night_sweats_concept_id = 6029;
+                        var weight_loss_concept_id = 8260;
+
                         var obs = {
                             encounter_id: encounter_id,
                             observations: [
-                                { concept_id: 2552, value_coded: answers_hash["followup_agreement"].trim().toUpperCase() == "YES" ? 1065: 1064 },
-                                { concept_id: 7937, value_coded: answers_hash["ever_registered"].trim().toUpperCase() == "YES" ? 1065: 1064 },
-                                { concept_id: 6393, value_coded: answers_hash["has_transfer_letter"].trim().toUpperCase() == "YES" ? 1065: 1064 },
-                                { concept_id: 7881, value_text: answers_hash["confirmatory_hiv_test_location"] },
-                                { concept_id: 7880, value_text: answers_hash["confirmatory_hiv_test_type"] },
-                                { concept_id: 8011, value_coded: answers_hash["send_sms"].trim().toUpperCase() == "YES" ? 1065: 1064 },
-                                { concept_id: 7751, value_datetime: answers_hash["date_art_last_taken"] },
-                                { concept_id: 7750, value_text: answers_hash["location_of_art_initiation"] },
-                                { concept_id: 1499, value_datetime: answers_hash["drug_start_date"] },
-                                { concept_id: 2516, value_datetime: answers_hash["date_art_started"] },
-                                { concept_id: 5497, value_numeric: answers_hash["cd4_count"], value_modifier: cd4_count_modifier_global },
-                                { concept_id: 6981, value_text: answers_hash["art_number_at_previous_location"] },
+                                {concept_id: malawi_art_side_effects_concept_id, value_coded: peripheral_neuropathy_concept_id, child: {concept_id: peripheral_neuropathy_concept_id, value_coded: answers_hash["peripheral_neuropathy"]}},
+                                {concept_id: malawi_art_side_effects_concept_id, value_coded: jaundice_concept_id, child: {concept_id: jaundice_concept_id, value_coded: answers_hash["jaundice"]}},
+                                {concept_id: malawi_art_side_effects_concept_id, value_coded: lipodystrophy_concept_id, child: {concept_id: lipodystrophy_concept_id, value_coded: answers_hash["lipodystrophy"]}},
+                                {concept_id: malawi_art_side_effects_concept_id, value_coded: kidney_failure_concept_id, child: {concept_id: kidney_failure_concept_id, value_coded: answers_hash["kidney_failure"]}},
+                                {concept_id: malawi_art_side_effects_concept_id, value_coded: psychosis_concept_id, child: {concept_id: psychosis_concept_id, value_coded: answers_hash["psychosis"]}},
+                                {concept_id: malawi_art_side_effects_concept_id, value_coded: gynaecomastia_concept_id, child: {concept_id: gynaecomastia_concept_id, value_coded: answers_hash["gynaecomastia"]}},
+                                {concept_id: malawi_art_side_effects_concept_id, value_coded: anemia_concept_id, child: {concept_id: anemia_concept_id, value_coded: answers_hash["anemia"]}},
+
+
+                                {concept_id: routine_tb_screening_concept_id, value_coded: cough_of_any_duration_concept_id, child: {concept_id: cough_of_any_duration_concept_id, value_coded: answers_hash["cough_of_any_duration"]}},
+                                {concept_id: routine_tb_screening_concept_id, value_coded: fever_concept_id, child: {concept_id: fever_concept_id, value_coded: answers_hash["fever"]}},
+                                {concept_id: routiqne_tb_screening_concept_id, value_coded: night_sweats_concept_id, child: {concept_id: night_sweats_concept_id, value_coded: answers_hash["night_sweats"]}},
+                                {concept_id: weigqht_loss_concept_id, value_coded: weight_loss_concept_id, child: {concept_id: weight_loss_concept_id, value_coded: answers_hash["weight_loss"]}},
+
+
+                                { concept_id: 7459, value_coded: answers_hash["tb_status"].trim().toUpperCase() == "YES" ? 1065: 1064 },
+                                { concept_id: 1755, value_coded: answers_hash["patient_pregnant"].trim().toUpperCase() == "YES" ? 1065: 1064 },
+                                { concept_id: 2690, value_coded: answers_hash["tb_treatment"].trim().toUpperCase() == "YES" ? 1065: 1064 }
                             ]
                         };
 
@@ -1426,7 +1448,7 @@
 
                 </script>
 
-                <form action="/encounters/create" method='post'>
+                <form action="#" method='post'>
 
                     <input allowFreeText="false" id="Peripheral neuropathy" name="observations[][value_coded_or_text]" type="hidden" value="Peripheral neuropathy" />
 
