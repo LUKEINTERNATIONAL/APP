@@ -1175,6 +1175,7 @@
                         tbTreatmentValue = __$('touchscreenInput' + tstCurrentPage).value.toUpperCase();
                         if (tbTreatmentValue == 'YES'){
                             $('tb_status_hack').value = 'Confirmed TB ON Treatment';
+                            answers_hash["tb_status"] = 7458;
                         }else{
                             $('tb_status_hack').value = '';
                         }
@@ -1189,6 +1190,7 @@
                         }
 
                         $('tb_status_hack').value = 'TB Not suspected';
+                        answers_hash["tb_status"] = 7454;
                         return 'NO'
                     }
   
@@ -1454,16 +1456,16 @@
                                 {concept_id: weight_loss_concept_id, value_coded: weight_loss_concept_id, child: {concept_id: weight_loss_concept_id, value_coded: getTBSymptomsAnswer('Weight loss / Failure to thrive / malnutrition')}},
 
 
-                                { concept_id: 7459, value_coded: answers_hash["tb_status"].trim().toUpperCase() == "YES" ? 1065: 1064 },
-                                { concept_id: 1717, value_coded: answers_hash["on_fpm"].trim().toUpperCase() == "YES" ? 1065: 1064 },
-                                { concept_id: 2690, value_coded: answers_hash["on_tb_treatment"].trim().toUpperCase() == "YES" ? 1065: 1064 }
+                                { concept_id: 7459, value_coded: answers_hash["tb_status"]},
+                                { concept_id: 1717, value_coded: answers_hash["on_fpm"].trim().toUpperCase() == "YES" ? 1065: 1066 },
+                                { concept_id: 2690, value_coded: answers_hash["on_tb_treatment"].trim().toUpperCase() == "YES" ? 1065: 1066 }
                             ]
                         };
 
                         if (patientGender == "FEMALE"){
-                            obs.observations.push({ concept_id: 6131, value_coded: (answers_hash["is_patient_pregnant"].length > 0 ? (answers_hash["is_patient_pregnant"].trim().toUpperCase() == "YES" ? 1065: 1064): "" )})
-                            obs.observations.push({ concept_id: 7965, value_coded: (answers_hash["is_patient_breastfeeding"].length > 0 ? (answers_hash["is_patient_breastfeeding"].trim().toUpperCase() == "YES" ? 1065: 1064): "") })
-                            obs.observations.push({ concept_id: 1717, value_coded: (answers_hash["on_fpm"].length > 0 ? (answers_hash["on_fpm"].trim().toUpperCase() == "YES" ? 1065: 1064): "") })
+                            obs.observations.push({ concept_id: 6131, value_coded: (answers_hash["is_patient_pregnant"].length > 0 ? (answers_hash["is_patient_pregnant"].trim().toUpperCase() == "YES" ? 1065: 1066): "" )})
+                            obs.observations.push({ concept_id: 7965, value_coded: (answers_hash["is_patient_breastfeeding"].length > 0 ? (answers_hash["is_patient_breastfeeding"].trim().toUpperCase() == "YES" ? 1065: 1066): "") })
+                            obs.observations.push({ concept_id: 1717, value_coded: (answers_hash["on_fpm"].length > 0 ? (answers_hash["on_fpm"].trim().toUpperCase() == "YES" ? 1065: 1066): "") })
 
                             family_planning_methods_used = answers_hash["current_fpm"].split(";");
                             for (i = 0; i < family_planning_methods_used.length; i++) {
@@ -1769,7 +1771,7 @@
                     <input condition="__$('tb_treatment_question').value == 'No'" helpText="TB associated symptoms" id="routine_tb_screening" name="advanced_tb_symptoms" optional="true" tt_onLoad="showCategory2('Clinic consultation'); advancedTBSymptoms(); __$('keyboard').style.display = 'none';" tt_pageStyleClass="NoControls" type="text" />
 
                     <select allowFreeText="false" condition="true && __$('tb_treatment_question').value.toUpperCase() == 'NO'
-                            && tbSymptomsHashSelects() == 'YES'" helpText="TB Status" id="tb_status" name="observations[][value_coded_or_text]" tt_onLoad="setNextButtonToGetInputValue('tb_status'); changeSubmitFunction(); showCategory2('Clinic consultation');checkTbHivStatus(); checkAndSelectTBSuspected(); checkAndSelectConfirmedTBOnTreatment();" tt_pageStyleClass="NoKeyboard">
+                            && tbSymptomsHashSelects() == 'YES'" helpText="TB Status" id="tb_status" name="observations[][value_coded_or_text]" tt_onLoad="changeSubmitFunction(); showCategory2('Clinic consultation');checkTbHivStatus(); checkAndSelectTBSuspected(); checkAndSelectConfirmedTBOnTreatment();" tt_pageStyleClass="NoKeyboard">
                         <option value=''></option>
                         <option value="TB NOT suspected">TB NOT suspected</option>
                         <option value="TB suspected">TB suspected</option>
