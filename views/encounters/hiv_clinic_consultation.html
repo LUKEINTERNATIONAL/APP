@@ -1395,7 +1395,7 @@
                         Weight_loss: "", last_arv_drugs_taken: "", side_effects: "",
                         on_tb_treatment: "", tb_status: "", is_patient_pregnant: "",
                         is_patient_breastfeeding: "", current_fpm: "", todays_fpm: "",
-                        on_tb_treatment: ""
+                        on_tb_treatment: "", on_fpm: ""
                     }
 
                     function submitHIVClinicConsultation() {
@@ -1421,6 +1421,12 @@
                         "None of the above": 1107
                     }
 
+                    var tb_status_concepts_map = {
+                        "TB NOT suspected": 7454,
+                        "TB suspected": 7455,
+                        "Confirmed TB NOT on treatment": 7456
+                    }
+                    
                     function postHIVClinicConsultationObs(encounter_id) {
                         var malawi_art_side_effects_concept_id = 7755;
                         var routine_tb_screening_concept_id = 8259;
@@ -1458,7 +1464,7 @@
 
                                 { concept_id: 7459, value_coded: answers_hash["tb_status"]},
                                 { concept_id: 1717, value_coded: answers_hash["on_fpm"].trim().toUpperCase() == "YES" ? 1065: 1066 },
-                                { concept_id: 2690, value_coded: answers_hash["on_tb_treatment"].trim().toUpperCase() == "YES" ? 1065: 1066 }
+                                { concept_id: 2690, value_coded: answers_hash["on_tb_treatment"] }
                             ]
                         };
 
@@ -1525,10 +1531,29 @@
                     function changeSubmitFunction(){
                         var nextButton =  document.getElementById('nextButton');
                         nextButton.onmousedown = function(){
+                            value = $('touchscreenInput'+tstCurrentPage).value.trim();
+                            tb_status_value = tb_status_concepts_map[value]
+                            answers_hash["tb_status"] = tb_status_value
                             submitHIVClinicConsultation();
                             alert("Form submitted");
                         }
                     }
+
+                    function submitWhenOnTBTreatment(){
+                        var nextButton =  document.getElementById('nextButton');
+                        nextButton.onmousedown = function(){
+                            value = $('touchscreenInput'+tstCurrentPage).value;
+                            if (value.match(/YES/i)){
+                                answers_hash["on_tb_treatment"] = 1065;
+                                submitHIVClinicConsultation();
+                                alert("Form submitted");
+                            } else{
+                                answers_hash["on_tb_treatment"] = 1066;
+                                gotoNextPage();
+                            }
+                        }
+                    }
+                    
                 </script>
 
                 <form action="#" method='post'>
@@ -1760,7 +1785,7 @@
 
                     <input conditions="true" helpText="Potential Side effects (select all that apply)" id="side_effects" name="advanced_side_effects" optional="true" tt_onLoad="showCategory2('Clinic consultation'); advancedSideEffects(); __$('keyboard').style.display = 'none';" tt_pageStyleClass="NoControls" type="text" />
 
-                    <select allowFreeText="false" helpText="On TB Treatment?" id="tb_treatment_question" name="observations[][value_coded_or_text]" tt_onLoad="setNextButtonToGetInputValue('on_tb_treatment'); showCategory2('Clinic consultation');" tt_onUnLoad="showCategory2('Clinic consultation'); hideTBStatusQuestion();" tt_pageStyleClass="NoKeyboard">
+                    <select allowFreeText="false" helpText="On TB Treatment?" id="tb_treatment_question" name="observations[][value_coded_or_text]" tt_onLoad="submitWhenOnTBTreatment(); showCategory2('Clinic consultation');" tt_onUnLoad="showCategory2('Clinic consultation'); hideTBStatusQuestion();" tt_pageStyleClass="NoKeyboard">
                         <option value=''></option>
                         <option value=""></option>
                         <option value="Yes">Yes</option>
