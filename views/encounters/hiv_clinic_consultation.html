@@ -1139,7 +1139,14 @@
                         if (unselectedTBSymptoms.length > 0){
                             showMessage("The following TB Symptoms are not selected <br />" +  unselectedTBSymptoms.join('<br /> '));
                         }else{
-                            gotoNextPage();
+                            if (tbSymptomsHashSelects() == 'YES'){
+                                gotoNextPage();
+                            } else{
+                                submitHIVClinicConsultation();
+                                alert("Form submitted");
+                            }
+
+
                         }
                     }
 
@@ -1213,6 +1220,7 @@
                         }else{
                             $('on_fpm').value = 'YES';
                         }
+                        answers_hash["on_fpm"] = $('on_fpm').value;
                     }
 
                     function controlNoneSelectionForFamilyPlanning(){
@@ -1379,11 +1387,11 @@
 
 
                     var answers_hash = {
-                        peripheral_neuropathy: "", jaundice: "", lipodystrophy: "",
-                        kidney_failure: "", psychosis: "", gynaecomastia: "",
                         anemia: "", routine_tuberculosis_screening: "", night_sweats: "",
                         Weight_loss: "", last_arv_drugs_taken: "", side_effects: "",
-                        on_tb_treatment: "", tb_status: ""
+                        on_tb_treatment: "", tb_status: "", is_patient_pregnant: "",
+                        is_patient_breastfeeding: "", current_fpm: "", todays_fpm: "",
+                        on_tb_treatment: ""
                     }
 
                     function submitHIVClinicConsultation() {
@@ -1396,6 +1404,17 @@
                         }
 
                         submitEncounter(encounter, "postHIVClinicConsultationObs");
+                    }
+
+                    var family_planning_methods_concept_map = {
+                        "Oral contraceptive pills": 780,
+                        "Depo-Provera": 907,
+                        "Intrauterine device/loop": 5275,
+                        "Implant": 7857,
+                        "Male condoms": 7858,
+                        "Female condoms": 7859,
+                        "Tubal ligation": 1719,
+                        "None of the above": 1107
                     }
 
                     function postHIVClinicConsultationObs(encounter_id) {
@@ -1418,37 +1437,137 @@
                         var obs = {
                             encounter_id: encounter_id,
                             observations: [
-                                {concept_id: malawi_art_side_effects_concept_id, value_coded: peripheral_neuropathy_concept_id, child: {concept_id: peripheral_neuropathy_concept_id, value_coded: answers_hash["peripheral_neuropathy"]}},
-                                {concept_id: malawi_art_side_effects_concept_id, value_coded: jaundice_concept_id, child: {concept_id: jaundice_concept_id, value_coded: answers_hash["jaundice"]}},
-                                {concept_id: malawi_art_side_effects_concept_id, value_coded: lipodystrophy_concept_id, child: {concept_id: lipodystrophy_concept_id, value_coded: answers_hash["lipodystrophy"]}},
-                                {concept_id: malawi_art_side_effects_concept_id, value_coded: kidney_failure_concept_id, child: {concept_id: kidney_failure_concept_id, value_coded: answers_hash["kidney_failure"]}},
-                                {concept_id: malawi_art_side_effects_concept_id, value_coded: psychosis_concept_id, child: {concept_id: psychosis_concept_id, value_coded: answers_hash["psychosis"]}},
-                                {concept_id: malawi_art_side_effects_concept_id, value_coded: gynaecomastia_concept_id, child: {concept_id: gynaecomastia_concept_id, value_coded: answers_hash["gynaecomastia"]}},
-                                {concept_id: malawi_art_side_effects_concept_id, value_coded: anemia_concept_id, child: {concept_id: anemia_concept_id, value_coded: answers_hash["anemia"]}},
+                                {concept_id: malawi_art_side_effects_concept_id, value_coded: peripheral_neuropathy_concept_id, child: {concept_id: peripheral_neuropathy_concept_id, value_coded: getSideEffectAnswer('Peripheral neuropathy')}},
+                                {concept_id: malawi_art_side_effects_concept_id, value_coded: jaundice_concept_id, child: {concept_id: jaundice_concept_id, value_coded: getSideEffectAnswer('Jaundice')}},
+                                {concept_id: malawi_art_side_effects_concept_id, value_coded: lipodystrophy_concept_id, child: {concept_id: lipodystrophy_concept_id, value_coded: getSideEffectAnswer('Lipodystrophy')}},
+                                {concept_id: malawi_art_side_effects_concept_id, value_coded: kidney_failure_concept_id, child: {concept_id: kidney_failure_concept_id, value_coded: getSideEffectAnswer('Kidney Failure')}},
+                                {concept_id: malawi_art_side_effects_concept_id, value_coded: psychosis_concept_id, child: {concept_id: psychosis_concept_id, value_coded: getSideEffectAnswer('Psychosis')}},
+                                {concept_id: malawi_art_side_effects_concept_id, value_coded: gynaecomastia_concept_id, child: {concept_id: gynaecomastia_concept_id, value_coded: getSideEffectAnswer('Gynaecomastia')}},
+                                {concept_id: malawi_art_side_effects_concept_id, value_coded: anemia_concept_id, child: {concept_id: anemia_concept_id, value_coded: getSideEffectAnswer('Anemia')}},
 
 
-                                {concept_id: routine_tb_screening_concept_id, value_coded: cough_of_any_duration_concept_id, child: {concept_id: cough_of_any_duration_concept_id, value_coded: answers_hash["cough_of_any_duration"]}},
-                                {concept_id: routine_tb_screening_concept_id, value_coded: fever_concept_id, child: {concept_id: fever_concept_id, value_coded: answers_hash["fever"]}},
-                                {concept_id: routiqne_tb_screening_concept_id, value_coded: night_sweats_concept_id, child: {concept_id: night_sweats_concept_id, value_coded: answers_hash["night_sweats"]}},
-                                {concept_id: weigqht_loss_concept_id, value_coded: weight_loss_concept_id, child: {concept_id: weight_loss_concept_id, value_coded: answers_hash["weight_loss"]}},
+                                {concept_id: routine_tb_screening_concept_id, value_coded: cough_of_any_duration_concept_id, child: {concept_id: cough_of_any_duration_concept_id, value_coded: getTBSymptomsAnswer('Cough of any duration')}},
+                                {concept_id: routine_tb_screening_concept_id, value_coded: fever_concept_id, child: {concept_id: fever_concept_id, value_coded: getTBSymptomsAnswer('Fever')}},
+                                {concept_id: routiqne_tb_screening_concept_id, value_coded: night_sweats_concept_id, child: {concept_id: night_sweats_concept_id, value_coded: getTBSymptomsAnswer('Night sweats')}},
+                                {concept_id: weight_loss_concept_id, value_coded: weight_loss_concept_id, child: {concept_id: weight_loss_concept_id, value_coded: getTBSymptomsAnswer('Weight loss / Failure to thrive / malnutrition')}},
 
 
                                 { concept_id: 7459, value_coded: answers_hash["tb_status"].trim().toUpperCase() == "YES" ? 1065: 1064 },
-                                { concept_id: 1755, value_coded: answers_hash["patient_pregnant"].trim().toUpperCase() == "YES" ? 1065: 1064 },
-                                { concept_id: 2690, value_coded: answers_hash["tb_treatment"].trim().toUpperCase() == "YES" ? 1065: 1064 }
+                                { concept_id: 1717, value_coded: answers_hash["on_fpm"].trim().toUpperCase() == "YES" ? 1065: 1064 },
+                                { concept_id: 2690, value_coded: answers_hash["on_tb_treatment"].trim().toUpperCase() == "YES" ? 1065: 1064 }
                             ]
                         };
 
+                        if (patientGender == "FEMALE"){
+                            obs.observations.push({ concept_id: 6131, value_coded: (answers_hash["is_patient_pregnant"].length > 0 ? (answers_hash["is_patient_pregnant"].trim().toUpperCase() == "YES" ? 1065: 1064): "" )})
+                            obs.observations.push({ concept_id: 7965, value_coded: (answers_hash["is_patient_breastfeeding"].length > 0 ? (answers_hash["is_patient_breastfeeding"].trim().toUpperCase() == "YES" ? 1065: 1064): "") })
+                            obs.observations.push({ concept_id: 1717, value_coded: (answers_hash["on_fpm"].length > 0 ? (answers_hash["on_fpm"].trim().toUpperCase() == "YES" ? 1065: 1064): "") })
+
+                            family_planning_methods_used = answers_hash["current_fpm"].value.split(";");
+                            for (i = 0; i < family_planning_methods_used.length; i++) {
+                                obs.observations.push({ concept_id: 374, value_coded: family_planning_methods_concept_map[family_planning_methods_used[i]] })
+                            }
+
+                            todays_family_planning_methods = answers_hash["todays_fpm"].value.split(";");
+                            for (i = 0; i < todays_family_planning_methods.length; i++) {
+                                obs.observations.push({ concept_id: 1618, value_coded: family_planning_methods_concept_map[todays_family_planning_methods[i]] })
+                            }
+
+                        }
+
                         createObs(obs, "nextPage")
+                    }
+
+                    function getSideEffectAnswer(key){
+                        yesValue = sideEffectsHash[key]["yes"];
+                        noValue = sideEffectsHash[key]["no"];
+                        if (yesValue.length == 0 && noValue.length == 0){
+                            return "";
+                        }
+                        if (yesValue.length > 0){
+                            return "YES"
+                        }
+                        if (noValue.length > 0){
+                            return "NO";
+                        }
+                    }
+
+                    function getTBSymptomsAnswer(key){
+                        yesValue = tbSymptomsHash[key]["yes"];
+                        noValue = tbSymptomsHash[key]["no"];
+                        if (yesValue.length == 0 && noValue.length == 0){
+                            return "";
+                        }
+                        if (yesValue.length > 0){
+                            return "YES"
+                        }
+                        if (noValue.length > 0){
+                            return "NO";
+                        }
                     }
 
                     function nextPage(){
                         alert("Done");
                     }
 
+                    function setNextButtonToGetInputValue(key){
+                        __$('nextButton').onmousedown = function(){
+                            value = __$('touchscreenInput' + tstCurrentPage).value;
+                            answers_hash[key] = value;
+                            gotoNextPage();
+                        }
+                    }
+
+                    function changeSubmitFunction(){
+                        var nextButton =  document.getElementById('nextButton');
+                        nextButton.onmousedown = function(){
+                            submitHIVClinicConsultation();
+                            alert("Form submitted");
+                        }
+                    }
                 </script>
 
                 <form action="#" method='post'>
+
+                    <select allowFreeText="false" helpText="Currently pregnant?" id="pregnant" name="observations[][value_coded_or_text]" tt_onLoad="setNextButtonToGetInputValue('is_patient_pregnant'); showCategory2('Clinic consultation');" tt_pageStyleClass="NoKeyboard" validationCode="checkPregnancyAndAge() == 'false'" validationMessage="Patient (Viral Load) is 25 years old. Is she pregnant?">
+                        <option value=''></option>
+                        <option value=""></option>
+                        <option value="YES">Yes</option>
+                        <option value="NO">No</option>
+                        <option value="UNKNOWN">Unknown</option></select>
+
+                    <select allowFreeText="false" helpText="Currently breastfeeding?" id="breast_feeding" name="observations[][value_coded_or_text]" tt_onLoad="setNextButtonToGetInputValue('is_patient_breastfeeding'); showCategory2('Clinic consultation');" tt_pageStyleClass="NoKeyboard" validationCode="checkBreastfeedingAndAge() == 'false'" validationMessage="Patient (Viral Load) is 25 years old. Is she breastfeeding?">
+                        <option value=''></option>
+                        <option value=""></option>
+                        <option value="YES">Yes</option>
+                        <option value="NO">No</option>
+                        <option value="UNKNOWN">Unknown</option>
+                    </select>
+
+                    <input allowFreeText="false" id="on_fpm" name="observations[][value_coded_or_text]" type="hidden" value="" />
+
+                    <select allowFreeText="false" condition="$('pregnant').value != 'YES'" helpText="What method are you currently on?" id="fpm_used" multiple="multiple" name="observations[][value_coded_or_text_multiple][]" tt_onLoad="setNextButtonToGetInputValue('current_fpm'); showCategory2('Clinic consultation'); fpm_used=false; startFamilyPlanningTimer(); window.setTimeout('controlNoneSelectionForFamilyPlanning(); setOptionsForSafeFamilyPlanningMethodsPopup();', 300);" tt_onUnLoad="stopFamilyPlanningTimer(); updateFamilyPlanningHiddenField();" tt_pageStyleClass="NoKeyboard"><option value=''></option><option value=""></option>
+                        <option value="ORAL CONTRACEPTIVE PILLS">Oral contraceptive pills</option>
+                        <option value="DEPO-PROVERA">Depo-Provera</option>
+                        <option value="INTRAUTERINE CONTRACEPTION">Intrauterine device/loop</option>
+                        <option value="CONTRACEPTIVE IMPLANT">Implant</option>
+                        <option value="MALE CONDOMS">Male condoms</option>
+                        <option value="FEMALE CONDOMS">Female condoms</option>
+                        <option value="TUBAL LIGATION">Tubal ligation</option>
+                        <option value="NONE">None of the above</option></select>
+
+                    <select allowFreeText="false" condition="$('pregnant').value != 'YES'" helpText="What method are you providing today?" id="fpm_used" multiple="multiple" name="observations[][value_coded_or_text_multiple][]" tt_onLoad="setNextButtonToGetInputValue('todays_fpm'); showCategory2('Clinic consultation'); fpm_used=false; startFamilyPlanningTimer(); window.setTimeout('controlNoneSelectionForFamilyPlanning(); setOptionsForSafeFamilyPlanningMethodsPopup();', 300)" tt_onUnLoad="stopFamilyPlanningTimer();" tt_pageStyleClass="NoKeyboard"><option value=''></option><option value=""></option>
+                        <option value="ORAL CONTRACEPTIVE PILLS">Oral contraceptive pills</option>
+                        <option value="DEPO-PROVERA">Depo-Provera</option>
+                        <option value="INTRAUTERINE CONTRACEPTION">Intrauterine device/loop</option>
+                        <option value="CONTRACEPTIVE IMPLANT">Implant</option>
+                        <option value="MALE CONDOMS">Male condoms</option>
+                        <option value="FEMALE CONDOMS">Female condoms</option>
+                        <option value="TUBAL LIGATION">Tubal ligation</option>
+                        <option value="NONE">None of the above</option></select>
+
+
+                    <input allowFreeText="false" id="on_fpm" name="observations[][value_coded_or_text]" type="hidden" value="" />
 
                     <input allowFreeText="false" id="Peripheral neuropathy" name="observations[][value_coded_or_text]" type="hidden" value="Peripheral neuropathy" />
 
@@ -1633,11 +1752,11 @@
 
                     <!-- TRANSFER IN END -->
 
-                    <input allowFreeText="false" id="pregnant" name="observations[][value_coded_or_text]" type="hidden" value="NO" />
+                    <input allowFreeText="false" id="pregnant" name="observations[][value_coded_or_text]" type="hidden" />
 
                     <input conditions="true" helpText="Potential Side effects (select all that apply)" id="side_effects" name="advanced_side_effects" optional="true" tt_onLoad="showCategory2('Clinic consultation'); advancedSideEffects(); __$('keyboard').style.display = 'none';" tt_pageStyleClass="NoControls" type="text" />
 
-                    <select allowFreeText="false" helpText="On TB Treatment?" id="tb_treatment_question" name="observations[][value_coded_or_text]" tt_onLoad="showCategory2('Clinic consultation');" tt_onUnLoad="showCategory2('Clinic consultation'); hideTBStatusQuestion();" tt_pageStyleClass="NoKeyboard">
+                    <select allowFreeText="false" helpText="On TB Treatment?" id="tb_treatment_question" name="observations[][value_coded_or_text]" tt_onLoad="setNextButtonToGetInputValue('on_tb_treatment'); showCategory2('Clinic consultation');" tt_onUnLoad="showCategory2('Clinic consultation'); hideTBStatusQuestion();" tt_pageStyleClass="NoKeyboard">
                         <option value=''></option>
                         <option value=""></option>
                         <option value="Yes">Yes</option>
@@ -1648,14 +1767,13 @@
                     <input condition="__$('tb_treatment_question').value == 'No'" helpText="TB associated symptoms" id="routine_tb_screening" name="advanced_tb_symptoms" optional="true" tt_onLoad="showCategory2('Clinic consultation'); advancedTBSymptoms(); __$('keyboard').style.display = 'none';" tt_pageStyleClass="NoControls" type="text" />
 
                     <select allowFreeText="false" condition="true && __$('tb_treatment_question').value.toUpperCase() == 'NO'
-                            && tbSymptomsHashSelects() == 'YES'" helpText="TB Status" id="tb_status" name="observations[][value_coded_or_text]" tt_onLoad="showCategory2('Clinic consultation');checkTbHivStatus(); checkAndSelectTBSuspected(); checkAndSelectConfirmedTBOnTreatment();" tt_pageStyleClass="NoKeyboard">
+                            && tbSymptomsHashSelects() == 'YES'" helpText="TB Status" id="tb_status" name="observations[][value_coded_or_text]" tt_onLoad="setNextButtonToGetInputValue('tb_status'); changeSubmitFunction(); showCategory2('Clinic consultation');checkTbHivStatus(); checkAndSelectTBSuspected(); checkAndSelectConfirmedTBOnTreatment();" tt_pageStyleClass="NoKeyboard">
                         <option value=''></option>
                         <option value="TB NOT suspected">TB NOT suspected</option>
                         <option value="TB suspected">TB suspected</option>
                         <option value="Confirmed TB NOT on treatment">Confirmed TB NOT on treatment</option>
                     </select>
 
-                    <input id="filter_provider" name="filter[provider]" type="hidden" />
 
                     <input allowFreeText="false" id="fast-track-input" name="observations[][value_coded_or_text]" type="hidden" value="" />
 
