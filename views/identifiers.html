@@ -19,8 +19,8 @@
 
     <div class="demo-header-cell demo-left" style="">
       
-        <div id="name-title"><strong>ART - Start Date: </strong>&nbsp;<span id="art-start-date"></span><span id="art-duration"> </span></div>
-        <div class="birthdates"><span class="headers"><strong>ARV Number:</strong></span> (<span id="arv-number"></span>)
+        <div id="name-title"><strong>ART - Start Date: </strong>&nbsp;<span id="art-start-date"></span> / <span id="art-duration"> </span> </div>
+        <div class="birthdates"><span class="headers"><strong>ARV Number:</strong></span> (<span id="arv-number"></span>) 
         </div>
         <div class="addresses"><span class="headers"><strong>File Number:</strong></span>&nbsp;<span id="filing-number"></span></div>
         <div class="addresses"><span class="headers"><strong>Current Outcome:</strong></span>&nbsp;<span id="current-outcome"></span></div>
@@ -42,14 +42,12 @@
           if (this.readyState == 4) {
             if (this.status == 200) {
               var results = JSON.parse(this.responseText);
+              console.log(results.art_duration);
               document.getElementById("art-start-date").innerHTML = results.art_start_date;
-              // document.getElementById("reason").innerHTML = results.reason_for_art;
+              document.getElementById("art-duration").innerHTML ="("+ Math.floor(results.art_duration) + " month(s))"
               document.getElementById("filing-number").innerHTML = results.filing_number;
-              // document.getElementById("art-duration").innerHTML = results.art_duration;
               document.getElementById("arv-number").innerHTML = results.arv_number;
               document.getElementById("current-outcome").innerHTML = results.current_outcome;
-              // document.getElementById("residence").innerHTML = results.residence;
-              // document.getElementById("current-regimen").innerHTML = results.current_regimen;
             }
           }
         };
