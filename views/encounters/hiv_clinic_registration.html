@@ -359,7 +359,7 @@
 
                         if (dateCreate(set_dob) == 'Invalid Date') {
                             if (set_dob.split('-')[1] == 'Unknown')
-                            return true
+                                return true
 
                             if (curr_date.getFullYear() == parseInt(dob_year)) {
                                 if ((curr_date.getMonth() + 1) < parseInt(dob_month)) {
@@ -1123,12 +1123,12 @@
                         switch (num) {
                             case 1:
                                 return "I";
-                            case 2:
-                                return "II";
-                            case 3:
-                                return "III";
-                            case 4:
-                                return "IV";
+                        case 2:
+                            return "II";
+                        case 3:
+                            return "III";
+                        case 4:
+                            return "IV";
                         }
                     }
 
@@ -1301,7 +1301,7 @@
                         var month_started_art = $("month_started_art").value
 
                         if (ever_received_art.toLowerCase() == 'no')
-                            return "false";
+                        return "false";
 
                         if (ever_registered_at_ART_clinic.toLowerCase() == 'no')
                             return "false";
@@ -1320,331 +1320,375 @@
                     function submitHIVClinicRegistration() {
 
                         var encounter = {
-                            encounter_type_name: 'HIV CLINIC REGISTRATION',
                             encounter_type_id:  9,
                             patient_id: patient_id,
                             encounter_datetime: null
+                            }
+
+                            submitEncounter(encounter, "postHIVClinicRegistrationObs");
                         }
 
-                        submitEncounter(encounter, "postHIVClinicRegistrationObs");
-                    }
+                        function submitVitalsRegistration() {
 
-                    function submitVitalsRegistration() {
+                            var encounter = {
+                                encounter_type_id:  6,
+                                patient_id: patient_id,
+                                encounter_datetime: null
+                            }
 
-                        var encounter = {
-                            encounter_type_name: 'VITALS',
-                            encounter_type_id:  6,
-                            patient_id: patient_id,
-                            encounter_datetime: null
+                            submitEncounter(encounter, "postVitalsObs");
                         }
 
-                        submitEncounter(encounter, "postVitalsObs");
-                    }
+                        function submitHIVStaging() {
 
-                    function submitHIVStaging() {
+                            var encounter = {
+                                encounter_type_id:  52,
+                                patient_id: patient_id,
+                                encounter_datetime: null
+                            }
 
-                        var encounter = {
-                            encounter_type_name: 'HIV STAGING',
-                            encounter_type_id:  52,
-                            patient_id: patient_id,
-                            encounter_datetime: null
+                            submitEncounter(encounter, "postHIVStagingObs");
                         }
 
-                        submitEncounter(encounter, "postHIVStagingObs");
-                    }
-
-                    var answers_hash = {
-                        followup_agreement: "", ever_received_art: "", date_art_last_taken: "",
-                        taken_art_in_the_last_two_months: "", taken_art_in_the_last_two_weeks: "",
-                        ever_registered: "", drug_art_last_taken: "", location_of_art_initiation: "",
-                        drug_start_date: "", date_art_started: "", art_number_at_previous_location: "",
-                        has_transfer_letter: "",height: "", weight: "", bmi: "", is_patient_pregnant: "",
-                        is_patient_breastfeeding: "",
-                        who_stages_criteria_present: "", who_stage: "", cd4_less_than_or_equal_to_250: "",
-                        cd4_less_than_or_equal_to_350: "", cd4_less_than_or_equal_to_500: "",
-                        cd4_less_than_25: "", reason_for_art_eligibility: "", cd4_location: "",
-                        cd4_datetime: "", cd4_count: "", confirmatory_hiv_test_date: "",
-                        confirmatory_hiv_test_location: "", confirmatory_hiv_test_type: "",
-                        send_sms: "", cd4_percent: ""
-                    }
-
-                    function postHIVClinicRegistrationObs(encounter_id) {
-                        var obs = {
-                            encounter_id: encounter_id,
-                            observations: [
-                                { concept_id: 2552, value_coded: answers_hash["followup_agreement"].trim().toUpperCase() == "YES" ? 1065: 1066 },
-                                { concept_id: 7937, value_coded: answers_hash["ever_registered"].trim().toUpperCase() == "YES" ? 1065: 1066 },
-                                { concept_id: 6393, value_coded: answers_hash["has_transfer_letter"].trim().toUpperCase() == "YES" ? 1065: 1066 },
-                                { concept_id: 7881, value_text: answers_hash["confirmatory_hiv_test_location"] },
-                                { concept_id: 7880, value_text: answers_hash["confirmatory_hiv_test_type"] },
-                                { concept_id: 8011, value_coded: answers_hash["send_sms"].trim().toUpperCase() == "YES" ? 1065: 1066 },
-                                { concept_id: 7751, value_datetime: answers_hash["date_art_last_taken"] },
-                                { concept_id: 7750, value_text: answers_hash["location_of_art_initiation"] },
-                                { concept_id: 1499, value_datetime: answers_hash["drug_start_date"] },
-                                { concept_id: 2516, value_datetime: answers_hash["date_art_started"] },
-                                { concept_id: 5497, value_numeric: answers_hash["cd4_count"], value_modifier: cd4_count_modifier_global },
-                                { concept_id: 6981, value_text: answers_hash["art_number_at_previous_location"] },
-                            ]
-                        };
-
-                        createObs(obs, "nextPage")
-                    }
-
-                    function postVitalsObs(encounter_id){
-                        var obs = {
-                            encounter_id: encounter_id,
-                            observations: [
-                                { concept_id: 5090, value_numeric: answers_hash["height"]},
-                                { concept_id: 5089, value_numeric: answers_hash["weight"]},
-                                { concept_id: 2137, value_numeric: answers_hash["bmi"] }                            ]
-                        };
-
-                        createObs(obs, "nextPage")
-                    }
-
-                    var who_stage_concept_map = {
-                        "Cryptococcal meningitis or other extrapulmonary cryptococcosis": 7548,
-                        "Candidiasis of oseophagus, trachea and bronchi or lungs": 5340,
-                        "Extrapulmonary tuberculosis (EPTB)": 1547,
-                        "Kaposis sarcoma": 507,
-                        "Bacterial pneumonia, severe recurrent": 1215,
-                        "Non-typhoidal Salmonella bacteraemia, recurrent": 7959,
-                        "Symptomatic HIV-associated nephropathy or cardiomyopathy": 7957,
-                        "Cerebral or B-cell non Hodgkin lymphoma": 2587,
-                        "Pneumocystis pneumonia": 882,
-                        "Chronic herpes simplex infection (orolabial, gential / anorectal >1 month or visceral at any site)": 5344,
-                        "Cytomegalovirus infection (retinitis or infection or other organs)": 7551,
-                        "Toxoplasmosis of the brain": 2583,
-                        "Invasive cancer of cervix": 2588,
-                        "Unspecified stage 4 condition": 7040,
-                        "Other": 6408,
-                        "Pneumocystis pneumonia": 882,
-                        "Candidiasis of oseophagus, trachea and bronchi or lungs": 5340,
-                        "Extrapulmonary tuberculosis (EPTB)": 1547,
-                        "Kaposis sarcoma": 507,
-                        "HIV encephalopathy": 1362,
-                        "Cryptococcal meningitis or other extrapulmonary cryptococcosis": 7548,
-                        "Disseminated non-tuberculosis mycobacterial infection": 2585,
-                        "Cryptosporidiosis, chronic with diarroea": 7549,
-                        "Isosporiasis >1 month": 7956,
-                        "Disseminated mycosis (coccidiomycosis or histoplasmosis)": 7550,
-                        "Symptomatic HIV-associated nephropathy or cardiomyopathy": 7957,
-                        "Progressive multifocal leukoencephalopathy": 5046,
-                        "Cerebral or B-cell non Hodgkin lymphoma": 2587,
-                        "Severe unexplained wasting or malnutrition not responding to treatment (weight-for-height/ -age <70% or MUAC less than 11cm or oedema)": 3068,
-                        "Bacterial infections, severe recurrent  (empyema, pyomyositis, meningitis, bone/joint infections but EXCLUDING pneumonia)": 2894,
-                        "Chronic herpes simplex infection (orolabial or cutaneous >1 month or visceral at any site)": 7960,
-                        "Cytomegalovirus infection: rentinitis or other organ (from age 1 month)": 7552,
-                        "Toxoplasmosis of the brain (from age 1 month)": 5048,
-                        "Recto-vaginal fistula, HIV-associated": 7961,
-                        "Severe weight loss >10% and/or BMI <18.5kg/m^2, unexplained": 7540,
-                        "Diarrhoea, chronic (>1 month) unexplained": 5018,
-                        "Fever, persistent unexplained, intermittent or constant, >1 month": 5027,
-                        "Pulmonary tuberculosis (current)": 8206,
-                        "Tuberculosis (PTB or EPTB) within the last 2 years": 7539,
-                        "Oral candidiasis": 5334,
-                        "Anaemia, unexplained < 8 g/dl": 2582,
-                        "Neutropaenia, unexplained < 500 /mm(cubed)": 7954,
-                        "Severe bacterial infections (pneumonia, empyema, pyomyositis, bone/joint, meningitis, bacteraemia)": 7541,
-                        "Thrombocytopaenia, chronic < 50,000 /mm(cubed)": 7955,
-                        "Hepatitis B or C infection": 8205,
-                        "Oral hairy leukoplakia": 5337,
-                        "Unspecified stage 3 condition": 7039,
-                        "Fever, persistent unexplained, intermittent or constant, >1 month": 5027,
-                        "Oral hairy leukoplakia": 5337,
-                        "Pulmonary tuberculosis (current)": 8206,
-                        "Tuberculosis (PTB or EPTB) within the last 2 years": 7539,
-                        "Anaemia, unexplained < 8 g/dl": 2582,
-                        "Neutropaenia, unexplained < 500 /mm(cubed)": 7954,
-                        "Thrombocytopaenia, chronic < 50,000 /mm(cubed)": 7955,
-                        "Moderate unexplained wasting/malnutrition not responding to treatment (weight-for-height/ -age 70-79% or muac 11-12 cm)": 7543,
-                        "Diarrhoea, persistent unexplained (14 days or more)": 7544,
-                        "Oral candidiasis (from age 2 months)": 7545,
-                        "Acute necrotizing ulcerative gingivitis or periodontitis": 7546,
-                        "Lymph node tuberculosis": 7547,
-                        "Bacterial pneumonia, severe recurrent": 1215,
-                        "Symptomatic lymphoid interstitial pneumonia": 5024,
-                        "Chronic HIV-associated lung disease, including bronchiectasis": 2889,
-                        "Moderate weight loss less than or equal to 10 percent, unexplained": 5332,
-                        "Respiratory tract infections, recurrent (sinusitis, tonsilitus, otitis media, pharyngitis)": 5012,
-                        "Seborrhoeic dermatitis": 2578,
-                        "Papular pruritic eruptions / Fungal nail infections": 7536,
-                        "Herpes zoster": 836,
-                        "Angular cheilitis": 2575,
-                        "Oral ulcerations, recurrent": 2576,
-                        "Unspecified stage 2 condition": 7038,
-                        "Respiratory tract infections, recurrent (sinusitis, tonsilitus, otitis media, pharyngitis)": 5012,
-                        "Herpes zoster": 836,
-                        "Angular cheilitis": 2575,
-                        "Oral ulcerations, recurrent": 2576,
-                        "Papular pruritic eruptions / Fungal nail infections": 7536,
-                        "Hepatosplenomegaly, persistent unexplained": 7537,
-                        "Lineal gingival erythema": 2891,
-                        "Wart virus infection, extensive": 6775,
-                        "Molluscum contagiosum, extensive": 6776,
-                        "Parotid enlargement, persistent unexplained": 1210,
-                        "Asymptomatic HIV infection": 5327,
-                        "Persistent generalized lymphadenopathy": 5328
-                    }
-
-
-                    function postHIVStagingObs(encounter_id){
-                        var obs = {
-                            encounter_id: encounter_id,
-                            observations: [                               
-                                { concept_id: 7752, value_coded: answers_hash["taken_art_in_the_last_two_months"].trim().toUpperCase() == "YES" ? 1065: 1066 },
-                                { concept_id: 6394, value_coded: answers_hash["taken_art_in_the_last_two_weeks"].trim().toUpperCase() == "YES" ? 1065: 1066 },
-                                { concept_id: 7562, value_text: answers_hash["who_stage"] },
-                                { concept_id: 8262, value_text: answers_hash["cd4_less_than_or_equal_to_250"] },
-                                { concept_id: 8207, value_text: answers_hash["cd4_less_than_or_equal_to_350"] },
-                                { concept_id: 9389, value_text: answers_hash["cd4_less_than_or_equal_to_500"] },
-                                { concept_id: 7032, value_text: answers_hash["cd4_less_than_25"] },
-                                { concept_id: 7563, value_text: answers_hash["reason_for_art_eligibility"] },
-                                { concept_id: 6830, value_text: answers_hash["cd4_location"] },
-                                { concept_id: 6831, value_datetime: answers_hash["cd4_datetime"] },
-                                { concept_id: 5497, value_numeric: answers_hash["cd4_count"], value_modifier: cd4_count_modifier_global },
-                                { concept_id: 730, value_text: answers_hash["cd4_percent"], value_modifier: cd4_percent_modifier_global }
-                            ]
-                        };
-
-                        if (patientGender == "FEMALE"){
-                            obs.observations.push({ concept_id: 6131, value_coded: (answers_hash["is_patient_pregnant"].length > 0 ? (answers_hash["is_patient_pregnant"].trim().toUpperCase() == "YES" ? 1065: 1066): "" )})
-                            obs.observations.push({ concept_id: 7965, value_coded: (answers_hash["is_patient_breastfeeding"].length > 0 ? (answers_hash["is_patient_breastfeeding"].trim().toUpperCase() == "YES" ? 1065: 1066): "") })
+                        var answers_hash = {
+                            followup_agreement: "", ever_received_art: "", date_art_last_taken: "",
+                            taken_art_in_the_last_two_months: "", taken_art_in_the_last_two_weeks: "",
+                            ever_registered: "", drug_art_last_taken: "", location_of_art_initiation: "",
+                            drug_start_date: "", date_art_started: "", art_number_at_previous_location: "",
+                            has_transfer_letter: "",height: "", weight: "", bmi: "", is_patient_pregnant: "",
+                            is_patient_breastfeeding: "",
+                            who_stages_criteria_present: "", who_stage: "", cd4_less_than_or_equal_to_250: "",
+                            cd4_less_than_or_equal_to_350: "", cd4_less_than_or_equal_to_500: "",
+                            cd4_less_than_25: "", reason_for_art_eligibility: "", cd4_location: "",
+                            cd4_datetime: "", cd4_count: "", confirmatory_hiv_test_date: "",
+                            confirmatory_hiv_test_location: "", confirmatory_hiv_test_type: "",
+                            send_sms: "", cd4_percent: ""
                         }
 
-                        for (condition in selected_stage_conditions) {
-                            if (selected_stage_conditions[condition].length > 0) {
-                                conditions = selected_stage_conditions[condition].split(';');
-                                for (i = 0; i < conditions.length; i++) {
-                                    obs.observations.push({ concept_id: 2743, value_coded: who_stage_concept_map[conditions[i]] })
+                        function postHIVClinicRegistrationObs(encounter_id) {
+                            var obs = {
+                                encounter_id: encounter_id,
+                                observations: [
+                                    { concept_id: 2552, value_coded: answers_hash["followup_agreement"].trim().toUpperCase() == "YES" ? 1065: 1066 },
+                                    { concept_id: 7937, value_coded: answers_hash["ever_registered"].trim().toUpperCase() == "YES" ? 1065: 1066 },
+                                    { concept_id: 6393, value_coded: answers_hash["has_transfer_letter"].trim().toUpperCase() == "YES" ? 1065: 1066 },
+                                    { concept_id: 7881, value_text: answers_hash["confirmatory_hiv_test_location"] },
+                                    { concept_id: 7880, value_text: answers_hash["confirmatory_hiv_test_type"] },
+                                    { concept_id: 8011, value_coded: answers_hash["send_sms"].trim().toUpperCase() == "YES" ? 1065: 1066 },
+                                    { concept_id: 7751, value_datetime: answers_hash["date_art_last_taken"] },
+                                    { concept_id: 7750, value_text: answers_hash["location_of_art_initiation"] },
+                                    { concept_id: 1499, value_datetime: answers_hash["drug_start_date"] },
+                                    { concept_id: 2516, value_datetime: answers_hash["date_art_started"] },
+                                    { concept_id: 5497, value_numeric: answers_hash["cd4_count"], value_modifier: cd4_count_modifier_global },
+                                    { concept_id: 6981, value_text: answers_hash["art_number_at_previous_location"] },
+                                ]
+                            };
+
+                            createObs(obs, "nextPage")
+                        }
+
+                        function postVitalsObs(encounter_id){
+                            var obs = {
+                                encounter_id: encounter_id,
+                                observations: [
+                                    { concept_id: 5090, value_numeric: answers_hash["height"]},
+                                    { concept_id: 5089, value_numeric: answers_hash["weight"]},
+                                    { concept_id: 2137, value_numeric: answers_hash["bmi"] }                            ]
+                            };
+
+                            createObs(obs, "nextPage")
+                        }
+
+                        var who_stage_concept_map = {
+                            "Cryptococcal meningitis or other extrapulmonary cryptococcosis": 7548,
+                            "Candidiasis of oseophagus, trachea and bronchi or lungs": 5340,
+                            "Extrapulmonary tuberculosis (EPTB)": 1547,
+                            "Kaposis sarcoma": 507,
+                            "Bacterial pneumonia, severe recurrent": 1215,
+                            "Non-typhoidal Salmonella bacteraemia, recurrent": 7959,
+                            "Symptomatic HIV-associated nephropathy or cardiomyopathy": 7957,
+                            "Cerebral or B-cell non Hodgkin lymphoma": 2587,
+                            "Pneumocystis pneumonia": 882,
+                            "Chronic herpes simplex infection (orolabial, gential / anorectal >1 month or visceral at any site)": 5344,
+                            "Cytomegalovirus infection (retinitis or infection or other organs)": 7551,
+                            "Toxoplasmosis of the brain": 2583,
+                            "Invasive cancer of cervix": 2588,
+                            "Unspecified stage 4 condition": 7040,
+                            "Other": 6408,
+                            "Pneumocystis pneumonia": 882,
+                            "Candidiasis of oseophagus, trachea and bronchi or lungs": 5340,
+                            "Extrapulmonary tuberculosis (EPTB)": 1547,
+                            "Kaposis sarcoma": 507,
+                            "HIV encephalopathy": 1362,
+                            "Cryptococcal meningitis or other extrapulmonary cryptococcosis": 7548,
+                            "Disseminated non-tuberculosis mycobacterial infection": 2585,
+                            "Cryptosporidiosis, chronic with diarroea": 7549,
+                            "Isosporiasis >1 month": 7956,
+                            "Disseminated mycosis (coccidiomycosis or histoplasmosis)": 7550,
+                            "Symptomatic HIV-associated nephropathy or cardiomyopathy": 7957,
+                            "Progressive multifocal leukoencephalopathy": 5046,
+                            "Cerebral or B-cell non Hodgkin lymphoma": 2587,
+                            "Severe unexplained wasting or malnutrition not responding to treatment (weight-for-height/ -age <70% or MUAC less than 11cm or oedema)": 3068,
+                            "Bacterial infections, severe recurrent  (empyema, pyomyositis, meningitis, bone/joint infections but EXCLUDING pneumonia)": 2894,
+                            "Chronic herpes simplex infection (orolabial or cutaneous >1 month or visceral at any site)": 7960,
+                            "Cytomegalovirus infection: rentinitis or other organ (from age 1 month)": 7552,
+                            "Toxoplasmosis of the brain (from age 1 month)": 5048,
+                            "Recto-vaginal fistula, HIV-associated": 7961,
+                            "Severe weight loss >10% and/or BMI <18.5kg/m^2, unexplained": 7540,
+                            "Diarrhoea, chronic (>1 month) unexplained": 5018,
+                            "Fever, persistent unexplained, intermittent or constant, >1 month": 5027,
+                            "Pulmonary tuberculosis (current)": 8206,
+                            "Tuberculosis (PTB or EPTB) within the last 2 years": 7539,
+                            "Oral candidiasis": 5334,
+                            "Anaemia, unexplained < 8 g/dl": 2582,
+                            "Neutropaenia, unexplained < 500 /mm(cubed)": 7954,
+                            "Severe bacterial infections (pneumonia, empyema, pyomyositis, bone/joint, meningitis, bacteraemia)": 7541,
+                            "Thrombocytopaenia, chronic < 50,000 /mm(cubed)": 7955,
+                            "Hepatitis B or C infection": 8205,
+                            "Oral hairy leukoplakia": 5337,
+                            "Unspecified stage 3 condition": 7039,
+                            "Fever, persistent unexplained, intermittent or constant, >1 month": 5027,
+                            "Oral hairy leukoplakia": 5337,
+                            "Pulmonary tuberculosis (current)": 8206,
+                            "Tuberculosis (PTB or EPTB) within the last 2 years": 7539,
+                            "Anaemia, unexplained < 8 g/dl": 2582,
+                            "Neutropaenia, unexplained < 500 /mm(cubed)": 7954,
+                            "Thrombocytopaenia, chronic < 50,000 /mm(cubed)": 7955,
+                            "Moderate unexplained wasting/malnutrition not responding to treatment (weight-for-height/ -age 70-79% or muac 11-12 cm)": 7543,
+                            "Diarrhoea, persistent unexplained (14 days or more)": 7544,
+                            "Oral candidiasis (from age 2 months)": 7545,
+                            "Acute necrotizing ulcerative gingivitis or periodontitis": 7546,
+                            "Lymph node tuberculosis": 7547,
+                            "Bacterial pneumonia, severe recurrent": 1215,
+                            "Symptomatic lymphoid interstitial pneumonia": 5024,
+                            "Chronic HIV-associated lung disease, including bronchiectasis": 2889,
+                            "Moderate weight loss less than or equal to 10 percent, unexplained": 5332,
+                            "Respiratory tract infections, recurrent (sinusitis, tonsilitus, otitis media, pharyngitis)": 5012,
+                            "Seborrhoeic dermatitis": 2578,
+                            "Papular pruritic eruptions / Fungal nail infections": 7536,
+                            "Herpes zoster": 836,
+                            "Angular cheilitis": 2575,
+                            "Oral ulcerations, recurrent": 2576,
+                            "Unspecified stage 2 condition": 7038,
+                            "Respiratory tract infections, recurrent (sinusitis, tonsilitus, otitis media, pharyngitis)": 5012,
+                            "Herpes zoster": 836,
+                            "Angular cheilitis": 2575,
+                            "Oral ulcerations, recurrent": 2576,
+                            "Papular pruritic eruptions / Fungal nail infections": 7536,
+                            "Hepatosplenomegaly, persistent unexplained": 7537,
+                            "Lineal gingival erythema": 2891,
+                            "Wart virus infection, extensive": 6775,
+                            "Molluscum contagiosum, extensive": 6776,
+                            "Parotid enlargement, persistent unexplained": 1210,
+                            "Asymptomatic HIV infection": 5327,
+                            "Persistent generalized lymphadenopathy": 5328
+                        }
+
+
+                        function postHIVStagingObs(encounter_id){
+                            var obs = {
+                                encounter_id: encounter_id,
+                                observations: [
+                                    { concept_id: 7752, value_coded: answers_hash["taken_art_in_the_last_two_months"].trim().toUpperCase() == "YES" ? 1065: 1066 },
+                                    { concept_id: 6394, value_coded: answers_hash["taken_art_in_the_last_two_weeks"].trim().toUpperCase() == "YES" ? 1065: 1066 },
+                                    { concept_id: 7562, value_text: answers_hash["who_stage"] },
+                                    { concept_id: 8262, value_text: answers_hash["cd4_less_than_or_equal_to_250"] },
+                                    { concept_id: 8207, value_text: answers_hash["cd4_less_than_or_equal_to_350"] },
+                                    { concept_id: 9389, value_text: answers_hash["cd4_less_than_or_equal_to_500"] },
+                                    { concept_id: 7032, value_text: answers_hash["cd4_less_than_25"] },
+                                    { concept_id: 7563, value_text: answers_hash["reason_for_art_eligibility"] },
+                                    { concept_id: 6830, value_text: answers_hash["cd4_location"] },
+                                    { concept_id: 6831, value_datetime: answers_hash["cd4_datetime"] },
+                                    { concept_id: 5497, value_numeric: answers_hash["cd4_count"], value_modifier: cd4_count_modifier_global },
+                                    { concept_id: 730, value_text: answers_hash["cd4_percent"], value_modifier: cd4_percent_modifier_global }
+                                ]
+                            };
+
+                            if (patientGender == "FEMALE"){
+                                obs.observations.push({ concept_id: 6131, value_coded: (answers_hash["is_patient_pregnant"].length > 0 ? (answers_hash["is_patient_pregnant"].trim().toUpperCase() == "YES" ? 1065: 1066): "" )})
+                                obs.observations.push({ concept_id: 7965, value_coded: (answers_hash["is_patient_breastfeeding"].length > 0 ? (answers_hash["is_patient_breastfeeding"].trim().toUpperCase() == "YES" ? 1065: 1066): "") })
+                            }
+
+                            for (condition in selected_stage_conditions) {
+                                if (selected_stage_conditions[condition].length > 0) {
+                                    conditions = selected_stage_conditions[condition].split(';');
+                                    for (i = 0; i < conditions.length; i++) {
+                                        obs.observations.push({ concept_id: 2743, value_coded: who_stage_concept_map[conditions[i]] })
+                                    }
+                                }
+                            }
+
+
+                            createObs(obs, "nextPage")
+                        }
+
+
+
+                        function nextPage(){
+                            alert("Done");
+                        }
+
+                        function setNextButtonToGetInputValue(key){
+                            __$('nextButton').onmousedown = function(){
+                                value = __$('touchscreenInput' + tstCurrentPage).value;
+                                answers_hash[key] = value;
+                                gotoNextPage();
+                            }
+                        }
+
+                        function setNextButtonToGetDateARTLastTaken(key){
+                            __$('nextButton').onmousedown = function(){
+                                year_art_last_taken = $('year_art_last_taken').value
+                                month_art_last_taken = $('month_art_last_taken').value
+                                day_art_last_taken = __$('touchscreenInput' + tstCurrentPage).value;
+
+
+                                date_art_last_taken = year_art_last_taken + "-" + month_art_last_taken + "-" + day_art_last_taken
+                                answers_hash[key] = date_art_last_taken;
+                                gotoNextPage();
+                            }
+                        }
+                    
+                        function setNextButtonToGetDateStartedART(key){
+                            __$('nextButton').onmousedown = function(){
+                                year_started_art = $('year_started_art').value
+                                month_started_art = $('month_started_art').value
+                                day_started_art = __$('touchscreenInput' + tstCurrentPage).value;
+
+                                art_start_date = year_started_art + "-" + month_started_art + "-" + day_started_art
+                                answers_hash[key] = art_start_date;
+                                gotoNextPage();
+                            }
+                        }
+
+                        function setNextButtonToGetCD4(key){
+                            __$('nextButton').onmousedown = function(){
+                                $('year_of_cd4').value, $('month_of_cd4').value
+
+                                cd4_year = $('year_of_cd4').value
+                                cd4_month = $('month_of_cd4').value
+                                cd4_day = __$('touchscreenInput' + tstCurrentPage).value;
+
+                                cd4_date = cd4_year + "-" + cd4_month + "-" + cd4_day
+                                answers_hash[key] = art_start_date;
+                                gotoNextPage();
+                            }
+                        }
+
+                        function setNextButtonToGetConfirmatoryTestDate(key){
+                            __$('nextButton').onmousedown = function(){
+                                confirmatory_hiv_test_year = $('confirmatory_hiv_test_year').value
+                                confirmatory_hiv_test_month = $('confirmatory_hiv_test_month').value
+                                confirmatory_hiv_test_day = __$('touchscreenInput' + tstCurrentPage).value;
+
+                                confirmatory_date = confirmatory_hiv_test_year + "-" + confirmatory_hiv_test_month + "-" + confirmatory_hiv_test_day;
+                                answers_hash[key] = art_start_date;
+                                gotoNextPage();
+                            }
+                        }
+
+                        function submitEncounterOnUnknownConfirmatoryDate(){
+                            var nextButton =  document.getElementById('nextButton');
+                            nextButton.onmousedown = function(){
+                                value = $('touchscreenInput'+tstCurrentPage).value;
+                                if (value.match(/UNKNOWN/i)){
+                                    submitHIVClinicRegistration();
+                                    submitVitalsRegistration();
+                                    submitHIVStaging();
+                                } else{
+                                    gotoNextPage();
                                 }
                             }
                         }
 
+                        
+                        function setDateARTLastTaken(){
+                            taken_art_in_the_last_two_months = answers_hash["taken_art_in_the_last_two_months"].toUpperCase();
+                            taken_art_in_the_last_two_weeks = answers_hash["taken_art_in_the_last_two_weeks"].toUpperCase();
 
-                        createObs(obs, "nextPage")
-                    }
+                            year_art_taken = parseInt(__$("year_art_last_taken").value);
+                            month_art_taken = __$("month_art_last_taken").value;
+                            day_art_taken = parseInt(__$("day_art_last_taken").value);
 
+                            if (taken_art_in_the_last_two_months == 'YES'){
+                                if (taken_art_in_the_last_two_weeks == 'YES'){
+                                    var date = new Date();
+                                    date.setDate(date.getDate() - 14); //two weeks
+                                    date = date.toDateString();
+                                    answers_hash["date_art_last_taken"] = date;
+                                }
+                                if (taken_art_in_the_last_two_weeks == 'NO'){
+                                    var date = new Date();
+                                    date.setDate(date.getDate() - 60); // 2 months
+                                    date = date.toDateString();
+                                    answers_hash["date_art_last_taken"] = date;
+                                }
+                            }
 
+                            if (taken_art_in_the_last_two_months == 'NO'){
+                                var date = new Date();
+                                date.setDate(date.getDate() - 90); //3 months
+                                date = date.toDateString();
+                                answers_hash["date_art_last_taken"] = date;
+                                answers_hash["date_art_last_taken"] = date;
+                            }
 
-                    function nextPage(){
-                        alert("Done");
-                    }
+                            if (year_art_taken > 1 && month_art_taken != 'Unknown' && day_art_taken > 0){
+                                date = year_art_taken + "/" + month_art_taken + "/" + day_art_taken
+                            }
 
-                    function setNextButtonToGetInputValue(key){
-                        __$('nextButton').onmousedown = function(){
-                            value = __$('touchscreenInput' + tstCurrentPage).value;
-                            answers_hash[key] = value;
-                            gotoNextPage();
+                            if (year_art_taken > 1 && month_art_taken == 'Unknown'){
+                                date = year_art_taken + "/July/01";
+                                answers_hash["date_art_last_taken"] = date;
+                            }
+                            else if (year_art_taken > 1 && month_art_taken != 'Unknown' &&  isNaN(day_art_taken)){
+                                date = year_art_taken + "/" +  month_art_taken + "/15";
+                                answers_hash["date_art_last_taken"] = date;
+                            }
+
                         }
-                    }
 
-                    function setNextButtonToGetDateARTLastTaken(key){
-                        __$('nextButton').onmousedown = function(){
-                            year_art_last_taken = $('year_art_last_taken').value
-                            month_art_last_taken = $('month_art_last_taken').value
-                            day_art_last_taken = __$('touchscreenInput' + tstCurrentPage).value;
-
-
-                            date_art_last_taken = year_art_last_taken + "-" + month_art_last_taken + "-" + day_art_last_taken
-                            answers_hash[key] = date_art_last_taken;
-                            gotoNextPage();
-                        }
-                    }
-                    
-                    function setNextButtonToGetDateStartedART(key){
-                        __$('nextButton').onmousedown = function(){
-                            year_started_art = $('year_started_art').value
-                            month_started_art = $('month_started_art').value
-                            day_started_art = __$('touchscreenInput' + tstCurrentPage).value;
-
-                            art_start_date = year_started_art + "-" + month_started_art + "-" + day_started_art
-                            answers_hash[key] = art_start_date;
-                            gotoNextPage();
-                        }
-                    }
-
-                    function setNextButtonToGetCD4(key){
-                        __$('nextButton').onmousedown = function(){
-                            $('year_of_cd4').value, $('month_of_cd4').value
-
-                            cd4_year = $('year_of_cd4').value
-                            cd4_month = $('month_of_cd4').value
-                            cd4_day = __$('touchscreenInput' + tstCurrentPage).value;
-
-                            cd4_date = cd4_year + "-" + cd4_month + "-" + cd4_day
-                            answers_hash[key] = art_start_date;
-                            gotoNextPage();
-                        }
-                    }
-
-                    function setNextButtonToGetConfirmatoryTestDate(key){
-                        __$('nextButton').onmousedown = function(){
-                            confirmatory_hiv_test_year = $('confirmatory_hiv_test_year').value
-                            confirmatory_hiv_test_month = $('confirmatory_hiv_test_month').value
-                            confirmatory_hiv_test_day = __$('touchscreenInput' + tstCurrentPage).value;
-
-                            confirmatory_date = confirmatory_hiv_test_year + "-" + confirmatory_hiv_test_month + "-" + confirmatory_hiv_test_day;
-                            answers_hash[key] = art_start_date;
-                            gotoNextPage();
-                        }
-                    }
-
-                    function submitEncounterOnUnknownConfirmatoryDate(){
-                        var nextButton =  document.getElementById('nextButton');
-                        nextButton.onmousedown = function(){
-                            value = $('touchscreenInput'+tstCurrentPage).value;
-                            if (value.match(/UNKNOWN/i)){
+                        function changeSubmitFunction(){
+                            var nextButton =  document.getElementById('nextButton');
+                            nextButton.onmousedown = function(){
                                 submitHIVClinicRegistration();
                                 submitVitalsRegistration();
                                 submitHIVStaging();
-                            } else{
-                                gotoNextPage();
+                                alert("Form submitted")
                             }
                         }
-                    }
 
-                    function changeSubmitFunction(){
-                        var nextButton =  document.getElementById('nextButton');
-                        nextButton.onmousedown = function(){
-                            submitHIVClinicRegistration();
-                            submitVitalsRegistration();
-                            submitHIVStaging();
-                            alert("Form submitted")
+                        function showCategory2(category) {
+                            if (category.length < 1)
+                                return;
+
+                            var pos = checkCtrl(__$("content"));
+
+                            if (__$("category")) {
+                                document.body.removeChild(__$("category"));
+                            }
+
+                            var cat = document.createElement("div");
+                            cat.id = "category";
+                            cat.style.position = "absolute";
+                            cat.style.right = "10px";
+                            cat.style.top = (pos[2] + 2) + "px";
+                            cat.style.fontSize = "26px";
+                            cat.style.padding = "10px";
+                            cat.style.backgroundColor = "#9e9";
+                            cat.style.borderColor = "#7c7";
+                            cat.style.color = "#000";
+                            cat.style.opacity = "0.95";
+                            cat.style.zIndex = 100;
+                            cat.style.textAlign = "center";
+                            cat.style.borderRadius = "30px";
+                            cat.innerHTML = category;
+
+                            document.body.appendChild(cat);
                         }
-                    }
-
-                    function showCategory2(category) {
-                        if (category.length < 1)
-                            return;
-
-                        var pos = checkCtrl(__$("content"));
-
-                        if (__$("category")) {
-                            document.body.removeChild(__$("category"));
-                        }
-
-                        var cat = document.createElement("div");
-                        cat.id = "category";
-                        cat.style.position = "absolute";
-                        cat.style.right = "10px";
-                        cat.style.top = (pos[2] + 2) + "px";
-                        cat.style.fontSize = "26px";
-                        cat.style.padding = "10px";
-                        cat.style.backgroundColor = "#9e9";
-                        cat.style.borderColor = "#7c7";
-                        cat.style.color = "#000";
-                        cat.style.opacity = "0.95";
-                        cat.style.zIndex = 100;
-                        cat.style.textAlign = "center";
-                        cat.style.borderRadius = "30px";
-                        cat.innerHTML = category;
-
-                        document.body.appendChild(cat);
-                    }
 
 
-                    setTimeout(function () {showCategory2('')}, 500);
+                        setTimeout(function () {showCategory2('')}, 500);
                 </script>
 
                 <form  onsubmit="submitEncounter();">
@@ -1741,7 +1785,7 @@
                     <input tt_onLoad="setNextButtonToGetDateStartedART('date_art_started')" condition="everReceivedARTDay() == 'true';" field_type="number" helpText="Day started ART" id="day_started_art" name="day_started_art" tt_onLoad="showCategory2('when starting ART');getDayOfMonthPicker($('year_started_art').value, $('month_started_art').value);$('nextButton').style.display = 'block';validateDayStartedART();" tt_onUnLoad="hideCategory();updateStartDate();setUnkownStage();" type="text" validationCode="checkStartDate();" validationMessage="Date ART started out of range  and 2018-09-18" />
 
                     <input allowFreeText="true" condition="$('ever_registered_at_ART_clinic').value == 'YES' && $('ever_received_art').value == 'YES'" field_type="alpha" helpText="ART number at previous location" id="previous_art_number" name="observations[][value_text]" tt_onLoad="showCategory2('when starting ART'); setNextButtonToGetInputValue('art_number_at_previous_location')" tt_onUnLoad="hideCategory()" type="text" />
-                    
+
                     <select tt_onLoad="setNextButtonToGetInputValue('has_transfer_letter')"  allowFreeText="false" condition="$('ever_registered_at_ART_clinic').value == 'YES' && $('ever_received_art').value == 'YES'" helpText="Has staging information?" id="has_transfer_letter" name="observations[][value_coded_or_text]" tt_onLoad="showCategory2('when starting ART')" tt_onUnLoad="hideCategory()" tt_onUnload="$('programs__states__state').value = 'Patient transferred in'" tt_pageStyleClass="NoKeyboard">
                         <option value=''></option>
                         <option value=""></option>
@@ -2178,151 +2222,151 @@
                     }
                 </style>
                 <script type="text/javascript">
-                    function hideConfirmatoryTestPopup() {
-                        document.getElementById("confirmatory-test-popup-div").style.display = 'none';
-                        document.getElementById("confirmatory-test-cover").style.display = 'none';
-                    }
+                        function hideConfirmatoryTestPopup() {
+                            document.getElementById("confirmatory-test-popup-div").style.display = 'none';
+                            document.getElementById("confirmatory-test-cover").style.display = 'none';
+                        }
 
-                    function showConfirmatoryTestPopup() {
-                        document.getElementById("confirmatory-test-popup-div").style.display = 'inline';
-                        document.getElementById("confirmatory-test-cover").style.display = 'inline';
+                        function showConfirmatoryTestPopup() {
+                            document.getElementById("confirmatory-test-popup-div").style.display = 'inline';
+                            document.getElementById("confirmatory-test-cover").style.display = 'inline';
 
-                        jQuery('#confirmatory-test-popup-div').center();
-                    }
+                            jQuery('#confirmatory-test-popup-div').center();
+                        }
 
-                    function setUnknownConfirmatoryTestForPopup() {
-                        unknown_confirmatory_option_input = jQuery("li[tstvalue='NOT DONE']")[0];
-                        if (unknown_confirmatory_option_input) {
-                            unknown_confirmatory_option_input.onmouseup = function () {
-                                if (!unknown_confirmatory_option_input.style.backgroundColor.match(/lightBlue/i)) {
-                                    showConfirmatoryTestPopup();
+                        function setUnknownConfirmatoryTestForPopup() {
+                            unknown_confirmatory_option_input = jQuery("li[tstvalue='NOT DONE']")[0];
+                            if (unknown_confirmatory_option_input) {
+                                unknown_confirmatory_option_input.onmouseup = function () {
+                                    if (!unknown_confirmatory_option_input.style.backgroundColor.match(/lightBlue/i)) {
+                                        showConfirmatoryTestPopup();
+                                    }
                                 }
                             }
                         }
-                    }
 
-                    function setSelectedStageConditions(stage) {
-                        selected_stage_conditions[stage] = $("touchscreenInput" + tstCurrentPage).value;
-                        selected_stage_conditions_copy[stage] = $("touchscreenInput" + tstCurrentPage).value;
-                    }
+                        function setSelectedStageConditions(stage) {
+                            selected_stage_conditions[stage] = $("touchscreenInput" + tstCurrentPage).value;
+                            selected_stage_conditions_copy[stage] = $("touchscreenInput" + tstCurrentPage).value;
+                        }
 
-                    function resetStageDefiningConditions() {
-                        selected_stage_conditions = JSON.parse(JSON.stringify(selected_stage_conditions_copy))
-                        stage_defining_conditions = __$('touchscreenInput' + tstCurrentPage).value;
+                        function resetStageDefiningConditions() {
+                            selected_stage_conditions = JSON.parse(JSON.stringify(selected_stage_conditions_copy))
+                            stage_defining_conditions = __$('touchscreenInput' + tstCurrentPage).value;
 
-                        if (stage_defining_conditions.length > 0) {
-                            if (stage_defining_conditions.match(/Asymptomatic HIV infection/i)) {
-                                if (selected_stage_conditions[4])
-                                    delete selected_stage_conditions[4]; //Delete Stage 4 conditions
-                                if (selected_stage_conditions[3])
-                                    delete selected_stage_conditions[3]; //Delete Stage 3 conditions
-                                if (selected_stage_conditions[2])
-                                    delete selected_stage_conditions[2]; //Delete Stage 2 conditions
+                            if (stage_defining_conditions.length > 0) {
+                                if (stage_defining_conditions.match(/Asymptomatic HIV infection/i)) {
+                                    if (selected_stage_conditions[4])
+                                        delete selected_stage_conditions[4]; //Delete Stage 4 conditions
+                                    if (selected_stage_conditions[3])
+                                        delete selected_stage_conditions[3]; //Delete Stage 3 conditions
+                                    if (selected_stage_conditions[2])
+                                        delete selected_stage_conditions[2]; //Delete Stage 2 conditions
+                                }
                             }
                         }
-                    }
 
-                    function showContraindicatingConditionsConfirmationPopup() {
-                        document.getElementById("popup-div").style.display = 'inline';
-                        document.getElementById("cover").style.display = 'inline';
-                    }
+                        function showContraindicatingConditionsConfirmationPopup() {
+                            document.getElementById("popup-div").style.display = 'inline';
+                            document.getElementById("cover").style.display = 'inline';
+                        }
 
-                    function setOptionsForContraindicationsPopup() {
-                        if (age >= 15) {
+                        function setOptionsForContraindicationsPopup() {
+                            if (age >= 15) {
+                                stageFourConditions = __$('stage_4_conditions').value;
+                                stageThreeConditions = __$('stage_3_conditions').value;
+                                stageTwoConditions = __$('stage_2_conditions').value;
+                            } else {
+                                stageFourConditions = jQuery('.stage_4_conditions')[0].value;
+                                stageThreeConditions = jQuery('.stage_3_conditions')[0].value;
+                                stageTwoConditions = jQuery('.stage_2_conditions')[0].value;
+                            }
+
+                            asymptomatic_option_input = jQuery("li[tstvalue='Asymptomatic HIV infection']")[0];
+
+                            if (stageFourConditions.length > 0 || stageThreeConditions.length > 0 || stageTwoConditions.length > 0) {
+                                asymptomatic_option_input.onmouseup = function () {
+                                    showContraindicatingConditionsConfirmationPopup();
+                                }
+                            }
+                        }
+
+                        function showContraindicatingConditionsConfirmationPopup() {
                             stageFourConditions = __$('stage_4_conditions').value;
                             stageThreeConditions = __$('stage_3_conditions').value;
                             stageTwoConditions = __$('stage_2_conditions').value;
-                        } else {
-                            stageFourConditions = jQuery('.stage_4_conditions')[0].value;
-                            stageThreeConditions = jQuery('.stage_3_conditions')[0].value;
-                            stageTwoConditions = jQuery('.stage_2_conditions')[0].value;
+
+                            asymptomatic_option_input = jQuery("li[tstvalue='Asymptomatic HIV infection']")[0];
+                            if (stageFourConditions.length > 0 || stageThreeConditions.length > 0 || stageTwoConditions.length > 0) {
+                                if (!asymptomatic_option_input.style.backgroundColor.match(/lightBlue/i)) {
+                                    document.getElementById("popup-div").style.display = 'inline';
+                                    document.getElementById("cover").style.display = 'inline';
+                                }
+                            }
+
                         }
 
-                        asymptomatic_option_input = jQuery("li[tstvalue='Asymptomatic HIV infection']")[0];
+                        function hidePopup() {
+                            clearInput();
+                            document.getElementById("popup-div").style.display = 'none';
+                            document.getElementById("cover").style.display = 'none';
+                        }
 
-                        if (stageFourConditions.length > 0 || stageThreeConditions.length > 0 || stageTwoConditions.length > 0) {
-                            asymptomatic_option_input.onmouseup = function () {
-                                showContraindicatingConditionsConfirmationPopup();
+                        function continueProcess() {
+                            $('stage_4_conditions').value = '';
+                            $('stage_3_conditions').value = '';
+                            $('stage_2_conditions').value = '';
+                            jQuery("#popup-div").hide();
+                            jQuery("#cover").hide();
+                            forceStageOneAvailabe();
+                        }
+
+                        function changeNextButtonForConfirmatoryYear() {
+
+                        }
+
+                        function changeAbsoluteMinForConfirmatoryYear() {
+                            year_started_art = jQuery('#year_started_art')[0].value;
+                            if (parseInt(year_started_art)) {
+                                jQuery('#touchscreenInput' + tstCurrentPage).attr("absoluteMin", year_started_art);
+                                jQuery('#touchscreenInput' + tstCurrentPage).attr("min", year_started_art);
+                            } else {
+                                jQuery('#touchscreenInput' + tstCurrentPage).attr("absoluteMin", '1840');
+                                jQuery('#touchscreenInput' + tstCurrentPage).attr("min", '1940');
                             }
                         }
-                    }
 
-                    function showContraindicatingConditionsConfirmationPopup() {
-                        stageFourConditions = __$('stage_4_conditions').value;
-                        stageThreeConditions = __$('stage_3_conditions').value;
-                        stageTwoConditions = __$('stage_2_conditions').value;
+                        function validateConfirmatoryMonth() {
+                            confirmatoryYear = parseInt(jQuery('#confirmatory_hiv_test_year')[0].value);
+                            date = sessionDate;
+                            currYear = date.getFullYear();
+                            currDay = date.getDate();
+                            availableMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
-                        asymptomatic_option_input = jQuery("li[tstvalue='Asymptomatic HIV infection']")[0];
-                        if (stageFourConditions.length > 0 || stageThreeConditions.length > 0 || stageTwoConditions.length > 0) {
-                            if (!asymptomatic_option_input.style.backgroundColor.match(/lightBlue/i)) {
-                                document.getElementById("popup-div").style.display = 'inline';
-                                document.getElementById("cover").style.display = 'inline';
+                            year_started_art = parseInt(jQuery('#year_started_art')[0].value);
+                            month_started_art = parseInt(jQuery('#month_started_art')[0].value);
+
+                            if (confirmatoryYear == currYear) {
+                                currentMonth = [];
+                                numOfloops = (date.getMonth() + 1);
+
+                                for (var i = 0; i < numOfloops; i++) {
+                                    currentMonth.push(availableMonths[i]);
+                                }
+                                rule = currentMonth.join("|");
+                                rule = rule + "|Unknown";
+                                return $('touchscreenInput' + tstCurrentPage).setAttribute('validationRule', rule);
                             }
-                        }
 
-                    }
-
-                    function hidePopup() {
-                        clearInput();
-                        document.getElementById("popup-div").style.display = 'none';
-                        document.getElementById("cover").style.display = 'none';
-                    }
-
-                    function continueProcess() {
-                        $('stage_4_conditions').value = '';
-                        $('stage_3_conditions').value = '';
-                        $('stage_2_conditions').value = '';
-                        jQuery("#popup-div").hide();
-                        jQuery("#cover").hide();
-                        forceStageOneAvailabe();
-                    }
-
-                    function changeNextButtonForConfirmatoryYear() {
-
-                    }
-
-                    function changeAbsoluteMinForConfirmatoryYear() {
-                        year_started_art = jQuery('#year_started_art')[0].value;
-                        if (parseInt(year_started_art)) {
-                            jQuery('#touchscreenInput' + tstCurrentPage).attr("absoluteMin", year_started_art);
-                            jQuery('#touchscreenInput' + tstCurrentPage).attr("min", year_started_art);
-                        } else {
-                            jQuery('#touchscreenInput' + tstCurrentPage).attr("absoluteMin", '1840');
-                            jQuery('#touchscreenInput' + tstCurrentPage).attr("min", '1940');
-                        }
-                    }
-
-                    function validateConfirmatoryMonth() {
-                        confirmatoryYear = parseInt(jQuery('#confirmatory_hiv_test_year')[0].value);
-                        date = sessionDate;
-                        currYear = date.getFullYear();
-                        currDay = date.getDate();
-                        availableMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
-                        year_started_art = parseInt(jQuery('#year_started_art')[0].value);
-                        month_started_art = parseInt(jQuery('#month_started_art')[0].value);
-
-                        if (confirmatoryYear == currYear) {
-                            currentMonth = [];
-                            numOfloops = (date.getMonth() + 1);
-
-                            for (var i = 0; i < numOfloops; i++) {
-                                currentMonth.push(availableMonths[i]);
+                            if (confirmatoryYear != currYear) {
+                                rule = availableMonths.join("|");
+                                rule = rule + "|Unknown";
+                                return $('touchscreenInput' + tstCurrentPage).setAttribute('validationRule', rule);
                             }
-                            rule = currentMonth.join("|");
-                            rule = rule + "|Unknown";
-                            return $('touchscreenInput' + tstCurrentPage).setAttribute('validationRule', rule);
+
                         }
 
-                        if (confirmatoryYear != currYear) {
-                            rule = availableMonths.join("|");
-                            rule = rule + "|Unknown";
-                            return $('touchscreenInput' + tstCurrentPage).setAttribute('validationRule', rule);
-                        }
-
-                    }
-
-                    /*function validateMonthStartedART(){
+                        /*function validateMonthStartedART(){
                      date = new Date;
                      currYear = date.getFullYear();
                      currDay = date.getDate();
@@ -2344,191 +2388,24 @@
                      
                      }*/
 
-                    function validateMonthStartedART() {
-                        year_art_last_taken = parseInt(jQuery('#year_art_last_taken')[0].value);
-                        month_art_last_taken = parseInt(jQuery('#month_art_last_taken')[0].value);
-                        date = sessionDate;
-                        currYear = date.getFullYear();
-                        currDay = date.getDate();
-                        availableMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                        function validateMonthStartedART() {
+                            year_art_last_taken = parseInt(jQuery('#year_art_last_taken')[0].value);
+                            month_art_last_taken = parseInt(jQuery('#month_art_last_taken')[0].value);
+                            date = sessionDate;
+                            currYear = date.getFullYear();
+                            currDay = date.getDate();
+                            availableMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
-                        year_started_art = parseInt(jQuery('#year_started_art')[0].value);
+                            year_started_art = parseInt(jQuery('#year_started_art')[0].value);
 
-                        if (year_started_art < year_art_last_taken) {
-                            rule = availableMonths.join("|");
-                            rule = rule + "|Unknown";
-                            return $('touchscreenInput' + tstCurrentPage).setAttribute('validationRule', rule);
-                        } else {
-                            if (year_started_art == currYear) {
-                                currentMonth = [];
-                                numOfloops = (sessionDate.getMonth() + 1);
-
-                                for (var i = 0; i < numOfloops; i++) {
-                                    currentMonth.push(availableMonths[i]);
-                                }
-                                rule = currentMonth.join("|");
-                                rule = rule + "|Unknown";
-                                return $('touchscreenInput' + tstCurrentPage).setAttribute('validationRule', rule);
-                            } else {
+                            if (year_started_art < year_art_last_taken) {
                                 rule = availableMonths.join("|");
                                 rule = rule + "|Unknown";
                                 return $('touchscreenInput' + tstCurrentPage).setAttribute('validationRule', rule);
-                            }
-                        }
-
-                    }
-
-                    function setAbsoluteMaxYearStartedART() {
-                        year_taken_art = parseInt(jQuery('#year_art_last_taken')[0].value);
-                        date = sessionDate;
-                        currYear = date.getFullYear();
-
-                        if (parseInt(year_taken_art)) {
-                            jQuery('#touchscreenInput' + tstCurrentPage).attr("absoluteMax", year_taken_art);
-                        } else {
-                            jQuery('#touchscreenInput' + tstCurrentPage).attr("absoluteMax", currYear);
-                        }
-                    }
-
-                    function validateMonthARTTaken() {
-                        date = sessionDate;
-                        currYear = sessionDate.getFullYear();
-                        currDay = date.getDate();
-                        availableMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
-                        year_taken_art = parseInt(jQuery('#year_art_last_taken')[0].value);
-                        if (year_taken_art == currYear) {
-                            currentMonth = [];
-                            numOfloops = (sessionDate.getMonth() + 1);
-
-                            for (var i = 0; i < numOfloops; i++) {
-                                currentMonth.push(availableMonths[i]);
-                            }
-
-                            rule = currentMonth.join("|");
-                            rule = rule + "|Unknown";
-                            return $('touchscreenInput' + tstCurrentPage).setAttribute('validationRule', rule);
-                        }
-                        if (year_taken_art == birthYear) {
-                            currentMonth = [];
-
-                            for (var i = birthMonth - 1; i < availableMonths.length; i++) {
-                                currentMonth.push(availableMonths[i]);
-                            }
-
-                            rule = currentMonth.join("|");
-                            rule = rule + "|Unknown";
-                            return $('touchscreenInput' + tstCurrentPage).setAttribute('validationRule', rule);
-                        }
-                    }
-
-                    function validateDayARTTaken() {
-                        date = sessionDate;
-                        currYear = date.getFullYear();
-                        currDay = date.getDate();
-                        currMonth = date.getMonth() + 1;
-                        availableMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
-                        year_taken_art = parseInt(jQuery('#year_art_last_taken')[0].value);
-                        month_taken_art = parseInt(jQuery('#month_art_last_taken')[0].value);
-
-                        if (year_taken_art == currYear) {
-                            if (month_taken_art == currMonth) {
-                                return $('touchscreenInput' + tstCurrentPage).setAttribute('absoluteMax', currDay);
-                            }
-                        }
-
-                        if (year_taken_art == birthYear) {
-                            if (month_taken_art == birthMonth) {
-                                return $('touchscreenInput' + tstCurrentPage).setAttribute('absoluteMin', birthDay);
-                            }
-                        }
-                    }
-
-                    function validateDayStartedART() {
-                        date = sessionDate;
-                        currYear = date.getFullYear();
-                        currDay = date.getDate();
-                        currMonth = date.getMonth() + 1;
-                        availableMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
-                        year_started_art = parseInt(jQuery('#year_started_art')[0].value);
-                        month_started_art = parseInt(jQuery('#month_started_art')[0].value);
-
-                        year_taken_art = parseInt(jQuery('#year_art_last_taken')[0].value);
-                        month_taken_art = parseInt(jQuery('#month_art_last_taken')[0].value);
-                        day_taken_art = parseInt(jQuery('#day_art_last_taken')[0].value);
-
-                        if ((year_taken_art != currYear) && (year_started_art == year_taken_art)) {
-                            if (month_taken_art == month_started_art) {
-                                return $('touchscreenInput' + tstCurrentPage).setAttribute('absoluteMax', day_taken_art);
-                            }
-                        }
-
-                        if (year_started_art == currYear) {
-                            if (month_started_art == currMonth) {
-                                return $('touchscreenInput' + tstCurrentPage).setAttribute('absoluteMax', currDay);
-                            }
-                        }
-                    }
-
-                    function validateConfirmatoryDay() {
-                        date = sessionDate;
-                        currYear = date.getFullYear();
-                        currDay = date.getDate();
-                        currMonth = date.getMonth() + 1;
-
-                        confirmatoryMonth = parseInt(jQuery('#confirmatory_hiv_test_month')[0].value);
-                        confirmatoryYear = parseInt(jQuery('#confirmatory_hiv_test_year')[0].value);
-
-                        year_started_art = parseInt(jQuery('#year_started_art')[0].value);
-                        month_started_art = parseInt(jQuery('#month_started_art')[0].value);
-                        day_started_art = parseInt(jQuery('#day_started_art')[0].value);
-
-                        if (confirmatoryYear == currYear) {
-                            if (confirmatoryMonth == currMonth) {
-                                return $('touchscreenInput' + tstCurrentPage).setAttribute('absoluteMax', currDay);
-                            }
-                        }
-
-                    }
-
-                    function setAbsoluteMaxCD4Year() {
-                        year_started_art = parseInt(jQuery('#year_started_art')[0].value);
-                        date = sessionDate;
-                        currYear = date.getFullYear();
-
-                        if (parseInt(year_started_art)) {
-                            jQuery('#touchscreenInput' + tstCurrentPage).attr("absoluteMax", year_started_art);
-                        } else {
-                            jQuery('#touchscreenInput' + tstCurrentPage).attr("absoluteMax", currYear);
-                        }
-                    }
-
-                    function validateCD4Month() {
-                        date = sessionDate;
-                        currYear = date.getFullYear();
-                        currDay = date.getDate();
-                        availableMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
-                        year_of_cd4 = parseInt(jQuery('#year_of_cd4')[0].value);
-                        year_started_art = parseInt(jQuery('#year_started_art')[0].value);
-                        month_started_art = parseInt(jQuery('#month_started_art')[0].value);
-
-                        if (year_of_cd4 < year_started_art) {
-                            rule = availableMonths.join("|");
-                            rule = rule + "|Unknown";
-                            return $('touchscreenInput' + tstCurrentPage).setAttribute('validationRule', rule);
-                        }
-                        else {
-                            if (year_of_cd4 == year_started_art) {
-                                if (year_of_cd4 < currYear) {
-                                    rule = availableMonths.join("|");
-                                    rule = rule + "|Unknown";
-                                    return $('touchscreenInput' + tstCurrentPage).setAttribute('validationRule', rule);
-                                } else {
+                            } else {
+                                if (year_started_art == currYear) {
                                     currentMonth = [];
-                                    numOfloops = (date.getMonth() + 1);
+                                    numOfloops = (sessionDate.getMonth() + 1);
 
                                     for (var i = 0; i < numOfloops; i++) {
                                         currentMonth.push(availableMonths[i]);
@@ -2536,332 +2413,499 @@
                                     rule = currentMonth.join("|");
                                     rule = rule + "|Unknown";
                                     return $('touchscreenInput' + tstCurrentPage).setAttribute('validationRule', rule);
+                                } else {
+                                    rule = availableMonths.join("|");
+                                    rule = rule + "|Unknown";
+                                    return $('touchscreenInput' + tstCurrentPage).setAttribute('validationRule', rule);
                                 }
+                            }
+
+                        }
+
+                        function setAbsoluteMaxYearStartedART() {
+                            year_taken_art = parseInt(jQuery('#year_art_last_taken')[0].value);
+                            date = sessionDate;
+                            currYear = date.getFullYear();
+
+                            if (parseInt(year_taken_art)) {
+                                jQuery('#touchscreenInput' + tstCurrentPage).attr("absoluteMax", year_taken_art);
                             } else {
-                                rule = availableMonths.join("|");
+                                jQuery('#touchscreenInput' + tstCurrentPage).attr("absoluteMax", currYear);
+                            }
+                        }
+
+                        function validateMonthARTTaken() {
+                            date = sessionDate;
+                            currYear = sessionDate.getFullYear();
+                            currDay = date.getDate();
+                            availableMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+                            year_taken_art = parseInt(jQuery('#year_art_last_taken')[0].value);
+                            if (year_taken_art == currYear) {
+                                currentMonth = [];
+                                numOfloops = (sessionDate.getMonth() + 1);
+
+                                for (var i = 0; i < numOfloops; i++) {
+                                    currentMonth.push(availableMonths[i]);
+                                }
+
+                                rule = currentMonth.join("|");
+                                rule = rule + "|Unknown";
+                                return $('touchscreenInput' + tstCurrentPage).setAttribute('validationRule', rule);
+                            }
+                            if (year_taken_art == birthYear) {
+                                currentMonth = [];
+
+                                for (var i = birthMonth - 1; i < availableMonths.length; i++) {
+                                    currentMonth.push(availableMonths[i]);
+                                }
+
+                                rule = currentMonth.join("|");
                                 rule = rule + "|Unknown";
                                 return $('touchscreenInput' + tstCurrentPage).setAttribute('validationRule', rule);
                             }
                         }
 
-                    }
+                        function validateDayARTTaken() {
+                            date = sessionDate;
+                            currYear = date.getFullYear();
+                            currDay = date.getDate();
+                            currMonth = date.getMonth() + 1;
+                            availableMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
-                    function validateCD4Day() {
-                        date = sessionDate;
-                        currYear = date.getFullYear();
-                        currDay = date.getDate();
-                        currMonth = date.getMonth() + 1;
+                            year_taken_art = parseInt(jQuery('#year_art_last_taken')[0].value);
+                            month_taken_art = parseInt(jQuery('#month_art_last_taken')[0].value);
 
-                        cd4Month = parseInt(jQuery('#month_of_cd4')[0].value);
-                        cd4Year = parseInt(jQuery('#year_of_cd4')[0].value);
+                            if (year_taken_art == currYear) {
+                                if (month_taken_art == currMonth) {
+                                    return $('touchscreenInput' + tstCurrentPage).setAttribute('absoluteMax', currDay);
+                                }
+                            }
 
-                        year_started_art = parseInt(jQuery('#year_started_art')[0].value);
-                        month_started_art = parseInt(jQuery('#month_started_art')[0].value);
-                        day_started_art = parseInt(jQuery('#day_started_art')[0].value);
-
-                        if (cd4Year == currYear) {
-                            if (cd4Month == currMonth) {
-                                return $('touchscreenInput' + tstCurrentPage).setAttribute('absoluteMax', currDay);
+                            if (year_taken_art == birthYear) {
+                                if (month_taken_art == birthMonth) {
+                                    return $('touchscreenInput' + tstCurrentPage).setAttribute('absoluteMin', birthDay);
+                                }
                             }
                         }
 
-                        if ((year_of_cd4 == year_started_art) && (year_of_cd4 != currYear)) {
-                            if (cd4Month == month_started_art) {
-                                return $('touchscreenInput' + tstCurrentPage).setAttribute('absoluteMax', day_started_art);
+                        function validateDayStartedART() {
+                            date = sessionDate;
+                            currYear = date.getFullYear();
+                            currDay = date.getDate();
+                            currMonth = date.getMonth() + 1;
+                            availableMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+                            year_started_art = parseInt(jQuery('#year_started_art')[0].value);
+                            month_started_art = parseInt(jQuery('#month_started_art')[0].value);
+
+                            year_taken_art = parseInt(jQuery('#year_art_last_taken')[0].value);
+                            month_taken_art = parseInt(jQuery('#month_art_last_taken')[0].value);
+                            day_taken_art = parseInt(jQuery('#day_art_last_taken')[0].value);
+
+                            if ((year_taken_art != currYear) && (year_started_art == year_taken_art)) {
+                                if (month_taken_art == month_started_art) {
+                                    return $('touchscreenInput' + tstCurrentPage).setAttribute('absoluteMax', day_taken_art);
+                                }
+                            }
+
+                            if (year_started_art == currYear) {
+                                if (month_started_art == currMonth) {
+                                    return $('touchscreenInput' + tstCurrentPage).setAttribute('absoluteMax', currDay);
+                                }
                             }
                         }
 
-                    }
+                        function validateConfirmatoryDay() {
+                            date = sessionDate;
+                            currYear = date.getFullYear();
+                            currDay = date.getDate();
+                            currMonth = date.getMonth() + 1;
 
-                    function preselectSevereWeightLoss() {
-                        if (parseFloat(currentBmi) < 16) {
-                            console.log("It's a bit funny now")
-                            severe_weight_loss_text = 'Severe weight loss >10% and/or BMI <18.5kg/m^2, unexplained';
-                            severe_weight_loss_option_input = jQuery("li[tstvalue='Severe weight loss >10% and/or BMI <18.5kg/m^2, unexplained']")[0];
-                            severe_weight_loss_option_id = severe_weight_loss_option_input.id;
-                            weight_loss_input = document.getElementById('optionValue' + severe_weight_loss_option_id);
-                            current_input_values = $('touchscreenInput' + tstCurrentPage).value.split(';');
-                            if (current_input_values.indexOf(severe_weight_loss_text) == -1) {
-                                updateTouchscreenInputForSelect(weight_loss_input); //Run this only when the option is not selected;
+                            confirmatoryMonth = parseInt(jQuery('#confirmatory_hiv_test_month')[0].value);
+                            confirmatoryYear = parseInt(jQuery('#confirmatory_hiv_test_year')[0].value);
+
+                            year_started_art = parseInt(jQuery('#year_started_art')[0].value);
+                            month_started_art = parseInt(jQuery('#month_started_art')[0].value);
+                            day_started_art = parseInt(jQuery('#day_started_art')[0].value);
+
+                            if (confirmatoryYear == currYear) {
+                                if (confirmatoryMonth == currMonth) {
+                                    return $('touchscreenInput' + tstCurrentPage).setAttribute('absoluteMax', currDay);
+                                }
                             }
 
                         }
-                    }
 
-                    function preselectSevereWeightLossPaeds() {
-                        currentWeight = parseFloat($("weight").value);
-                        current_weight_percentile = (currentWeight / (median_weight_height[0]) * 100)
-                        severe_weight_loss_text = "Severe unexplained wasting or malnutrition not responding to treatment (weight-for-height/ -age <70% or MUAC less than 11cm or oedema)"
-                        if (current_weight_percentile < 70) {
-                            console.log("It's a bit funny now")
-                            severe_weight_loss_option_input = jQuery("li[tstvalue='Severe unexplained wasting or malnutrition not responding to treatment (weight-for-height/ -age <70% or MUAC less than 11cm or oedema)']")[0];
-                            severe_weight_loss_option_id = severe_weight_loss_option_input.id;
-                            weight_loss_input = document.getElementById('optionValue' + severe_weight_loss_option_id);
-                            current_input_values = $('touchscreenInput' + tstCurrentPage).value.split(';');
-                            if (current_input_values.indexOf(severe_weight_loss_text) == -1) {
-                                updateTouchscreenInputForSelect(weight_loss_input); //Run this only when the option is not selected;
+                        function setAbsoluteMaxCD4Year() {
+                            year_started_art = parseInt(jQuery('#year_started_art')[0].value);
+                            date = sessionDate;
+                            currYear = date.getFullYear();
+
+                            if (parseInt(year_started_art)) {
+                                jQuery('#touchscreenInput' + tstCurrentPage).attr("absoluteMax", year_started_art);
+                            } else {
+                                jQuery('#touchscreenInput' + tstCurrentPage).attr("absoluteMax", currYear);
                             }
                         }
-                    }
 
-                    function preselectModerateWeightLoss() {
-                        if (parseFloat(currentBmi) >= 16.0 && parseFloat(currentBmi) <= 18.5) {
+                        function validateCD4Month() {
+                            date = sessionDate;
+                            currYear = date.getFullYear();
+                            currDay = date.getDate();
+                            availableMonths = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+                            year_of_cd4 = parseInt(jQuery('#year_of_cd4')[0].value);
+                            year_started_art = parseInt(jQuery('#year_started_art')[0].value);
+                            month_started_art = parseInt(jQuery('#month_started_art')[0].value);
+
+                            if (year_of_cd4 < year_started_art) {
+                                rule = availableMonths.join("|");
+                                rule = rule + "|Unknown";
+                                return $('touchscreenInput' + tstCurrentPage).setAttribute('validationRule', rule);
+                            }
+                            else {
+                                if (year_of_cd4 == year_started_art) {
+                                    if (year_of_cd4 < currYear) {
+                                        rule = availableMonths.join("|");
+                                        rule = rule + "|Unknown";
+                                        return $('touchscreenInput' + tstCurrentPage).setAttribute('validationRule', rule);
+                                    } else {
+                                        currentMonth = [];
+                                        numOfloops = (date.getMonth() + 1);
+
+                                        for (var i = 0; i < numOfloops; i++) {
+                                            currentMonth.push(availableMonths[i]);
+                                        }
+                                        rule = currentMonth.join("|");
+                                        rule = rule + "|Unknown";
+                                        return $('touchscreenInput' + tstCurrentPage).setAttribute('validationRule', rule);
+                                    }
+                                } else {
+                                    rule = availableMonths.join("|");
+                                    rule = rule + "|Unknown";
+                                    return $('touchscreenInput' + tstCurrentPage).setAttribute('validationRule', rule);
+                                }
+                            }
+
+                        }
+
+                        function validateCD4Day() {
+                            date = sessionDate;
+                            currYear = date.getFullYear();
+                            currDay = date.getDate();
+                            currMonth = date.getMonth() + 1;
+
+                            cd4Month = parseInt(jQuery('#month_of_cd4')[0].value);
+                            cd4Year = parseInt(jQuery('#year_of_cd4')[0].value);
+
+                            year_started_art = parseInt(jQuery('#year_started_art')[0].value);
+                            month_started_art = parseInt(jQuery('#month_started_art')[0].value);
+                            day_started_art = parseInt(jQuery('#day_started_art')[0].value);
+
+                            if (cd4Year == currYear) {
+                                if (cd4Month == currMonth) {
+                                    return $('touchscreenInput' + tstCurrentPage).setAttribute('absoluteMax', currDay);
+                                }
+                            }
+
+                            if ((year_of_cd4 == year_started_art) && (year_of_cd4 != currYear)) {
+                                if (cd4Month == month_started_art) {
+                                    return $('touchscreenInput' + tstCurrentPage).setAttribute('absoluteMax', day_started_art);
+                                }
+                            }
+
+                        }
+
+                        function preselectSevereWeightLoss() {
+                            if (parseFloat(currentBmi) < 16) {
+                                console.log("It's a bit funny now")
+                                severe_weight_loss_text = 'Severe weight loss >10% and/or BMI <18.5kg/m^2, unexplained';
+                                severe_weight_loss_option_input = jQuery("li[tstvalue='Severe weight loss >10% and/or BMI <18.5kg/m^2, unexplained']")[0];
+                                severe_weight_loss_option_id = severe_weight_loss_option_input.id;
+                                weight_loss_input = document.getElementById('optionValue' + severe_weight_loss_option_id);
+                                current_input_values = $('touchscreenInput' + tstCurrentPage).value.split(';');
+                                if (current_input_values.indexOf(severe_weight_loss_text) == -1) {
+                                    updateTouchscreenInputForSelect(weight_loss_input); //Run this only when the option is not selected;
+                                }
+
+                            }
+                        }
+
+                        function preselectSevereWeightLossPaeds() {
+                            currentWeight = parseFloat($("weight").value);
+                            current_weight_percentile = (currentWeight / (median_weight_height[0]) * 100)
+                            severe_weight_loss_text = "Severe unexplained wasting or malnutrition not responding to treatment (weight-for-height/ -age <70% or MUAC less than 11cm or oedema)"
+                            if (current_weight_percentile < 70) {
+                                console.log("It's a bit funny now")
+                                severe_weight_loss_option_input = jQuery("li[tstvalue='Severe unexplained wasting or malnutrition not responding to treatment (weight-for-height/ -age <70% or MUAC less than 11cm or oedema)']")[0];
+                                severe_weight_loss_option_id = severe_weight_loss_option_input.id;
+                                weight_loss_input = document.getElementById('optionValue' + severe_weight_loss_option_id);
+                                current_input_values = $('touchscreenInput' + tstCurrentPage).value.split(';');
+                                if (current_input_values.indexOf(severe_weight_loss_text) == -1) {
+                                    updateTouchscreenInputForSelect(weight_loss_input); //Run this only when the option is not selected;
+                                }
+                            }
+                        }
+
+                        function preselectModerateWeightLoss() {
+                            if (parseFloat(currentBmi) >= 16.0 && parseFloat(currentBmi) <= 18.5) {
+                                moderate_weight_loss_option_input = jQuery("[tstvalue='Moderate weight loss less than or equal to 10 percent, unexplained']")[0];
+                                moderate_weight_loss_option_id = moderate_weight_loss_option_input.id;
+                                weight_loss_input = document.getElementById('optionValue' + moderate_weight_loss_option_id);
+                                moderate_weight_loss_text = 'Moderate weight loss less than or equal to 10 percent, unexplained'
+
+                                severe_weight_loss_text = "Severe weight loss >10% and/or BMI <18.5kg/m^2, unexplained";
+                                current_input_values = $('touchscreenInput' + tstCurrentPage).value.split(';');
+                                if (selected_stage_conditions[3]) {
+                                    selected_stage_three_conditions = selected_stage_conditions[3].split(';');
+                                    if (selected_stage_three_conditions.indexOf(severe_weight_loss) == -1) {
+                                        if (current_input_values.indexOf(moderate_weight_loss_text) == -1) {
+                                            updateTouchscreenInputForSelect(weight_loss_input); //Preselect moderate if severe weight loss not selected
+                                        }
+                                    }
+                                }
+                            }
+
+                            disableModerateWeightLossOption();
+                        }
+
+                        function preselectModerateWeightLossPaeds() {
+                            currentWeight = parseFloat($("weight").value);
+                            current_weight_percentile = (currentWeight / (median_weight_height[0]) * 100)
+
+                            if (current_weight_percentile >= 70 && current_weight_percentile <= 79) {
+                                moderate_weight_loss_option_input = jQuery("[tstvalue='Moderate unexplained wasting/malnutrition not responding to treatment (weight-for-height/ -age 70-79% or muac 11-12 cm)'")[0];
+                                moderate_weight_loss_option_id = moderate_weight_loss_option_input.id;
+                                weight_loss_input = document.getElementById('optionValue' + moderate_weight_loss_option_id);
+                                moderate_weight_loss_text = 'Moderate unexplained wasting/malnutrition not responding to treatment (weight-for-height/ -age 70-79% or muac 11-12 cm'
+                                severe_weight_loss_text = "Severe unexplained wasting or malnutrition not responding to treatment (weight-for-height/ -age <70% or MUAC less than 11cm or oedema)";
+                                current_input_values = $('touchscreenInput' + tstCurrentPage).value.split(';');
+                                if (selected_stage_conditions[4]) {
+                                    selected_stage_four_conditions = selected_stage_conditions[4].split(';');
+                                    if (selected_stage_four_conditions.indexOf(severe_weight_loss) == -1) {
+                                        if (current_input_values.indexOf(moderate_weight_loss_text) == -1) {
+                                            updateTouchscreenInputForSelect(weight_loss_input); //Preselect moderate if severe weight loss not selected
+                                        }
+                                    }
+                                }
+                            }
+
+                            disableModerateWeightLossOptionPaeds();
+                        }
+
+                        function disableModerateWeightLossOption() {
                             moderate_weight_loss_option_input = jQuery("[tstvalue='Moderate weight loss less than or equal to 10 percent, unexplained']")[0];
                             moderate_weight_loss_option_id = moderate_weight_loss_option_input.id;
-                            weight_loss_input = document.getElementById('optionValue' + moderate_weight_loss_option_id);
-                            moderate_weight_loss_text = 'Moderate weight loss less than or equal to 10 percent, unexplained'
 
-                            severe_weight_loss_text = "Severe weight loss >10% and/or BMI <18.5kg/m^2, unexplained";
-                            current_input_values = $('touchscreenInput' + tstCurrentPage).value.split(';');
+                            weight_loss_input = document.getElementById('optionValue' + moderate_weight_loss_option_id);
+                            severe_weight_loss = "Severe weight loss >10% and/or BMI <18.5kg/m^2, unexplained";
+
                             if (selected_stage_conditions[3]) {
                                 selected_stage_three_conditions = selected_stage_conditions[3].split(';');
-                                if (selected_stage_three_conditions.indexOf(severe_weight_loss) == -1) {
-                                    if (current_input_values.indexOf(moderate_weight_loss_text) == -1) {
-                                        updateTouchscreenInputForSelect(weight_loss_input); //Preselect moderate if severe weight loss not selected
+                                if (selected_stage_three_conditions.indexOf(severe_weight_loss) != -1) {
+                                    //weight_loss_input.style.backgroundColor = '#CDBA96';
+                                    //moderate_wight_loss_option_input.style.backgroundColor = '#CDBA96';
+                                    moderate_weight_loss_text = weight_loss_input.innerHTML;
+                                    weight_loss_input.innerHTML = "<span class='disabled_check'>" + moderate_weight_loss_text + " ( Severe weight loss already selected )</span>"
+                                    moderate_weight_loss_option_input.onclick = null;
+                                    moderate_weight_loss_option_input.onmousedown = null;
+                                    moderate_weight_loss_option_input.onmouseup = null;
+
+                                    img_input = moderate_weight_loss_option_input.getElementsByTagName("img")[0];
+                                    img_input.src = '';
+                                    img_input.alt = '';
+
+
+                                    if (weight_loss_input.getAttribute('style').match(/lightblue/i)) {
+                                        updateTouchscreenInputForSelect(__$('optionValue' + "0"), weight_loss_input);
+                                        displayCountOfSelectedConditions();
+                                    } else {
+                                        displayCountOfSelectedConditions();
                                     }
+
+                                } else {
+                                    disableModerateWeightLossOptionForNormalBMI();
                                 }
+
                             }
+
                         }
 
-                        disableModerateWeightLossOption();
-                    }
+                        function disableModerateWeightLossOptionPaeds() {
+                            moderate_wight_loss_option_input = jQuery("[tstvalue='Moderate unexplained wasting/malnutrition not responding to treatment (weight-for-height/ -age 70-79% or muac 11-12 cm)']")[0];
+                            moderate_wight_loss_option_id = moderate_wight_loss_option_input.id;
 
-                    function preselectModerateWeightLossPaeds() {
-                        currentWeight = parseFloat($("weight").value);
-                        current_weight_percentile = (currentWeight / (median_weight_height[0]) * 100)
+                            weight_loss_input = document.getElementById('optionValue' + moderate_wight_loss_option_id);
+                            severe_weight_loss = "Severe unexplained wasting or malnutrition not responding to treatment (weight-for-height/ -age <70% or MUAC less than 11cm or oedema)";
 
-                        if (current_weight_percentile >= 70 && current_weight_percentile <= 79) {
-                            moderate_weight_loss_option_input = jQuery("[tstvalue='Moderate unexplained wasting/malnutrition not responding to treatment (weight-for-height/ -age 70-79% or muac 11-12 cm)'")[0];
-                            moderate_weight_loss_option_id = moderate_weight_loss_option_input.id;
-                            weight_loss_input = document.getElementById('optionValue' + moderate_weight_loss_option_id);
-                            moderate_weight_loss_text = 'Moderate unexplained wasting/malnutrition not responding to treatment (weight-for-height/ -age 70-79% or muac 11-12 cm'
-                            severe_weight_loss_text = "Severe unexplained wasting or malnutrition not responding to treatment (weight-for-height/ -age <70% or MUAC less than 11cm or oedema)";
-                            current_input_values = $('touchscreenInput' + tstCurrentPage).value.split(';');
                             if (selected_stage_conditions[4]) {
                                 selected_stage_four_conditions = selected_stage_conditions[4].split(';');
-                                if (selected_stage_four_conditions.indexOf(severe_weight_loss) == -1) {
-                                    if (current_input_values.indexOf(moderate_weight_loss_text) == -1) {
-                                        updateTouchscreenInputForSelect(weight_loss_input); //Preselect moderate if severe weight loss not selected
+                                if (selected_stage_four_conditions.indexOf(severe_weight_loss) != -1) {
+                                    moderate_weight_loss_text = weight_loss_input.innerHTML;
+                                    weight_loss_input.innerHTML = "<span class='disabled_check'>" + moderate_weight_loss_text + " ( Severe weight loss already selected )</span>"
+                                    moderate_wight_loss_option_input.onclick = null;
+                                    moderate_wight_loss_option_input.onmousedown = null;
+                                    moderate_wight_loss_option_input.onmouseup = null;
+
+                                    img_input = moderate_wight_loss_option_input.getElementsByTagName("img")[0];
+                                    img_input.src = '';
+                                    img_input.alt = '';
+
+
+                                    if (weight_loss_input.getAttribute('style').match(/lightblue/i)) {
+                                        updateTouchscreenInputForSelect(__$('optionValue' + "0"), weight_loss_input);
+                                        displayCountOfSelectedConditions();
+                                    } else {
+                                        displayCountOfSelectedConditions();
                                     }
+
+                                } else {
+                                    disableModerateWeightLossOptionForNormalBMI();
                                 }
+                            }
+
+                        }
+
+                        function disableSevereWeightLossInputForNormalBMI() {
+                            severe_weight_loss_option_input = jQuery("[tstvalue='Severe weight loss >10% and/or BMI <18.5kg/m^2, unexplained']")[0];
+                            severe_weight_loss_option_id = severe_weight_loss_option_input.id;
+
+
+                            weight_loss_input = document.getElementById('optionValue' + severe_weight_loss_option_id);
+                            severe_weight_loss = "Severe weight loss >10% and/or BMI <18.5kg/m^2, unexplained";
+
+                            if (parseFloat(currentBmi) > 18.5) {
+                                //weight_loss_input.style.backgroundColor = '#CDBA96';
+                                //severe_weight_loss_option_input.style.backgroundColor = '#CDBA96';
+                                //moderate_weight_loss_text = weight_loss_input.innerHTML;
+                                //weight_loss_input.innerHTML = moderate_weight_loss_text + " <i>( BMI is " + currentBmi + "  )</i>"
+                                //severe_weight_loss_option_input.onclick = null;
+                                //severe_weight_loss_option_input.onmousedown = null;
+                                //severe_weight_loss_option_input.onmouseup = null;
+
+                                //img_input = severe_weight_loss_option_input.getElementsByTagName("img")[0];
+                                //img_input.src = '';
+                                //img_input.alt = '';
+                                document.getElementById('currentBMI').innerHTML = currentBmi;
+                                weight_loss_input.setAttribute('onmousedown', 'alertOnNormalBMI()');
                             }
                         }
 
-                        disableModerateWeightLossOptionPaeds();
-                    }
+                        function disableModerateWeightLossOptionForNormalBMI() {
+                            moderate_weight_loss_option_input = jQuery("[tstvalue='Moderate weight loss less than or equal to 10 percent, unexplained']")[0];
+                            moderate_wight_loss_option_id = moderate_weight_loss_option_input.id;
 
-                    function disableModerateWeightLossOption() {
-                        moderate_weight_loss_option_input = jQuery("[tstvalue='Moderate weight loss less than or equal to 10 percent, unexplained']")[0];
-                        moderate_weight_loss_option_id = moderate_weight_loss_option_input.id;
+                            weight_loss_input = document.getElementById('optionValue' + moderate_weight_loss_option_input.id);
 
-                        weight_loss_input = document.getElementById('optionValue' + moderate_weight_loss_option_id);
-                        severe_weight_loss = "Severe weight loss >10% and/or BMI <18.5kg/m^2, unexplained";
-
-                        if (selected_stage_conditions[3]) {
-                            selected_stage_three_conditions = selected_stage_conditions[3].split(';');
-                            if (selected_stage_three_conditions.indexOf(severe_weight_loss) != -1) {
-                                //weight_loss_input.style.backgroundColor = '#CDBA96';
-                                //moderate_wight_loss_option_input.style.backgroundColor = '#CDBA96';
+                            if (parseFloat(currentBmi) > 18.5) {
+                                //moderate_weight_loss_option_input.style.backgroundColor = '#CDBA96';
                                 moderate_weight_loss_text = weight_loss_input.innerHTML;
-                                weight_loss_input.innerHTML = "<span class='disabled_check'>" + moderate_weight_loss_text + " ( Severe weight loss already selected )</span>"
-                                moderate_weight_loss_option_input.onclick = null;
-                                moderate_weight_loss_option_input.onmousedown = null;
-                                moderate_weight_loss_option_input.onmouseup = null;
+                                //weight_loss_input.innerHTML = moderate_weight_loss_text + " <i>( BMI is " + currentBmi + "  )</i>";
+                                //moderate_weight_loss_option_input.onclick = null;
+                                //moderate_weight_loss_option_input.onmousedown = null;
+                                //moderate_weight_loss_option_input.onmouseup = null;
 
                                 img_input = moderate_weight_loss_option_input.getElementsByTagName("img")[0];
-                                img_input.src = '';
-                                img_input.alt = '';
-
-
-                                if (weight_loss_input.getAttribute('style').match(/lightblue/i)) {
-                                    updateTouchscreenInputForSelect(__$('optionValue' + "0"), weight_loss_input);
-                                    displayCountOfSelectedConditions();
-                                } else {
-                                    displayCountOfSelectedConditions();
-                                }
-
-                            } else {
-                                disableModerateWeightLossOptionForNormalBMI();
+                                //img_input.src = '';
+                                //img_input.alt = '';
                             }
 
                         }
 
-                    }
+                        function hideTextInput() {
+                            jQuery('#touchscreenInput' + tstCurrentPage).hide();
+                        }
 
-                    function disableModerateWeightLossOptionPaeds() {
-                        moderate_wight_loss_option_input = jQuery("[tstvalue='Moderate unexplained wasting/malnutrition not responding to treatment (weight-for-height/ -age 70-79% or muac 11-12 cm)']")[0];
-                        moderate_wight_loss_option_id = moderate_wight_loss_option_input.id;
+                        function displayCountOfSelectedConditions() {
+                            jQuery('#helpText' + tstCurrentPage + ' > #count-selected').remove();
+                            jQuery('#helpText' + tstCurrentPage).append("<span id='count-selected'>&nbsp;</span>")
 
-                        weight_loss_input = document.getElementById('optionValue' + moderate_wight_loss_option_id);
-                        severe_weight_loss = "Severe unexplained wasting or malnutrition not responding to treatment (weight-for-height/ -age <70% or MUAC less than 11cm or oedema)";
-
-                        if (selected_stage_conditions[4]) {
-                            selected_stage_four_conditions = selected_stage_conditions[4].split(';');
-                            if (selected_stage_four_conditions.indexOf(severe_weight_loss) != -1) {
-                                moderate_weight_loss_text = weight_loss_input.innerHTML;
-                                weight_loss_input.innerHTML = "<span class='disabled_check'>" + moderate_weight_loss_text + " ( Severe weight loss already selected )</span>"
-                                moderate_wight_loss_option_input.onclick = null;
-                                moderate_wight_loss_option_input.onmousedown = null;
-                                moderate_wight_loss_option_input.onmouseup = null;
-
-                                img_input = moderate_wight_loss_option_input.getElementsByTagName("img")[0];
-                                img_input.src = '';
-                                img_input.alt = '';
-
-
-                                if (weight_loss_input.getAttribute('style').match(/lightblue/i)) {
-                                    updateTouchscreenInputForSelect(__$('optionValue' + "0"), weight_loss_input);
-                                    displayCountOfSelectedConditions();
-                                } else {
-                                    displayCountOfSelectedConditions();
-                                }
-
+                            if ($("touchscreenInput" + tstCurrentPage).value.length > 0) {
+                                selectedValuesCount = $("touchscreenInput" + tstCurrentPage).value.split(";").length;
                             } else {
-                                disableModerateWeightLossOptionForNormalBMI();
+                                selectedValuesCount = 0;
+                            }
+
+                            jQuery('#helpText' + tstCurrentPage + ' > #count-selected').html('&nbsp;(' + selectedValuesCount + ' selected)');
+                            liOptions = document.getElementsByTagName("li");
+                            for (var i = 0; i <= liOptions.length - 1; i++) {
+                                addEvent(liOptions[i], "click", function () {
+                                    if ($("touchscreenInput" + tstCurrentPage).value.length > 0) {
+                                        selectedValuesCount = $("touchscreenInput" + tstCurrentPage).value.split(";").length;
+                                    } else {
+                                        selectedValuesCount = 0
+                                    }
+                                    jQuery('#helpText' + tstCurrentPage + ' > #count-selected').html('&nbsp;(' + selectedValuesCount + ' selected)');
+
+                                });
+
                             }
                         }
 
-                    }
-
-                    function disableSevereWeightLossInputForNormalBMI() {
-                        severe_weight_loss_option_input = jQuery("[tstvalue='Severe weight loss >10% and/or BMI <18.5kg/m^2, unexplained']")[0];
-                        severe_weight_loss_option_id = severe_weight_loss_option_input.id;
-
-
-                        weight_loss_input = document.getElementById('optionValue' + severe_weight_loss_option_id);
-                        severe_weight_loss = "Severe weight loss >10% and/or BMI <18.5kg/m^2, unexplained";
-
-                        if (parseFloat(currentBmi) > 18.5) {
-                            //weight_loss_input.style.backgroundColor = '#CDBA96';
-                            //severe_weight_loss_option_input.style.backgroundColor = '#CDBA96';
-                            //moderate_weight_loss_text = weight_loss_input.innerHTML;
-                            //weight_loss_input.innerHTML = moderate_weight_loss_text + " <i>( BMI is " + currentBmi + "  )</i>"
-                            //severe_weight_loss_option_input.onclick = null;
-                            //severe_weight_loss_option_input.onmousedown = null;
-                            //severe_weight_loss_option_input.onmouseup = null;
-
-                            //img_input = severe_weight_loss_option_input.getElementsByTagName("img")[0];
-                            //img_input.src = '';
-                            //img_input.alt = '';
-                            document.getElementById('currentBMI').innerHTML = currentBmi;
-                            weight_loss_input.setAttribute('onmousedown', 'alertOnNormalBMI()');
-                        }
-                    }
-
-                    function disableModerateWeightLossOptionForNormalBMI() {
-                        moderate_weight_loss_option_input = jQuery("[tstvalue='Moderate weight loss less than or equal to 10 percent, unexplained']")[0];
-                        moderate_wight_loss_option_id = moderate_weight_loss_option_input.id;
-
-                        weight_loss_input = document.getElementById('optionValue' + moderate_weight_loss_option_input.id);
-
-                        if (parseFloat(currentBmi) > 18.5) {
-                            //moderate_weight_loss_option_input.style.backgroundColor = '#CDBA96';
-                            moderate_weight_loss_text = weight_loss_input.innerHTML;
-                            //weight_loss_input.innerHTML = moderate_weight_loss_text + " <i>( BMI is " + currentBmi + "  )</i>";
-                            //moderate_weight_loss_option_input.onclick = null;
-                            //moderate_weight_loss_option_input.onmousedown = null;
-                            //moderate_weight_loss_option_input.onmouseup = null;
-
-                            img_input = moderate_weight_loss_option_input.getElementsByTagName("img")[0];
-                            //img_input.src = '';
-                            //img_input.alt = '';
+                        function addEvent(obj, evType, fn) {
+                            if (obj.addEventListener) {
+                                obj.addEventListener(evType, fn, false);
+                                return true;
+                            } else if (obj.attachEvent) {
+                                var r = obj.attachEvent("on" + evType, fn);
+                                return r;
+                            } else {
+                                alert("Handler could not be attached");
+                            }
                         }
 
-                    }
 
-                    function hideTextInput() {
-                        jQuery('#touchscreenInput' + tstCurrentPage).hide();
-                    }
+                        function alertOnNormalBMI() {
+                            try {
+                                severe_weight_loss_option_id = severe_weight_loss_option_input.id;
+                            } catch (e) {
+                                severe_weight_loss_option_input = jQuery("[tstvalue='Moderate weight loss less than or equal to 10 percent, unexplained']")[0];
+                                severe_weight_loss_option_id = severe_weight_loss_option_input.id;
+                            }
 
-                    function displayCountOfSelectedConditions() {
-                        jQuery('#helpText' + tstCurrentPage + ' > #count-selected').remove();
-                        jQuery('#helpText' + tstCurrentPage).append("<span id='count-selected'>&nbsp;</span>")
+                            weight_loss_input = document.getElementById('optionValue' + severe_weight_loss_option_id);
 
-                        if ($("touchscreenInput" + tstCurrentPage).value.length > 0) {
-                            selectedValuesCount = $("touchscreenInput" + tstCurrentPage).value.split(";").length;
-                        } else {
-                            selectedValuesCount = 0;
+                            if (weight_loss_input.getAttribute('style').match(/lightblue/i)) {
+                                //selectCondition();
+                                displayCountOfSelectedConditions();
+                                return;
+                            }
+
+                            document.getElementById("regimen-change-popup-div").style.display = 'inline';
+                            document.getElementById("regimen-change-cover").style.display = 'inline';
                         }
 
-                        jQuery('#helpText' + tstCurrentPage + ' > #count-selected').html('&nbsp;(' + selectedValuesCount + ' selected)');
-                        liOptions = document.getElementsByTagName("li");
-                        for (var i = 0; i <= liOptions.length - 1; i++) {
-                            addEvent(liOptions[i], "click", function () {
-                                if ($("touchscreenInput" + tstCurrentPage).value.length > 0) {
-                                    selectedValuesCount = $("touchscreenInput" + tstCurrentPage).value.split(";").length;
-                                } else {
-                                    selectedValuesCount = 0
-                                }
-                                jQuery('#helpText' + tstCurrentPage + ' > #count-selected').html('&nbsp;(' + selectedValuesCount + ' selected)');
-
-                            });
-
-                        }
-                    }
-
-                    function addEvent(obj, evType, fn) {
-                        if (obj.addEventListener) {
-                            obj.addEventListener(evType, fn, false);
-                            return true;
-                        } else if (obj.attachEvent) {
-                            var r = obj.attachEvent("on" + evType, fn);
-                            return r;
-                        } else {
-                            alert("Handler could not be attached");
-                        }
-                    }
-
-
-                    function alertOnNormalBMI() {
-                        try {
-                            severe_weight_loss_option_id = severe_weight_loss_option_input.id;
-                        } catch (e) {
-                            severe_weight_loss_option_input = jQuery("[tstvalue='Moderate weight loss less than or equal to 10 percent, unexplained']")[0];
-                            severe_weight_loss_option_id = severe_weight_loss_option_input.id;
+                        function closeAlertOnNormalBMI() {
+                            document.getElementById("regimen-change-popup-div").style.display = 'none';
+                            document.getElementById("regimen-change-cover").style.display = 'none';
                         }
 
-                        weight_loss_input = document.getElementById('optionValue' + severe_weight_loss_option_id);
+                        function selectCondition() {
+                            severe_weight_loss_option_input = jQuery("[tstvalue='Severe weight loss >10% and/or BMI <18.5kg/m^2, unexplained']")[0];
 
-                        if (weight_loss_input.getAttribute('style').match(/lightblue/i)) {
-                            //selectCondition();
+                            try {
+                                severe_weight_loss_option_id = severe_weight_loss_option_input.id;
+                            } catch (e) {
+                                severe_weight_loss_option_input = jQuery("[tstvalue='Moderate weight loss less than or equal to 10 percent, unexplained']")[0];
+                                severe_weight_loss_option_id = severe_weight_loss_option_input.id;
+                            }
+
+                            weight_loss_input = document.getElementById('optionValue' + severe_weight_loss_option_id);
+                            updateTouchscreenInputForSelect(__$('optionValue' + "0"), weight_loss_input);
                             displayCountOfSelectedConditions();
-                            return;
+                            closeAlertOnNormalBMI();
                         }
 
-                        document.getElementById("regimen-change-popup-div").style.display = 'inline';
-                        document.getElementById("regimen-change-cover").style.display = 'inline';
-                    }
-
-                    function closeAlertOnNormalBMI() {
-                        document.getElementById("regimen-change-popup-div").style.display = 'none';
-                        document.getElementById("regimen-change-cover").style.display = 'none';
-                    }
-
-                    function selectCondition() {
-                        severe_weight_loss_option_input = jQuery("[tstvalue='Severe weight loss >10% and/or BMI <18.5kg/m^2, unexplained']")[0];
-
-                        try {
-                            severe_weight_loss_option_id = severe_weight_loss_option_input.id;
-                        } catch (e) {
-                            severe_weight_loss_option_input = jQuery("[tstvalue='Moderate weight loss less than or equal to 10 percent, unexplained']")[0];
-                            severe_weight_loss_option_id = severe_weight_loss_option_input.id;
+                        jQuery.fn.center = function () {
+                            parent = this.parent();
+                            this.css({
+                                "position": "absolute",
+                                "top": (((jQuery(parent).height() - this.outerHeight()) / 2) + jQuery(parent).scrollTop() - 100 + "px"),
+                                "left": (((jQuery(parent).width() - this.outerWidth()) / 2) + jQuery(parent).scrollLeft() + "px")
+                            });
+                            return this;
                         }
-
-                        weight_loss_input = document.getElementById('optionValue' + severe_weight_loss_option_id);
-                        updateTouchscreenInputForSelect(__$('optionValue' + "0"), weight_loss_input);
-                        displayCountOfSelectedConditions();
-                        closeAlertOnNormalBMI();
-                    }
-
-                    jQuery.fn.center = function () {
-                        parent = this.parent();
-                        this.css({
-                            "position": "absolute",
-                            "top": (((jQuery(parent).height() - this.outerHeight()) / 2) + jQuery(parent).scrollTop() - 100 + "px"),
-                            "left": (((jQuery(parent).width() - this.outerWidth()) / 2) + jQuery(parent).scrollLeft() + "px")
-                        });
-                        return this;
-                    }
                 </script>
                 <!--
                 <script language="javascript" type="text/javascript" src="/javascripts/show_category_hack.js" defer="true"></script>
