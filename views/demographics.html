@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <title>Bootstrap Example</title>
   <meta charset="utf-8">
@@ -8,57 +9,99 @@
   <script src="/assets/js/bootstrap/bootstrap.min.js"></script>
   <link rel="stylesheet" href="/assets/css/bootstrap/bootstrap.min.css">
 </head>
+
 <body>
 
-    <style>
-        .captions {
-            color: blue;
-        }
-    </style>
-<div class="container">
-  <h2>ART Patient Information Confirmation</h2>
-  <table class="table table-striped" style="height: 400px;">
+  <style>
+    .captions {
+      color: blue;
+    }
     
-    <tbody>
-      <tr>
-        <th class="captions"> Program Identifiers</th>
-        <th>Filing Number</th>
-        <td>0011-1100-11</td>
-        <th>ARV-Number</td>
-        <td>0011-11100 </td>
-        <th>Current Outcome</td>
-        <td> deceased </td>
-      </tr>
-      <tr>
+  </style>
+  <div class="container">
+    <h2>ART Patient Information Confirmation</h2>
+    <table class="table table-striped" style="height: 400px;">
+
+      <tbody>
+        <tr>
+          <th class="captions"> Program Identifiers</th>
+          <th>Filing Number</th>
+          <td id="filing-number"></td>
+          <th>ARV-Number</td>
+          <td id="arv-number"> </td>
+          <th>Current Outcome</td>
+          <td id="current-outcome"> deceased </td>
+        </tr>
+        <tr>
           <th class="captions"> Addresses</th>
-        <th> Residence</td>
-        <td> Mphanje</td>
-        <th>Duration of ART</th>
-        <td> 2 years </td>
-        <th>Current Regiment</th>
-        <td> 3 months </td>
-        
-      </tr>
-    <tr>
-        <th class="captions"> Dates</th>
-        <th>ART Start date</th>
-        <td>January 2012 </td>
-        <th>Reason for ART</th>
-        <td> MOH </td>
-        <th>Latest VL</th>
-        <td>4000</td>
-        
-    </tr>
-    <tr>
-        <th class="captions">Samples</th>
-       <th>Date of sample</th>
-       <td>2012-12-12</td>
-       <th>Date given to Patient</th>
-       <td>2011-12-12 </td>
-    </tr>
-    </tbody>
-  </table>
-</div>
+          <th> Residence</td>
+          <td id="residence"> </td>
+
+          <th>Current Regimen</th>
+          <td id="current-regimen">  </td>
+
+          <th>Reason for ART</th>
+          <td id="reason"> </td>
+        </tr>
+        <tr>
+          <th class="captions"> Dates</th>
+          <th>ART Start date</th>
+          <td id="art-start-date"> </td>
+          <th>Duration of ART</th>
+          <td id="art-duration">  </td>
+          <th>Date of sample</th>
+          <td id="date-of-sample">N/A</td>
+          
+        </tr>
+        <tr>
+          
+          <th class="captions">Samples</th>
+          <th>Latest VL</th>
+          <td id="latest-vl">N/A</td>
+          <th>Date given to Patient</th>
+          <td id="date-given-to-patient">N/A</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+
+  <script>
+    var apiURL = sessionStorage.getItem("apiURL");
+    var apiPort = sessionStorage.getItem("apiPort");
+    var apiProtocol = sessionStorage.getItem("apiProtocol");
+    var id = sessionStorage.getItem("patientID");
+
+    function ajaxRequest() {
+      var url = 'http://' + apiURL + ':' + apiPort + '/api/v1/programs/1/patients/' + id;
+      var req = new XMLHttpRequest();
+      req.onreadystatechange = function () {
+
+        if (this.readyState == 4) {
+          if (this.status == 200) {
+            var results = JSON.parse(this.responseText);
+            document.getElementById("art-start-date").innerHTML = results.art_start_date;
+            document.getElementById("reason").innerHTML = results.reason_for_art;
+            document.getElementById("filing-number").innerHTML = results.filing_number;
+            document.getElementById("art-duration").innerHTML = results.art_duration;
+            document.getElementById("arv-number").innerHTML = results.arv_number;
+            document.getElementById("current-outcome").innerHTML = results.current_outcome;
+            document.getElementById("residence").innerHTML = results.residence;
+            document.getElementById("current-regimen").innerHTML = results.current_regimen;
+          }
+        }
+      };
+      try {
+        req.open('GET', url, true);
+        req.setRequestHeader('Authorization', sessionStorage.getItem('authorization'));
+        req.send(null);
+      } catch (e) {
+      }
+    }
+    
+    ajaxRequest();
+  </script>
 
 </body>
+
 </html>
