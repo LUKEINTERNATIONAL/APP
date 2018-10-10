@@ -1,0 +1,195 @@
+<!--script src="https://code.jquery.com/jquery-3.1.1.min.js"></script-->
+<script src="/apps/ART/assets/js/Highcharts-6.1.3/code/highcharts.js"></script>
+<script src="/apps/ART/assets/js/Highcharts-6.1.3/code/highcharts-3d.js"></script>
+<script src="/apps/ART/assets/js/Highcharts-6.1.3/code/modules/exporting.js"></script>
+<script src="/apps/ART/assets/js/Highcharts-6.1.3/code/modules/export-data.js"></script>
+
+<script type="text/javascript" src="/assets/js/post_parameters.js"></script>
+
+
+<style>
+.encounter-types {
+  border-style: solid;
+  border-width: 0px 0px 1px 0px;
+}
+
+.numbers {
+  text-align: right;
+  padding-right: 5px;
+  border-style: solid;
+  border-width: 0px 0px 1px 0px;
+}
+
+.overview-main-container {
+  display: table;
+  width: 100%;
+  overflow: auto;
+}
+
+.overview-main-container-row {
+  display: table-row;
+}
+
+.overview-main-container-cell {
+  vertical-align: top;
+  display: table-cell;
+}
+
+#pie-chart {
+  width: 40%;
+  height: 315px;
+}
+
+#stats-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+#stats-table th {
+  border-style: solid;
+  border-width: 0px 0px 1px 0px;
+}
+
+* {
+    -webkit-touch-callout:none;
+    -webkit-user-select:none;
+    -moz-user-select:none;
+    -ms-user-select:none;
+    user-select:none;
+}
+
+</style>
+
+
+<div class="overview-main-container">
+  <div class="overview-main-container-row">
+  
+    <div class="overview-main-container-cell" id="pie-chart">
+    </div>
+
+    <div class="overview-main-container-cell" style="width: 30%;">
+      <table id="stats-table">
+        <tr>
+          <th>&nbsp;</th>
+          <th class="numbers">Female</th>
+          <th class="numbers">Male</th>
+        </tr>
+        <tbody id="stats-table-body">
+        </tbody>
+      </table>
+    </div>
+
+
+  </div>
+</div>
+
+
+
+
+<script type="text/javascript">
+
+function buildPieChart() {
+// Build the chart
+Highcharts.chart('pie-chart', {
+    chart: {
+        type: 'pie',
+        options3d: {
+            enabled: true,
+            alpha: 55,
+            beta: 0
+        }
+    },
+    title: {
+        text: 'Encounters created: January, 2018'
+    },
+    tooltip: {
+        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+    },
+    credits: {
+        enabled: false
+    },
+    exporting: {
+        enabled: false
+    },
+    plotOptions: {
+        pie: {
+            allowPointSelect: true,
+            cursor: 'pointer',
+            depth: 35,
+            dataLabels: {
+                enabled: true,
+                format: '{point.name}'
+            }
+        }
+    },
+    series: [{
+        type: 'pie',
+        name: 'Encounters',
+        data: encounters_created
+    }]
+});
+
+}
+
+
+//var stats = {all: true, date: dsdsd, encounter_types: [1,3,4,]
+var stats = {all: true, encounter_types: [6, 7, 51, 52, 53, 68]};
+var apiProtocol = sessionStorage.apiProtocol;
+var apiURL = sessionStorage.apiURL;
+var apiPort = sessionStorage.apiPort;
+
+var encounter_types = {}
+encounter_types[6]  = "Vitals"; 
+encounter_types[7]  = "Appointments"; 
+encounter_types[51] = "HIV reception"; 
+encounter_types[52] = "HIV Staging"; 
+encounter_types[53] = "HIV clinic consultation"; 
+encounter_types[68] = "ART Adherence"; 
+
+submitParameters(stats, "/reports/encounters", "renderStats");
+
+var encounters_created = [];
+var counter = 1;
+
+function renderStats(stats) {
+  var tby = document.getElementById("stats-table-body");
+  for(var encounter_type_id in stats){
+    var tr = document.createElement("tr");
+    var td = document.createElement("td");
+    td.setAttribute("class","encounter-types");
+    td.innerHTML = encounter_types[encounter_type_id];
+    tr.appendChild(td);
+
+    var td = document.createElement("td");
+    td.setAttribute("class","numbers");
+    td.innerHTML = stats[encounter_type_id].F;
+    tr.appendChild(td);
+
+    var td = document.createElement("td");
+    td.innerHTML = stats[encounter_type_id].M;
+    td.setAttribute("class","numbers");
+    tr.appendChild(td);
+
+    tby.appendChild(tr);
+  
+    if(counter == 1) {
+      encounters_created.push({
+        name: encounter_types[encounter_type_id],
+        y: (stats[encounter_type_id].F + stats[encounter_type_id].M),
+        sliced: true,   selected: true
+      });
+    }else{
+      encounters_created.push({
+        name: encounter_types[encounter_type_id],
+        y: (stats[encounter_type_id].F + stats[encounter_type_id].M)
+      });
+    }
+
+    counter++;
+  }
+
+  console.log(encounters_created);
+  buildPieChart();
+}
+
+</script>

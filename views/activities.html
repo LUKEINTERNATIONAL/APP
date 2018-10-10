@@ -1,0 +1,117 @@
+
+
+<script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js" defer="true"></script>
+<script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/standard.js" defer="true"></script>
+<script type="text/javascript" src="/assets/js/jquery.min.js"></script>
+
+<script type="text/javascript" src="/assets/js/yes_no_ctrls.js"></script>
+<link rel="stylesheet" href="/assets/css/yes_no_ctrls.css" type="text/css">
+<script type="text/javascript" src="/assets/js/post_parameters.js"></script>
+<script type="text/javascript" src="/assets/js/generic_ajaxrequest.js"></script>
+
+<style>
+
+.inputFrameClass {
+  width: 96% !important;
+}
+
+#clearButton {
+  display: none;
+}
+
+</style>
+
+<script>
+
+var patientID = sessionStorage.getItem("patientID");
+var programID = sessionStorage.getItem("programID");
+var tt_cancel_destination = "/";
+
+function loadActivities() {
+  var activities = [];
+
+  jQuery.getJSON("/apps/ART/application.json")
+    .done(function (data) {
+      activities = data.activities.tasks;
+      renderActivities(activities);
+
+    })
+    .fail(function () {
+      console.log("The application " + applicationName + "'s application.json file is not available");
+  });
+
+}
+/*
+<li id="0" tstvalue="vitals" class="even" tag="even" onmousedown="" onclick="null; updateTouchscreenInputForSelect(__$('optionValue' + this.id), this); " style=""><div style="display: table; border-spacing: 0px;"><div style="display: table-row"><div style="display: table-cell;"><img id="img0" src="/public/touchscreentoolkit/lib/images/unticked.jpg" alt="[ ]"></div><div style="display: table-cell; vertical-align: middle; text-align: left; padding-left: 15px;" id="optionValue0">Vitals</div></div></div></li
+*/
+
+function renderActivities(activities) {
+  var ul = document.getElementById("tt_currentUnorderedListOptions");
+  for(var i = 0 ; i < activities.sort().length ; i++){
+    var innerHTML = '<div style="display: table; border-spacing: 0px;"><div style="display: table-row"><div style="display: table-cell;"><img id="img';
+    innerHTML += i + '" src="/public/touchscreentoolkit/lib/images/unticked.jpg" alt="[ ]"></div><div style="display: table-cell; vertical-align: middle; text-align: left; padding-left: 15px;"';
+    innerHTML += ' id="optionValue' + i + '">';
+    innerHTML+= activities[i][0] + "</div></div></div>";
+    
+    var li = document.createElement("li");
+    li.setAttribute("id", i );
+    li.setAttribute("tstvalue", activities[i][1]);
+    li.setAttribute("onmousedown", "null; updateTouchscreenInputForSelect(__$('optionValue' + this.id), this); ");
+    li.setAttribute("style","");
+    li.setAttribute("class","even");
+    li.innerHTML = innerHTML;
+    ul.appendChild(li); 
+  } 
+}
+
+function changeNextBTN() {
+  var nextBTN = document.getElementById("nextButton");
+  nextButton.setAttribute("onmousedown","setActivities();");
+}
+
+function setActivities() {
+  var values = document.getElementById("touchscreenInput0").value;
+  if(isEmpty(values))
+    return;
+
+  var regex = new RegExp(";", "g");
+  values = values.replace(regex, ",");
+
+  var parameters = { property: "Activities", property_value: values }
+
+  submitParameters(parameters, "/user_properties", "redirectTo"); 
+  
+}
+
+function redirectTo(obj) {
+  sessionStorage.setItem("userActivities", obj.property_value);
+  document.location = "/";
+}
+
+function isEmpty(str){
+  try {
+    return (str.replace(/\s+/g, '').length < 1);
+  }catch(e){
+    return true;
+  }
+}
+
+</script>
+
+<body id="mateme">
+  <div id="container">
+    <div id="content">
+
+
+      <form action="post">
+
+        <select id="activity" tt_pageStyleClass="NoKeyboard NoInput small" 
+          multiple="multiple" helpText="Activities" name="activities" tt_onLoad="changeNextBTN();loadActivities();">
+        </select>
+
+      </form>
+
+   </div>
+ </div>
+</body>
+

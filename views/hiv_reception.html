@@ -1,14 +1,22 @@
 
+<script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js" defer="true"></script>
+<script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/standard.js" defer="true"></script>
+<script type="text/javascript" src="/assets/js/jquery.min.js"></script>
 
-<script type="text/javascript" src="/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js" defer="true"></script>
-<script type="text/javascript" src="/touchscreentoolkit/lib/javascripts/standard.js" defer="true"></script>
-<script type="text/javascript" src="/apps/core/assets/js/jquery.min.js"></script>
-
-<script type="text/javascript" src="/apps/core/assets/js/yes_no_ctrls.js"></script>
-<link rel="stylesheet" href="/apps/core/assets/css/yes_no_ctrls.css" type="text/css">
-<script type="text/javascript" src="/apps/core/assets/js/post_parameters.js"></script>
+<script type="text/javascript" src="/assets/js/yes_no_ctrls.js"></script>
+<link rel="stylesheet" href="/assets/css/yes_no_ctrls.css" type="text/css">
+<script type="text/javascript" src="/assets/js/post_parameters.js"></script>
+<script type="text/javascript" src="/assets/js/generic_ajaxrequest.js"></script>
 
 <script>
+
+var patientID = sessionStorage.getItem("patientID");
+var programID = sessionStorage.getItem("programID");
+var tt_cancel_destination = "/views/patient_dashboard.html?patient_id=" + patientID;
+
+YesNoConcepts = {};
+YesNoConcepts["Yes"] = 1065;
+YesNoConcepts["No"] = 1066;
 
 function autoSelectGuardian(clickedBtn) {
   if(clickedBtn.id.match(/No/i)) {
@@ -22,28 +30,28 @@ function submitHIVreception() {
   var encounter = {
     encounter_type_name: 'HIV RECEPTION',
     encounter_type_id:  51,
-    patient_id: 13,
+    patient_id: patientID,
     encounter_datetime: null
   }
 
-  submitEncounter(encounter, "postVitalsObs");
+  submitParameters(encounter, "/encounters", "postVitalsObs");
 }
 
-function postVitalsObs(encounter_id) {
+function postVitalsObs(encounter) {
 
   var obs = {
-    encounter_id: encounter_id,
+    encounter_id: encounter["encounter_id"],
     observations: [
       { concept_id: 1805, value_coded: YesNoConcepts[yesNo_Hash['HIV Reception']['Patient present?']] },
       { concept_id: 2122, value_coded: YesNoConcepts[yesNo_Hash['HIV Reception']['Guardian present?']] }
     ]
   }; 
 
-  createObs(obs, "nextPage")  
+  submitParameters(obs, "/observations", "nextPage")  
 }
 
-function nextPage(){
-  alert("Done");
+function nextPage(obs){
+  nextEncounter(patientID, programID, "");
 }
 
 
@@ -62,7 +70,7 @@ function changeSubmitFuction() {
     <div id="content">
 
 
-      <form onsubmit="submitEncounter();">
+      <form>
 
         <input type="text" name="summary"
           tt_onLoad="__$('keyboard').style.display = 'none';changeSubmitFuction();buildYesNoUI('HIV Reception', 'Patient present?,1805,autoSelectGuardian#Guardian present?,2122');" 
