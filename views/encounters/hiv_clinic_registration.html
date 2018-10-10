@@ -6,13 +6,13 @@
     <head>
         <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
         <title>Encounters New</title>
-        <script type="text/javascript" src="/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js" defer="true"></script>
-        <script type="text/javascript" src="/touchscreentoolkit/lib/javascripts/standard.js" defer="true"></script>
-        <script type="text/javascript" src="/apps/core/assets/js/jquery.min.js"></script>
+        <script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js" defer="true"></script>
+        <script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/standard.js" defer="true"></script>
+        <script type="text/javascript" src="/assets/js/jquery.min.js"></script>
 
-        <script type="text/javascript" src="/apps/core/assets/js/yes_no_ctrls.js"></script>
-        <link rel="stylesheet" href="/apps/core/assets/css/yes_no_ctrls.css" type="text/css"/>
-        <script type="text/javascript" src="/apps/core/assets/js/post_parameters.js"></script>
+        <script type="text/javascript" src="/assets/js/yes_no_ctrls.js"></script>
+        <link rel="stylesheet" href="/assets/css/yes_no_ctrls.css" type="text/css"/>
+        <script type="text/javascript" src="/assets/js/post_parameters.js"></script>
         <script type="text/javascript">
             tstUsername = "admin";
             tstCurrentDate = "2018-09-18";
@@ -1325,7 +1325,7 @@
                             encounter_datetime: null
                         }
 
-                        submitEncounter(encounter, "postHIVClinicRegistrationObs");
+                        submitParameters(encounter,"/encounters/", "postHIVClinicRegistrationObs");
                     }
 
                     function submitVitalsRegistration() {
@@ -1336,7 +1336,7 @@
                             encounter_datetime: answers_hash["date_art_started"]
                         }
 
-                        submitEncounter(encounter, "postVitalsObs");
+                        submitParameters(encounter, "postVitalsObs");
                     }
 
                     function submitHIVStaging() {
@@ -1347,7 +1347,7 @@
                             encounter_datetime: answers_hash["date_art_started"]
                         }
 
-                        submitEncounter(encounter, "postHIVStagingObs");
+                        submitParameters(encounter, "postHIVStagingObs");
                     }
 
                     var answers_hash = {
@@ -1365,9 +1365,9 @@
                         send_sms: "", cd4_percent: ""
                     }
 
-                    function postHIVClinicRegistrationObs(encounter_id) {
+                    function postHIVClinicRegistrationObs(encounter) {
                         var obs = {
-                            encounter_id: encounter_id,
+                            encounter_id: encounter.encounter_id,
                             observations: [
                                 { concept_id: 2552, value_coded: answers_hash["followup_agreement"].trim().toUpperCase() == "YES" ? 1065: 1066 },
                                 { concept_id: 7937, value_coded: answers_hash["ever_registered"].trim().toUpperCase() == "YES" ? 1065: 1066 },
@@ -1386,19 +1386,19 @@
                             ]
                         };
 
-                        createObs(obs, "nextPage")
+                        submitParameters(obs,"/observations/", "nextPage");
                     }
 
-                    function postVitalsObs(encounter_id){
+                    function postVitalsObs(encounter){
                         var obs = {
-                            encounter_id: encounter_id,
+                            encounter_id: encounter.encounter_id,
                             observations: [
                                 { concept_id: 5090, value_numeric: answers_hash["height"]},
                                 { concept_id: 5089, value_numeric: answers_hash["weight"]},
                                 { concept_id: 2137, value_numeric: answers_hash["bmi"] }                            ]
                         };
 
-                        createObs(obs, "nextPage")
+                     submitParameters(obs,"/observations/", "nextPage");
                     }
 
                     var who_stage_concept_map = {
@@ -1487,9 +1487,9 @@
                     }
 
 
-                    function postHIVStagingObs(encounter_id){
+                    function postHIVStagingObs(encounter){
                         var obs = {
-                            encounter_id: encounter_id,
+                            encounter_id: encounter.encounter_id,
                             observations: [
                                 { concept_id: 7562, value_text: answers_hash["who_stage"] },
                                 { concept_id: 8262, value_text: answers_hash["cd4_less_than_or_equal_to_250"] },
@@ -1517,9 +1517,10 @@
                                 }
                             }
                         }
+                        obs= JSON.stringify(obs);
 
 
-                        createObs(obs, "nextPage")
+                         submitParameters(obs,"/observations/", "nextPage");
                     }
 
 
@@ -1587,7 +1588,7 @@
                         }
                     }
 
-                    function submitEncounterOnUnknownConfirmatoryDate(){
+                    function submitParametersOnUnknownConfirmatoryDate(){
                         var nextButton =  document.getElementById('nextButton');
                         nextButton.onmousedown = function(){
                             value = $('touchscreenInput'+tstCurrentPage).value;
@@ -1761,7 +1762,7 @@
                     setTimeout(function () {showCategory2('')}, 500);
                 </script>
 
-                <form  onsubmit="submitEncounter();">
+                <form  onsubmit="submitParameters();">
 
                     <select tt_onLoad="setNextButtonToGetInputValue('followup_agreement')" name="follow_up_agreement" allowFreeText="false" helpText="Agrees to be contacted by phone/visited at home?" id="agrees_to_followup" tt_pageStyleClass="NoKeyboard">
                         <option value=""></option>
@@ -2081,7 +2082,7 @@
 
                     <select objectType="location" tt_onLoad="setNextButtonToGetInputValue('confirmatory_hiv_test_location');" ajaxURL="/locations?name=" allowFreeText="true" condition="$('type_of_confirmatory_hiv_test').value != 'NOT DONE'" field_type="alpha" helpText="Location of confirmatory HIV test" id="confirmatory_hiv_test_location" name="observations[][value_coded_or_text]"></select>
 
-                    <input absoluteMax="2018" condition="$('type_of_confirmatory_hiv_test').value != 'NOT DONE'" field_type="number" helpText="Confirmatory HIV test year" id="confirmatory_hiv_test_year" name="year_confirmatory_hiv_test" tt_onLoad="changeNextButtonForConfirmatoryYear(); changeAbsoluteMinForConfirmatoryYear(); __$('Unknown').style.display = 'inline'; submitEncounterOnUnknownConfirmatoryDate();" tt_pageStyleClass="Numeric NumbersOnly" type="text" />
+                    <input absoluteMax="2018" condition="$('type_of_confirmatory_hiv_test').value != 'NOT DONE'" field_type="number" helpText="Confirmatory HIV test year" id="confirmatory_hiv_test_year" name="year_confirmatory_hiv_test" tt_onLoad="changeNextButtonForConfirmatoryYear(); changeAbsoluteMinForConfirmatoryYear(); __$('Unknown').style.display = 'inline'; submitParametersOnUnknownConfirmatoryDate();" tt_pageStyleClass="Numeric NumbersOnly" type="text" />
 
                     <select condition="$('type_of_confirmatory_hiv_test').value != 'NOT DONE' && $('confirmatory_hiv_test_year').value.toLowerCase() != 'unknown'" helpText="Confirmatory HIV test month" id="confirmatory_hiv_test_month" name="month_confirmatory_hiv_test" tt_onLoad="__$('keyboard').style.display = 'none'; validateConfirmatoryMonth();" validationMessage="Please enter a valid date">
                         <option value=""></option>
