@@ -1593,8 +1593,11 @@
                             value = $('touchscreenInput'+tstCurrentPage).value;
                             if (value.match(/UNKNOWN/i)){
                                 submitHIVClinicRegistration();
-                                submitVitalsRegistration();
-                                submitHIVStaging();
+                                if (showConditions() == true){
+                                    submitVitalsRegistration();
+                                    submitHIVStaging();
+                                }
+                                
                             } else{
                                 gotoNextPage();
                             }
@@ -1717,8 +1720,10 @@
                         var nextButton =  document.getElementById('nextButton');
                         nextButton.onmousedown = function(){
                             submitHIVClinicRegistration();
-                            submitVitalsRegistration();
-                            submitHIVStaging();
+                            if (showConditions() == true){
+                                submitVitalsRegistration();
+                                submitHIVStaging();
+                            }
                             alert("Form submitted")
                         }
                     }
