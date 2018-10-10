@@ -16,10 +16,16 @@
     .captions {
       color: blue;
     }
+    .red {
+      color: red;
+    }
+    .green {
+      color: green;
+    }
     
   </style>
   <div class="container">
-    <h2>ART Patient Information Confirmation</h2>
+    <h2>Next Encounter: <span id="nextEncounter"></span> (<span id="available"></span>)</h2>
     <table class="table table-striped" style="height: 400px;">
 
       <tbody>
@@ -98,6 +104,15 @@
       } catch (e) {
       }
     }
+    document.getElementById("nextEncounter").innerHTML = sessionStorage.nextEncounter;
+    var available = document.getElementById("available");
+    available.innerHTML = sessionStorage.nextEncounterAvailable;
+    if (sessionStorage.nextEncounterAvailable === "Available") {
+      available.className = "green";
+    }else {
+      available.className = "red";
+    }
+    
     
     ajaxRequest();
   </script>
