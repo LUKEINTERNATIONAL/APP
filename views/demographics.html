@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Bootstrap Example</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="/assets/js/jquery.min.js"></script>
+  <script src="/assets/js/bootstrap/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="/assets/css/bootstrap/bootstrap.min.css">
+</head>
+
+<body>
+
+  <style>
+    .captions {
+      color: blue;
+    }
+    .red {
+      color: red;
+    }
+    .green {
+      color: green;
+    }
+    
+  </style>
+  <div class="container">
+    <h2>Next Encounter: <span id="nextEncounter"></span> (<span id="available"></span>)</h2>
+    <table class="table table-striped" style="height: 400px;">
+
+      <tbody>
+        <tr>
+          <th class="captions"> Program Identifiers</th>
+          <th>Filing Number</th>
+          <td id="filing-number"></td>
+          <th>ARV-Number</td>
+          <td id="arv-number"> </td>
+          <th>Current Outcome</td>
+          <td id="current-outcome"> deceased </td>
+        </tr>
+        <tr>
+          <th class="captions"> Addresses</th>
+          <th> Residence</td>
+          <td id="residence"> </td>
+
+          <th>Current Regimen</th>
+          <td id="current-regimen">  </td>
+
+          <th>Reason for ART</th>
+          <td id="reason"> </td>
+        </tr>
+        <tr>
+          <th class="captions"> Dates</th>
+          <th>ART Start date</th>
+          <td id="art-start-date"> </td>
+          <th>Duration of ART</th>
+          <td id="art-duration">  </td>
+          <th>Date of sample</th>
+          <td id="date-of-sample">N/A</td>
+          
+        </tr>
+        <tr>
+          
+          <th class="captions">Samples</th>
+          <th>Latest VL</th>
+          <td id="latest-vl">N/A</td>
+          <th>Date given to Patient</th>
+          <td id="date-given-to-patient">N/A</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+
+  <script>
+    var apiURL = sessionStorage.getItem("apiURL");
+    var apiPort = sessionStorage.getItem("apiPort");
+    var apiProtocol = sessionStorage.getItem("apiProtocol");
+    var id = sessionStorage.getItem("patientID");
+
+    function ajaxRequest() {
+      var url = 'http://' + apiURL + ':' + apiPort + '/api/v1/programs/1/patients/' + id;
+      var req = new XMLHttpRequest();
+      req.onreadystatechange = function () {
+
+        if (this.readyState == 4) {
+          if (this.status == 200) {
+            var results = JSON.parse(this.responseText);
+            document.getElementById("art-start-date").innerHTML = results.art_start_date;
+            document.getElementById("reason").innerHTML = results.reason_for_art;
+            document.getElementById("filing-number").innerHTML = results.filing_number;
+            document.getElementById("art-duration").innerHTML = results.art_duration;
+            document.getElementById("arv-number").innerHTML = results.arv_number;
+            document.getElementById("current-outcome").innerHTML = results.current_outcome;
+            document.getElementById("residence").innerHTML = results.residence;
+            document.getElementById("current-regimen").innerHTML = results.current_regimen;
+          }
+        }
+      };
+      try {
+        req.open('GET', url, true);
+        req.setRequestHeader('Authorization', sessionStorage.getItem('authorization'));
+        req.send(null);
+      } catch (e) {
+      }
+    }
+    document.getElementById("nextEncounter").innerHTML = sessionStorage.nextEncounter;
+    var available = document.getElementById("available");
+    available.innerHTML = sessionStorage.nextEncounterAvailable;
+    if (sessionStorage.nextEncounterAvailable === "Available") {
+      available.className = "green";
+    }else {
+      available.className = "red";
+    }
+    
+    
+    ajaxRequest();
+  </script>
+
+</body>
+
+</html>
