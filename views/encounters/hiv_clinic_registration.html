@@ -13,6 +13,8 @@
         <script type="text/javascript" src="/assets/js/yes_no_ctrls.js"></script>
         <link rel="stylesheet" href="/assets/css/yes_no_ctrls.css" type="text/css"/>
         <script type="text/javascript" src="/assets/js/post_parameters.js"></script>
+        <script type="text/javascript" src="/assets/js/generic_ajaxrequest.js"></script>
+
         <script type="text/javascript">
             tstUsername = "admin";
             tstCurrentDate = "2018-09-18";
@@ -1526,7 +1528,8 @@
 
 
                     function nextPage(){
-                        alert("Done");
+                        nextEncounter(sessionStorage.patientID, 1);
+                        // alert("Done");
                     }
 
                     function setNextButtonToGetInputValue(key){
@@ -1725,7 +1728,7 @@
                                 submitVitalsRegistration();
                                 submitHIVStaging();
                             }
-                            alert("Form submitted")
+                            // alert("Form submitted")
                         }
                     }
 
