@@ -2,6 +2,10 @@
 <script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js" defer="true"></script>
 <script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/standard.js" defer="true"></script>
 <script type="text/javascript" src="/assets/js/jquery.min.js"></script>
+<script type="text/javascript" src="/assets/js/moment.js"></script>
+<!-- <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.css"> -->
+  
+<!-- <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script> -->
 
 <style>
 
@@ -184,11 +188,19 @@
 .list-selected {
   background-color: lightblue;
 }
-
+table {
+  width: 99%;
+}
+table, th, td, tbody, thead {
+  border: 1px solid black;
+}
 </style>
 
 
 <script>
+localStorage.clear();
+var apiURL = sessionStorage.getItem("apiURL");
+var apiPort = sessionStorage.getItem("apiPort");
 
 function buildEntryPage() {
   var frame = document.getElementById("inputFrame" + tstCurrentPage);
@@ -262,12 +274,16 @@ function buildEntry(e) {
     
   e.setAttribute("class","btn-ctrl");
 
-  if(e.id == "Medication")
+  if(e.id == "Medication") {
     buildPillCountScreen();
+  }else if (e.id == "Summary") {
+    buildSummaryPage();
+  }
+    
 
 }
 
-var medication = ["Triprolidine 2.5 Mg Oral Tablet","Zinc Gluconate 10 Mg Oral Tablet"];
+var medication = [];
 
 function buildPillCountScreen() {
   var mainContainer = document.getElementById("main-container-table-cell-right");
@@ -295,19 +311,166 @@ function buildPillCountScreen() {
 
   var medicationList = document.getElementById("medication-list");
   var ul = document.createElement("ul");
+
   ul.setAttribute("id","medication-ul");
   medicationList.appendChild(ul);
 
-  for(var i = 0 ; i < medication.length ; i++){
-    var li = document.createElement("li");
-    li.setAttribute("class","list");
-    li.setAttribute("onmousedown","selectMed(this)");
-    li.innerHTML = medication[i];
-    ul.appendChild(li);
-  }
+  var url = 'http://' + apiURL + ':' + apiPort + '/api/v1/drug_orders/?patient_id=' + sessionStorage.patientID;
+    var req = new XMLHttpRequest();
+    req.onreadystatechange = function () {
+
+      if (this.readyState == 4) {
+        if (this.status == 200) {
+           medication = JSON.parse(this.responseText);
+          for(var i = 0 ; i < medication.length ; i++){
+            var li = document.createElement("li");
+            li.setAttribute("class","list");
+            li.setAttribute("onmousedown","selectMed(this)");
+            li.innerHTML = medication[i].drug.name;
+            localStorage.setItem(medication[i].drug.name, 0);
+            ul.appendChild(li);
+          }
+        }
+      }
+    };
+    try {
+      req.open('GET', url, true);
+      req.setRequestHeader('Authorization', sessionStorage.getItem('authorization'));
+      req.send(null);
+    } catch (e) {
+    }
+  
+
+  
 
   buildKeyPad();
 
+}
+
+function buildSummaryPage() {
+  var mainContainer = document.getElementById("main-container-table-cell-right");
+  mainContainer.innerHTML = null;
+  generateTable(mainContainer);
+  var table = document.createElement("TAB")
+}
+
+function createTable(rownName) {
+
+    var pillsRow = document.createElement("TR");
+    pillsRow.setAttribute("id", rownName + "TR");
+    document.getElementById("myTable").appendChild(pillsRow);
+
+    var d = document.createElement("TD");
+    var e = document.createTextNode(rownName);
+    d.appendChild(e);
+    document.getElementById("dailyTabsTR").appendChild(d);
+    
+}
+
+function generateTable(mainContainer) {
+    
+    var x = document.createElement("TABLE");
+    x.setAttribute("id", "myTable");
+    mainContainer.appendChild(x);
+
+    var y = document.createElement("TR");
+    y.setAttribute("id", "myTR");
+    document.getElementById("myTable").appendChild(y);
+    document.getElementById("myTR").innerHTML = "<td> Drug Name </td>";
+
+    var pillsRow = document.createElement("TR");
+    pillsRow.setAttribute("id", "numberTR");
+    document.getElementById("myTable").appendChild(pillsRow);
+    document.getElementById("numberTR").innerHTML = "<td> Tabs Given </td>"
+
+    var TabsPerDayRow = document.createElement("TR");
+    TabsPerDayRow.setAttribute("id", "dailyTabsTR");
+    document.getElementById("myTable").appendChild(TabsPerDayRow);
+    document.getElementById("dailyTabsTR").innerHTML = "<td> Tabs Per Day </td>"
+
+    var DosesPerDayRow = document.createElement("TR");
+    DosesPerDayRow.setAttribute("id", "dosesTabsTR");
+    document.getElementById("myTable").appendChild(DosesPerDayRow);
+    document.getElementById("dosesTabsTR").innerHTML = "<td> Doses Per Day </td>";
+
+    var ExpectedRow = document.createElement("TR");
+    ExpectedRow.setAttribute("id", "ExpectedTabsTR");
+    document.getElementById("myTable").appendChild(ExpectedRow);
+    document.getElementById("ExpectedTabsTR").innerHTML = "<td> Expected </td>";
+
+    var actualRow = document.createElement("TR");
+    actualRow.setAttribute("id", "actualTabsTR");
+    document.getElementById("myTable").appendChild(actualRow);
+    document.getElementById("actualTabsTR").innerHTML = "<td> Actual (Counted) </td>";
+
+    var dosesMissedRow = document.createElement("TR");
+    dosesMissedRow.setAttribute("id", "dosesMissedTabsTR");
+    document.getElementById("myTable").appendChild(dosesMissedRow);
+    document.getElementById("dosesTabsTR").innerHTML = "<td> Doses Missed/ unaccounted for </td>";
+    
+    var dosesConsumedRow = document.createElement("TR");
+    dosesConsumedRow.setAttribute("id", "dosesConsumedTabsTR");
+    document.getElementById("myTable").appendChild(dosesConsumedRow);
+    document.getElementById("dosesConsumedTabsTR").innerHTML = "<td> Doses consumed </td>";
+
+    var artAdherenceRow = document.createElement("TR");
+    artAdherenceRow.setAttribute("id", "artAdherenceTabsTR");
+    document.getElementById("myTable").appendChild(artAdherenceRow);
+    document.getElementById("artAdherenceTabsTR").innerHTML = "<td> ART Adherence </td>";
+    
+    var url = 'http://' + apiURL + ':' + apiPort + '/api/v1/drug_orders/?patient_id=' + sessionStorage.patientID;
+    var req = new XMLHttpRequest();
+    req.onreadystatechange = function () {
+
+      if (this.readyState == 4) {
+        if (this.status == 200) {
+           medication = JSON.parse(this.responseText);
+          for(var i = 0 ; i < medication.length ; i++){
+            var z = document.createElement("TD");
+            var t = document.createTextNode(medication[i].drug.name);
+            z.appendChild(t);
+            var today = moment();
+            var givenDay = moment(medication[i].order.start_date);
+            var dayDiffernece = today.diff(givenDay, 'days');
+            
+            document.getElementById("myTR").appendChild(z);
+            var b = document.createElement("TD");
+            var c = document.createTextNode(localStorage.getItem(medication[i].drug.name));
+            b.appendChild(c);
+            var expected = (medication[i].quantity - (dayDiffernece * medication[i].equivalent_daily_dose));
+            var remaining = localStorage.getItem(medication[i].drug.name);
+            var consumed = medication[i].quantity - remaining;
+            var adherencePercentage = Math.round(100*(medication[i].quantity - remaining) / (medication[i].quantity - expected));            
+            document.getElementById("numberTR").innerHTML += "<td>" +medication[i].quantity+"</td>";
+            document.getElementById("dailyTabsTR").innerHTML += "<td>" +medication[i].equivalent_daily_dose+"</td>";
+            document.getElementById("actualTabsTR").innerHTML += "<td>" +localStorage.getItem(medication[i].drug.name)+"</td>";
+            document.getElementById("ExpectedTabsTR").innerHTML += "<td>" +expected+"</td>";
+            document.getElementById("dosesTabsTR").innerHTML += "<td>" +(expected - remaining)+"</td>";
+            document.getElementById("dosesConsumedTabsTR").innerHTML += "<td>" +consumed+"</td>";
+            document.getElementById("artAdherenceTabsTR").innerHTML += "<td>" +adherencePercentage+"%</td>";
+            
+              if (i == 3) {
+                break;
+              }
+
+          }
+        }
+      }
+    };
+    try {
+      req.open('GET', url, true);
+      req.setRequestHeader('Authorization', sessionStorage.getItem('authorization'));
+      req.send(null);
+    } catch (e) {
+    }
+
+    // var tables = ["Drug Name", "Tabs Given", "Tabs Per Day", "Tablets Per Day"];
+    // console.log(tables);
+    // for (let index = 0; index < tables.length; index++) {
+    //   createTable(tables[index]);
+      
+    // }
+   
 }
 
 function buildKeyPad() {
@@ -377,15 +540,16 @@ function buildKeyPad() {
 
 function setEnteredKey(key) {
   var inputBox = document.getElementById("pills-brought");
-  
+  var activeBTN = sessionStorage.activeBTN;
   try{
 
     if(key.innerHTML.match(/Del/i)){
       inputBox.value = inputBox.value.substring(0, inputBox.value.length - 1);
     }else{
       inputBox.value += key.innerHTML;
+      
     }
-
+    localStorage.setItem(activeBTN, inputBox.value);
   }catch(x) { }
 
   //getMedication(inputBox.value);
@@ -394,10 +558,17 @@ function setEnteredKey(key) {
 
 function selectMed(e) {
   var list = document.getElementsByClassName("list");
+  // console.log(localStorage.getItem(e.innerHTML));
+  if (localStorage.getItem(e.innerHTML) != 0) {
+    document.getElementById("pills-brought").value = localStorage.getItem(e.innerHTML);
+  }
+  else {
+    document.getElementById("pills-brought").value = "";
+  }
   for(var i = 0 ; i < list.length ; i++){
     list[i].setAttribute("class","list");
   }
-
+  sessionStorage.setItem("activeBTN", e.innerHTML);
   e.setAttribute("class","list list-selected");
 }
 
