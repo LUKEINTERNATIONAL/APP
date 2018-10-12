@@ -191,8 +191,15 @@
 table {
   width: 99%;
 }
-table, th, td, tbody, thead {
+ table, th, td tbody, thead {
   border: 1px solid black;
+}
+
+.headers {
+  /* border: 0px; */
+  color: white;
+  background-color: #5d5a5a;
+  /* width: 100%; */
 }
 </style>
 
@@ -314,8 +321,8 @@ function buildPillCountScreen() {
 
   ul.setAttribute("id","medication-ul");
   medicationList.appendChild(ul);
-
-  var url = 'http://' + apiURL + ':' + apiPort + '/api/v1/drug_orders/?patient_id=' + sessionStorage.patientID;
+  var todaysDate = moment().format("YYYY-MM-DD");
+  var url = 'http://' + apiURL + ':' + apiPort + '/api/v1/programs/1/patients/'+ sessionStorage.patientID + "/last_drugs_received?date="+todaysDate;
     var req = new XMLHttpRequest();
     req.onreadystatechange = function () {
 
@@ -327,7 +334,6 @@ function buildPillCountScreen() {
             li.setAttribute("class","list");
             li.setAttribute("onmousedown","selectMed(this)");
             li.innerHTML = medication[i].drug.name;
-            localStorage.setItem(medication[i].drug.name, 0);
             ul.appendChild(li);
           }
         }
@@ -372,6 +378,12 @@ function generateTable(mainContainer) {
     var x = document.createElement("TABLE");
     x.setAttribute("id", "myTable");
     mainContainer.appendChild(x);
+    
+    var y = document.createElement("TR");
+    y.setAttribute("id", "headerTR");
+    y.setAttribute("class", "headers");
+    document.getElementById("myTable").appendChild(y);
+    document.getElementById("headerTR").innerHTML = "<td class='headers'> Prescription </td>";
 
     var y = document.createElement("TR");
     y.setAttribute("id", "myTR");
@@ -392,6 +404,12 @@ function generateTable(mainContainer) {
     DosesPerDayRow.setAttribute("id", "dosesTabsTR");
     document.getElementById("myTable").appendChild(DosesPerDayRow);
     document.getElementById("dosesTabsTR").innerHTML = "<td> Doses Per Day </td>";
+    
+    var y = document.createElement("TR");
+    y.setAttribute("id", "expectedTR");
+    y.setAttribute("class", "headers");
+    document.getElementById("myTable").appendChild(y);
+    document.getElementById("expectedTR").innerHTML = "<td class='headers'> Tabs Remaining </td>";
 
     var ExpectedRow = document.createElement("TR");
     ExpectedRow.setAttribute("id", "ExpectedTabsTR");
@@ -403,6 +421,12 @@ function generateTable(mainContainer) {
     document.getElementById("myTable").appendChild(actualRow);
     document.getElementById("actualTabsTR").innerHTML = "<td> Actual (Counted) </td>";
 
+    var y = document.createElement("TR");
+    y.setAttribute("id", "adherenceTR");
+    y.setAttribute("class", "headers");
+    document.getElementById("myTable").appendChild(y);
+    document.getElementById("adherenceTR").innerHTML = "<td class='headers'> Adherence </td>";
+    
     var dosesMissedRow = document.createElement("TR");
     dosesMissedRow.setAttribute("id", "dosesMissedTabsTR");
     document.getElementById("myTable").appendChild(dosesMissedRow);
@@ -418,7 +442,10 @@ function generateTable(mainContainer) {
     document.getElementById("myTable").appendChild(artAdherenceRow);
     document.getElementById("artAdherenceTabsTR").innerHTML = "<td> ART Adherence </td>";
     
-    var url = 'http://' + apiURL + ':' + apiPort + '/api/v1/drug_orders/?patient_id=' + sessionStorage.patientID;
+    // var url = 'http://' + apiURL + ':' + apiPort + '/api/v1/drug_orders/?patient_id=' + sessionStorage.patientID;
+
+  var todaysDate = moment().format("YYYY-MM-DD");
+  var url = 'http://' + apiURL + ':' + apiPort + '/api/v1/programs/1/patients/'+ sessionStorage.patientID + "/last_drugs_received?date="+todaysDate;
     var req = new XMLHttpRequest();
     req.onreadystatechange = function () {
 
@@ -570,13 +597,14 @@ function setEnteredKey(key) {
 
 function selectMed(e) {
   var list = document.getElementsByClassName("list");
-  // console.log(localStorage.getItem(e.innerHTML));
-  if (localStorage.getItem(e.innerHTML) != 0) {
-    document.getElementById("pills-brought").value = localStorage.getItem(e.innerHTML);
-  }
-  else {
-    document.getElementById("pills-brought").value = "";
-  }
+  document.getElementById("pills-brought").value = localStorage.getItem(e.innerHTML);
+    console.log(localStorage.getItem(e.innerHTML));
+  // if (localStorage.getItem(e.innerHTML) != 0) {
+  //   document.getElementById("pills-brought").value = localStorage.getItem(e.innerHTML);
+  // }
+  // else {
+  //   document.getElementById("pills-brought").value = localStorage.getItem(e.innerHTML);
+  // }
   for(var i = 0 ; i < list.length ; i++){
     list[i].setAttribute("class","list");
   }
