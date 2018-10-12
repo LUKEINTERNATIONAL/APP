@@ -6,13 +6,15 @@
     <head>
         <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
         <title>Encounters New</title>
-        <script type="text/javascript" src="/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js" defer="true"></script>
-        <script type="text/javascript" src="/touchscreentoolkit/lib/javascripts/standard.js" defer="true"></script>
-        <script type="text/javascript" src="/apps/core/assets/js/jquery.min.js"></script>
+        <script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js" defer="true"></script>
+        <script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/standard.js" defer="true"></script>
+        <script type="text/javascript" src="/assets/js/jquery.min.js"></script>
 
-        <script type="text/javascript" src="/apps/core/assets/js/yes_no_ctrls.js"></script>
-        <link rel="stylesheet" href="/apps/core/assets/css/yes_no_ctrls.css" type="text/css"/>
-        <script type="text/javascript" src="/apps/core/assets/js/post_parameters.js"></script>
+        <script type="text/javascript" src="/assets/js/yes_no_ctrls.js"></script>
+        <link rel="stylesheet" href="/assets/css/yes_no_ctrls.css" type="text/css"/>
+        <script type="text/javascript" src="/assets/js/post_parameters.js"></script>
+        <script type="text/javascript" src="/assets/js/generic_ajaxrequest.js"></script>
+
         <script type="text/javascript">
             tstUsername = "admin";
             tstCurrentDate = "2018-09-18";
@@ -155,8 +157,8 @@
             <div id="content">
 
                 <script>
-                    var tt_cancel_destination = "/patients/show/"
-                    var patient_id = "1201";
+                    var tt_cancel_destination = "/views/patient_dashboard.html";
+                    var patient_id = sessionStorage.patientID;
 
                     var todayDate = createDates("2018", "9", "18");
                     var originaltestDate = ""
@@ -359,7 +361,7 @@
 
                         if (dateCreate(set_dob) == 'Invalid Date') {
                             if (set_dob.split('-')[1] == 'Unknown')
-                            return true
+                                return true
 
                             if (curr_date.getFullYear() == parseInt(dob_year)) {
                                 if ((curr_date.getMonth() + 1) < parseInt(dob_month)) {
@@ -1320,37 +1322,34 @@
                     function submitHIVClinicRegistration() {
 
                         var encounter = {
-                            encounter_type_name: 'HIV CLINIC REGISTRATION',
                             encounter_type_id:  9,
                             patient_id: patient_id,
                             encounter_datetime: null
                         }
 
-                        submitEncounter(encounter, "postHIVClinicRegistrationObs");
+                        submitParameters(encounter,"/encounters/", "postHIVClinicRegistrationObs");
                     }
 
                     function submitVitalsRegistration() {
 
                         var encounter = {
-                            encounter_type_name: 'VITALS',
                             encounter_type_id:  6,
                             patient_id: patient_id,
-                            encounter_datetime: null
+                            encounter_datetime: answers_hash["date_art_started"]
                         }
 
-                        submitEncounter(encounter, "postVitalsObs");
+                        submitParameters(encounter, "postVitalsObs");
                     }
 
                     function submitHIVStaging() {
 
                         var encounter = {
-                            encounter_type_name: 'HIV STAGING',
                             encounter_type_id:  52,
                             patient_id: patient_id,
-                            encounter_datetime: null
+                            encounter_datetime: answers_hash["date_art_started"]
                         }
 
-                        submitEncounter(encounter, "postHIVStagingObs");
+                        submitParameters(encounter, "postHIVStagingObs");
                     }
 
                     var answers_hash = {
@@ -1368,17 +1367,19 @@
                         send_sms: "", cd4_percent: ""
                     }
 
-                    function postHIVClinicRegistrationObs(encounter_id) {
+                    function postHIVClinicRegistrationObs(encounter) {
                         var obs = {
-                            encounter_id: encounter_id,
+                            encounter_id: encounter.encounter_id,
                             observations: [
-                                { concept_id: 2552, value_coded: answers_hash["followup_agreement"].trim().toUpperCase() == "YES" ? 1065: 1064 },
-                                { concept_id: 7937, value_coded: answers_hash["ever_registered"].trim().toUpperCase() == "YES" ? 1065: 1064 },
-                                { concept_id: 6393, value_coded: answers_hash["has_transfer_letter"].trim().toUpperCase() == "YES" ? 1065: 1064 },
+                                { concept_id: 2552, value_coded: answers_hash["followup_agreement"].trim().toUpperCase() == "YES" ? 1065: 1066 },
+                                { concept_id: 7937, value_coded: answers_hash["ever_registered"].trim().toUpperCase() == "YES" ? 1065: 1066 },
+                                { concept_id: 6393, value_coded: answers_hash["has_transfer_letter"].trim().toUpperCase() == "YES" ? 1065: 1066 },
                                 { concept_id: 7881, value_text: answers_hash["confirmatory_hiv_test_location"] },
                                 { concept_id: 7880, value_text: answers_hash["confirmatory_hiv_test_type"] },
-                                { concept_id: 8011, value_coded: answers_hash["send_sms"].trim().toUpperCase() == "YES" ? 1065: 1064 },
-                                { concept_id: 7751, value_datetime: answers_hash["date_art_last_taken"] },
+                                { concept_id: 8011, value_coded: answers_hash["send_sms"].trim().toUpperCase() == "YES" ? 1065: 1066 },
+                                { concept_id: 7751, value_datetime: answers_hash["date_art_last_taken"], value_text: date_art_last_taken_value_text },
+                                { concept_id: 7752, value_coded: answers_hash["taken_art_in_the_last_two_months"].trim().toUpperCase() == "YES" ? 1065: 1066 },
+                                { concept_id: 6394, value_coded: answers_hash["taken_art_in_the_last_two_weeks"].trim().toUpperCase() == "YES" ? 1065: 1066 },
                                 { concept_id: 7750, value_text: answers_hash["location_of_art_initiation"] },
                                 { concept_id: 1499, value_datetime: answers_hash["drug_start_date"] },
                                 { concept_id: 2516, value_datetime: answers_hash["date_art_started"] },
@@ -1387,19 +1388,19 @@
                             ]
                         };
 
-                        createObs(obs, "nextPage")
+                        submitParameters(obs,"/observations/", "nextPage");
                     }
 
-                    function postVitalsObs(encounter_id){
+                    function postVitalsObs(encounter){
                         var obs = {
-                            encounter_id: encounter_id,
+                            encounter_id: encounter.encounter_id,
                             observations: [
                                 { concept_id: 5090, value_numeric: answers_hash["height"]},
                                 { concept_id: 5089, value_numeric: answers_hash["weight"]},
                                 { concept_id: 2137, value_numeric: answers_hash["bmi"] }                            ]
                         };
 
-                        createObs(obs, "nextPage")
+                     submitParameters(obs,"/observations/", "nextPage");
                     }
 
                     var who_stage_concept_map = {
@@ -1488,12 +1489,10 @@
                     }
 
 
-                    function postHIVStagingObs(encounter_id){
+                    function postHIVStagingObs(encounter){
                         var obs = {
-                            encounter_id: encounter_id,
-                            observations: [                               
-                                { concept_id: 7752, value_coded: answers_hash["taken_art_in_the_last_two_months"].trim().toUpperCase() == "YES" ? 1065: 1064 },
-                                { concept_id: 6394, value_coded: answers_hash["taken_art_in_the_last_two_weeks"].trim().toUpperCase() == "YES" ? 1065: 1064 },
+                            encounter_id: encounter.encounter_id,
+                            observations: [
                                 { concept_id: 7562, value_text: answers_hash["who_stage"] },
                                 { concept_id: 8262, value_text: answers_hash["cd4_less_than_or_equal_to_250"] },
                                 { concept_id: 8207, value_text: answers_hash["cd4_less_than_or_equal_to_350"] },
@@ -1508,8 +1507,8 @@
                         };
 
                         if (patientGender == "FEMALE"){
-                            obs.observations.push({ concept_id: 6131, value_coded: (answers_hash["is_patient_pregnant"].length > 0 ? (answers_hash["is_patient_pregnant"].trim().toUpperCase() == "YES" ? 1065: 1064): "" )})
-                            obs.observations.push({ concept_id: 7965, value_coded: (answers_hash["is_patient_breastfeeding"].length > 0 ? (answers_hash["is_patient_breastfeeding"].trim().toUpperCase() == "YES" ? 1065: 1064): "") })
+                            obs.observations.push({ concept_id: 6131, value_coded: (answers_hash["is_patient_pregnant"].length > 0 ? (answers_hash["is_patient_pregnant"].trim().toUpperCase() == "YES" ? 1065: 1066): "" )})
+                            obs.observations.push({ concept_id: 7965, value_coded: (answers_hash["is_patient_breastfeeding"].length > 0 ? (answers_hash["is_patient_breastfeeding"].trim().toUpperCase() == "YES" ? 1065: 1066): "") })
                         }
 
                         for (condition in selected_stage_conditions) {
@@ -1520,15 +1519,17 @@
                                 }
                             }
                         }
+                        obs= JSON.stringify(obs);
 
 
-                        createObs(obs, "nextPage")
+                         submitParameters(obs,"/observations/", "nextPage");
                     }
 
 
 
                     function nextPage(){
-                        alert("Done");
+                        nextEncounter(sessionStorage.patientID, 1);
+                        // alert("Done");
                     }
 
                     function setNextButtonToGetInputValue(key){
@@ -1590,27 +1591,144 @@
                         }
                     }
 
-                    function submitEncounterOnUnknownConfirmatoryDate(){
+                    function submitParametersOnUnknownConfirmatoryDate(){
                         var nextButton =  document.getElementById('nextButton');
                         nextButton.onmousedown = function(){
                             value = $('touchscreenInput'+tstCurrentPage).value;
                             if (value.match(/UNKNOWN/i)){
                                 submitHIVClinicRegistration();
-                                submitVitalsRegistration();
-                                submitHIVStaging();
+                                if (showConditions() == true){
+                                    submitVitalsRegistration();
+                                    submitHIVStaging();
+                                }
+                                
                             } else{
                                 gotoNextPage();
                             }
                         }
                     }
 
+
+                    var date_art_last_taken_value_text = "";
+                    
+                    function setDateARTLastTaken(){
+                        taken_art_in_the_last_two_months = answers_hash["taken_art_in_the_last_two_months"].toUpperCase();
+                        taken_art_in_the_last_two_weeks = answers_hash["taken_art_in_the_last_two_weeks"].toUpperCase();
+
+                        year_art_taken = parseInt(__$("year_art_last_taken").value);
+                        month_art_taken = __$("month_art_last_taken").value;
+                        day_art_taken = parseInt(__$("day_art_last_taken").value);
+
+                        if (taken_art_in_the_last_two_months == 'YES'){
+                            if (taken_art_in_the_last_two_weeks == 'YES'){
+                                var date = new Date();
+                                date.setDate(date.getDate() - 14); //two weeks
+                                date = date.toDateString();
+                                answers_hash["date_art_last_taken"] = date;
+                                date_art_last_teken_value_text = "Estimated";
+                            }
+                            if (taken_art_in_the_last_two_weeks == 'NO'){
+                                var date = new Date();
+                                date.setDate(date.getDate() - 60); // 2 months
+                                date = date.toDateString();
+                                answers_hash["date_art_last_taken"] = date;
+                                date_art_last_taken_value_text = "Estimated";
+                            }
+                        }
+
+                        if (taken_art_in_the_last_two_months == 'NO'){
+                            var date = new Date();
+                            date.setDate(date.getDate() - 90); //3 months
+                            date = date.toDateString();
+                            answers_hash["date_art_last_taken"] = date;
+                            date_art_last_taken_value_text = "Estimated";
+                        }
+
+                        if (year_art_taken > 1 && month_art_taken != 'Unknown' && !(isNaN(day_art_taken)) && day_art_taken > 0){
+                            date = year_art_taken + "/" + month_art_taken + "/" + day_art_taken;
+                            answers_hash["date_art_last_taken"] = date;
+                        }
+
+                        if (year_art_taken > 1 && month_art_taken == 'Unknown'){
+                            date = year_art_taken + "/July/01";
+                            answers_hash["date_art_last_taken"] = date;
+                            date_art_last_taken_value_text = "Estimated";
+                        }
+                        else if (year_art_taken > 1 && month_art_taken != 'Unknown' &&  isNaN(day_art_taken)){
+                            date = year_art_taken + "/" +  month_art_taken + "/15";
+                            answers_hash["date_art_last_taken"] = date;
+                            date_art_last_taken_value_text = "Estimated";
+                        }
+
+                    }
+
+                    function setDateARTStarted(){
+                        year_started_art = parseInt(__$("year_started_art").value);
+                        month_started_art = __$("month_started_art").value;
+                        day_started_art = parseInt(__$("day_started_art").value);
+
+                        art_start_date_estimation = __$("art_start_date_estimation").value;
+
+                        if (art_start_date_estimation.match(/6 months/i)){
+                            var date = new Date();
+                            date.setDate(date.getDate() - 180); // 6 months
+                            date = date.toDateString();
+                            answers_hash["date_art_started"] = date;
+                        }
+
+                        if (art_start_date_estimation.match(/12 months/i)){
+                            var date = new Date();
+                            date.setDate(date.getDate() - 365); // 6 months
+                            date = date.toDateString();
+                            answers_hash["date_art_started"] = date;
+                        }
+
+                        if (art_start_date_estimation.match(/18 months/i)){
+                            var date = new Date();
+                            date.setDate(date.getDate() - 540); // 6 months
+                            date = date.toDateString();
+                            answers_hash["date_art_started"] = date;
+                        }
+
+                        if (art_start_date_estimation.match(/24 months/i)){
+                            var date = new Date();
+                            date.setDate(date.getDate() - 730); // 6 months
+                            date = date.toDateString();
+                            answers_hash["date_art_started"] = date;
+                        }
+
+                        if (art_start_date_estimation.match(/Over 2 years/i)){
+                            var date = new Date();
+                            date.setDate(date.getDate() - 730); // 6 months
+                            date = date.toDateString();
+                            answers_hash["date_art_started"] = date;
+                        }
+
+                        if (year_started_art > 1 && month_started_art != 'Unknown' && day_started_art > 0){
+                            date = year_started_art + "/" + month_started_art + "/" + day_started_art;
+                            answers_hash["date_art_started"] = date;
+                        }
+
+                        if (year_started_art > 1 && month_started_art == 'Unknown'){
+                            date = year_started_art + "/July/01";
+                            answers_hash["date_art_started"] = date;
+                        }
+                        else if (year_started_art > 1 && month_started_art != 'Unknown' &&  isNaN(day_started_art)){
+                            date = year_started_art + "/" +  month_started_art + "/15";
+                            answers_hash["date_art_started"] = date;
+                        }
+
+                    }
+
                     function changeSubmitFunction(){
                         var nextButton =  document.getElementById('nextButton');
                         nextButton.onmousedown = function(){
                             submitHIVClinicRegistration();
-                            submitVitalsRegistration();
-                            submitHIVStaging();
-                            alert("Form submitted")
+                            if (showConditions() == true){
+                                submitVitalsRegistration();
+                                submitHIVStaging();
+                            }
+                            // alert("Form submitted")
                         }
                     }
 
@@ -1647,7 +1765,7 @@
                     setTimeout(function () {showCategory2('')}, 500);
                 </script>
 
-                <form  onsubmit="submitEncounter();">
+                <form  onsubmit="submitParameters();">
 
                     <select tt_onLoad="setNextButtonToGetInputValue('followup_agreement')" name="follow_up_agreement" allowFreeText="false" helpText="Agrees to be contacted by phone/visited at home?" id="agrees_to_followup" tt_pageStyleClass="NoKeyboard">
                         <option value=""></option>
@@ -1699,7 +1817,7 @@
                         <option value="UNKNOWN">Unknown</option>
                     </select>
 
-                    <select tt_onLoad="setNextButtonToGetInputValue('ever_registered')" allowFreeText="false" condition="$('ever_received_art').value == 'YES'" helpText="Ever registered at an ART clinic?" id="ever_registered_at_ART_clinic" name="observations[][value_coded_or_text]" tt_pageStyleClass="NoKeyboard">
+                    <select tt_onLoad="setNextButtonToGetInputValue('ever_registered'); setDateARTLastTaken();" allowFreeText="false" condition="$('ever_received_art').value == 'YES'" helpText="Ever registered at an ART clinic?" id="ever_registered_at_ART_clinic" name="observations[][value_coded_or_text]" tt_pageStyleClass="NoKeyboard">
                         <option value=''></option>
                         <option value=""></option>
                         <option value="YES">Yes</option>
@@ -1708,7 +1826,7 @@
 
                     <select objectType="location" ajaxURL="/locations?name=" allowFreeText="true" condition="$('ever_registered_at_ART_clinic').value == 'YES' && $('ever_received_art').value == 'YES'" field_type="alpha" helpText="Location of ART initiation" id="location_of_art_initialization" name="observations[][value_coded_or_text]" tt_onLoad="showCategory2('when starting ART'); setNextButtonToGetInputValue('location_of_art_initiation')" tt_onUnLoad="hideCategory()"></select>
 
-                    <input absoluteMin="1890" condition="$('ever_received_art').value == 'YES' && $('ever_registered_at_ART_clinic').value == 'YES'" field_type="number" helpText="Year started ART" id="year_started_art" min="1940" name="year_started_art" tt_onLoad="showCategory2('when starting ART'); setAbsoluteMaxYearStartedART();" tt_onUnLoad="hideCategory()" tt_pageStyleClass="Numeric NumbersOnly" type="text" />
+                    <input absoluteMin="1890" condition="$('ever_received_art').value == 'YES' && $('ever_registered_at_ART_clinic').value == 'YES'" field_type="number" helpText="Year started ART" id="year_started_art" min="1940" name="year_started_art" tt_onLoad="jQuery('#Unknown').show(); showCategory2('when starting ART'); setAbsoluteMaxYearStartedART();" tt_onUnLoad="hideCategory()" tt_pageStyleClass="Numeric NumbersOnly" type="text" />
 
                     <select allowFreeText="false" condition="$('year_started_art').value.toUpperCase() == 'UNKNOWN'" helpText="Estimated time since ART initiation" id="art_start_date_estimation" name="art_start_date_estimation" ttMatchFromBeginning="true" tt_onLoad="showCategory2('when starting ART');setReasonForStarting();" tt_onUnLoad="hideCategory();setUnkownStage();">
                         <option value=""></option>
@@ -1740,8 +1858,8 @@
 
                     <input tt_onLoad="setNextButtonToGetDateStartedART('date_art_started')" condition="everReceivedARTDay() == 'true';" field_type="number" helpText="Day started ART" id="day_started_art" name="day_started_art" tt_onLoad="showCategory2('when starting ART');getDayOfMonthPicker($('year_started_art').value, $('month_started_art').value);$('nextButton').style.display = 'block';validateDayStartedART();" tt_onUnLoad="hideCategory();updateStartDate();setUnkownStage();" type="text" validationCode="checkStartDate();" validationMessage="Date ART started out of range  and 2018-09-18" />
 
-                    <input allowFreeText="true" condition="$('ever_registered_at_ART_clinic').value == 'YES' && $('ever_received_art').value == 'YES'" field_type="alpha" helpText="ART number at previous location" id="previous_art_number" name="observations[][value_text]" tt_onLoad="showCategory2('when starting ART'); setNextButtonToGetInputValue('art_number_at_previous_location')" tt_onUnLoad="hideCategory()" type="text" />
-                    
+                    <input allowFreeText="true" condition="$('ever_registered_at_ART_clinic').value == 'YES' && $('ever_received_art').value == 'YES'" field_type="alpha" helpText="ART number at previous location" id="previous_art_number" name="observations[][value_text]" tt_onLoad="setDateARTStarted(); showCategory2('when starting ART'); setNextButtonToGetInputValue('art_number_at_previous_location')" tt_onUnLoad="hideCategory()" type="text" />
+
                     <select tt_onLoad="setNextButtonToGetInputValue('has_transfer_letter')"  allowFreeText="false" condition="$('ever_registered_at_ART_clinic').value == 'YES' && $('ever_received_art').value == 'YES'" helpText="Has staging information?" id="has_transfer_letter" name="observations[][value_coded_or_text]" tt_onLoad="showCategory2('when starting ART')" tt_onUnLoad="hideCategory()" tt_onUnload="$('programs__states__state').value = 'Patient transferred in'" tt_pageStyleClass="NoKeyboard">
                         <option value=''></option>
                         <option value=""></option>
@@ -1967,7 +2085,7 @@
 
                     <select objectType="location" tt_onLoad="setNextButtonToGetInputValue('confirmatory_hiv_test_location');" ajaxURL="/locations?name=" allowFreeText="true" condition="$('type_of_confirmatory_hiv_test').value != 'NOT DONE'" field_type="alpha" helpText="Location of confirmatory HIV test" id="confirmatory_hiv_test_location" name="observations[][value_coded_or_text]"></select>
 
-                    <input absoluteMax="2018" condition="$('type_of_confirmatory_hiv_test').value != 'NOT DONE'" field_type="number" helpText="Confirmatory HIV test year" id="confirmatory_hiv_test_year" name="year_confirmatory_hiv_test" tt_onLoad="changeNextButtonForConfirmatoryYear(); changeAbsoluteMinForConfirmatoryYear(); __$('Unknown').style.display = 'inline'; submitEncounterOnUnknownConfirmatoryDate();" tt_pageStyleClass="Numeric NumbersOnly" type="text" />
+                    <input absoluteMax="2018" condition="$('type_of_confirmatory_hiv_test').value != 'NOT DONE'" field_type="number" helpText="Confirmatory HIV test year" id="confirmatory_hiv_test_year" name="year_confirmatory_hiv_test" tt_onLoad="changeNextButtonForConfirmatoryYear(); changeAbsoluteMinForConfirmatoryYear(); __$('Unknown').style.display = 'inline'; submitParametersOnUnknownConfirmatoryDate();" tt_pageStyleClass="Numeric NumbersOnly" type="text" />
 
                     <select condition="$('type_of_confirmatory_hiv_test').value != 'NOT DONE' && $('confirmatory_hiv_test_year').value.toLowerCase() != 'unknown'" helpText="Confirmatory HIV test month" id="confirmatory_hiv_test_month" name="month_confirmatory_hiv_test" tt_onLoad="__$('keyboard').style.display = 'none'; validateConfirmatoryMonth();" validationMessage="Please enter a valid date">
                         <option value=""></option>

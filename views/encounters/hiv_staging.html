@@ -6,17 +6,18 @@
     <head>
         <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
         <title>Encounters New</title>
-        <script type="text/javascript" src="/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js" defer="true"></script>
-        <script type="text/javascript" src="/touchscreentoolkit/lib/javascripts/standard.js" defer="true"></script>
-        <script type="text/javascript" src="/apps/core/assets/js/jquery.min.js"></script>
+        <script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js" defer="true"></script>
+        <script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/standard.js" defer="true"></script>
+        <script type="text/javascript" src="/public/apps/core/assets/js/jquery.min.js"></script>
 
-        <script type="text/javascript" src="/apps/core/assets/js/yes_no_ctrls.js"></script>
-        <link rel="stylesheet" href="/apps/core/assets/css/yes_no_ctrls.css" type="text/css"/>
-        <script type="text/javascript" src="/apps/core/assets/js/post_parameters.js"></script>
+        <script type="text/javascript" src="/assets/js/yes_no_ctrls.js"></script>
+        <link rel="stylesheet" href="/assets/css/yes_no_ctrls.css" type="text/css"/>
+        <script type="text/javascript" src="/assets/js/post_parameters.js"></script>
+        <script type="text/javascript" src="/assets/js/generic_ajaxrequest.js"></script>
 
         <script type="text/javascript">
-            var tt_cancel_destination = null;
-            var patient_id = 1206;
+            var tt_cancel_destination = "/views/patient_dashboard.html";
+            var patient_id = sessionStorage.patientID;
         </script>
 
 
@@ -1089,18 +1090,17 @@
                     function submitHIVStaging() {
 
                         var encounter = {
-                            encounter_type_name: 'HIV STAGING',
                             encounter_type_id:  52,
                             patient_id: patient_id,
                             encounter_datetime: null
                         }
 
-                        submitEncounter(encounter, "postHIVStagingObs");
+                        submitParameters(encounter, "/encounters", "postHIVStagingObs");
                     }
 
-                    function postHIVStagingObs(encounter_id){
+                    function postHIVStagingObs(encounter){
                         var obs = {
-                            encounter_id: encounter_id,
+                            encounter_id: encounter.encounter_id,
                             observations: [
                                 { concept_id: 7562, value_text: answers_hash["who_stage"] },
                                 { concept_id: 8262, value_text: answers_hash["cd4_less_than_or_equal_to_250"] },
@@ -1124,11 +1124,12 @@
                         }
 
 
-                        createObs(obs, "nextPage")
+                        submitParameters(obs, "/observations", "nextPage")
                     }
 
                     function nextPage(){
-                        alert("Done");
+                        nextEncounter(sessionStorage.patientID, 1);
+
                     }
 
 
@@ -1144,13 +1145,13 @@
                         var nextButton =  document.getElementById('nextButton');
                         nextButton.onmousedown = function(){
                             submitHIVStaging();
-                            alert("Form submitted")
+                            // alert("Form submitted")
                         }
                     }
 
                 </script>
 
-                <form onsubmit="submitEncounter();">
+                <form>
 
                     <input allowFreeText="false" id="calculated_who_stage_4" name="observations[][value_coded_or_text]" type="hidden" value="" />
 

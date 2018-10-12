@@ -1,429 +1,84 @@
 
+<script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js" defer="true"></script>
+<script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/standard.js" defer="true"></script>
+<script type="text/javascript" src="/assets/js/jquery.min.js"></script>
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-    <head>
-        <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
-        <title>Encounters New</title>
-        <script type="text/javascript" src="/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js" defer="true"/>
-
-        <script type="text/javascript">
-            tstUsername = "admin";
-            tstCurrentDate = "2018-09-18";
-            var tt_cancel_destination = null;
-        
-            var tt_cancel_destination = ""
-            var art_period_in_months = parseInt('0');
-            var fastTrackPatient = 'false'.toUpperCase();
-
-            function new_relationship() {
-                var current = '/encounters/new/hiv_reception?patient_id=790';
-                window.location = "/relationships/search?patient_id=790&return_to=" + escape(current) + "&guardian_added=true"
-            }
-
-            function show_new_relationship_button() {
-                var button = "<button onmousedown='new_relationship();' class='button navButton'><span>New Guardian</span></button>";
-                $('tt_extraButtons').innerHTML = button
-            }
-
-            function hide_new_relationship_button() {
-                $('tt_extraButtons').innerHTML = "";
-            }
-
-            // Don't save Guardian: None. We might later want to start saving this answer
-            function cleanup_guardian_options() {
-                var options = $('guardian_present').options;
-                for (var i=0; i<options.length; i++) {
-                    if (options[i].selected && options[i].value == 'Yes') {
-                        return new_relationship();
-                    }
-                }
-                return null;
-            }
-
-            // Disable option No on Patient Present if Guardian is not present (or Unknown)
-            function forcePatientPresentYes() {
-                if ($('guardian_present').value == 'No') {
-                    $('patient_present').value == 'Yes';
-                }
-            }
-
-            function checkConfirmDate(){
-                var testDate = createDates($('confirmatory_hiv_test_year').value, $('confirmatory_hiv_test_month').value , $('confirmatory_hiv_test_day').value);
-                var years = testDate.getFullYear();
-                var month = testDate.getMonth() + 1;
-
-                years = currentYear - years;
-                month = currentMonth - month;
-                var total = (years * 12) + month;
-
-
-                if($('date_started_art') != null){
-                    if ((testDate > $('date_started_art').value) || (total > ageInMonths) || (testDate <= originaltestDate) || ( testDate > todayDate)){
-                        return false
-                    }
-                    else{ return true}
-                }
-                else if ((total > ageInMonths) || (testDate <= originaltestDate) || ( testDate > todayDate)){
-                    return false
-                }
-                else {
-                    return true
-                }
-
-            }
-
-            function createDates(year,month,day) {
-                date_str = year
-
-                if(month.length == 1)
-                    month = '0' + month
-
-                date_str+='-' + month
-
-                if(day.length == 1)
-                    day = '0' + day
-
-                date_str+='-' + day
-
-                intyear = 0 ; intmonth = 0 ; intday = 0;
-                intyear = parseInt(date_str.substring(0,4))
-                intmonth = (parseInt(date_str.substring(5,7)) - 1)
-                intday = (parseInt(date_str.substring(8,10)))
-
-                if (intmonth == -1)
-                    intmonth = (parseInt(date_str.substring(5,7).substring(1,2)) - 1)
-
-                if (intday == 0)
-                    intday = parseInt(date_str.substring(8,10).substring(1,2))
-
-                return new Date(intyear,intmonth,intday);
-            }
-
-            function updateConfirmDate(){
-                var testDate = createDates($('confirmatory_hiv_test_year').value, $('confirmatory_hiv_test_month').value , $('confirmatory_hiv_test_day').value);
-                $('confirmatory_hiv_test_date').value = testDate;
-            }
-
-        </script>
-        <style type="text/css">
-            #tab {
-                height:312px;
-            }
-            #barcode {
-                background:transparent none repeat scroll 0 0;
-                border-color:-moz-use-text-color -moz-use-text-color silver;
-                border-style:none none solid;
-                border-width:medium medium 1px;
-                font-family:"Nimbus Sans L","Arial Narrow",sans-serif;
-                font-size:2.2em;
-                padding-left:5px;
-                width:400px;
-            }
-            #header div {
-                font-weight:normal;
-                float:none;
-                clear:both;
-            }
-
-            .summary{
-                position:relative;
-                float:center;
-                width:100%;
-                padding-left:10px;
-                padding-right:10px;
-            }
-
-            .summary td , th{
-                border-style:solid;
-                border-width:thin;
-                padding:5px;
-            }
-
-            .summary tbody{
-                position:relative;
-                height:500px;
-                overflow:auto;
-                overflow-x: hidden;
-            }
-
-            .summary>tbody tr {
-                position:relative;
-                height:12px;
-            }
-            .summary>thead tr {
-                position:relative;
-                height:12px;
-            }
-
-            #tt_page_art_number .touchscreenTextInput, #tt_page_hcc_number .touchscreenTextInput {
-                width: 98% !important;
-            }
-
-            #tt_page_confirmatory_hiv_test_month .inputFrameClass{
-                height: 100%;
-            }
-            #tt_page_confirmatory_hiv_test_month #viewport{
-                height: 80%;
-            }
-
-            #fast_track_reminder_cover, #fast_track_reminder_cover_missed{
-                position: absolute;
-                background-color: black;
-                width: 100%;
-                height: 102%;
-                left: 0%;
-                top: 0%;
-                z-index: 990;
-                opacity: 0.87;
-            }
-
-            #fast_track_reminder, #fast_track_reminder_missed{
-                position: absolute;
-                width: 75%;
-                height: 40%;
-                top: 10%;
-                z-index: 991;
-                left: 12%;
-                border: 1px solid black;
-                background-color: #228B22;
-                border-radius: 15px;
-            }
-
-            #fast_track_reminder_header, #fast_track_reminder_header_missed{
-                padding: 10px;
-                background-color: white;
-                color: black;
-                border-radius: 15px 15px 0px 0px;
-            }
-
-            #fast_track_reminder_footer, #fast_track_reminder_footer_missed{
-                background-color: #FFD39B;
-                height: 60px;
-                width: 100%;
-                position: absolute;
-                width: 100%;
-                position: absolute;
-                bottom: 0px;
-                border-radius: 0px 0px 15px 15px;
-            }
-
-            #fast_track_reminder_footer #fastTrackNotNow{
-                position: absolute;
-                padding: 12px 20%;
-                /*right: 8px;*/
-                left: 8px;
-                bottom: 8px;
-                font-weight: bold;
-                cursor: pointer;
-                font-family: arial;
-                font-size: 18px;
-                padding: 13px 34px;
-                border-radius: 8px;
-                border: 2px solid #228b22;
-                background: goldenrod;
-            }
-
-            #fast_track_reminder_footer #fastTrackNow, #fast_track_reminder_footer_missed #fastTrackMissed{
-                position: absolute;
-                padding: 12px 20%;
-                right: 8px;
-                bottom: 8px;
-                font-weight: bold;
-                cursor: pointer;
-                font-family: arial;
-                font-size: 18px;
-                padding: 13px 34px;
-                border-radius: 8px;
-                border: 2px solid #228b22;
-                background: goldenrod;
-            }
-
-            #tt_page_fast_track .inputFrameClass{
-                padding :0px;
-            }
-
-        </style>
-    </head>
-    <body id="mateme">
-        <div id="container">
-            <div id="content">
-
-                <form id='appointment' action="/encounters/create" method='post'>
-                    <input id="encounter_encounter_type_name" name="encounter[encounter_type_name]" type="hidden" value="HIV RECEPTION" />
-                    <input id="encounter_patient_id" name="encounter[patient_id]" type="hidden" value="790" />
-                    <input id="encounter_encounter_datetime" name="encounter[encounter_datetime]" type="hidden" value="2018-09-18T15:19:17+02:00" />
-                    <input id="encounter_provider_id" name="encounter[provider_id]" type="hidden" value="1" />
-
-
-
-                    <label for='guardian_present'>Guardian Present</label>
-
-                    <select id="guardian_present" name="observations[][value_text]" tt_onUnLoad="forcePatientPresentYes(),setTimeout(cleanup_guardian_options() , 500)"><option value="Yes">Yes</option>
-                        <option value="No">No</option></select>
-
-
-                    <input id="observations__value_coded_or_text" name="observations[][value_coded_or_text]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="GUARDIAN PRESENT" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="790" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="2018-09-18T15:19:17+02:00" />
-
-
-
-
-
-
-                    <label for='patient_present'>Patient Present (Torey Bashirian)</label>
-                    <select condition="$('guardian_present').value.toUpperCase() == 'YES'" id="patient_present" name="observations[][value_coded_or_text]" tt_onLoad="hide_new_relationship_button()"><option value="Yes">Yes</option>
-                        <option value="No">No</option></select>
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="PATIENT PRESENT" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="790" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="2018-09-18T15:19:17+02:00" />
-
-
-
-
-
-
-                    <input type="hidden" value="YES" id="ever_registered_at_ART_clinic"/>
-
-                    <!---------------------- FAST TRACK -->
-                    <input allowFreeText="false" id="fast-track-input" name="observations[][value_coded_or_text]" type="hidden" value="" />
-                    <input id="observations__value_numeric" name="observations[][value_numeric]" type="hidden" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="FAST" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="790" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="2018-09-18T15:19:17+02:00" />
-
-                    <input condition="fastTrackPatient == 'TRUE'" helpText="Fast Track" id="fast_track_pop_up_input" name="fast_track_pop_up_input" optional="true" tt_onLoad="showFastTrackReminder();" tt_pageStyleClass="NoControls" type="text" />
-
-                    <input id="observations__value_numeric" name="observations[][value_numeric]" type="hidden" />
-                    <input id="observations__value_modifier" name="observations[][value_modifier]" type="hidden" />
-                    <input id="observations__value_datetime" name="observations[][value_datetime]" type="hidden" />
-                    <input id="observations__value_coded_or_text_multiple_" name="observations[][value_coded_or_text_multiple][]" type="hidden" />
-                    <input id="observations__value_coded" name="observations[][value_coded]" type="hidden" />
-                    <input id="observations__value_text" name="observations[][value_text]" type="hidden" />
-                    <input id="observations__value_boolean" name="observations[][value_boolean]" type="hidden" />
-                    <input id="observations__value_drug" name="observations[][value_drug]" type="hidden" />
-                    <input id="observations__obs_group_id" name="observations[][obs_group_id]" type="hidden" />
-                    <input id="observations__parent_concept_name" name="observations[][parent_concept_name]" type="hidden" />
-                    <input id="observations__order_id" name="observations[][order_id]" type="hidden" />
-                    <input id="observations__concept_name" name="observations[][concept_name]" type="hidden" value="STOP REASON" />
-                    <input id="observations__patient_id" name="observations[][patient_id]" type="hidden" value="790" />
-                    <input id="observations__obs_datetime" name="observations[][obs_datetime]" type="hidden" value="2018-09-18T15:19:17+02:00" />
-                    <select allowFreeText="false" condition="__$('fast-track-input').value == 'No'" helpText="Select Reason for stopping Fast Track" id="fast_track_stop_reason" name="observations[][value_coded_or_text]" tt_onLoad="" tt_onUnLoad="" tt_pageStyleClass="NoKeyboard">
-                        <option value=''>
-                        </option><option value="">
-                        </option>
-                        <option value="Poor Adherence">Poor Adherence</option>
-                        <option value="Sick">Sick</option>
-                        <option value="Side Effects">Side Effects</option>
-                        <option value="Other">Other</option>
-                    </select>
-
-
-                    <!------------------- FAST TRACK END--->
-
-
-
-                    <input id="filter_provider" name="filter[provider]" type="hidden" />
-
-                    <input name="commit" type="submit" value="Finish" />
-                </form>
-
-
-                <div id="fast_track_reminder" style="display:none;">
-                    <div id="fast_track_reminder_header">
-                        <span style="font-size: 16pt; font-weight: bold;">Fast Track Notification</span>
-                    </div>
-
-                </div>
-
-                <div id="fast_track_reminder_cover" style="display:none;">
-
-                </div>
-
-                <div id="fast_track_reminder_cover_missed" style="display:none;">
-
-                </div>
-
-
-                <div id="fast_track_reminder_missed" style="display:none; background-color: #FF4040;">
-                    <div id="fast_track_reminder_header_missed">
-                        <span style="font-size: 16pt; font-weight: bold;">Missed Fast Track Notification</span>
-                    </div>
-
-                    <div id="fast_track_reminder_content_missed">
-                        <div style="position: relative; overflow:auto; height: 80%; font-size: 14pt; font-weight: bold; color: white;">
-                            <br />
-                            <center>
-                                Fast Track Appointment on <u></u><br />
-
-                            </center>
-                        </div>
-                    </div>
-
-                    <div id="fast_track_reminder_footer_missed">
-                        <span id="fastTrackMissed" onclick="continueNormalFlow();" style="padding: 12px 7%;">Proceed With Regular Clinic Visit</span>
-                    </div>
-                </div>
-
-
-                <script type="text/javascript">
-
-                    function showFastTrackReminder(){
-                        jQuery('#keyboard').hide();
-                        jQuery('#clearButton').hide();
-                        jQuery("#fast_track_reminder").show();
-                        jQuery("#fast_track_reminder_cover").show();
-                    }
-
-                    function fastTrackNotNow(){
-                        //jQuery('#fast-track-input').value = 'No';
-                        jQuery('#fast-track-input').attr('value', 'No');
-                        jQuery("#fast_track_reminder").hide();
-                        jQuery("#fast_track_reminder_cover").hide();
-                        gotoNextPage();
-                    }
-
-                    function fastTrackNow(){
-                        //jQuery('#fast-track-input').value = 'Yes';
-                        jQuery('#fast-track-input').attr('value', 'Yes');
-                        jQuery("#fast_track_reminder").hide();
-                        jQuery("#fast_track_reminder_cover").hide();
-                        gotoNextPage();
-                    }
-
-                    function continueNormalFlow(){
-                        jQuery("#fast_track_reminder").hide();
-                        jQuery("#fast_track_reminder_cover").hide();
-                        jQuery("#fast_track_reminder_missed").hide();
-                        jQuery("#fast_track_reminder_cover_missed").hide();
-                        gotoNextPage();
-                    }
-
-                    function showFastTrackMissedNotification(){
-                        jQuery('#keyboard').hide();
-                        jQuery('#clearButton').hide();
-                        jQuery("#fast_track_reminder_missed").show();
-                        jQuery("#fast_track_reminder_cover_missed").show();
-                    }
-                </script>
-
-            </div>
-        </div>
-    </body>
-
-</html>
+<script type="text/javascript" src="/assets/js/yes_no_ctrls.js"></script>
+<link rel="stylesheet" href="/assets/css/yes_no_ctrls.css" type="text/css">
+<script type="text/javascript" src="/assets/js/post_parameters.js"></script>
+<script type="text/javascript" src="/assets/js/generic_ajaxrequest.js"></script>
+
+<script>
+
+var patientID = sessionStorage.getItem("patientID");
+var programID = sessionStorage.getItem("programID");
+var tt_cancel_destination = "/views/patient_dashboard.html?patient_id=" + patientID;
+
+YesNoConcepts = {};
+YesNoConcepts["Yes"] = 1065;
+YesNoConcepts["No"] = 1066;
+
+function autoSelectGuardian(clickedBtn) {
+  if(clickedBtn.id.match(/No/i)) {
+    var e = document.getElementById('btn_yes_1');
+    buttonClicked(e,'HIV Reception','Guardian present?');
+  }
+}
+
+function submitHIVreception() {
+  	
+  var encounter = {
+    encounter_type_name: 'HIV RECEPTION',
+    encounter_type_id:  51,
+    patient_id: patientID,
+    encounter_datetime: null
+  }
+
+  submitParameters(encounter, "/encounters", "postVitalsObs");
+}
+
+function postVitalsObs(encounter) {
+
+  var obs = {
+    encounter_id: encounter["encounter_id"],
+    observations: [
+      { concept_id: 1805, value_coded: YesNoConcepts[yesNo_Hash['HIV Reception']['Patient present?']] },
+      { concept_id: 2122, value_coded: YesNoConcepts[yesNo_Hash['HIV Reception']['Guardian present?']] }
+    ]
+  }; 
+
+  submitParameters(obs, "/observations", "nextPage")  
+}
+
+function nextPage(obs){
+  nextEncounter(sessionStorage.patientID, 1);
+}
+
+
+
+
+
+function changeSubmitFuction() {
+  var nextButton =  document.getElementById('nextButton');
+  nextButton.setAttribute("onmousedown","submitHIVreception();");
+}
+
+</script>
+
+<body id="mateme">
+  <div id="container">
+    <div id="content">
+
+
+      <form>
+
+        <input type="text" name="summary"
+          tt_onLoad="__$('keyboard').style.display = 'none';changeSubmitFuction();buildYesNoUI('HIV Reception', 'Patient present?,1805,autoSelectGuardian#Guardian present?,2122');" 
+          tt_pageStyleClass= "NoControls" helpText="HIV reception" optional = "true"/>
+
+      </form>
+
+   </div>
+ </div>
+</body>
 

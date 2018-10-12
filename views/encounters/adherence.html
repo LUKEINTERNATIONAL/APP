@@ -1,0 +1,597 @@
+
+<script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js" defer="true"></script>
+<script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/standard.js" defer="true"></script>
+<script type="text/javascript" src="/assets/js/jquery.min.js"></script>
+<script type="text/javascript" src="/assets/js/moment.js"></script>
+<!-- <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.css"> -->
+  
+<!-- <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script> -->
+
+<style>
+
+#clearButton , #nextButton {
+  display: none;
+}
+
+.main-container-table {
+  display: table;
+  width: 100%;
+}
+
+.main-container-table-row {
+  display: table-row;
+}
+
+.main-container-table-cell {
+  display: table-cell;
+  height: 550px;
+}
+
+#main-container-table-cell-left {
+  border-style: solid;
+  border-width: 0px 1px 0px 0px;
+  width: 150px;
+
+  text-align: center;
+  vertical-align: top;
+}
+
+
+
+.main-ctrl-table {
+  display: table;
+  vertical-align: top;
+  height: 300px;
+  margin: 5px;
+
+  border-collapse:separate;border-spacing:5px;
+}
+
+.main-container-table-row {
+  display: table-row;
+}
+
+.main-ctrl-table-cell {
+  display: table-cell;
+}
+
+
+.btn-ctrl {
+  padding: 5% 0px 0px 0px;
+  float: left;
+  text-align: center;
+  margin-right: auto;
+  margin-left: auto;
+  display: block;
+  margin: 5px 5px 0px 10px;
+  border: 1px solid #5ca6c4;
+  cursor: pointer;
+  box-shadow: inset 2px -4px 2px 0px;
+  background-color: white;
+  border-radius: 7px;
+  border: solid black 3px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  -moz-box-shadow: inset 0 0 10px #000000;
+  -webkit-box-shadow: inset 0 0 10px #5ca6c4;
+  box-shadow: inset 0 0 10px #000000;
+  text-decoration: none !important;
+  font-weight: bold;
+  font-size: 14px;
+  width: 100px;
+  height: 100px;
+  background-color: #5ca6c4;
+  color: white;
+}
+
+.btns-icons {
+  width: 30px;
+  height: 30px;
+}
+
+.btns-icons-selected-none {
+  color: black;
+  background-color: #dddddd;
+}
+
+.medication-table {
+  display: table;
+  width: 100%;
+  margin: 5px;
+}
+
+.medication-table-row {
+  display: table-row;
+}
+
+.medication-table-cell {
+  display: table-cell;
+}
+
+#medication-list {
+  background-color: lightyellow;
+  height: 550px;
+  margin-left: 24px;
+  width: 65%;
+  border-radius: 25px;
+}
+
+.keypad-table {
+  display: table;
+  border-collapse: separate;
+  border-spacing: 5px;
+  width: 245px;
+  margin-left: 10%;
+}
+
+.keypad-table-row {
+  display: table-row;
+}
+
+.keypad-table-cell {
+  display: table-cell;
+}
+
+.keypad-buttons {
+  border: 1px solid #7eb9d0;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  font-size: 28px;
+  font-family: arial, helvetica, sans-serif;
+  padding: 10px 10px 10px 10px;
+  text-decoration: none;
+  display: inline-block;
+  text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.3);
+  font-weight: bold;
+  color: #FFFFFF;
+  background-color: #a7cfdf;
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#a7cfdf), to(#23538a));
+  background-image: -webkit-linear-gradient(top, #a7cfdf, #23538a);
+  background-image: -moz-linear-gradient(top, #a7cfdf, #23538a);
+  background-image: -ms-linear-gradient(top, #a7cfdf, #23538a);
+  background-image: -o-linear-gradient(top, #a7cfdf, #23538a);
+  background-image: linear-gradient(to bottom, #a7cfdf, #23538a);
+  filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr=#a7cfdf, endColorstr=#23538a);
+  width: 50px;
+  height: 50px;
+  text-align: center;
+}
+
+#pills-brought {
+  width: 230px;
+  text-align: center;
+
+
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  border-bottom: 1px solid silver;
+  font-family: "Nimbus Sans L","Arial Narrow",sans-serif;
+  font-size: 2.2em;
+}
+
+.list {
+  color: black;
+  list-style: none;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  font-family: "Nimbus Sans L","Arial Narrow",sans-serif;
+  font-size: 1.2em;
+  width: 90%;
+  line-height: 50px;
+}
+
+.list-selected {
+  background-color: lightblue;
+}
+table {
+  width: 99%;
+}
+table, th, td, tbody, thead {
+  border: 1px solid black;
+}
+</style>
+
+
+<script>
+localStorage.clear();
+var apiURL = sessionStorage.getItem("apiURL");
+var apiPort = sessionStorage.getItem("apiPort");
+
+function buildEntryPage() {
+  var frame = document.getElementById("inputFrame" + tstCurrentPage);
+  frame.style = "width: 96%; height: 90%;";
+  
+  var mainContainer = document.createElement("div");
+  mainContainer.setAttribute("class","main-container-table");
+  frame.appendChild(mainContainer);
+
+  var mainContainerRow = document.createElement("div");
+  mainContainerRow.setAttribute("class","main-container-table-row");
+  mainContainer.appendChild(mainContainerRow);
+
+  var cells = ["left","right"];
+  for(var i = 0; i < cells.length ; i++){
+    var mainContainerCell = document.createElement("div");
+    mainContainerCell.setAttribute("class","main-container-table-cell");
+    mainContainerCell.setAttribute("id","main-container-table-cell-" + cells[i]);
+    mainContainerRow.appendChild(mainContainerCell);
+  }
+
+
+  buildBtnCtrls();
+}
+
+function buildBtnCtrls() {
+  var mainContainer = document.getElementById("main-container-table-cell-left");
+
+  
+  var mainBtnContainer = document.createElement("div");
+  mainBtnContainer.setAttribute("class","main-ctrl-table");
+  mainContainer.appendChild(mainBtnContainer);
+
+  var cells = [["Medication","medication.png"],["Summary","prescription.png"]];
+
+  for(var i = 0 ; i < cells.length ; i++) {
+    var mainBtnContainerRow = document.createElement("div");
+    mainBtnContainerRow.setAttribute("class","main-ctrl-table-row");
+    mainBtnContainer.appendChild(mainBtnContainerRow);
+
+    var mainBtnContainerCell = document.createElement("div");
+    mainBtnContainerCell.setAttribute("class","main-ctrl-table-cell");
+    
+    var img = document.createElement("img");
+    img.setAttribute("src","../../../../assets/images/prescription/" + cells[i][1]);
+    img.setAttribute("class","btns-icons");
+
+    var btn = document.createElement("span");
+    btn.setAttribute("class","btn-ctrl");
+    btn.appendChild(img);
+    btn.innerHTML += "<br /><br />" + cells[i][0];
+    btn.setAttribute("onmousedown","buildEntry(this);");
+    btn.setAttribute("id", cells[i][0]);
+    mainBtnContainerCell.appendChild(btn);
+
+
+    mainBtnContainerRow.appendChild(mainBtnContainerCell);
+    mainBtnContainer.appendChild(mainBtnContainerRow);
+
+  
+  }
+
+  buildEntry(document.getElementById("Medication"));
+}
+
+function buildEntry(e) {
+  var cells = document.getElementsByClassName("btn-ctrl");
+  for(var i = 0 ; i < cells.length ; i++){
+    cells[i].setAttribute("class","btn-ctrl btns-icons-selected-none");
+  }
+    
+  e.setAttribute("class","btn-ctrl");
+
+  if(e.id == "Medication") {
+    buildPillCountScreen();
+  }else if (e.id == "Summary") {
+    buildSummaryPage();
+  }
+    
+
+}
+
+var medication = [];
+
+function buildPillCountScreen() {
+  var mainContainer = document.getElementById("main-container-table-cell-right");
+  mainContainer.innerHTML = null;
+
+
+  var table = document.createElement("div");
+  table.setAttribute("class","medication-table");
+  mainContainer.appendChild(table);
+
+  var tr = document.createElement("div");
+  tr.setAttribute("class","medication-table-row");
+  table.appendChild(tr);
+
+  var cells = ["medication-list","keypad"];
+  
+  for(var i = 0 ; i < cells.length ; i++){
+    var td = document.createElement("div");
+    td.setAttribute("class","medication-table-cell");
+    td.setAttribute("id", cells[i]);
+    tr.appendChild(td);
+  }
+    
+
+
+  var medicationList = document.getElementById("medication-list");
+  var ul = document.createElement("ul");
+
+  ul.setAttribute("id","medication-ul");
+  medicationList.appendChild(ul);
+
+  var url = 'http://' + apiURL + ':' + apiPort + '/api/v1/drug_orders/?patient_id=' + sessionStorage.patientID;
+    var req = new XMLHttpRequest();
+    req.onreadystatechange = function () {
+
+      if (this.readyState == 4) {
+        if (this.status == 200) {
+           medication = JSON.parse(this.responseText);
+          for(var i = 0 ; i < medication.length ; i++){
+            var li = document.createElement("li");
+            li.setAttribute("class","list");
+            li.setAttribute("onmousedown","selectMed(this)");
+            li.innerHTML = medication[i].drug.name;
+            localStorage.setItem(medication[i].drug.name, 0);
+            ul.appendChild(li);
+          }
+        }
+      }
+    };
+    try {
+      req.open('GET', url, true);
+      req.setRequestHeader('Authorization', sessionStorage.getItem('authorization'));
+      req.send(null);
+    } catch (e) {
+    }
+  
+
+  
+
+  buildKeyPad();
+
+}
+
+function buildSummaryPage() {
+  var mainContainer = document.getElementById("main-container-table-cell-right");
+  mainContainer.innerHTML = null;
+  generateTable(mainContainer);
+  var table = document.createElement("TAB")
+}
+
+function createTable(rownName) {
+
+    var pillsRow = document.createElement("TR");
+    pillsRow.setAttribute("id", rownName + "TR");
+    document.getElementById("myTable").appendChild(pillsRow);
+
+    var d = document.createElement("TD");
+    var e = document.createTextNode(rownName);
+    d.appendChild(e);
+    document.getElementById("dailyTabsTR").appendChild(d);
+    
+}
+
+function generateTable(mainContainer) {
+    
+    var x = document.createElement("TABLE");
+    x.setAttribute("id", "myTable");
+    mainContainer.appendChild(x);
+
+    var y = document.createElement("TR");
+    y.setAttribute("id", "myTR");
+    document.getElementById("myTable").appendChild(y);
+    document.getElementById("myTR").innerHTML = "<td> Drug Name </td>";
+
+    var pillsRow = document.createElement("TR");
+    pillsRow.setAttribute("id", "numberTR");
+    document.getElementById("myTable").appendChild(pillsRow);
+    document.getElementById("numberTR").innerHTML = "<td> Tabs Given </td>"
+
+    var TabsPerDayRow = document.createElement("TR");
+    TabsPerDayRow.setAttribute("id", "dailyTabsTR");
+    document.getElementById("myTable").appendChild(TabsPerDayRow);
+    document.getElementById("dailyTabsTR").innerHTML = "<td> Tabs Per Day </td>"
+
+    var DosesPerDayRow = document.createElement("TR");
+    DosesPerDayRow.setAttribute("id", "dosesTabsTR");
+    document.getElementById("myTable").appendChild(DosesPerDayRow);
+    document.getElementById("dosesTabsTR").innerHTML = "<td> Doses Per Day </td>";
+
+    var ExpectedRow = document.createElement("TR");
+    ExpectedRow.setAttribute("id", "ExpectedTabsTR");
+    document.getElementById("myTable").appendChild(ExpectedRow);
+    document.getElementById("ExpectedTabsTR").innerHTML = "<td> Expected </td>";
+
+    var actualRow = document.createElement("TR");
+    actualRow.setAttribute("id", "actualTabsTR");
+    document.getElementById("myTable").appendChild(actualRow);
+    document.getElementById("actualTabsTR").innerHTML = "<td> Actual (Counted) </td>";
+
+    var dosesMissedRow = document.createElement("TR");
+    dosesMissedRow.setAttribute("id", "dosesMissedTabsTR");
+    document.getElementById("myTable").appendChild(dosesMissedRow);
+    document.getElementById("dosesTabsTR").innerHTML = "<td> Doses Missed/ unaccounted for </td>";
+    
+    var dosesConsumedRow = document.createElement("TR");
+    dosesConsumedRow.setAttribute("id", "dosesConsumedTabsTR");
+    document.getElementById("myTable").appendChild(dosesConsumedRow);
+    document.getElementById("dosesConsumedTabsTR").innerHTML = "<td> Doses consumed </td>";
+
+    var artAdherenceRow = document.createElement("TR");
+    artAdherenceRow.setAttribute("id", "artAdherenceTabsTR");
+    document.getElementById("myTable").appendChild(artAdherenceRow);
+    document.getElementById("artAdherenceTabsTR").innerHTML = "<td> ART Adherence </td>";
+    
+    var url = 'http://' + apiURL + ':' + apiPort + '/api/v1/drug_orders/?patient_id=' + sessionStorage.patientID;
+    var req = new XMLHttpRequest();
+    req.onreadystatechange = function () {
+
+      if (this.readyState == 4) {
+        if (this.status == 200) {
+           medication = JSON.parse(this.responseText);
+          for(var i = 0 ; i < medication.length ; i++){
+            var z = document.createElement("TD");
+            var t = document.createTextNode(medication[i].drug.name);
+            z.appendChild(t);
+            var today = moment();
+            var givenDay = moment(medication[i].order.start_date);
+            var dayDiffernece = today.diff(givenDay, 'days');
+            
+            document.getElementById("myTR").appendChild(z);
+            var b = document.createElement("TD");
+            var c = document.createTextNode(localStorage.getItem(medication[i].drug.name));
+            b.appendChild(c);
+            var expected = (medication[i].quantity - (dayDiffernece * medication[i].equivalent_daily_dose));
+            var remaining = localStorage.getItem(medication[i].drug.name);
+            var consumed = medication[i].quantity - remaining;
+            var adherencePercentage = Math.round(100*(medication[i].quantity - remaining) / (medication[i].quantity - expected));            
+            document.getElementById("numberTR").innerHTML += "<td>" +medication[i].quantity+"</td>";
+            document.getElementById("dailyTabsTR").innerHTML += "<td>" +medication[i].equivalent_daily_dose+"</td>";
+            document.getElementById("actualTabsTR").innerHTML += "<td>" +localStorage.getItem(medication[i].drug.name)+"</td>";
+            document.getElementById("ExpectedTabsTR").innerHTML += "<td>" +expected+"</td>";
+            document.getElementById("dosesTabsTR").innerHTML += "<td>" +(expected - remaining)+"</td>";
+            document.getElementById("dosesConsumedTabsTR").innerHTML += "<td>" +consumed+"</td>";
+            document.getElementById("artAdherenceTabsTR").innerHTML += "<td>" +adherencePercentage+"%</td>";
+            
+              if (i == 3) {
+                break;
+              }
+
+          }
+        }
+      }
+    };
+    try {
+      req.open('GET', url, true);
+      req.setRequestHeader('Authorization', sessionStorage.getItem('authorization'));
+      req.send(null);
+    } catch (e) {
+    }
+
+    // var tables = ["Drug Name", "Tabs Given", "Tabs Per Day", "Tablets Per Day"];
+    // console.log(tables);
+    // for (let index = 0; index < tables.length; index++) {
+    //   createTable(tables[index]);
+      
+    // }
+   
+}
+
+function buildKeyPad() {
+  var mainContainer = document.getElementById("keypad");
+  var keypad = document.createElement("div");
+  keypad.setAttribute("class","keypad-table");
+  mainContainer.appendChild(keypad);
+
+  /* ............................ */
+  var row = document.createElement("div");
+  row.setAttribute("class","keypad-table-row");
+  keypad.appendChild(row);
+
+  var cell = document.createElement("div");
+  cell.setAttribute("class","keypad-table-cell");
+  cell.innerHTML = "Pill(s) brought"
+  cell.style = "text-align: center; font-size: 2.2em;"
+  row.appendChild(cell);
+  /* ............................ */
+
+
+  var row = document.createElement("div");
+  row.setAttribute("class","keypad-table-row");
+  keypad.appendChild(row);
+
+  var cell = document.createElement("div");
+  cell.setAttribute("class","keypad-table-cell");
+  row.appendChild(cell);
+   
+  var inputText = document.createElement("input");
+  inputText.setAttribute("type","text");
+  inputText.setAttribute("id","pills-brought");
+  cell.appendChild(inputText); 
+
+  var keypad = document.createElement("div");
+  keypad.setAttribute("class","keypad-table");
+  mainContainer.appendChild(keypad);
+
+
+  var qwerty = [];
+  qwerty.push(["1","2","3"]);
+  qwerty.push(["4","5","6"]);
+  qwerty.push(["7","8","9"]);
+  qwerty.push([".","0","Del."]);
+
+
+
+  for(var i = 0 ; i < qwerty.length; i++){
+    var row = document.createElement("div");
+    row.setAttribute("class","keypad-table-row");
+
+    for(var j = 0 ; j < qwerty[i].length; j++){
+      var cell = document.createElement("div");
+      cell.setAttribute("class","keypad-table-cell");
+      var span = document.createElement("span");
+      span.setAttribute("class","keypad-buttons");
+      span.innerHTML = qwerty[i][j];
+      span.setAttribute("onmousedown","setEnteredKey(this);");
+      cell.appendChild(span);
+      row.appendChild(cell);
+    }
+    keypad.appendChild(row);
+  }
+
+
+}
+
+function setEnteredKey(key) {
+  var inputBox = document.getElementById("pills-brought");
+  var activeBTN = sessionStorage.activeBTN;
+  try{
+
+    if(key.innerHTML.match(/Del/i)){
+      inputBox.value = inputBox.value.substring(0, inputBox.value.length - 1);
+    }else{
+      inputBox.value += key.innerHTML;
+      
+    }
+    localStorage.setItem(activeBTN, inputBox.value);
+  }catch(x) { }
+
+  //getMedication(inputBox.value);
+
+}
+
+function selectMed(e) {
+  var list = document.getElementsByClassName("list");
+  // console.log(localStorage.getItem(e.innerHTML));
+  if (localStorage.getItem(e.innerHTML) != 0) {
+    document.getElementById("pills-brought").value = localStorage.getItem(e.innerHTML);
+  }
+  else {
+    document.getElementById("pills-brought").value = "";
+  }
+  for(var i = 0 ; i < list.length ; i++){
+    list[i].setAttribute("class","list");
+  }
+  sessionStorage.setItem("activeBTN", e.innerHTML);
+  e.setAttribute("class","list list-selected");
+}
+
+
+</script>
+
+
+<body id="mateme">
+  <div id="container">
+    <div id="content">
+
+
+      <form>
+
+        <input type="text" name="summary"
+          tt_onLoad="__$('keyboard').style.display = 'none';buildEntryPage();" 
+          tt_pageStyleClass= "NoControls" helpText="ART adherence" optional = "true"/>
+
+
+      </form>
+
+   </div>
+ </div>
+</body>
+
+
