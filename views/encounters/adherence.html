@@ -441,14 +441,26 @@ function generateTable(mainContainer) {
             var remaining = localStorage.getItem(medication[i].drug.name);
             var consumed = medication[i].quantity - remaining;
             var adherencePercentage = Math.round(100*(medication[i].quantity - remaining) / (medication[i].quantity - expected));            
+            var missed = (expected - remaining);
+            if (adherencePercentage < 0) {
+              adherencePercentage = 0;
+            }
+            
+            if (expected < 0) {
+              expected = 0;
+            }
+
+            if (missed < 0) {
+              missed = 0;
+            } 
+
             document.getElementById("numberTR").innerHTML += "<td>" +medication[i].quantity+"</td>";
             document.getElementById("dailyTabsTR").innerHTML += "<td>" +medication[i].equivalent_daily_dose+"</td>";
             document.getElementById("actualTabsTR").innerHTML += "<td>" +localStorage.getItem(medication[i].drug.name)+"</td>";
             document.getElementById("ExpectedTabsTR").innerHTML += "<td>" +expected+"</td>";
-            document.getElementById("dosesTabsTR").innerHTML += "<td>" +(expected - remaining)+"</td>";
+            document.getElementById("dosesTabsTR").innerHTML += "<td>" +missed+"</td>";
             document.getElementById("dosesConsumedTabsTR").innerHTML += "<td>" +consumed+"</td>";
             document.getElementById("artAdherenceTabsTR").innerHTML += "<td>" +adherencePercentage+"%</td>";
-            
               if (i == 3) {
                 break;
               }
