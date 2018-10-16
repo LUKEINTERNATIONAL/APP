@@ -78,14 +78,17 @@
 }
 
 #selected-medication {
-  width: 100%;
-  margin: 5px;
+  width: 99%;
+  margin: 15px 5px 0px 5px;
+  border-collapse: collapse;
+  color: black;
+  font-size: 1.3em;
 }
 
 #selected-medication th {
   text-align: center;
   border-style: solid;
-  border-width: 1px;
+  border-width: 1px 1px 1px 1px;
 }
 
 #next-interval-table-left {
@@ -143,10 +146,38 @@
   border-width: 0px;
   background-color: darkgrey;
 }
+
+#selected-medication-tbody td {
+  border-style: solid;
+  border-width: 1px;
+}
+
+.med-names {
+  margin-left: 5px;
+}
+
+.numbers {
+  text-align: center;
+}
+
+.adult-category {
+  background-color: yellow;
+}
+
+.peads-category {
+  background-color: lightgreen;
+}
+
 </style>
 
 <script>
+var sessionDate = new Date("2018-10-16");
 
+var givenRegimens = {};
+var passedRegimens = {};
+
+var selectedRegimens
+var setSelectedInterval;
 
 function buildRegimenPage() {
   var frame = document.getElementById("inputFrame" + tstCurrentPage);
@@ -203,6 +234,73 @@ function selectRegimen(e) {
   }
     
   e.setAttribute("style","background-color: lightblue;");
+  selectedRegimens = e.innerHTML;
+}
+
+function calculateEstimatedNextApp() {
+  var selectedMeds = givenRegimens[selectedRegimens];
+  var set_date = null;
+
+  set_date = sessionDate.getFullYear();
+  var month = (sessionDate.getMonth() + 1);
+
+  if(month.length < 2)
+    month = "0" + month;
+
+  set_date += "-" + month;
+
+  var day = (sessionDate.getDate());
+  if(day.length < 2)
+    day = "0" + day;
+
+  set_date += "-" + day;
+  
+  var appDate = new Date(set_date);
+  appDate.setDate(appDate.getDate() + parseInt(setSelectedInterval));
+
+/*
+  var appDate = null;
+  appDate = new Date(set_date);
+
+  appDate = new Date(appDate.setTime(appDate.getTime() + parseInt(setSelectedInterval) * 86400000 ));
+  var month = (appDate.getMonth() + 1);
+
+  if(month.length < 2)
+    month = "0" + month;
+
+  var day = (appDate.getDate());
+  if(day.length < 2)
+    day = "0" + day;
+
+
+  var set_date = appDate.getFullYear()  + "-" + month + "-" + day;
+  appDate = new Date(set_date);
+
+  alert(appDate.getFullYear() + "    " + set_date)
+*/
+
+  var runout_date = [];
+
+  for(var i = 0 ; i < selectedMeds.length ; i++){
+    var pills_per_day = 0;
+    var am  = 0; var noon = 0; var pm = 0;
+
+    if(!isNaN(parseInt(selectedMeds[i].am)))
+      am = parseFloat(selectedMeds[i].am);
+
+    if(!isNaN(parseFloat(selectedMeds[i].noon)))
+      noon = parseInt(selectedMeds[i].noon);
+
+    if(!isNaN(parseFloat(selectedMeds[i].pm)))
+      pm = parseInt(selectedMeds[i].pm);
+
+
+    pills_per_day += (am + noon + pm);
+    //(pills_per_day * setSelectedInterval);
+  }
+
+  var td = document.getElementById("estimated-next-appointment-date");
+  td.innerHTML = appDate.getDate() + "/" + getFullMonth(appDate.getMonth()) + "/"+ appDate.getFullYear();
 }
 
 function createContainers(side) {
@@ -229,6 +327,7 @@ function showSelectedMeds() {
   table.appendChild(thead);
 
   var tr = document.createElement("tr");
+  tr.style = "background-color: lightgray;";
   thead.appendChild(tr);
 
   var theads = ["Drug name", "Units", "AM", "Noon", "PM"];
@@ -245,6 +344,50 @@ function showSelectedMeds() {
   tbody.setAttribute("id","selected-medication-tbody");
   table.appendChild(tbody);
 
+  if(givenRegimens[selectedRegimens]) {
+    var rows = givenRegimens[selectedRegimens]; 
+    
+    for(var i = 0 ; i < rows.length ; i++) {
+      var tr = document.createElement("tr");
+      tbody.appendChild(tr);
+
+      if(selectedRegimens.split(" ")[0].match(/A/i)){
+        tr.setAttribute("class","adult-category");
+      }else if(selectedRegimens.split(" ")[0].match(/P/i)){
+        tr.setAttribute("class","peads-category");
+      }
+
+
+      var td = document.createElement("td");
+      td.innerHTML = rows[i].drug_name;
+      td.setAttribute("class","numbers");
+      td.setAttribute("class","med-names");
+      tr.appendChild(td);
+
+      var td = document.createElement("td");
+      td.innerHTML = rows[i].units;
+      td.setAttribute("class","numbers");
+      tr.appendChild(td);
+
+      var td = document.createElement("td");
+      td.innerHTML = rows[i].am;
+      td.setAttribute("class","numbers");
+      tr.appendChild(td);
+
+      var td = document.createElement("td");
+      td.innerHTML = rows[i].noon;
+      td.setAttribute("class","numbers");
+      tr.appendChild(td);
+
+      var td = document.createElement("td");
+      td.innerHTML = rows[i].pm;
+      td.setAttribute("class","numbers");
+      tr.appendChild(td);
+
+
+    }
+
+  }
 }
 
 
@@ -316,6 +459,9 @@ function buildNextIntervalPage() {
   var frame = document.getElementById("inputFrame" + tstCurrentPage);
   frame.style = "height: 89%; width: 96%;";
 
+  var nextBtn = document.getElementById("nextButton");
+  nextButton.setAttribute("onmousedown", "validateIntervalSelection();");
+
   var container = document.createElement("div");
   container.setAttribute("class","next-interval-table");
   frame.appendChild(container);
@@ -383,7 +529,18 @@ function addIntervals() {
 
     var td = document.createElement("td");
     td.setAttribute("class","interval-buttons");
-    td.setAttribute("interval", intervals[i]);
+
+    var days;
+
+    if(intervals[i].match(/week/i)){
+      days = ((parseInt(intervals[i].split(" ")[0])*7))
+    }else if (intervals[i].match(/days/i)){
+      days = 4
+    }else if (intervals[i].match(/month/i)){
+      days = ((parseInt(intervals[i].split(" ")[0])* 28))
+    }
+
+    td.setAttribute("interval", days);
     td.setAttribute("onmousedown","setNextInterval(this)");
     td.innerHTML = intervals[i];
     tr.appendChild(td);
@@ -403,18 +560,45 @@ function setNextInterval(e){
   }
     
   e.setAttribute("style","background-color: lightblue;");
+  setSelectedInterval = e.getAttribute("interval");
+  calculateEstimatedNextApp(); 
+}
+
+function preSelectInterval() {
+  var cells = document.getElementsByClassName("interval-buttons");
+  for(var i = 0 ; i < cells.length ; i++){
+    if(cells[i].getAttribute("interval") == setSelectedInterval)
+      setNextInterval(cells[i]);
+
+  }
 }
 
 function adjustFrameHeight() {
   var frame = document.getElementById('inputFrame' + tstCurrentPage);
   frame.style = 'height: 89% !important; width: 96%;';
+
+  var lis = frame.getElementsByTagName("li")
+  for(var i = 0 ; i < lis.length ; i++){
+    var attr = lis[i].getAttribute("onmousedown");
+    lis[i].setAttribute("onmousedown", attr + " changeNextBtn(this);");
+  }
 }
 
+function changeNextBtn(e) {
+  var btn = document.getElementById("nextButton");
 
-var givenRegimens = {};
-var passedRegimens = {};
+  if(e.innerHTML == "No"){
+    btn.innerHTML = "<span>Finish</span>";
+    btn.setAttribute("onmousedown", "arrangeParamsForSubmission();")
+  }else{
+    btn.innerHTML = "<span>Next</span>";
+    btn.setAttribute("onmousedown", "gotoNextPage();")
+  }
+}
 
 function getRegimens() {
+  var nextBtn = document.getElementById("nextButton");
+  nextButton.setAttribute("onmousedown", "validateRegimenSelection();");
 
   var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1/programs/1/regimens";
 
@@ -427,11 +611,12 @@ function getRegimens() {
         passedRegimens[key] = [];
         for(var i = 0 ; i < obj[key].length ; i++){
           var drug = {
-            name: obj[key][i].drug_name, 
+            drug_name: obj[key][i].drug_name, 
             concept_name: obj[key][i].concept_name, 
             drug_id: obj[key][i].drug_id, 
             units: obj[key][i].units, 
             am: obj[key][i].am, 
+            noon: 'N/A', 
             pm: obj[key][i].pm
           }
           passedRegimens[key].push(drug);
@@ -449,18 +634,59 @@ function getRegimens() {
       }
       
       buildRegimenPage();
+      preSelectRegimenSelection();
     }
   };
   
-  xhttp.open("GET", url + "?weight=60.5", true);
+  xhttp.open("GET", url + "?weight=6.5", true);
   xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
   xhttp.setRequestHeader('Content-type', "application/json");
   xhttp.send();
 }
 
 
+function preSelectRegimenSelection() {
+  if(selectedRegimens) {
+    var e = document.getElementById(selectedRegimens);
+    selectRegimen(e);
+  }
+}
 
+function validateRegimenSelection() {
+  if(!selectedRegimens){
+    showMessage("Please select one of regimens shown or<br />build your own by selecting: <b>Custom</b>");
+    return;
+  }
 
+ gotoNextPage(); 
+}
+
+function validateIntervalSelection() {
+  if(!setSelectedInterval){
+    showMessage("Please select Interval to next visit");
+    return;
+  }
+
+ gotoNextPage(); 
+}
+
+function getFullMonth(i) {
+  var months = new Array();
+  months[0] = "January";
+  months[1] = "February";
+  months[2] = "March";
+  months[3] = "April";
+  months[4] = "May";
+  months[5] = "June";
+  months[6] = "July";
+  months[7] = "August";
+  months[8] = "September";
+  months[9] = "October";
+  months[10] = "November";
+  months[11] = "December";
+
+  return months[i];
+}
 </script>
 
 
@@ -481,7 +707,7 @@ function getRegimens() {
           tt_pageStyleClass= "NoControls" helpText="Current patient weight: <span='patient_weight'></span>" optional = "true"/>
 
         <input type="text" name="duration"
-          tt_onLoad="__$('keyboard').style.display = 'none'; buildNextIntervalPage();" 
+          tt_onLoad="__$('keyboard').style.display = 'none'; buildNextIntervalPage();preSelectInterval();" 
           tt_pageStyleClass= "NoControls" helpText="Interval to next visit" optional = "true"/>
 
          <select name="follow_up_agreement" allowFreeText="false" 
