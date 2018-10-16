@@ -1,0 +1,469 @@
+
+<script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js" defer="true"></script>
+<!--script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/standard.js" defer="true"></script-->
+<script type="text/javascript" src="/assets/js/jquery.min.js"></script>
+
+<link rel="stylesheet" href="/assets/css/datatables/uikit.min.css" type="text/css">
+<link rel="stylesheet" href="/assets/css/datatables/dataTables.uikit.min.css" type="text/css">
+
+<link rel="stylesheet" href="/assets/css/datatables/fixedHeader.dataTables.min.css" type="text/css">
+<link rel="stylesheet" href="/assets/css/datatables/scroller.dataTables.min.css" type="text/css">
+
+<script type="text/javascript" src="/assets/js/datatables/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="/assets/js/datatables/dataTables.fixedHeader.min.js"></script>
+
+<script type="text/javascript" src="/assets/js/yes_no_ctrls.js"></script>
+<link rel="stylesheet" href="/assets/css/yes_no_ctrls.css" type="text/css">
+<script type="text/javascript" src="/assets/js/post_parameters.js"></script>
+<script type="text/javascript" src="/assets/js/generic_ajaxrequest.js"></script>
+
+<style>
+
+.regimen-container {
+  display: table;
+  width: 100%;
+  border-collapse: separate;
+}
+
+.regimen-container-row {
+  display: table-row;
+}
+
+.regimen-container-cell {
+  display: table-cell;
+  width: 45%;
+  height: 590px;
+}
+
+.regimen-tables {
+  width: 100%;
+  border-collapse: separate;
+  margin: 5px;
+  border-spacing: 20px;
+  color: black;
+}
+
+.regimen-names {
+  border-style: solid;
+  border-width: 1px;
+  text-align: center;
+  line-height: 10px;
+  height: 50px;
+
+  padding: 10px;
+  box-shadow: 5px 10px #888888;
+}
+
+.assessmentTable {
+  display: table;
+}
+
+.assessmentTableRow {
+  display: table-row;
+}
+
+.assessmentTableCell {
+  display: table-cell;
+  width: 48%;
+}
+
+#assessmentTable-cell-left {
+  float: left;
+  width: 46%;
+}
+
+#assessmentTable-cell-right {
+  float: right;
+  width: 46%;
+}
+
+#selected-medication {
+  width: 100%;
+  margin: 5px;
+}
+
+#selected-medication th {
+  text-align: center;
+  border-style: solid;
+  border-width: 1px;
+}
+
+#next-interval-table-left {
+  float: left;
+  width: 45%;
+}
+
+#next-interval-table-right {
+  float: right;
+  width: 50%;
+
+  height: 90%;
+  border-style: solid;
+  background-color: #fff;
+  border: 2px solid #ccf;
+  border-radius: 10px;
+}
+
+#intervals-table {
+  width: 100%;
+  margin: 5px;
+  color: black;
+  border-collapse: separate;
+  margin: 5px;
+  border-spacing: 20px;
+
+}
+
+.interval-buttons {
+  border-style: solid;
+  border-width: 1px;
+  text-align: center;
+  line-height: 10px;
+  height: 50px;
+  padding: 10px;
+  box-shadow: 5px 10px #888888;
+}
+
+#interval-info-table {
+  width: 100%;
+  color: black;
+  border-collapse: separate;
+  margin: 5px;
+  border-spacing: 20px;
+}
+
+#interval-info-table th, #interval-info-table td {
+  text-align: left;
+  margin-left: 5px;
+  border-style: solid;
+  border-width: 0px 0px 1px 0px;
+}
+
+.separator-rows {
+  background-color: white;
+  border-width: 0px;
+  background-color: blue;
+}
+</style>
+
+<script>
+
+givenRegimens = {
+  "Regimen 0 A": ["d4T (Stavudine 30mg tablet)","RIF or R (Rifampin 300mg tablet)"],
+  "Regimen 1 A": ["AZT/3TC/TDF/LPV/r","TDF300/3TC300 + LPV/r200/50"],
+  "Regimen 3 A": ["RIF or R (Rifampin) no dose strength","IDV (Indinavir 400mg tablet)"],
+  "Regimen 5 A": ["TDF/3TC/EFV (300/300/600mg tablet)"],
+  "Regimen 6 A": ["d4T (Stavudine 30mg tablet)","RIF or R (Rifampin 300mg tablet)"],
+  "Regimen 8 A": ["d4T (Stavudine 30mg tablet)","RIF or R (Rifampin 300mg tablet)"],
+  "Regimen 9 A": ["d4T (Stavudine 30mg tablet)","RIF or R (Rifampin 300mg tablet)"],
+  "Regimen 10 A": ["d4T (Stavudine 30mg tablet)","RIF or R (Rifampin 300mg tablet)"],
+  "Regimen 11 A": ["TDF/3TC/EFV (300/300/600mg tablet)"],
+  "Regimen 12 A": ["d4T (Stavudine 30mg tablet)","RIF or R (Rifampin 300mg tablet)"],
+  "Regimen 13 A": ["d4T (Stavudine 30mg tablet)","RIF or R (Rifampin 300mg tablet)"]
+};
+
+function buildRegimenPage() {
+  var frame = document.getElementById("inputFrame" + tstCurrentPage);
+  frame.style = "height: 89%; width: 96%;";
+  document.getElementById("clearButton").style = "display: none;";
+
+  var regimenContainer = document.createElement("div");
+  regimenContainer.setAttribute("class","regimen-container");
+  frame.appendChild(regimenContainer);
+
+  var regimenContainerRow = document.createElement("div");
+  regimenContainerRow.setAttribute("class","regimen-container-row");
+  regimenContainer.appendChild(regimenContainerRow);
+
+
+  var cells = ["left","right"];
+  
+  for(var i = 0 ; i < cells.length ; i++){
+    var regimenContainerCell = document.createElement("div");
+    regimenContainerCell.setAttribute("class","regimen-container-cell");
+    regimenContainerCell.setAttribute("id","regimen-container-" + cells[i]);
+    regimenContainerRow.appendChild(regimenContainerCell);
+    createContainers(cells[i]);
+  }
+
+
+  loadRegimens();
+}
+
+function loadRegimens() {
+  var side = "right";
+
+  for(var regimen in givenRegimens){
+    side = (side == "right" ? "left" : "right");
+    var table = document.getElementById("regimen-table-" + side);
+
+    var tr = document.createElement("tr");
+    table.appendChild(tr);
+
+    var td = document.createElement("td");
+    td.setAttribute("class","regimen-names");
+    td.setAttribute("id", regimen);
+    td.setAttribute("onmousedown","selectRegimen(this);");
+    td.innerHTML = regimen;
+    tr.appendChild(td);
+  }
+
+}
+
+function selectRegimen(e) {
+  var cells = document.getElementsByClassName("regimen-names");
+  for(var i = 0 ; i < cells.length ; i++){
+    cells[i].setAttribute("style","background-color: '';");
+  }
+    
+  e.setAttribute("style","background-color: lightblue;");
+}
+
+function createContainers(side) {
+  var container = document.getElementById("regimen-container-" + side);
+
+  var table = document.createElement("table");
+  table.setAttribute("class","regimen-tables");
+  table.setAttribute("id","regimen-table-" + side);
+  container.appendChild(table);
+}
+
+/* ########################################################################################### */
+
+function showSelectedMeds() {
+  var frame = document.getElementById("inputFrame" + tstCurrentPage);
+  frame.style = "height: 89%; width: 96%;";
+  document.getElementById("clearButton").style = "display: none;";
+
+  var table = document.createElement("table");
+  table.setAttribute("id","selected-medication");
+  frame.appendChild(table);
+
+  var thead = document.createElement("thead");
+  table.appendChild(thead);
+
+  var tr = document.createElement("tr");
+  thead.appendChild(tr);
+
+  var theads = ["Drug name", "Units", "AM", "Noon", "PM"];
+  for(var i = 0 ; i < theads.length ; i++){
+    var th = document.createElement("th");
+    th.innerHTML = theads[i];
+    if(i == 0)
+      th.style = "text-align: left;"
+
+    tr.appendChild(th);
+  }
+
+  var tbody = document.createElement("tbody");
+  tbody.setAttribute("id","selected-medication-tbody");
+  table.appendChild(tbody);
+
+}
+
+
+
+/* ###################################################### */
+
+var assessment_questions = "Patient present?,1805#Guardian present?,2122"
+
+var inclusion_list_arr = [
+  ['Adult  18 years +', 9533], 
+  ['On ART for 12 months +', 9534],
+  ['On 1<sup>st</sup> line ART',9535],
+  ['Good current adherence', 9537], ['Last VL <1000', 9536]
+];
+
+var exclusion_list_arr = [
+  ['Pregnant / Breastfeeding', 9538],
+  ["Side effects / HIV-rel. diseases", 9539],
+  ["Needs BP / diabetes treatment", 9540],
+  ['Started IPT <12m ago', 9527],
+  ["Any sign for TB",2186]
+];
+
+function buildFTassessmentPage() {
+  var frame = document.getElementById("inputFrame" + tstCurrentPage)
+  //buildYesNoUI("Fast track", assessment_questions, targetElement);
+
+  var assessmentTable = document.createElement("div");
+  assessmentTable.setAttribute("class","assessmentTable");
+  frame.appendChild(assessmentTable)
+
+  var assessmentTableRow = document.createElement("div");
+  assessmentTableRow.setAttribute("class","assessmentTable-row");
+  assessmentTable.appendChild(assessmentTableRow);
+
+  var cells = ["left","right"];
+
+  for(var i = 0 ; i < cells.length ; i++){
+    var assessmentTableCell = document.createElement("div");
+    assessmentTableCell.setAttribute("class","assessmentTable-cell");
+    assessmentTableCell.setAttribute("id","assessmentTable-cell-" + cells[i]);
+    assessmentTableRow.appendChild(assessmentTableCell);
+  }
+
+  var leftCell = document.getElementById("assessmentTable-cell-left");
+  buildYesNoUI("Fast track", inclusion_list_arr.join("#").split(",").join(","), leftCell);
+
+  var rightCell = document.getElementById("assessmentTable-cell-right");
+  buildYesNoUI("Fast track", exclusion_list_arr.join("#").split(",").join(","), rightCell);
+
+}
+
+var setDataTable = null;
+
+function initDataTable() {
+  setDataTable = jQuery('#selected-medication').DataTable( {
+    fixedHeader: true,
+    searching: false,
+    paging: false,
+    scroller: {
+      loadingIndicator: true
+    }
+  } );
+
+  document.getElementById("selected-medication_info").style = "display: none;";
+}
+
+function buildNextIntervalPage() {
+  var frame = document.getElementById("inputFrame" + tstCurrentPage);
+  frame.style = "height: 89%; width: 96%;";
+
+  var container = document.createElement("div");
+  container.setAttribute("class","next-interval-table");
+  frame.appendChild(container);
+
+  var containerRow = document.createElement("div");
+  containerRow.setAttribute("class","next-interval-table-row");
+  container.appendChild(containerRow);
+
+  var cells = ["left","right"];
+
+  for(var i = 0 ; i < cells.length ; i++){
+    var containerCell = document.createElement("div");
+    containerCell.setAttribute("class","next-interval-table-cell");
+    containerCell.setAttribute("id","next-interval-table-" + cells[i]);
+    containerRow.appendChild(containerCell);
+  }
+  
+  addIntervals();
+  addIntervalInfoSection();
+}
+
+function isEven(n) {
+  return n % 2 == 0;
+}
+
+function isOdd(n) {
+  return Math.abs(n % 2) == 1;
+}
+
+function addIntervalInfoSection() {
+  var container = document.getElementById("next-interval-table-right");
+  var table = document.createElement("table");
+  table.setAttribute("id", "interval-info-table");
+
+    var innerHTML = "<tr><th>Estimated next appointment date</th></tr>";
+   innerHTML +="<tr><td id='estimated-next-appointment-date'>&nbsp;</th></tr>";
+   innerHTML += "<tr><td class='separator-rows'>&nbsp;</td></tr>";
+   innerHTML += "<tr><th>Earliest medication run-out date</th></tr>";
+   innerHTML += "<tr><td id='earliest-runout-date'>&nbsp;</th></tr>";
+   innerHTML += "<tr><td class='separator-rows'>&nbsp;</td></tr>";
+
+  table.innerHTML = innerHTML;
+  container.appendChild(table);
+}
+
+function addIntervals() {
+  var container = document.getElementById("next-interval-table-left");
+  var intervals = ["2 weeks","1 month"]
+  var count = 2;
+  
+  while(count < 13){
+    intervals.push(count + " months");
+    count++;
+  }
+
+  var table = document.createElement("table");
+  table.setAttribute("id","intervals-table");
+  var tr;
+
+  for(var i = 0 ; i < intervals.length ; i++){
+    if(isEven(i)) {
+      tr = document.createElement("tr");
+      table.appendChild(tr);
+    }
+
+    var td = document.createElement("td");
+    td.setAttribute("class","interval-buttons");
+    td.setAttribute("interval", intervals[i]);
+    td.setAttribute("onmousedown","setNextInterval(this)");
+    td.innerHTML = intervals[i];
+    tr.appendChild(td);
+
+  }
+
+
+
+
+  container.appendChild(table);
+}
+
+function setNextInterval(e){
+  var cells = document.getElementsByClassName("interval-buttons");
+  for(var i = 0 ; i < cells.length ; i++){
+    cells[i].setAttribute("style","background-color: '';");
+  }
+    
+  e.setAttribute("style","background-color: lightblue;");
+}
+
+function adjustFrameHeight() {
+  var frame = document.getElementById('inputFrame' + tstCurrentPage);
+  frame.style = 'height: 89% !important; width: 96%;';
+}
+</script>
+
+
+
+<body id="mateme">
+  <div id="container">
+    <div id="content">
+
+
+      <form action="post">
+
+        <input type="text" name="regimens"
+          tt_onLoad="__$('keyboard').style.display = 'none';buildRegimenPage();" 
+          tt_pageStyleClass= "NoControls" helpText="ARV Regimen(s)" optional = "true"/>
+
+        <input type="text" name="selected-medications"
+          tt_onLoad="__$('keyboard').style.display = 'none'; showSelectedMeds(); initDataTable();" 
+          tt_pageStyleClass= "NoControls" helpText="Current patient weight: <span='patient_weight'></span>" optional = "true"/>
+
+        <input type="text" name="duration"
+          tt_onLoad="__$('keyboard').style.display = 'none'; buildNextIntervalPage();" 
+          tt_pageStyleClass= "NoControls" helpText="Interval to next visit" optional = "true"/>
+
+         <select name="follow_up_agreement" allowFreeText="false" 
+          helpText="Assess for fast track visit (next appointment)" 
+          tt_onLoad = "adjustFrameHeight();"
+          id="assess_for_ft" tt_pageStyleClass="NoKeyboard">
+            <option value=""></option>
+            <option value="YES">Yes</option>
+            <option value="NO">No</option>
+        </select>
+
+
+        <input type="text" name="fast-track-questions"
+          tt_onLoad="__$('keyboard').style.display = 'none';buildFTassessmentPage();" 
+          tt_pageStyleClass= "NoControls" helpText="Fast track assessment" optional = "true"/>
+
+
+      </form>
+
+   </div>
+ </div>
+</body>
+
