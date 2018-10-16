@@ -635,7 +635,9 @@ function toNextEncounter() {
       encounter_datetime: moment().format("YYYY-MM-DD")
     }
 
-    submitParameters(encounter, "/encounters", "postConsultationObs");
+    if (sessionStorage.adherencePercentage) {
+      submitParameters(encounter, "/encounters", "postConsultationObs");
+    }
 }
 
 function postConsultationObs(response) {
@@ -650,11 +652,10 @@ function postConsultationObs(response) {
         }
       ],
     }
-
     submitParameters(encounter, "/observations", "nextPage"); 
 }
 function nextPage(){
-  nextEncounter(sessionStorage.patientID, 1, false);
+  nextEncounter(sessionStorage.patientID, 1);
 }
 
 </script>
@@ -664,17 +665,14 @@ function nextPage(){
   <div id="container">
     <div id="content">
 
-
       <form>
 
         <input type="text" name="summary"
           tt_onLoad="__$('keyboard').style.display = 'none';buildEntryPage(); toNextEncounter();" 
           tt_pageStyleClass= "NoControls" helpText="ART adherence" optional = "true"/>
 
-
       </form>
       
-
    </div>
  </div>
 </body>
