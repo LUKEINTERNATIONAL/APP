@@ -47,7 +47,7 @@
   border-style: solid;
   border-width: 1px;
   text-align: center;
-  line-height: 10px;
+  line-height: 20px;
   height: 50px;
 
   padding: 10px;
@@ -140,27 +140,13 @@
 }
 
 .separator-rows {
-  background-color: white;
   border-width: 0px;
-  background-color: blue;
+  background-color: darkgrey;
 }
 </style>
 
 <script>
 
-givenRegimens = {
-  "Regimen 0 A": ["d4T (Stavudine 30mg tablet)","RIF or R (Rifampin 300mg tablet)"],
-  "Regimen 1 A": ["AZT/3TC/TDF/LPV/r","TDF300/3TC300 + LPV/r200/50"],
-  "Regimen 3 A": ["RIF or R (Rifampin) no dose strength","IDV (Indinavir 400mg tablet)"],
-  "Regimen 5 A": ["TDF/3TC/EFV (300/300/600mg tablet)"],
-  "Regimen 6 A": ["d4T (Stavudine 30mg tablet)","RIF or R (Rifampin 300mg tablet)"],
-  "Regimen 8 A": ["d4T (Stavudine 30mg tablet)","RIF or R (Rifampin 300mg tablet)"],
-  "Regimen 9 A": ["d4T (Stavudine 30mg tablet)","RIF or R (Rifampin 300mg tablet)"],
-  "Regimen 10 A": ["d4T (Stavudine 30mg tablet)","RIF or R (Rifampin 300mg tablet)"],
-  "Regimen 11 A": ["TDF/3TC/EFV (300/300/600mg tablet)"],
-  "Regimen 12 A": ["d4T (Stavudine 30mg tablet)","RIF or R (Rifampin 300mg tablet)"],
-  "Regimen 13 A": ["d4T (Stavudine 30mg tablet)","RIF or R (Rifampin 300mg tablet)"]
-};
 
 function buildRegimenPage() {
   var frame = document.getElementById("inputFrame" + tstCurrentPage);
@@ -367,7 +353,7 @@ function addIntervalInfoSection() {
     var innerHTML = "<tr><th>Estimated next appointment date</th></tr>";
    innerHTML +="<tr><td id='estimated-next-appointment-date'>&nbsp;</th></tr>";
    innerHTML += "<tr><td class='separator-rows'>&nbsp;</td></tr>";
-   innerHTML += "<tr><th>Earliest medication run-out date</th></tr>";
+   innerHTML += "<tr><th>Estimated earliest medication run-out date</th></tr>";
    innerHTML += "<tr><td id='earliest-runout-date'>&nbsp;</th></tr>";
    innerHTML += "<tr><td class='separator-rows'>&nbsp;</td></tr>";
 
@@ -423,6 +409,58 @@ function adjustFrameHeight() {
   var frame = document.getElementById('inputFrame' + tstCurrentPage);
   frame.style = 'height: 89% !important; width: 96%;';
 }
+
+
+var givenRegimens = {};
+var passedRegimens = {};
+
+function getRegimens() {
+
+  var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1/programs/1/regimens";
+
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+      var obj = JSON.parse(this.responseText);
+      
+      for(var key in obj) {
+        passedRegimens[key] = [];
+        for(var i = 0 ; i < obj[key].length ; i++){
+          var drug = {
+            name: obj[key][i].drug_name, 
+            concept_name: obj[key][i].concept_name, 
+            drug_id: obj[key][i].drug_id, 
+            units: obj[key][i].units, 
+            am: obj[key][i].am, 
+            pm: obj[key][i].pm
+          }
+          passedRegimens[key].push(drug);
+        }
+      }
+
+      for(var key in passedRegimens){
+        var regimen_name = key;
+        var concept_names = [];
+        for(var i = 0 ; i < passedRegimens[key].length ; i++){
+          concept_names.push(passedRegimens[key][i].concept_name)
+        }
+        regimen_name += " (" + concept_names.join(" ") + ")";
+        givenRegimens[regimen_name] = passedRegimens[key]; 
+      }
+      
+      buildRegimenPage();
+    }
+  };
+  
+  xhttp.open("GET", url + "?weight=60.5", true);
+  xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+  xhttp.setRequestHeader('Content-type', "application/json");
+  xhttp.send();
+}
+
+
+
+
 </script>
 
 
@@ -435,7 +473,7 @@ function adjustFrameHeight() {
       <form action="post">
 
         <input type="text" name="regimens"
-          tt_onLoad="__$('keyboard').style.display = 'none';buildRegimenPage();" 
+          tt_onLoad="__$('keyboard').style.display = 'none';getRegimens();" 
           tt_pageStyleClass= "NoControls" helpText="ARV Regimen(s)" optional = "true"/>
 
         <input type="text" name="selected-medications"
