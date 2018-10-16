@@ -3,13 +3,14 @@
 <script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/standard.js" defer="true"></script>
 <script type="text/javascript" src="/assets/js/jquery.min.js"></script>
 <script type="text/javascript" src="/assets/js/moment.js"></script>
+<script type="text/javascript" src="/assets/js/generic_ajaxrequest.js"></script>
 <!-- <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.css"> -->
   
 <!-- <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script> -->
 
 <style>
 
-#clearButton , #nextButton {
+#clearButton {
   display: none;
 }
 
@@ -612,6 +613,12 @@ function selectMed(e) {
   e.setAttribute("class","list list-selected");
 }
 
+function nextPage(){
+  // nextEncounter(sessionStorage.patientID, 1);
+  window.location.href = "/views/patient/dispensing.html"
+
+}
+
 
 </script>
 
@@ -624,11 +631,12 @@ function selectMed(e) {
       <form>
 
         <input type="text" name="summary"
-          tt_onLoad="__$('keyboard').style.display = 'none';buildEntryPage();" 
-          tt_pageStyleClass= "NoControls" helpText="ART adherence" optional = "true"/>
+          tt_onLoad="__$('keyboard').style.display = 'none';buildEntryPage(); document.getElementById('nextButton').onmousedown = nextPage;" 
+          tt_pageStyleClass= "NoControls" helpText="ART adherence" optional = "true" />
 
 
       </form>
+      
 
    </div>
  </div>
