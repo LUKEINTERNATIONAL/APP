@@ -54,13 +54,15 @@ function nextPage(obs){
   nextEncounter(sessionStorage.patientID, 1);
 }
 
-
-
-
-
 function changeSubmitFuction() {
   var nextButton =  document.getElementById('nextButton');
   nextButton.setAttribute("onmousedown","submitHIVreception();");
+}
+
+function addYesNo() {
+  var tar = document.getElementById("inputFrame" + tstCurrentPage);
+  var attr = 'Patient present?,1805,autoSelectGuardian#Guardian present?,2122'
+  buildYesNoUI('HIV Reception', attr, tar);
 }
 
 </script>
@@ -73,7 +75,7 @@ function changeSubmitFuction() {
       <form>
 
         <input type="text" name="summary"
-          tt_onLoad="__$('keyboard').style.display = 'none';changeSubmitFuction();buildYesNoUI('HIV Reception', 'Patient present?,1805,autoSelectGuardian#Guardian present?,2122');" 
+          tt_onLoad="__$('keyboard').style.display = 'none';changeSubmitFuction();addYesNo();" 
           tt_pageStyleClass= "NoControls" helpText="HIV reception" optional = "true"/>
 
       </form>
