@@ -1,0 +1,753 @@
+
+<script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js" defer="true"></script>
+<!--script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/standard.js" defer="true"></script-->
+<script type="text/javascript" src="/assets/js/jquery.min.js"></script>
+
+<link rel="stylesheet" href="/assets/css/datatables/uikit.min.css" type="text/css">
+<link rel="stylesheet" href="/assets/css/datatables/dataTables.uikit.min.css" type="text/css">
+
+<link rel="stylesheet" href="/assets/css/datatables/fixedHeader.dataTables.min.css" type="text/css">
+<link rel="stylesheet" href="/assets/css/datatables/scroller.dataTables.min.css" type="text/css">
+
+<script type="text/javascript" src="/assets/js/datatables/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="/assets/js/datatables/dataTables.fixedHeader.min.js"></script>
+
+<script type="text/javascript" src="/assets/js/yes_no_ctrls.js"></script>
+<link rel="stylesheet" href="/assets/css/yes_no_ctrls.css" type="text/css">
+<script type="text/javascript" src="/assets/js/post_parameters.js"></script>
+<script type="text/javascript" src="/assets/js/generic_ajaxrequest.js"></script>
+
+<style>
+
+body {
+  color: black;
+}
+
+.regimen-container {
+  display: table;
+  width: 100%;
+  border-collapse: separate;
+}
+
+.regimen-container-row {
+  display: table-row;
+}
+
+.regimen-container-cell {
+  display: table-cell;
+  width: 45%;
+  height: 590px;
+}
+
+.regimen-tables {
+  width: 100%;
+  border-collapse: separate;
+  margin: 5px;
+  border-spacing: 20px;
+  color: black;
+}
+
+.regimen-names {
+  border-style: solid;
+  border-width: 1px;
+  text-align: center;
+  line-height: 20px;
+  height: 50px;
+
+  padding: 10px;
+  box-shadow: 5px 10px #888888;
+}
+
+.assessmentTable {
+  display: table;
+  width: 100%;
+}
+
+.assessmentTableRow {
+  display: table-row;
+}
+
+.assessmentTableCell {
+  display: table-cell;
+  width: 48%;
+}
+
+#assessmentTable-cell-left {
+  float: left;
+  width: 48%;
+}
+
+#assessmentTable-cell-right {
+  float: right;
+  width: 46%;
+}
+
+#selected-medication {
+  width: 99%;
+  margin: 15px 5px 0px 5px;
+  border-collapse: collapse;
+  color: black;
+  font-size: 1.3em;
+}
+
+#selected-medication th {
+  text-align: center;
+  border-style: solid;
+  border-width: 1px 1px 1px 1px;
+}
+
+#next-interval-table-left {
+  float: left;
+  width: 45%;
+}
+
+#next-interval-table-right {
+  float: right;
+  width: 54%;
+
+  height: 90%;
+  border-style: solid;
+  background-color: #fff;
+  border: 2px solid #ccf;
+  border-radius: 10px;
+}
+
+#intervals-table {
+  width: 100%;
+  margin: 5px;
+  color: black;
+  border-collapse: separate;
+  margin: 5px;
+  border-spacing: 20px;
+
+}
+
+.interval-buttons {
+  border-style: solid;
+  border-width: 1px;
+  text-align: center;
+  line-height: 10px;
+  height: 50px;
+  padding: 10px;
+  box-shadow: 5px 10px #888888;
+}
+
+#interval-info-table {
+  width: 100%;
+  color: black;
+  border-collapse: separate;
+  margin: 5px;
+  border-spacing: 20px;
+}
+
+#interval-info-table th, #interval-info-table td {
+  text-align: left;
+  margin-left: 5px;
+  border-style: solid;
+  border-width: 0px 0px 1px 0px;
+}
+
+.separator-rows {
+  border-width: 0px;
+  background-color: darkgrey;
+}
+
+#selected-medication-tbody td {
+  border-style: solid;
+  border-width: 1px;
+}
+
+.med-names {
+  margin-left: 5px;
+}
+
+.numbers {
+  text-align: center;
+}
+
+.adult-category {
+  background-color: #F8EA98;
+  color: black;
+}
+
+.peads-category {
+  background-color: #E2BED6;
+  color: black;
+}
+
+.pack-sizes {
+  float: right;
+  padding-right: 5px;
+}
+</style>
+
+<script>
+var sessionDate = new Date("2018-10-16");
+
+var givenRegimens = {};
+var passedRegimens = {};
+
+var selectedRegimens
+var setSelectedInterval;
+
+function buildRegimenPage() {
+  var frame = document.getElementById("inputFrame" + tstCurrentPage);
+  frame.style = "height: 89%; width: 96%;";
+  document.getElementById("clearButton").style = "display: none;";
+
+  var regimenContainer = document.createElement("div");
+  regimenContainer.setAttribute("class","regimen-container");
+  frame.appendChild(regimenContainer);
+
+  var regimenContainerRow = document.createElement("div");
+  regimenContainerRow.setAttribute("class","regimen-container-row");
+  regimenContainer.appendChild(regimenContainerRow);
+
+
+  var cells = ["left","right"];
+  
+  for(var i = 0 ; i < cells.length ; i++){
+    var regimenContainerCell = document.createElement("div");
+    regimenContainerCell.setAttribute("class","regimen-container-cell");
+    regimenContainerCell.setAttribute("id","regimen-container-" + cells[i]);
+    regimenContainerRow.appendChild(regimenContainerCell);
+    createContainers(cells[i]);
+  }
+
+
+  loadRegimens();
+}
+
+function loadRegimens() {
+  var side = "right";
+
+  for(var regimen in givenRegimens){
+    side = (side == "right" ? "left" : "right");
+    var table = document.getElementById("regimen-table-" + side);
+
+    var tr = document.createElement("tr");
+    table.appendChild(tr);
+
+    var td = document.createElement("td");
+    td.setAttribute("class","regimen-names");
+    td.setAttribute("id", regimen);
+    td.setAttribute("onmousedown","selectRegimen(this);");
+    td.innerHTML = regimen;
+    tr.appendChild(td);
+  }
+
+}
+
+function selectRegimen(e) {
+  var cells = document.getElementsByClassName("regimen-names");
+  for(var i = 0 ; i < cells.length ; i++){
+    cells[i].setAttribute("style","background-color: '';");
+  }
+    
+  e.setAttribute("style","background-color: lightblue;");
+  selectedRegimens = e.innerHTML;
+}
+
+function calculateEstimatedNextApp() {
+  var selectedMeds = givenRegimens[selectedRegimens];
+  var set_date = null;
+
+  set_date = sessionDate.getFullYear();
+  var month = (sessionDate.getMonth() + 1);
+
+  if(month.length < 2)
+    month = "0" + month;
+
+  set_date += "-" + month;
+
+  var day = (sessionDate.getDate());
+  if(day.length < 2)
+    day = "0" + day;
+
+  set_date += "-" + day;
+  
+  var appDate = new Date(set_date);
+  appDate.setDate(appDate.getDate() + parseInt(setSelectedInterval));
+
+  var estimated_packs = [];
+
+  for(var i = 0 ; i < selectedMeds.length ; i++){
+    var pills_per_day = 0;
+    var am  = 0; var noon = 0; var pm = 0;
+
+    if(!isNaN(parseInt(selectedMeds[i].am)))
+      am = parseFloat(selectedMeds[i].am);
+
+    if(!isNaN(parseFloat(selectedMeds[i].noon)))
+      noon = parseInt(selectedMeds[i].noon);
+
+    if(!isNaN(parseFloat(selectedMeds[i].pm)))
+      pm = parseInt(selectedMeds[i].pm);
+
+    pills_per_day += (am + noon + pm);
+
+    var packs = ((pills_per_day * setSelectedInterval) / parseInt(selectedMeds[i].pack_size));
+    var pack_size_str = ("'" + packs + "'");
+    var packs_rounded = packs;
+
+    if(pack_size_str.match(/\./))
+      packs_rounded =  Math.round(packs)
+      
+    if(packs_rounded > packs){
+      packs = packs_rounded;
+    }else{
+      packs = packs_rounded + parseInt(selectedMeds[i].pack_size)
+    }
+
+    estimated_packs.push([selectedMeds[i].drug_name, packs]);
+    console.log(estimated_packs[i][0] + "      Zzzz         " + estimated_packs[i][1])
+  }
+
+  var td = document.getElementById("estimated-next-appointment-date");
+  td.innerHTML = appDate.getDate() + "/" + getFullMonth(appDate.getMonth()) + "/"+ appDate.getFullYear();
+
+
+  var td = document.getElementById("estimated-packs");
+  var innerHTML = "";
+  for(var i = 0 ; i < estimated_packs.length ; i++){
+    innerHTML += estimated_packs[i][0] + "<span class='pack-sizes'>" + estimated_packs[i][1] + "</span><br />";
+  }
+  
+  td.innerHTML = innerHTML;
+}
+
+function createContainers(side) {
+  var container = document.getElementById("regimen-container-" + side);
+
+  var table = document.createElement("table");
+  table.setAttribute("class","regimen-tables");
+  table.setAttribute("id","regimen-table-" + side);
+  container.appendChild(table);
+}
+
+/* ########################################################################################### */
+
+function showSelectedMeds() {
+  var frame = document.getElementById("inputFrame" + tstCurrentPage);
+  frame.style = "height: 89%; width: 96%;";
+  document.getElementById("clearButton").style = "display: none;";
+
+  var table = document.createElement("table");
+  table.setAttribute("id","selected-medication");
+  frame.appendChild(table);
+
+  var thead = document.createElement("thead");
+  table.appendChild(thead);
+
+  var tr = document.createElement("tr");
+  tr.style = "background-color: lightgray;";
+  thead.appendChild(tr);
+
+  var theads = ["Drug name", "Units", "AM", "Noon", "PM"];
+  for(var i = 0 ; i < theads.length ; i++){
+    var th = document.createElement("th");
+    th.innerHTML = theads[i];
+    if(i == 0)
+      th.style = "text-align: left;"
+
+    tr.appendChild(th);
+  }
+
+  var tbody = document.createElement("tbody");
+  tbody.setAttribute("id","selected-medication-tbody");
+  table.appendChild(tbody);
+
+  if(givenRegimens[selectedRegimens]) {
+    var rows = givenRegimens[selectedRegimens]; 
+    
+    for(var i = 0 ; i < rows.length ; i++) {
+      var tr = document.createElement("tr");
+      tbody.appendChild(tr);
+
+      if(selectedRegimens.split(" ")[0].match(/A/i)){
+        tr.setAttribute("class","adult-category");
+      }else if(selectedRegimens.split(" ")[0].match(/P/i)){
+        tr.setAttribute("class","peads-category");
+      }
+
+
+      var td = document.createElement("td");
+      td.innerHTML = rows[i].drug_name;
+      td.setAttribute("class","numbers");
+      td.setAttribute("class","med-names");
+      tr.appendChild(td);
+
+      var td = document.createElement("td");
+      td.innerHTML = rows[i].units;
+      td.setAttribute("class","numbers");
+      tr.appendChild(td);
+
+      var td = document.createElement("td");
+      td.innerHTML = rows[i].am;
+      td.setAttribute("class","numbers");
+      tr.appendChild(td);
+
+      var td = document.createElement("td");
+      td.innerHTML = rows[i].noon;
+      td.setAttribute("class","numbers");
+      tr.appendChild(td);
+
+      var td = document.createElement("td");
+      td.innerHTML = rows[i].pm;
+      td.setAttribute("class","numbers");
+      tr.appendChild(td);
+
+
+    }
+
+  }
+}
+
+
+
+/* ###################################################### */
+
+var assessment_questions = "Patient present?,1805#Guardian present?,2122"
+
+var inclusion_list_arr = [
+  ['Adult  18 years +', 9533], 
+  ['On ART for 12 months +', 9534],
+  ['On 1<sup>st</sup> line ART',9535],
+  ['Good current adherence', 9537], ['Last VL <1000', 9536]
+];
+
+var exclusion_list_arr = [
+  ['Pregnant / Breastfeeding', 9538],
+  ["Side effects / HIV-rel. diseases", 9539],
+  ["Needs BP / diabetes treatment", 9540],
+  ['Started IPT <12m ago', 9527],
+  ["Any sign for TB",2186]
+];
+
+function buildFTassessmentPage() {
+  var frame = document.getElementById("inputFrame" + tstCurrentPage)
+  //buildYesNoUI("Fast track", assessment_questions, targetElement);
+
+  var assessmentTable = document.createElement("div");
+  assessmentTable.setAttribute("class","assessmentTable");
+  frame.appendChild(assessmentTable)
+
+  var assessmentTableRow = document.createElement("div");
+  assessmentTableRow.setAttribute("class","assessmentTable-row");
+  assessmentTable.appendChild(assessmentTableRow);
+
+  var cells = ["left","right"];
+
+  for(var i = 0 ; i < cells.length ; i++){
+    var assessmentTableCell = document.createElement("div");
+    assessmentTableCell.setAttribute("class","assessmentTable-cell");
+    assessmentTableCell.setAttribute("id","assessmentTable-cell-" + cells[i]);
+    assessmentTableRow.appendChild(assessmentTableCell);
+  }
+
+  var leftCell = document.getElementById("assessmentTable-cell-left");
+  buildYesNoUI("Fast track", inclusion_list_arr.join("#").split(",").join(","), leftCell);
+
+  var rightCell = document.getElementById("assessmentTable-cell-right");
+  buildYesNoUI("Fast track", exclusion_list_arr.join("#").split(",").join(","), rightCell);
+
+}
+
+var setDataTable = null;
+
+function initDataTable() {
+  setDataTable = jQuery('#selected-medication').DataTable( {
+    fixedHeader: true,
+    searching: false,
+    paging: false,
+    scroller: {
+      loadingIndicator: true
+    }
+  } );
+
+  document.getElementById("selected-medication_info").style = "display: none;";
+}
+
+function buildNextIntervalPage() {
+  var frame = document.getElementById("inputFrame" + tstCurrentPage);
+  frame.style = "height: 89%; width: 96%;";
+
+  var nextBtn = document.getElementById("nextButton");
+  nextButton.setAttribute("onmousedown", "validateIntervalSelection();");
+
+  var container = document.createElement("div");
+  container.setAttribute("class","next-interval-table");
+  frame.appendChild(container);
+
+  var containerRow = document.createElement("div");
+  containerRow.setAttribute("class","next-interval-table-row");
+  container.appendChild(containerRow);
+
+  var cells = ["left","right"];
+
+  for(var i = 0 ; i < cells.length ; i++){
+    var containerCell = document.createElement("div");
+    containerCell.setAttribute("class","next-interval-table-cell");
+    containerCell.setAttribute("id","next-interval-table-" + cells[i]);
+    containerRow.appendChild(containerCell);
+  }
+  
+  addIntervals();
+  addIntervalInfoSection();
+}
+
+function isEven(n) {
+  return n % 2 == 0;
+}
+
+function isOdd(n) {
+  return Math.abs(n % 2) == 1;
+}
+
+function addIntervalInfoSection() {
+  var container = document.getElementById("next-interval-table-right");
+  var table = document.createElement("table");
+  table.setAttribute("id", "interval-info-table");
+
+    var innerHTML = "<tr><th>Estimated next appointment date:</th></tr>";
+   innerHTML +="<tr><td id='estimated-next-appointment-date'>&nbsp;</th></tr>";
+   innerHTML += "<tr><td class='separator-rows'>&nbsp;</td></tr>";
+   innerHTML += "<tr><th>Estimated packs/tins:</th></tr>";
+   innerHTML += "<tr><td id='estimated-packs'>&nbsp;</th></tr>";
+   innerHTML += "<tr><td class='separator-rows'>&nbsp;</td></tr>";
+
+  table.innerHTML = innerHTML;
+  container.appendChild(table);
+}
+
+function addIntervals() {
+  var container = document.getElementById("next-interval-table-left");
+  var intervals = ["2 weeks","1 month"]
+  var count = 2;
+  
+  while(count < 13){
+    intervals.push(count + " months");
+    count++;
+  }
+
+  var table = document.createElement("table");
+  table.setAttribute("id","intervals-table");
+  var tr;
+
+  for(var i = 0 ; i < intervals.length ; i++){
+    if(isEven(i)) {
+      tr = document.createElement("tr");
+      table.appendChild(tr);
+    }
+
+    var td = document.createElement("td");
+    td.setAttribute("class","interval-buttons");
+
+    var days;
+
+    if(intervals[i].match(/week/i)){
+      days = ((parseInt(intervals[i].split(" ")[0])*7))
+    }else if (intervals[i].match(/days/i)){
+      days = 4
+    }else if (intervals[i].match(/month/i)){
+      days = ((parseInt(intervals[i].split(" ")[0])* 28))
+    }
+
+    td.setAttribute("interval", days);
+    td.setAttribute("onmousedown","setNextInterval(this)");
+    td.innerHTML = intervals[i];
+    tr.appendChild(td);
+
+  }
+
+
+
+
+  container.appendChild(table);
+}
+
+function setNextInterval(e){
+  var cells = document.getElementsByClassName("interval-buttons");
+  for(var i = 0 ; i < cells.length ; i++){
+    cells[i].setAttribute("style","background-color: '';");
+  }
+    
+  e.setAttribute("style","background-color: lightblue;");
+  setSelectedInterval = e.getAttribute("interval");
+  calculateEstimatedNextApp(); 
+}
+
+function preSelectInterval() {
+  var cells = document.getElementsByClassName("interval-buttons");
+  for(var i = 0 ; i < cells.length ; i++){
+    if(cells[i].getAttribute("interval") == setSelectedInterval)
+      setNextInterval(cells[i]);
+
+  }
+}
+
+function adjustFrameHeight() {
+  var frame = document.getElementById('inputFrame' + tstCurrentPage);
+  frame.style = 'height: 89% !important; width: 96%;';
+
+  var lis = frame.getElementsByTagName("li")
+  for(var i = 0 ; i < lis.length ; i++){
+    var attr = lis[i].getAttribute("onmousedown");
+    lis[i].setAttribute("onmousedown", attr + " changeNextBtn(this);");
+  }
+}
+
+function changeNextBtn(e) {
+  var btn = document.getElementById("nextButton");
+
+  if(e.innerHTML == "No"){
+    btn.innerHTML = "<span>Finish</span>";
+    btn.setAttribute("onmousedown", "arrangeParamsForSubmission();")
+  }else{
+    btn.innerHTML = "<span>Next</span>";
+    btn.setAttribute("onmousedown", "gotoNextPage();")
+  }
+}
+
+function getRegimens() {
+  var nextBtn = document.getElementById("nextButton");
+  nextButton.setAttribute("onmousedown", "validateRegimenSelection();");
+
+  var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1/programs/1/regimens";
+
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+      var obj = JSON.parse(this.responseText);
+      
+      for(var key in obj) {
+        passedRegimens[key] = [];
+        for(var i = 0 ; i < obj[key].length ; i++){
+          var pack_size = 30;
+          
+          if(!isNaN(parseInt(obj[key][i].parseInt)))
+            pack_size = parseInt(obj[key][i].pack_size);
+
+
+          var drug = {
+            drug_name: obj[key][i].drug_name, 
+            concept_name: obj[key][i].concept_name, 
+            drug_id: obj[key][i].drug_id, 
+            units: obj[key][i].units, 
+            pack_size: pack_size, 
+            am: obj[key][i].am, 
+            noon: 'N/A', 
+            pm: obj[key][i].pm
+          }
+          passedRegimens[key].push(drug);
+        }
+      }
+
+      for(var key in passedRegimens){
+        var regimen_name = key;
+        var concept_names = [];
+        for(var i = 0 ; i < passedRegimens[key].length ; i++){
+          concept_names.push(passedRegimens[key][i].concept_name)
+        }
+        regimen_name += " (" + concept_names.join(" ") + ")";
+        givenRegimens[regimen_name] = passedRegimens[key]; 
+      }
+      
+      buildRegimenPage();
+      preSelectRegimenSelection();
+    }
+  };
+  
+  xhttp.open("GET", url + "?weight=60.5", true);
+  xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+  xhttp.setRequestHeader('Content-type', "application/json");
+  xhttp.send();
+}
+
+
+function preSelectRegimenSelection() {
+  if(selectedRegimens) {
+    var e = document.getElementById(selectedRegimens);
+    selectRegimen(e);
+  }
+}
+
+function validateRegimenSelection() {
+  if(!selectedRegimens){
+    showMessage("Please select one of regimens shown or<br />build your own by selecting: <b>Custom</b>");
+    return;
+  }
+
+ gotoNextPage(); 
+}
+
+function validateIntervalSelection() {
+  if(!setSelectedInterval){
+    showMessage("Please select Interval to next visit");
+    return;
+  }
+
+ gotoNextPage(); 
+}
+
+function getFullMonth(i) {
+  var months = new Array();
+  months[0] = "January";
+  months[1] = "February";
+  months[2] = "March";
+  months[3] = "April";
+  months[4] = "May";
+  months[5] = "June";
+  months[6] = "July";
+  months[7] = "August";
+  months[8] = "September";
+  months[9] = "October";
+  months[10] = "November";
+  months[11] = "December";
+
+  return months[i].substring(0,3);
+}
+</script>
+
+
+
+<body id="mateme">
+  <div id="container">
+    <div id="content">
+
+
+      <form action="post">
+
+        <input type="text" name="regimens"
+          tt_onLoad="__$('keyboard').style.display = 'none';getRegimens();" 
+          tt_pageStyleClass= "NoControls" helpText="ARV Regimen(s)" optional = "true"/>
+
+        <input type="text" name="selected-medications"
+          tt_onLoad="__$('keyboard').style.display = 'none'; showSelectedMeds(); initDataTable();" 
+          tt_pageStyleClass= "NoControls" helpText="Current patient weight: <span='patient_weight'></span>" optional = "true"/>
+
+        <input type="text" name="duration"
+          tt_onLoad="__$('keyboard').style.display = 'none'; buildNextIntervalPage();preSelectInterval();" 
+          tt_pageStyleClass= "NoControls" helpText="Interval to next visit" optional = "true"/>
+
+         <select name="follow_up_agreement" allowFreeText="false" 
+          helpText="Assess for fast track visit (next appointment)" 
+          tt_onLoad = "adjustFrameHeight();"
+          id="assess_for_ft" tt_pageStyleClass="NoKeyboard">
+            <option value=""></option>
+            <option value="YES">Yes</option>
+            <option value="NO">No</option>
+        </select>
+
+
+        <input type="text" name="fast-track-questions"
+          tt_onLoad="__$('keyboard').style.display = 'none';buildFTassessmentPage();" 
+          tt_pageStyleClass= "NoControls" helpText="Fast track assessment" optional = "true"/>
+
+
+      </form>
+
+   </div>
+ </div>
+</body>
+
