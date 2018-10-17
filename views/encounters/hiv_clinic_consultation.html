@@ -7,7 +7,7 @@
         <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
         <title>Encounters New</title>
         <script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js" defer="true"></script>
-        <script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/standard.js" defer="true"></script>
+       <!--  <script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/standard.js" defer="true"></script> -->
         <script type="text/javascript" src="/assets/js/jquery.min.js"></script>
 
         <script type="text/javascript" src="/assets/js/yes_no_ctrls.js"></script>
@@ -16,10 +16,9 @@
         <script type="text/javascript" src="/assets/js/generic_ajaxrequest.js"></script>
 
         <script type="text/javascript">
-            var tt_cancel_destination = null;
             var patient_id = sessionStorage.patientID;
-
             var patientGender = sessionStorage.patientGender;
+            var tt_cancel_destination = "/views/patient_dashboard.html?patient_id=" + patient_id;
         </script>
 
 
@@ -353,14 +352,13 @@
 
                 <script>
 
-                    var tt_cancel_destination = "";
                     var consultation_tb_status = 'Unknown';
                     var terminal_family_planning_method = 'false';
                     var art_period_in_months = parseInt('10');
                     var hivFirstVisit = 'false';
                     var patientEverHadDrugs = 'false'
                     var fastTrackAssesmentConcepts = JSON.parse('{"5":{"concept_name":"Adherence on last 2 visits was good","concept_id":9530},"6":{"concept_name":"Patient not suffering from major side effects, signs of TB or HIV associated disease","concept_id":9531},"1":{"concept_name":"Age \u003E 18 years and on ART \u003E 1 year","concept_id":9526},"7":{"concept_name":"Patient do not need hypertension or diabetes care on next visit","concept_id":9532},"2":{"concept_name":"Not On Second Line Treatment OR on IPT","concept_id":9527},"3":{"concept_name":"Last VL \u003C 1000, no VL Result pending, no VL taken at next visit","concept_id":9528},"4":{"concept_name":"Not Pregnant? - no EID needed at next visit","concept_id":9529}}');
-                    var patient_id = sessionStorage.patientID;
+                    // var patient_id = sessionStorage.patientID;
                     var sideEffectsHash = {};
                     var tbSymptomsHash = {};
                     var gender = 'M';
