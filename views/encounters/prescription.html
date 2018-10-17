@@ -19,6 +19,10 @@
 
 <style>
 
+body {
+  color: black;
+}
+
 .regimen-container {
   display: table;
   width: 100%;
@@ -56,6 +60,7 @@
 
 .assessmentTable {
   display: table;
+  width: 100%;
 }
 
 .assessmentTableRow {
@@ -98,7 +103,7 @@
 
 #next-interval-table-right {
   float: right;
-  width: 50%;
+  width: 54%;
 
   height: 90%;
   border-style: solid;
@@ -258,28 +263,7 @@ function calculateEstimatedNextApp() {
   var appDate = new Date(set_date);
   appDate.setDate(appDate.getDate() + parseInt(setSelectedInterval));
 
-/*
-  var appDate = null;
-  appDate = new Date(set_date);
-
-  appDate = new Date(appDate.setTime(appDate.getTime() + parseInt(setSelectedInterval) * 86400000 ));
-  var month = (appDate.getMonth() + 1);
-
-  if(month.length < 2)
-    month = "0" + month;
-
-  var day = (appDate.getDate());
-  if(day.length < 2)
-    day = "0" + day;
-
-
-  var set_date = appDate.getFullYear()  + "-" + month + "-" + day;
-  appDate = new Date(set_date);
-
-  alert(appDate.getFullYear() + "    " + set_date)
-*/
-
-  var runout_date = [];
+  var estimated_packs = [];
 
   for(var i = 0 ; i < selectedMeds.length ; i++){
     var pills_per_day = 0;
@@ -297,10 +281,20 @@ function calculateEstimatedNextApp() {
 
     pills_per_day += (am + noon + pm);
     //(pills_per_day * setSelectedInterval);
+    estimated_packs.push(selectedMeds[i].drug_name);
   }
 
   var td = document.getElementById("estimated-next-appointment-date");
   td.innerHTML = appDate.getDate() + "/" + getFullMonth(appDate.getMonth()) + "/"+ appDate.getFullYear();
+
+
+  var td = document.getElementById("estimated-packs");
+  var innerHTML = "";
+  for(var i = 0 ; i < estimated_packs.length ; i++){
+    innerHTML += estimated_packs[i] + "<br />";
+  }
+  
+  td.innerHTML = innerHTML;
 }
 
 function createContainers(side) {
@@ -496,11 +490,11 @@ function addIntervalInfoSection() {
   var table = document.createElement("table");
   table.setAttribute("id", "interval-info-table");
 
-    var innerHTML = "<tr><th>Estimated next appointment date</th></tr>";
+    var innerHTML = "<tr><th>Estimated next appointment date:</th></tr>";
    innerHTML +="<tr><td id='estimated-next-appointment-date'>&nbsp;</th></tr>";
    innerHTML += "<tr><td class='separator-rows'>&nbsp;</td></tr>";
-   innerHTML += "<tr><th>Estimated earliest medication run-out date</th></tr>";
-   innerHTML += "<tr><td id='earliest-runout-date'>&nbsp;</th></tr>";
+   innerHTML += "<tr><th>Estimated packs/tins:</th></tr>";
+   innerHTML += "<tr><td id='estimated-packs'>&nbsp;</th></tr>";
    innerHTML += "<tr><td class='separator-rows'>&nbsp;</td></tr>";
 
   table.innerHTML = innerHTML;
@@ -638,7 +632,7 @@ function getRegimens() {
     }
   };
   
-  xhttp.open("GET", url + "?weight=6.5", true);
+  xhttp.open("GET", url + "?weight=60.5", true);
   xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
   xhttp.setRequestHeader('Content-type', "application/json");
   xhttp.send();
@@ -685,7 +679,7 @@ function getFullMonth(i) {
   months[10] = "November";
   months[11] = "December";
 
-  return months[i];
+  return months[i].substring(0,3);
 }
 </script>
 
