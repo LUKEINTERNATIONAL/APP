@@ -708,7 +708,7 @@
         return months[i].substring(0,3);
     }
 
-    var patient_id = 24;
+    var patient_id = sessionStorage.patientID;
     function submitFastTrackAssesment() {
 
         var encounter = {
@@ -844,7 +844,11 @@
         var year = (set_date.getFullYear());
         return year + "-" + month + "-" + day;
     }
-    
+
+    function nextPage(){
+        nextEncounter(sessionStorage.patientID, 1);
+
+    }
 </script>
 
 
