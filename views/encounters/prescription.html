@@ -217,13 +217,12 @@ body {
 }
 
 #keayboard-td {
-  text-align: center;
+  text-align: -moz-center;
 }
 
 .search-results-keyboard {
   display: table;
   width: 60%;
-  margin-left: 4%;
   border-style: solid;
   border-width: 1px;
   border-radius: 10px;
@@ -287,12 +286,16 @@ body {
 }
 
 #selected-results-td {
-  height: 50%;
   width: 46%;
   background-color: #fff;
   border: 2px solid #ccf;
   border-radius: 10px;
   vertical-align: top;
+}
+
+#selected-results {
+  height: 200px;
+  overflow: auto;
 }
 
 #search-results {
@@ -1126,16 +1129,18 @@ function displaySelected(container_name) {
   }
 
   var table = document.createElement("table");
-  table.style = "width: 99%; margin: 5px;";
+  table.style = "width: 98%; margin: 5px; border-collapse: collapse;";
 
   for(var drug_id in selected_meds){
     var row = document.createElement("tr");
+
     row.setAttribute("id","row-" + drug_id);
     row.setAttribute("class","selected-meds-row");
     row.setAttribute("onmousedown","setDosage(this, '" + container_name + "');");
     table.appendChild(row);
 
     var td = document.createElement("td");
+    td.setAttribute("style","width: 40px;");
     td.innerHTML = "&nbsp;"
 
     var img = document.createElement("img");
@@ -1147,6 +1152,7 @@ function displaySelected(container_name) {
     row.appendChild(td);
 
     var td = document.createElement("td");
+    td.setAttribute("style","font-size: 20px;")
     td.innerHTML = selected_meds[drug_id].name;
     row.appendChild(td);
 
@@ -1583,8 +1589,8 @@ function resetCustomRegimens() {
 
 }
 
-.prescription-keypad {
-  margin-left: 60px;
+#keypad-td {
+  text-align: -moz-center;
 }
 
 .dosage-inputs {
