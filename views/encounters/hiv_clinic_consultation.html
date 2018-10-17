@@ -7,7 +7,6 @@
         <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
         <title>Encounters New</title>
         <script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js" defer="true"></script>
-        <script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/standard.js" defer="true"></script>
         <script type="text/javascript" src="/assets/js/jquery.min.js"></script>
 
         <script type="text/javascript" src="/assets/js/yes_no_ctrls.js"></script>
@@ -16,10 +15,9 @@
         <script type="text/javascript" src="/assets/js/generic_ajaxrequest.js"></script>
 
         <script type="text/javascript">
-            var tt_cancel_destination = null;
             var patient_id = sessionStorage.patientID;
-
-            var patientGender = "FEMALE";
+            var patientGender = sessionStorage.patientGender;
+            var tt_cancel_destination = "/views/patient_dashboard.html?patient_id=" + patient_id;
         </script>
 
 
@@ -353,14 +351,13 @@
 
                 <script>
 
-                    var tt_cancel_destination = "";
                     var consultation_tb_status = 'Unknown';
                     var terminal_family_planning_method = 'false';
                     var art_period_in_months = parseInt('10');
                     var hivFirstVisit = 'false';
                     var patientEverHadDrugs = 'false'
                     var fastTrackAssesmentConcepts = JSON.parse('{"5":{"concept_name":"Adherence on last 2 visits was good","concept_id":9530},"6":{"concept_name":"Patient not suffering from major side effects, signs of TB or HIV associated disease","concept_id":9531},"1":{"concept_name":"Age \u003E 18 years and on ART \u003E 1 year","concept_id":9526},"7":{"concept_name":"Patient do not need hypertension or diabetes care on next visit","concept_id":9532},"2":{"concept_name":"Not On Second Line Treatment OR on IPT","concept_id":9527},"3":{"concept_name":"Last VL \u003C 1000, no VL Result pending, no VL taken at next visit","concept_id":9528},"4":{"concept_name":"Not Pregnant? - no EID needed at next visit","concept_id":9529}}');
-                    var patient_id = sessionStorage.patientID;
+                    // var patient_id = sessionStorage.patientID;
                     var sideEffectsHash = {};
                     var tbSymptomsHash = {};
                     var gender = 'M';
@@ -1468,7 +1465,7 @@
                             ]
                         };
 
-                        if (patientGender == "FEMALE"){
+                        if (patientGender == "F"){
                             obs.observations.push({ concept_id: 6131, value_coded: (answers_hash["is_patient_pregnant"].length > 0 ? (answers_hash["is_patient_pregnant"].trim().toUpperCase() == "YES" ? 1065: 1066): "" )})
                             obs.observations.push({ concept_id: 7965, value_coded: (answers_hash["is_patient_breastfeeding"].length > 0 ? (answers_hash["is_patient_breastfeeding"].trim().toUpperCase() == "YES" ? 1065: 1066): "") })
                             obs.observations.push({ concept_id: 1717, value_coded: (answers_hash["on_fpm"].length > 0 ? (answers_hash["on_fpm"].trim().toUpperCase() == "YES" ? 1065: 1066): "") })
@@ -1556,14 +1553,14 @@
 
                 <form action="#" method='post'>
 
-                    <select condition="patientGender == 'FEMALE'"  allowFreeText="false" helpText="Currently pregnant?" id="pregnant" name="observations[][value_coded_or_text]" tt_onLoad="setNextButtonToGetInputValue('is_patient_pregnant'); showCategory2('Clinic consultation');" tt_pageStyleClass="NoKeyboard" validationCode="checkPregnancyAndAge() == 'false'" validationMessage="Patient (Viral Load) is 25 years old. Is she pregnant?">
+                    <select condition="patientGender == 'F'"  allowFreeText="false" helpText="Currently pregnant?" id="pregnant" name="observations[][value_coded_or_text]" tt_onLoad="setNextButtonToGetInputValue('is_patient_pregnant'); showCategory2('Clinic consultation');" tt_pageStyleClass="NoKeyboard" validationCode="checkPregnancyAndAge() == 'false'" validationMessage="Patient (Viral Load) is 25 years old. Is she pregnant?">
                         <option value=''></option>
                         <option value=""></option>
                         <option value="YES">Yes</option>
                         <option value="NO">No</option>
                         <option value="UNKNOWN">Unknown</option></select>
 
-                    <select condition="patientGender == 'FEMALE'" allowFreeText="false" helpText="Currently breastfeeding?" id="breast_feeding" name="observations[][value_coded_or_text]" tt_onLoad="setNextButtonToGetInputValue('is_patient_breastfeeding'); showCategory2('Clinic consultation');" tt_pageStyleClass="NoKeyboard" validationCode="checkBreastfeedingAndAge() == 'false'" validationMessage="Patient (Viral Load) is 25 years old. Is she breastfeeding?">
+                    <select condition="patientGender == 'F'" allowFreeText="false" helpText="Currently breastfeeding?" id="breast_feeding" name="observations[][value_coded_or_text]" tt_onLoad="setNextButtonToGetInputValue('is_patient_breastfeeding'); showCategory2('Clinic consultation');" tt_pageStyleClass="NoKeyboard" validationCode="checkBreastfeedingAndAge() == 'false'" validationMessage="Patient (Viral Load) is 25 years old. Is she breastfeeding?">
                         <option value=''></option>
                         <option value=""></option>
                         <option value="YES">Yes</option>
@@ -1573,7 +1570,7 @@
 
                     <input allowFreeText="false" id="on_fpm" name="observations[][value_coded_or_text]" type="hidden" value="" />
 
-                    <select allowFreeText="false" condition="patientGender == 'FEMALE' && $('pregnant').value != 'YES'" helpText="What method are you currently on?" id="fpm_used" multiple="multiple" name="observations[][value_coded_or_text_multiple][]" tt_onLoad="setNextButtonToGetInputValue('current_fpm'); showCategory2('Clinic consultation'); fpm_used=false; startFamilyPlanningTimer(); window.setTimeout('controlNoneSelectionForFamilyPlanning(); setOptionsForSafeFamilyPlanningMethodsPopup();', 300);" tt_onUnLoad="stopFamilyPlanningTimer(); updateFamilyPlanningHiddenField();" tt_pageStyleClass="NoKeyboard"><option value=''></option><option value=""></option>
+                    <select allowFreeText="false" condition="patientGender == 'F' && $('pregnant').value != 'YES'" helpText="What method are you currently on?" id="fpm_used" multiple="multiple" name="observations[][value_coded_or_text_multiple][]" tt_onLoad="setNextButtonToGetInputValue('current_fpm'); showCategory2('Clinic consultation'); fpm_used=false; startFamilyPlanningTimer(); window.setTimeout('controlNoneSelectionForFamilyPlanning(); setOptionsForSafeFamilyPlanningMethodsPopup();', 300);" tt_onUnLoad="stopFamilyPlanningTimer(); updateFamilyPlanningHiddenField();" tt_pageStyleClass="NoKeyboard"><option value=''></option><option value=""></option>
                         <option value="ORAL CONTRACEPTIVE PILLS">Oral contraceptive pills</option>
                         <option value="DEPO-PROVERA">Depo-Provera</option>
                         <option value="INTRAUTERINE CONTRACEPTION">Intrauterine device/loop</option>
@@ -1583,7 +1580,7 @@
                         <option value="TUBAL LIGATION">Tubal ligation</option>
                         <option value="NONE">None of the above</option></select>
 
-                    <select allowFreeText="false" condition="patientGender == 'FEMALE' && $('pregnant').value != 'YES'" helpText="What method are you providing today?" id="fpm_used" multiple="multiple" name="observations[][value_coded_or_text_multiple][]" tt_onLoad="setNextButtonToGetInputValue('todays_fpm'); showCategory2('Clinic consultation'); fpm_used=false; startFamilyPlanningTimer(); window.setTimeout('controlNoneSelectionForFamilyPlanning(); setOptionsForSafeFamilyPlanningMethodsPopup();', 300)" tt_onUnLoad="stopFamilyPlanningTimer();" tt_pageStyleClass="NoKeyboard"><option value=''></option><option value=""></option>
+                    <select allowFreeText="false" condition="patientGender == 'F' && $('pregnant').value != 'YES'" helpText="What method are you providing today?" id="fpm_used" multiple="multiple" name="observations[][value_coded_or_text_multiple][]" tt_onLoad="setNextButtonToGetInputValue('todays_fpm'); showCategory2('Clinic consultation'); fpm_used=false; startFamilyPlanningTimer(); window.setTimeout('controlNoneSelectionForFamilyPlanning(); setOptionsForSafeFamilyPlanningMethodsPopup();', 300)" tt_onUnLoad="stopFamilyPlanningTimer();" tt_pageStyleClass="NoKeyboard"><option value=''></option><option value=""></option>
                         <option value="ORAL CONTRACEPTIVE PILLS">Oral contraceptive pills</option>
                         <option value="DEPO-PROVERA">Depo-Provera</option>
                         <option value="INTRAUTERINE CONTRACEPTION">Intrauterine device/loop</option>

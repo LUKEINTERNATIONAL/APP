@@ -1,15 +1,18 @@
 
 <script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js" defer="true"></script>
-<script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/standard.js" defer="true"></script>
 <script type="text/javascript" src="/assets/js/jquery.min.js"></script>
 <script type="text/javascript" src="/assets/js/moment.js"></script>
-<!-- <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.css"> -->
-  
-<!-- <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.js"></script> -->
+<script type="text/javascript" src="/assets/js/generic_ajaxrequest.js"></script>
+<script type="text/javascript" src="/assets/js/post_parameters.js"></script>
+
+<script type="text/javascript">
+  var patientID = sessionStorage.getItem("patientID");
+  var tt_cancel_destination = "/views/patient_dashboard.html?patient_id=" + patientID;
+</script>
 
 <style>
 
-#clearButton , #nextButton {
+#clearButton {
   display: none;
 }
 
@@ -189,10 +192,29 @@
   background-color: lightblue;
 }
 table {
-  width: 99%;
+  width: 98%;
+  margin: 2%;
+  height: 100%;
 }
-table, th, td, tbody, thead {
+ table, td, tbody, thead {
   border: 1px solid black;
+  border-collapse: collapse;
+  padding: 1%;
+}
+
+.headers {
+  border: 0px;
+  color: white;
+  background-color: #5d5a5a;
+  /* width: 100%; */
+}
+
+.red {
+  color: red;
+}
+
+.green {
+  color: green;
 }
 </style>
 
@@ -314,20 +336,20 @@ function buildPillCountScreen() {
 
   ul.setAttribute("id","medication-ul");
   medicationList.appendChild(ul);
-
-  var url = 'http://' + apiURL + ':' + apiPort + '/api/v1/drug_orders/?patient_id=' + sessionStorage.patientID;
+  var todaysDate = moment().format("YYYY-MM-DD");
+  var url = 'http://' + apiURL + ':' + apiPort + '/api/v1/programs/1/patients/'+ sessionStorage.patientID + "/last_drugs_received?date="+todaysDate;
     var req = new XMLHttpRequest();
     req.onreadystatechange = function () {
 
       if (this.readyState == 4) {
         if (this.status == 200) {
            medication = JSON.parse(this.responseText);
+           sessionStorage.setItem("orderID", medication.order_id);
           for(var i = 0 ; i < medication.length ; i++){
             var li = document.createElement("li");
             li.setAttribute("class","list");
             li.setAttribute("onmousedown","selectMed(this)");
             li.innerHTML = medication[i].drug.name;
-            localStorage.setItem(medication[i].drug.name, 0);
             ul.appendChild(li);
           }
         }
@@ -372,6 +394,12 @@ function generateTable(mainContainer) {
     var x = document.createElement("TABLE");
     x.setAttribute("id", "myTable");
     mainContainer.appendChild(x);
+    
+    var y = document.createElement("TR");
+    y.setAttribute("id", "headerTR");
+    y.setAttribute("class", "headers");
+    document.getElementById("myTable").appendChild(y);
+    document.getElementById("headerTR").innerHTML = "<td class='headers'> Prescription </td> <td class='headers' id='last-visit'>  </td>";
 
     var y = document.createElement("TR");
     y.setAttribute("id", "myTR");
@@ -392,6 +420,12 @@ function generateTable(mainContainer) {
     DosesPerDayRow.setAttribute("id", "dosesTabsTR");
     document.getElementById("myTable").appendChild(DosesPerDayRow);
     document.getElementById("dosesTabsTR").innerHTML = "<td> Doses Per Day </td>";
+    
+    var y = document.createElement("TR");
+    y.setAttribute("id", "expectedTR");
+    y.setAttribute("class", "headers");
+    document.getElementById("myTable").appendChild(y);
+    document.getElementById("expectedTR").innerHTML = "<td class='headers'> Tabs Remaining </td> <td class='headers' id='days-elapsed'> Prescription </td>";
 
     var ExpectedRow = document.createElement("TR");
     ExpectedRow.setAttribute("id", "ExpectedTabsTR");
@@ -403,11 +437,18 @@ function generateTable(mainContainer) {
     document.getElementById("myTable").appendChild(actualRow);
     document.getElementById("actualTabsTR").innerHTML = "<td> Actual (Counted) </td>";
 
+    var y = document.createElement("TR");
+    y.setAttribute("id", "adherenceTR");
+    y.setAttribute("class", "headers");
+    document.getElementById("myTable").appendChild(y);
+    document.getElementById("adherenceTR").innerHTML = "<td class='headers'> Adherence </td> <td class='headers'></td>";
+    
     var dosesMissedRow = document.createElement("TR");
     dosesMissedRow.setAttribute("id", "dosesMissedTabsTR");
     document.getElementById("myTable").appendChild(dosesMissedRow);
-    document.getElementById("dosesTabsTR").innerHTML = "<td> Doses Missed/ unaccounted for </td>";
-    
+    document.getElementById("dosesMissedTabsTR").innerHTML = "<td> Doses Missed/ unaccounted for </td>";
+
+
     var dosesConsumedRow = document.createElement("TR");
     dosesConsumedRow.setAttribute("id", "dosesConsumedTabsTR");
     document.getElementById("myTable").appendChild(dosesConsumedRow);
@@ -418,8 +459,10 @@ function generateTable(mainContainer) {
     document.getElementById("myTable").appendChild(artAdherenceRow);
     document.getElementById("artAdherenceTabsTR").innerHTML = "<td> ART Adherence </td>";
     
-    var url = 'http://' + apiURL + ':' + apiPort + '/api/v1/drug_orders/?patient_id=' + sessionStorage.patientID;
+  var todaysDate = moment().format("YYYY-MM-DD");
+  var url = 'http://' + apiURL + ':' + apiPort + '/api/v1/programs/1/patients/'+ sessionStorage.patientID + "/last_drugs_received?date="+todaysDate;
     var req = new XMLHttpRequest();
+    var counted = "0";
     req.onreadystatechange = function () {
 
       if (this.readyState == 4) {
@@ -437,18 +480,41 @@ function generateTable(mainContainer) {
             var b = document.createElement("TD");
             var c = document.createTextNode(localStorage.getItem(medication[i].drug.name));
             b.appendChild(c);
-            var expected = (medication[i].quantity - (dayDiffernece * medication[i].equivalent_daily_dose));
+            var expected = (medication[i].quantity - (dayDiffernece * (medication[i].equivalent_daily_dose * medication[i].dose)));
             var remaining = localStorage.getItem(medication[i].drug.name);
             var consumed = medication[i].quantity - remaining;
             var adherencePercentage = Math.round(100*(medication[i].quantity - remaining) / (medication[i].quantity - expected));            
-            document.getElementById("numberTR").innerHTML += "<td>" +medication[i].quantity+"</td>";
-            document.getElementById("dailyTabsTR").innerHTML += "<td>" +medication[i].equivalent_daily_dose+"</td>";
-            document.getElementById("actualTabsTR").innerHTML += "<td>" +localStorage.getItem(medication[i].drug.name)+"</td>";
-            document.getElementById("ExpectedTabsTR").innerHTML += "<td>" +expected+"</td>";
-            document.getElementById("dosesTabsTR").innerHTML += "<td>" +(expected - remaining)+"</td>";
-            document.getElementById("dosesConsumedTabsTR").innerHTML += "<td>" +consumed+"</td>";
-            document.getElementById("artAdherenceTabsTR").innerHTML += "<td>" +adherencePercentage+"%</td>";
+            sessionStorage.setItem("adherencePercentage", adherencePercentage);
+            var missed = (expected - remaining);
+            if (localStorage.getItem(medication[i].drug.name) != null) {
+              counted = localStorage.getItem(medication[i].drug.name);
+            }else {
+              counted = 0;
+            }
             
+            if (adherencePercentage < 0) {
+              adherencePercentage = 0;
+            }
+            
+            if (expected < 0) {
+              expected = 0;
+            }
+
+            if (missed < 0) {
+              // missed += (-missed) + (-missed);
+              missed = missed * (-1);
+            } 
+
+            document.getElementById("numberTR").innerHTML += "<td>" +medication[i].quantity+"</td>";
+            document.getElementById("days-elapsed").innerHTML = dayDiffernece +" days elapsed";
+            document.getElementById("last-visit").innerHTML = "Last Visit " + moment(medication[i].order.start_date).format("DD/MMM/YYYY") ;
+            document.getElementById("dailyTabsTR").innerHTML += "<td>" +medication[i].equivalent_daily_dose+"</td>";
+            document.getElementById("dosesTabsTR").innerHTML += "<td>" +medication[i].dose+"</td>";
+            document.getElementById("actualTabsTR").innerHTML += "<td>" +counted+"</td>";
+            document.getElementById("ExpectedTabsTR").innerHTML += "<td>" +expected+"</td>";
+            document.getElementById("dosesMissedTabsTR").innerHTML += "<td>" +missed+" doses Missed</td>";
+            document.getElementById("dosesConsumedTabsTR").innerHTML += "<td>" +adherencePercentage+"%</td>";
+            document.getElementById("artAdherenceTabsTR").innerHTML += "<td class='red'>Explore Problems</td>";
               if (i == 3) {
                 break;
               }
@@ -464,13 +530,6 @@ function generateTable(mainContainer) {
     } catch (e) {
     }
 
-    // var tables = ["Drug Name", "Tabs Given", "Tabs Per Day", "Tablets Per Day"];
-    // console.log(tables);
-    // for (let index = 0; index < tables.length; index++) {
-    //   createTable(tables[index]);
-      
-    // }
-   
 }
 
 function buildKeyPad() {
@@ -552,19 +611,12 @@ function setEnteredKey(key) {
     localStorage.setItem(activeBTN, inputBox.value);
   }catch(x) { }
 
-  //getMedication(inputBox.value);
-
 }
 
 function selectMed(e) {
   var list = document.getElementsByClassName("list");
-  // console.log(localStorage.getItem(e.innerHTML));
-  if (localStorage.getItem(e.innerHTML) != 0) {
-    document.getElementById("pills-brought").value = localStorage.getItem(e.innerHTML);
-  }
-  else {
-    document.getElementById("pills-brought").value = "";
-  }
+  document.getElementById("pills-brought").value = localStorage.getItem(e.innerHTML);
+
   for(var i = 0 ; i < list.length ; i++){
     list[i].setAttribute("class","list");
   }
@@ -572,6 +624,40 @@ function selectMed(e) {
   e.setAttribute("class","list list-selected");
 }
 
+function toNextEncounter() {
+  __$("nextButton").removeAttribute("onmousedown");
+  document.getElementById("nextButton").setAttribute("onmousedown", "submitAdherence()");
+
+}
+  function submitAdherence() {
+    var encounter = {
+      encounter_type_id: 68,
+      patient_id: sessionStorage.patientID,
+      encounter_datetime: moment().format("YYYY-MM-DD")
+    }
+
+    if (sessionStorage.adherencePercentage) {
+      submitParameters(encounter, "/encounters", "postConsultationObs");
+    }
+}
+
+function postConsultationObs(response) {
+     var encounter = {
+      encounter_id : response.encounter_id,
+      observations: [
+        {
+          concept_id: 1164,
+          order_id: sessionStorage.order_id,
+          value_numeric: sessionStorage.adherencePercentage,
+          value_modifier: "%",
+        }
+      ],
+    }
+    submitParameters(encounter, "/observations", "nextPage"); 
+}
+function nextPage(){
+  nextEncounter(sessionStorage.patientID, 1);
+}
 
 </script>
 
@@ -580,16 +666,14 @@ function selectMed(e) {
   <div id="container">
     <div id="content">
 
-
       <form>
 
         <input type="text" name="summary"
-          tt_onLoad="__$('keyboard').style.display = 'none';buildEntryPage();" 
+          tt_onLoad="__$('keyboard').style.display = 'none';buildEntryPage(); toNextEncounter();" 
           tt_pageStyleClass= "NoControls" helpText="ART adherence" optional = "true"/>
 
-
       </form>
-
+      
    </div>
  </div>
 </body>
