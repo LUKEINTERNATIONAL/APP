@@ -190,6 +190,8 @@ var passedRegimens = {};
 var selectedRegimens
 var setSelectedInterval;
 
+var show_custom_regimens = false;
+
 function buildRegimenPage() {
   var frame = document.getElementById("inputFrame" + tstCurrentPage);
   frame.style = "height: 89%; width: 96%;";
@@ -613,6 +615,16 @@ function getRegimens() {
   var nextBtn = document.getElementById("nextButton");
   nextButton.setAttribute("onmousedown", "validateRegimenSelection();");
 
+  var footer = document.getElementById("buttons");
+  customRgimen = document.createElement("button")
+  customRgimen.setAttribute("onmousedown","customRegimen();");
+  customRgimen.setAttribute("id","customRegimen");
+  customRgimen.setAttribute("class","button blue navButton");
+  customRgimen.innerHTML = "<span>Custom regimen</span>";
+  footer.appendChild(customRgimen);
+  show_custom_regimens = false;
+
+
   var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1/programs/1/regimens";
 
   var xhttp = new XMLHttpRequest();
@@ -707,6 +719,48 @@ function getFullMonth(i) {
 
   return months[i].substring(0,3);
 }
+
+
+/* ######### custom prescription page ######################### */
+function showCustomPrescriptionPage() {
+  return show_custom_regimens;
+}
+
+function removeCustomBtn() {
+  var footer = document.getElementById("buttons");
+  var btn = document.getElementById("customRegimen");
+  footer.removeChild(btn);
+}
+
+function customRegimen() {
+  show_custom_regimens = true;
+  gotoNextPage();
+}
+
+function buildCustomPrescriptionPage() {
+  var frame = document.getElementById("inputFrame" + tstCurrentPage);
+  frame.style = "height: 89%; width: 96%;";
+
+  var custom = document.createElement("div");
+  custom.setAttribute("class","custom-regimens");
+  frame.appendChild(custom);
+
+  var customRow = document.createElement("div");
+  customRow.setAttribute("class","custom-regimens-row");
+  custom.appendChild(customRow);
+
+
+  var cells = ["left", "right"];
+  for(var i = 0 ; i < cells.length ; i++){
+    var customCell = document.createElement("div");
+    customCell.setAttribute("class","custom-regimens-cell");
+    customCell.setAttribute("class","custom-regimens-cell-" + cells[i]);
+    customRow.appendChild(customCell);
+  }
+
+
+}
+
 </script>
 
 
@@ -719,8 +773,15 @@ function getFullMonth(i) {
       <form action="post">
 
         <input type="text" name="regimens"
-          tt_onLoad="__$('keyboard').style.display = 'none';getRegimens();" 
+          tt_onLoad="__$('keyboard').style.display = 'none';getRegimens();"
+          tt_onUnLoad = "removeCustomBtn();" 
           tt_pageStyleClass= "NoControls" helpText="ARV Regimen(s)" optional = "true"/>
+
+        <input type="text" name="regimens"
+          condition = "showCustomPrescriptionPage() == true"
+          tt_onLoad="__$('keyboard').style.display = 'none';buildCustomPrescriptionPage();" 
+          tt_pageStyleClass= "NoControls" helpText="Custom prescription" optional = "true"/>
+
 
         <input type="text" name="selected-medications"
           tt_onLoad="__$('keyboard').style.display = 'none'; showSelectedMeds(); initDataTable();" 
