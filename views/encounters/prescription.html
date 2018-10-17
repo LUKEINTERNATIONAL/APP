@@ -1157,8 +1157,8 @@ function displaySelected(container_name) {
 }
 
 function setDosage(e, container_name) {
-  //if(container_name != "dosage-table-cell-left")
-    //return;
+  if(container_name != "dosage-container-cell-left")
+    return;
 
   var rows = document.getElementsByClassName("selected-meds-row");
   for(var i = 0 ; i < rows.length ; i++){

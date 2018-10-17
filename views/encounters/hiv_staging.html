@@ -7,7 +7,7 @@
         <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
         <title>Encounters New</title>
         <script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js" defer="true"></script>
-        <script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/standard.js" defer="true"></script>
+        <!-- <script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/standard.js" defer="true"></script> -->
         <script type="text/javascript" src="/public/apps/core/assets/js/jquery.min.js"></script>
 
         <script type="text/javascript" src="/assets/js/yes_no_ctrls.js"></script>
@@ -16,8 +16,8 @@
         <script type="text/javascript" src="/assets/js/generic_ajaxrequest.js"></script>
 
         <script type="text/javascript">
-            var tt_cancel_destination = "/views/patient_dashboard.html";
             var patient_id = sessionStorage.patientID;
+            var tt_cancel_destination = "/views/patient_dashboard.html?patient_id=" + patient_id;
         </script>
 
 
@@ -274,7 +274,6 @@
             <div id="content">
                 <script type="text/javascript">
 
-                    var tt_cancel_destination = "";
                     var age = 136;
                     var ageInMonths = 1637;
                     var firstPositiveHivTestType = "HIV rapid test";
