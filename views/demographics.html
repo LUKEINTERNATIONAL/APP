@@ -36,7 +36,7 @@
           <th>ARV-Number</td>
           <td id="arv-number"> </td>
           <th>Current Outcome</td>
-          <td id="current-outcome"> deceased </td>
+          <td id="current-outcome"> </td>
         </tr>
         <tr>
           <th class="captions"> Addresses</th>
@@ -94,6 +94,15 @@
             document.getElementById("current-outcome").innerHTML = results.current_outcome;
             document.getElementById("residence").innerHTML = results.residence;
             document.getElementById("current-regimen").innerHTML = results.current_regimen;
+            document.getElementById("nextEncounter").innerHTML = sessionStorage.nextEncounter;
+            var available = document.getElementById("available");
+            available.innerHTML = sessionStorage.nextEncounterAvailable;
+            if (sessionStorage.nextEncounterAvailable === "Available") {
+              available.className = "green";
+            }else {
+              available.className = "red";
+            }
+            
           }
         }
       };
@@ -103,14 +112,6 @@
         req.send(null);
       } catch (e) {
       }
-    }
-    document.getElementById("nextEncounter").innerHTML = sessionStorage.nextEncounter;
-    var available = document.getElementById("available");
-    available.innerHTML = sessionStorage.nextEncounterAvailable;
-    if (sessionStorage.nextEncounterAvailable === "Available") {
-      available.className = "green";
-    }else {
-      available.className = "red";
     }
     
     

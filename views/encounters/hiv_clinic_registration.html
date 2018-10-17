@@ -7,7 +7,6 @@
         <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
         <title>Encounters New</title>
         <script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js" defer="true"></script>
-        <script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/standard.js" defer="true"></script>
         <script type="text/javascript" src="/assets/js/jquery.min.js"></script>
 
         <script type="text/javascript" src="/assets/js/yes_no_ctrls.js"></script>
@@ -18,7 +17,6 @@
         <script type="text/javascript">
             tstUsername = "admin";
             tstCurrentDate = "2018-09-18";
-            var tt_cancel_destination = null;
         </script>
         <style type="text/css">
             #tab {
@@ -157,9 +155,8 @@
             <div id="content">
 
                 <script>
-                    var tt_cancel_destination = "/views/patient_dashboard.html";
                     var patient_id = sessionStorage.patientID;
-
+                    var tt_cancel_destination = "/views/patient_dashboard.html?patient_id=" + patient_id;
                     var todayDate = createDates("2018", "9", "18");
                     var originaltestDate = ""
 
@@ -1522,7 +1519,7 @@
                         obs= JSON.stringify(obs);
 
 
-                         submitParameters(obs,"/observations/", "nextPage");
+                         submitParameters(obs,"/observations", "nextPage");
                     }
 
 
