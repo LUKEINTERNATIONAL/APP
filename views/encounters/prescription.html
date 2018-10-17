@@ -166,13 +166,19 @@ body {
 }
 
 .adult-category {
-  background-color: yellow;
+  background-color: #F8EA98;
+  color: black;
 }
 
 .peads-category {
-  background-color: lightgreen;
+  background-color: #E2BED6;
+  color: black;
 }
 
+.pack-sizes {
+  float: right;
+  padding-right: 5px;
+}
 </style>
 
 <script>
@@ -278,10 +284,23 @@ function calculateEstimatedNextApp() {
     if(!isNaN(parseFloat(selectedMeds[i].pm)))
       pm = parseInt(selectedMeds[i].pm);
 
-
     pills_per_day += (am + noon + pm);
-    //(pills_per_day * setSelectedInterval);
-    estimated_packs.push(selectedMeds[i].drug_name);
+
+    var packs = ((pills_per_day * setSelectedInterval) / parseInt(selectedMeds[i].pack_size));
+    var pack_size_str = ("'" + packs + "'");
+    var packs_rounded = packs;
+
+    if(pack_size_str.match(/\./))
+      packs_rounded =  Math.round(packs)
+      
+    if(packs_rounded > packs){
+      packs = packs_rounded;
+    }else{
+      packs = packs_rounded + parseInt(selectedMeds[i].pack_size)
+    }
+
+    estimated_packs.push([selectedMeds[i].drug_name, packs]);
+    console.log(estimated_packs[i][0] + "      Zzzz         " + estimated_packs[i][1])
   }
 
   var td = document.getElementById("estimated-next-appointment-date");
@@ -291,7 +310,7 @@ function calculateEstimatedNextApp() {
   var td = document.getElementById("estimated-packs");
   var innerHTML = "";
   for(var i = 0 ; i < estimated_packs.length ; i++){
-    innerHTML += estimated_packs[i] + "<br />";
+    innerHTML += estimated_packs[i][0] + "<span class='pack-sizes'>" + estimated_packs[i][1] + "</span><br />";
   }
   
   td.innerHTML = innerHTML;
@@ -604,11 +623,18 @@ function getRegimens() {
       for(var key in obj) {
         passedRegimens[key] = [];
         for(var i = 0 ; i < obj[key].length ; i++){
+          var pack_size = 30;
+          
+          if(!isNaN(parseInt(obj[key][i].parseInt)))
+            pack_size = parseInt(obj[key][i].pack_size);
+
+
           var drug = {
             drug_name: obj[key][i].drug_name, 
             concept_name: obj[key][i].concept_name, 
             drug_id: obj[key][i].drug_id, 
             units: obj[key][i].units, 
+            pack_size: pack_size, 
             am: obj[key][i].am, 
             noon: 'N/A', 
             pm: obj[key][i].pm
