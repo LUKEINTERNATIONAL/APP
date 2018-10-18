@@ -590,11 +590,11 @@
         var frame = document.getElementById('inputFrame' + tstCurrentPage);
         frame.style = 'height: 89% !important; width: 96%;';
 
-        var lis = frame.getElementsByTagName("li")
+        /*var lis = frame.getElementsByTagName("li")
         for(var i = 0 ; i < lis.length ; i++){
             var attr = lis[i].getAttribute("onmousedown");
             lis[i].setAttribute("onmousedown", attr + " changeNextBtn(this);");
-        }
+        }*/
     }
 
     function changeNextBtn(e) {
@@ -818,18 +818,34 @@
         }
     }
 
+    function submitWhenNoFastTrack(){
+        var nextButton =  document.getElementById('nextButton');
+        nextButton.onmousedown = function(){
+           
+            value = $('touchscreenInput'+tstCurrentPage).value;
+            if (value.match(/NO/i)){
+                submitFastTrackAssesment();
+            } else{
+                gotoNextPage();
+            }
+        }
+    }
+
 
     function getFastTrackAssesmentAnswerConcept(key){
-        console.log("key = " + key);
+        try{
+            value = yesNo_Hash["Fast track"][key];
 
-        value = yesNo_Hash["Fast track"][key];
-
-        if (value.match(/YES/i)){
-            return "1065";
-        } else {
-            return "1066";
+            if (value.match(/YES/i)){
+                return "1065";
+            } else {
+                return "1066";
+            }
+            
+        } catch(e){
+            return "";
         }
-        return "";
+        
     }
 
     function getFormattedDate(set_date) {
@@ -874,7 +890,7 @@
 
                 <select name="follow_up_agreement" allowFreeText="false"
                         helpText="Assess for fast track visit (next appointment)"
-                        tt_onLoad = "adjustFrameHeight();"
+                        tt_onLoad = "adjustFrameHeight(); submitWhenNoFastTrack();"
                         id="assess_for_ft" tt_pageStyleClass="NoKeyboard">
                     <option value=""></option>
                     <option value="YES">Yes</option>
