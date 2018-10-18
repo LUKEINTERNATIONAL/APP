@@ -1437,7 +1437,12 @@ function isEmpty(str){
 }
 
 function resetCustomRegimens() {
+  if(selectedRegimens != "Unknown regimen"){
+    return;
+  }
+
   selectedRegimens = null;
+  show_custom_regimens = false;
   givenRegimens["Unknown regimen"] = null;
 
   var originalRegimens = {};
