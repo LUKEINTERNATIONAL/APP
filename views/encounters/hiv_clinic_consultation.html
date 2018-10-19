@@ -1,5 +1,3 @@
-
-
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
@@ -13,6 +11,18 @@
         <link rel="stylesheet" href="/assets/css/yes_no_ctrls.css" type="text/css"/>
         <script type="text/javascript" src="/assets/js/post_parameters.js"></script>
         <script type="text/javascript" src="/assets/js/generic_ajaxrequest.js"></script>
+
+        
+        <script type="text/javascript" src="/assets/js/HighCharts/highcharts.js"></script>
+        <script type="text/javascript" src="/assets/js/HighCharts/exporting.js"></script>
+        <script type="text/javascript" src="/assets/js/HighCharts/offline-exporting.js"></script>
+
+        <link rel="stylesheet" href="/apps/ART/assets/css/hiv_clinical_consultation_weight_trail.css" type="text/css"/>
+        <script type="text/javascript" src="/apps/ART/assets/js/hiv_clinical_consultation_weight_trail.js"></script>
+
+
+        <script type="text/javascript" src="/apps/ART/assets/js/hiv_clinical_consultation_yes_no.js"></script>
+
 
         <script type="text/javascript">
             var patient_id = sessionStorage.patientID;
@@ -1553,7 +1563,7 @@
 
                 <form action="#" method='post'>
 
-                    <select condition="patientGender == 'F'"  allowFreeText="false" helpText="Currently pregnant?" id="pregnant" name="observations[][value_coded_or_text]" tt_onLoad="setNextButtonToGetInputValue('is_patient_pregnant'); showCategory2('Clinic consultation');" tt_pageStyleClass="NoKeyboard" validationCode="checkPregnancyAndAge() == 'false'" validationMessage="Patient (Viral Load) is 25 years old. Is she pregnant?">
+                    <!-- <select condition="patientGender == 'F'"  allowFreeText="false" helpText="Currently pregnant?" id="pregnant" name="observations[][value_coded_or_text]" tt_onLoad="setNextButtonToGetInputValue('is_patient_pregnant'); showCategory2('Clinic consultation');" tt_pageStyleClass="NoKeyboard" validationCode="checkPregnancyAndAge() == 'false'" validationMessage="Patient (Viral Load) is 25 years old. Is she pregnant?">
                         <option value=''></option>
                         <option value=""></option>
                         <option value="YES">Yes</option>
@@ -1566,7 +1576,20 @@
                         <option value="YES">Yes</option>
                         <option value="NO">No</option>
                         <option value="UNKNOWN">Unknown</option>
-                    </select>
+                    </select> -->
+        
+
+                    <input type="text" name="pregnant-breastfeeding-questions"
+                      showCategory2('Clinic consultation');
+                      validationCode="checkPregnancyAndAge() == 'false'" 
+                      validationMessage="Patient (Viral Load) is 25 years old. Is she pregnant / Breastfeeding?"
+                      tt_onLoad="__$('keyboard').style.display = 'none';addPregBreastFeedingYesNo();" 
+                      tt_pageStyleClass= "NoControls" helpText="Pregnant / Breastfeeding" optional = "true"/>
+
+                    <input type="text" name="weight-summary"
+                      tt_onLoad="__$('keyboard').style.display = 'none';buildWeightHistory();" 
+                      tt_pageStyleClass= "NoControls" helpText="Weight history" optional = "true"/>
+
 
                     <input allowFreeText="false" id="on_fpm" name="observations[][value_coded_or_text]" type="hidden" value="" />
 
@@ -1777,8 +1800,14 @@
                     <!-- TRANSFER IN END -->
 
                     <input allowFreeText="false" id="pregnant" name="observations[][value_coded_or_text]" type="hidden" />
+ 
+                    <!-- <input conditions="true" helpText="Potential Side effects (select all that apply)" id="side_effects" name="advanced_side_effects" optional="true" tt_onLoad="showCategory2('Clinic consultation'); advancedSideEffects(); __$('keyboard').style.display = 'none';" tt_pageStyleClass="NoControls" type="text" /> -->
 
-                    <input conditions="true" helpText="Potential Side effects (select all that apply)" id="side_effects" name="advanced_side_effects" optional="true" tt_onLoad="showCategory2('Clinic consultation'); advancedSideEffects(); __$('keyboard').style.display = 'none';" tt_pageStyleClass="NoControls" type="text" />
+                     <input type="text" name="side-effects"
+                      tt_onLoad="__$('keyboard').style.display = 'none';addSideEffectsYesNo();" 
+                      tt_pageStyleClass= "NoControls" 
+                      helpText="Potential Side effects (select all that apply)" optional = "true"/>
+
 
                     <select allowFreeText="false" helpText="On TB Treatment?" id="tb_treatment_question" name="observations[][value_coded_or_text]" tt_onLoad="submitWhenOnTBTreatment(); showCategory2('Clinic consultation');" tt_onUnLoad="showCategory2('Clinic consultation'); hideTBStatusQuestion();" tt_pageStyleClass="NoKeyboard">
                         <option value=''></option>
@@ -1788,7 +1817,15 @@
                     </select>
 
 
-                    <input condition="__$('tb_treatment_question').value == 'No'" helpText="TB associated symptoms" id="routine_tb_screening" name="advanced_tb_symptoms" optional="true" tt_onLoad="showCategory2('Clinic consultation'); advancedTBSymptoms(); __$('keyboard').style.display = 'none';" tt_pageStyleClass="NoControls" type="text" />
+                    <!-- <input condition="__$('tb_treatment_question').value == 'No'" helpText="TB associated symptoms" id="routine_tb_screening" name="advanced_tb_symptoms" optional="true" tt_onLoad="showCategory2('Clinic consultation'); advancedTBSymptoms(); __$('keyboard').style.display = 'none';" tt_pageStyleClass="NoControls" type="text" /> -->
+
+
+                    <input type="text" name="tb-associated-symptoms"
+                      tt_onLoad="__$('keyboard').style.display = 'none';addTBassociatedSymptomsYesNo();" 
+                      tt_pageStyleClass= "NoControls"
+                      condition="__$('tb_treatment_question').value == 'No'"
+                      id="routine_tb_screening" 
+                      helpText="TB associated symptoms" optional = "true"/>
 
                     <select allowFreeText="false" condition="true && __$('tb_treatment_question').value.toUpperCase() == 'NO'
                             && tbSymptomsHashSelects() == 'YES'" helpText="TB Status" id="tb_status" name="observations[][value_coded_or_text]" tt_onLoad="changeSubmitFunction(); showCategory2('Clinic consultation');checkTbHivStatus(); checkAndSelectTBSuspected(); checkAndSelectConfirmedTBOnTreatment();" tt_pageStyleClass="NoKeyboard">
@@ -1803,7 +1840,7 @@
 
                     <input name="commit" type="submit" value="Finish" />
 
-                    <script src="/javascripts/fastTrackOptionsPopup.js?version=1537348107" type="text/javascript"></script>
+                    <!--script src="/javascripts/fastTrackOptionsPopup.js?version=1537348107" type="text/javascript"></script-->
                 </form>
 
                 <div id="fast_track_reminder" style="display:none;">
