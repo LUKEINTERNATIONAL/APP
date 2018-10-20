@@ -1,0 +1,40 @@
+.chart-container-table {
+  display: table;
+  width: 100%;
+}
+
+.chart-container-row {
+  display: table-row;
+}
+
+.chart-container-cell {
+  display: table-cell;
+}
+
+#chart-container-left {
+  height: 585px;
+  border-style: solid;
+  border-width: 1px;
+  border-radius: 1px;
+  width: 73%;
+}
+
+#chart-container-right {
+  vertical-align: top;
+  padding: 0px 5px 1px 5px;
+  width: 25%;
+}
+
+#weight-summary-table {
+  width: 100%;
+}
+
+#weight-summary-table td {
+  height: 40px;
+}
+
+#weight-summary-table th {
+  height: 40px;
+  border-style: solid;
+  border-width: 0px 0px 1px 0px;
+}
