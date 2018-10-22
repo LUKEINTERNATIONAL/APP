@@ -1,3 +1,33 @@
+function getWeights() {
+  passedData = [];
+  var url = 'http://'+apiURL+':'+apiPort+'/api/v1/observations/?person_id='+sessionStorage.patientID+'&concept_id=5089';
+          var req = new XMLHttpRequest();
+          req.onreadystatechange = function(){
+          
+          if (this.readyState == 4) {
+          if (this.status == 200) {
+              var results = JSON.parse(this.responseText);
+              var length = results.length;
+              sessionStorage.currentWeight = results[length-1].value_numeric;
+              sessionStorage.previousWeight = results[0].value_numeric;
+              for (let index = 0; index < results.length; index++) {
+                passedData.push([moment(results[index].obs_datetime).format("YYYY-MM-DD"), results[index].value_numeric]);
+              }
+              formatData(passedData);  
+              
+              }
+          }
+          };
+          try {
+              req.open('GET', url, true);
+              req.setRequestHeader('Authorization',sessionStorage.getItem('authorization'));
+              req.send(null);
+          } catch (e) {
+
+          }
+          
+}
+
 function buildWeightHistory() {
   var frame = document.getElementById("inputFrame" + tstCurrentPage);
   frame.style = "width: 96%; height: 89%;";
@@ -23,18 +53,17 @@ function buildWeightHistory() {
     containerRow.appendChild(containerCell);
   }
 
-
-  buildChart();
+  getWeights();
 }
 
 function weightSummaryTable() {
   var table = "<table id='weight-summary-table'>";
   table += "<tr><th>Initial Weight</th></tr>";
-  table += "<tr><td id='initial-weight'>&nbsp;</td></tr>";
+  table += "<tr><td id='initial-weight'>&nbsp;"+sessionStorage.previousWeight+"</td></tr>";
   table += "<tr><th>Latest Weight</th></tr>";
-  table += "<tr><td id='latest-weight'>&nbsp;</td></tr>";
+  table += "<tr><td id='latest-weight'>&nbsp;"+sessionStorage.currentWeight+"</td></tr>";
   table += "<tr><th>Patient's age</th></tr>";
-  table += "<tr><td id='patient-age'>&nbsp;</td></tr>";
+  table += "<tr><td id='patient-age'>&nbsp;"+sessionStorage.patientAge+"</td></tr>";
 
 
   return table;
@@ -47,18 +76,6 @@ function fallbackHandler(options) {
   } else {
     throw 'Should not have to fall back for this combination. ' + options.type;
   }
-}
-
-
-function buildChart() {
-  passedData = [];
-  passedData.push(['2018-01-15', 48.9]);
-  passedData.push(['2018-06-08', 58.9]);
-  passedData.push(['2018-07-12', 68.9]);
-  passedData.push(['2018-08-19', 78.9]);
-  passedData.push(['2018-10-16', 85.9]);
-
-  formatData(passedData);  
 }
 
 function plotChart(data) {
