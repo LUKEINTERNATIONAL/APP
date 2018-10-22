@@ -14,6 +14,7 @@
         <link rel="stylesheet" href="/assets/css/yes_no_ctrls.css" type="text/css"/>
         <script type="text/javascript" src="/assets/js/post_parameters.js"></script>
         <script type="text/javascript" src="/assets/js/generic_ajaxrequest.js"></script>
+        <script type="text/javascript" src="/assets/js/moment.js"></script>
 
         <script type="text/javascript">
             var patient_id = sessionStorage.patientID;
@@ -280,7 +281,7 @@
                     var cd4_count_numeric, cd4_count_estimate, cd4_count_modifier;
                     var selected_stage_conditions = {};
                     var retrospective_entry = false
-                    var tstCurrentDate = '2018-09-18'
+                    var tstCurrentDate = moment().format("DD-MM-YYYY");
                     var currentBMI = parseFloat('21.9');
                     currentBMI = parseFloat(currentBMI);
                     var currentWeight = '58.9'
