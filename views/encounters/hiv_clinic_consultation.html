@@ -1808,6 +1808,11 @@
                       tt_pageStyleClass= "NoControls" 
                       helpText="Potential Side effects (select all that apply)" optional = "true"/>
 
+                    <textarea id="other_side_effects" name="other_side_effects" style="width: 98%;"
+                      helpText="Other side effects (free text)" optional = "false"
+                      tt_onLoad="document.getElementById('inputFrame' + tstCurrentPage).style='width: 95.5%;'" 
+                      cols="56" rows="8" condition="OtherSideEffects == true">
+                    </textarea> 
 
                     <select allowFreeText="false" helpText="On TB Treatment?" id="tb_treatment_question" name="observations[][value_coded_or_text]" tt_onLoad="submitWhenOnTBTreatment(); showCategory2('Clinic consultation');" tt_onUnLoad="showCategory2('Clinic consultation'); hideTBStatusQuestion();" tt_pageStyleClass="NoKeyboard">
                         <option value=''></option>

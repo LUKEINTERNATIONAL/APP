@@ -6,7 +6,7 @@ var sideEffectsLeft = [
 
 var sideEffectsRight = [
   ["Psychosis",5],["Gynaecomastia",6],
-  ["Anemia",7], ["Other",8]
+  ["Anemia",7], ["Other", 8, "activateOtherSideEffects"]
 ];
 
 function addPregBreastFeedingYesNo() {
@@ -62,3 +62,12 @@ function addTBassociatedSymptomsYesNo() {
   buildYesNoUI(concept_name, symptoms, frame);
 }
 
+var OtherSideEffects = false
+
+function activateOtherSideEffects(btn) {
+  if(btn.getAttribute("whichone").toLowerCase() == 'yes'){
+    OtherSideEffects = true;
+  }else{
+    OtherSideEffects = false;
+  }
+}
