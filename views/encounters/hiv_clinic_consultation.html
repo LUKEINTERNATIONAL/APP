@@ -1535,6 +1535,18 @@
                         }
                     }
 
+                    function updateBreastFeedingPregnancyAnswers(){
+                        preganncy_status = yesNo_Hash["Pregnant-Breastfeeding"]["Pregnant?"];
+                        breast_feeding_status = yesNo_Hash["Pregnant-Breastfeeding"]["Breastfeeding?"];
+
+                        answers_hash["is_patient_pregnant"] = preganncy_status;
+                        answers_hash["is_patient_breastfeeding"] = breast_feeding_status;
+
+                        $('pregnant').value = preganncy_status.toUpperCase();
+                        $("breastfeeding").value = breast_feeding_status.toUpperCase();
+
+                    }
+
                     function changeSubmitFunction(){
                         var nextButton =  document.getElementById('nextButton');
                         nextButton.onmousedown = function(){
@@ -1578,16 +1590,16 @@
                         <option value="UNKNOWN">Unknown</option>
                     </select> -->
         
+                    <input allowFreeText="false" id="breastfeeding" name="observations[][value_coded_or_text]" type="hidden" />
 
                     <input type="text" name="pregnant-breastfeeding-questions"
-                      showCategory2('Clinic consultation');
                       validationCode="checkPregnancyAndAge() == 'false'" 
                       validationMessage="Patient (Viral Load) is 25 years old. Is she pregnant / Breastfeeding?"
-                      tt_onLoad="__$('keyboard').style.display = 'none';addPregBreastFeedingYesNo();" 
+                      tt_onLoad="__$('keyboard').style.display = 'none';addPregBreastFeedingYesNo(); showCategory2('Clinic consultation');"
                       tt_pageStyleClass= "NoControls" helpText="Pregnant / Breastfeeding" optional = "true"/>
 
                     <input type="text" name="weight-summary"
-                      tt_onLoad="__$('keyboard').style.display = 'none';buildWeightHistory();" 
+                      tt_onLoad="__$('keyboard').style.display = 'none';buildWeightHistory(); updateBreastFeedingPregnancyAnswers();"
                       tt_pageStyleClass= "NoControls" helpText="Weight history" optional = "true"/>
 
 
