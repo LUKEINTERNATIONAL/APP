@@ -71,3 +71,17 @@ function activateOtherSideEffects(btn) {
     OtherSideEffects = false;
   }
 }
+
+function addLabInvestigationsQuestions() {
+  var concept_name = "Requested lab test set";
+  var labSets = [
+    ["CD4 count", 5497],
+    ["Crag", 1001],
+    ["Urine LAM", 1479]
+  ];
+
+  var frame   = document.getElementById("inputFrame" + tstCurrentPage);
+  var tests  = labSets.join(";").split(";").join("#");
+
+  buildYesNoUI(concept_name, tests, frame);
+}
