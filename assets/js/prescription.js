@@ -411,7 +411,7 @@ function adjustFrameHeight() {
   var lis = frame.getElementsByTagName("li")
   for(var i = 0 ; i < lis.length ; i++){
     var attr = lis[i].getAttribute("onmousedown");
-    lis[i].setAttribute("onmousedown", attr + " changeNextBtn(this);");
+    lis[i].setAttribute("onmousedown", attr + "; changeNextBtn(this);");
   }
 }
 
@@ -420,7 +420,7 @@ function changeNextBtn(e) {
 
   if(e.innerHTML == "No"){
     btn.innerHTML = "<span>Finish</span>";
-    btn.setAttribute("onmousedown", "arrangeParamsForSubmission();")
+    btn.setAttribute("onmousedown", "submitFastTrackAssesment();")
   }else{
     btn.innerHTML = "<span>Next</span>";
     btn.setAttribute("onmousedown", "gotoNextPage();")
@@ -1114,4 +1114,151 @@ function resetCustomRegimens() {
   givenRegimens = originalRegimens;
   selected_meds = {};
 }
+
+
+    var patient_id = sessionStorage.patientID;
+    
+    function submitFastTrackAssesment() {
+
+        var encounter = {
+            encounter_type_id:  156,
+            patient_id: patient_id,
+            encounter_datetime: null
+        }
+
+        submitParameters(encounter, "/encounters", "postFastTrackAssesmentObs");
+    }
+
+    function submitRegimen(){
+        var encounter = {
+            encounter_type_id:  25,
+            patient_id: patient_id,
+            encounter_datetime: null
+        }
+
+        submitParameters(encounter, "/encounters", "postRegimenOrders");
+    }
+
+    function postRegimenOrders(encounter){
+        var drug_orders_params = {encounter_id: encounter.encounter_id, drug_orders: []}
+        var start_date = new Date();
+
+        var start_date = new Date();
+        var start_date_formated = getFormattedDate(start_date);
+        var duration = parseInt(setSelectedInterval);
+        var auto_expire_date = start_date.setDate(start_date.getDate() + duration);
+        var auto_expire_date_formated = getFormattedDate(new Date(auto_expire_date));
+        var drug_orders = givenRegimens[selectedRegimens];
+
+        for (var i=0; i < drug_orders.length; i++){
+            morning_tabs = parseFloat(drug_orders[i]["am"]);
+            evening_tabs = parseFloat(drug_orders[i]["pm"]);
+            frequency = "ONCE A DAY (OD)";
+            equivalent_daily_dose = morning_tabs + evening_tabs;
+            instructions = drug_orders[i].drug_name + ":- Morning: "  + morning_tabs + " tab(s), Evening: " + evening_tabs + " tabs";
+
+            if (evening_tabs == 0){
+                dose = morning_tabs;
+            }
+
+            if (morning_tabs == 0){
+                dose = evening_tabs;
+            }
+
+            if (morning_tabs > 0 && evening_tabs > 0){
+                frequency = "TWICE A DAY (BD)";
+                dose = (morning_tabs + evening_tabs)/2;
+            }
+
+            drug_order = {
+                drug_inventory_id: drug_orders[i].drug_id,
+                dose: dose,
+                equivalent_daily_dose: equivalent_daily_dose,
+                frequency: frequency,
+                start_date: start_date_formated,
+                auto_expire_date: auto_expire_date_formated,
+                instructions: instructions,
+                units: drug_orders[i].units
+            }
+
+            drug_orders_params.drug_orders.push(drug_order);
+        }
+
+
+        submitParameters(drug_orders_params, "/drug_orders", "nextPage");
+    }
+
+
+    function postFastTrackAssesmentObs(encounter){
+        var obs = {
+            encounter_id: encounter.encounter_id,
+            observations: [
+                { concept_id: 9561, value_coded: assessForFastTrackAnswer() },
+                { concept_id: 9533, value_coded: getFastTrackAssesmentAnswerConcept('Adult  18 years +') },
+                { concept_id: 9534, value_coded: getFastTrackAssesmentAnswerConcept('On ART for 12 months +') },
+                { concept_id: 9535, value_coded: getFastTrackAssesmentAnswerConcept('On 1<sup>st</sup> line ART') },
+                { concept_id: 9537, value_coded: getFastTrackAssesmentAnswerConcept('Good current adherence') },
+                { concept_id: 9536, value_coded: getFastTrackAssesmentAnswerConcept('Last VL <1000') },
+                { concept_id: 9538, value_coded: getFastTrackAssesmentAnswerConcept('Pregnant / Breastfeeding') },
+                { concept_id: 9539, value_coded: getFastTrackAssesmentAnswerConcept('Side effects / HIV-rel. diseases') },
+                { concept_id: 9540, value_coded: getFastTrackAssesmentAnswerConcept('Needs BP / diabetes treatment') },
+                { concept_id: 9527, value_coded: getFastTrackAssesmentAnswerConcept('Started IPT <12m ago') },
+                { concept_id: 2186, value_coded: getFastTrackAssesmentAnswerConcept('Any sign for TB') }
+            ]
+        };
+
+        submitParameters(obs, "/observations", "submitRegimen")
+    }
+
+    function assessForFastTrackAnswer(){
+        value = __$("assess_for_ft").value;
+        if (value.trim().toUpperCase() == "YES"){
+            return 1065;
+        } else {
+            return 1066;
+        }
+    }
+
+    function changeSubmitFunction(){
+        var nextButton =  document.getElementById('nextButton');
+        nextButton.onmousedown = function(){
+            submitFastTrackAssesment();
+            //submitRegimen();
+        }
+    }
+
+
+    function getFastTrackAssesmentAnswerConcept(key){
+        try{
+            value = yesNo_Hash["Fast track"][key];
+
+            if (value.match(/YES/i)){
+                return "1065";
+            } else {
+                return "1066";
+            }
+
+        } catch(e){
+            return "";
+        }
+
+    }
+
+    function getFormattedDate(set_date) {
+        var month = (set_date.getMonth() + 1);
+        if(month < 10)
+            month = "0" + month;
+
+        var day = (set_date.getDate());
+        if(day < 10)
+            day = "0" + day;
+
+        var year = (set_date.getFullYear());
+        return year + "-" + month + "-" + day;
+    }
+
+    function nextPage(){
+        nextEncounter(sessionStorage.patientID, 1);
+
+    }
 
