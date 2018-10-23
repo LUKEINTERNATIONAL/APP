@@ -6,7 +6,7 @@ var sideEffectsLeft = [
 
 var sideEffectsRight = [
   ["Psychosis",5],["Gynaecomastia",6],
-  ["Anemia",7], ["Other",8]
+  ["Anemia",7], ["Other", 8, "activateOtherSideEffects"]
 ];
 
 function addPregBreastFeedingYesNo() {
@@ -62,3 +62,26 @@ function addTBassociatedSymptomsYesNo() {
   buildYesNoUI(concept_name, symptoms, frame);
 }
 
+var OtherSideEffects = false
+
+function activateOtherSideEffects(btn) {
+  if(btn.getAttribute("whichone").toLowerCase() == 'yes'){
+    OtherSideEffects = true;
+  }else{
+    OtherSideEffects = false;
+  }
+}
+
+function addLabInvestigationsQuestions() {
+  var concept_name = "Requested lab test set";
+  var labSets = [
+    ["CD4 count", 5497],
+    ["Crag", 1001],
+    ["Urine LAM", 1479]
+  ];
+
+  var frame   = document.getElementById("inputFrame" + tstCurrentPage);
+  var tests  = labSets.join(";").split(";").join("#");
+
+  buildYesNoUI(concept_name, tests, frame);
+}
