@@ -12,16 +12,20 @@
         <script type="text/javascript" src="/assets/js/post_parameters.js"></script>
         <script type="text/javascript" src="/assets/js/generic_ajaxrequest.js"></script>
 
-        
+
         <script type="text/javascript" src="/assets/js/HighCharts/highcharts.js"></script>
         <script type="text/javascript" src="/assets/js/HighCharts/exporting.js"></script>
         <script type="text/javascript" src="/assets/js/HighCharts/offline-exporting.js"></script>
 
+        <script type="text/javascript" src="/assets/js/moment.js"></script>
+        <script type="text/javascript" src="/assets/js/bmi.js"></script>
+        
         <link rel="stylesheet" href="/apps/ART/assets/css/hiv_clinical_consultation_weight_trail.css" type="text/css"/>
         <script type="text/javascript" src="/apps/ART/assets/js/hiv_clinical_consultation_weight_trail.js"></script>
 
 
         <script type="text/javascript" src="/apps/ART/assets/js/hiv_clinical_consultation_yes_no.js"></script>
+        
 
 
         <script type="text/javascript">
@@ -1207,10 +1211,11 @@
                     }
 
                     var calculatedWeightlossPercent = null;
-
                     function weightLossPercent(){
-                        currentWeight = 58.9;
-                        previousWeight = 58.9;
+                                
+                            
+                        // currentWeight = 58.9;
+                        // previousWeight = 58.9;
                         /*Decrease = Original Number - New Number
                     //%Decrease = Decrease ÷ Original Number × 100
                     If your answer is a negative number then this is a percentage increase.
@@ -1450,6 +1455,7 @@
                         var fever_concept_id = 5945;
                         var night_sweats_concept_id = 6029;
                         var weight_loss_concept_id = 8260;
+                        var other_concept_id = 6408;
 
                         var obs = {
                             encounter_id: encounter.encounter_id,
@@ -1475,6 +1481,12 @@
                             ]
                         };
 
+                        other_side_effect = yesNo_Hash["MALAWI ART SIDE EFFECTS"]["Other"];
+                        if (other_side_effect.toUpperCase() == "YES"){
+                            obs.observations.push({concept_id: malawi_art_side_effects_concept_id, value_coded: other_concept_id, child: {concept_id: other_concept_id, value_text: othe_side_effect_value}})
+                        }
+
+
                         if (patientGender == "F"){
                             obs.observations.push({ concept_id: 6131, value_coded: (answers_hash["is_patient_pregnant"].length > 0 ? (answers_hash["is_patient_pregnant"].trim().toUpperCase() == "YES" ? 1065: 1066): "" )})
                             obs.observations.push({ concept_id: 7965, value_coded: (answers_hash["is_patient_breastfeeding"].length > 0 ? (answers_hash["is_patient_breastfeeding"].trim().toUpperCase() == "YES" ? 1065: 1066): "") })
@@ -1495,31 +1507,36 @@
                         submitParameters(obs, "/observations", "nextPage")
                     }
 
+                    var othe_side_effect_value = "";
+                    function updateOtherSideEffect(){
+                        value = __$('touchscreenInput' + tstCurrentPage).value;
+                        othe_side_effect_value = value;
+                    }
+
                     function getSideEffectAnswer(key){
-                        yesValue = sideEffectsHash[key]["yes"];
-                        noValue = sideEffectsHash[key]["no"];
-                        if (yesValue.length == 0 && noValue.length == 0){
-                            return "";
+                        side_effects_answers = yesNo_Hash["MALAWI ART SIDE EFFECTS"];
+                        side_effect_answer = side_effects_answers[key];
+                        if (side_effect_answer.toUpperCase() == "YES"){
+                            return "1065";
                         }
-                        if (yesValue.length > 0){
-                            return "1065"
-                        }
-                        if (noValue.length > 0){
+                        if (side_effect_answer.toUpperCase() == "NO"){
                             return "1066";
                         }
+                        return "";
                     }
 
                     function getTBSymptomsAnswer(key){
-                        yesValue = tbSymptomsHash[key]["yes"];
-                        noValue = tbSymptomsHash[key]["no"];
-                        if (yesValue.length == 0 && noValue.length == 0){
+                        routine_tb_screening_answers = yesNo_Hash["ROUTINE TUBERCULOSIS SCREENING"];
+                        try{
+                            routine_tb_screening_answer = routine_tb_screening_answers[key];
+                            if (routine_tb_screening_answer.toUpperCase() == "YES"){
+                                return "1065";
+                            }
+                            if (routine_tb_screening_answer.toUpperCase() == "NO"){
+                                return "1066";
+                            }
+                        } catch(e){
                             return "";
-                        }
-                        if (yesValue.length > 0){
-                            return "1065"
-                        }
-                        if (noValue.length > 0){
-                            return "1066";
                         }
                     }
 
@@ -1533,6 +1550,18 @@
                             answers_hash[key] = value;
                             gotoNextPage();
                         }
+                    }
+
+                    function updateBreastFeedingPregnancyAnswers(){
+                        preganncy_status = yesNo_Hash["Pregnant-Breastfeeding"]["Pregnant?"];
+                        breast_feeding_status = yesNo_Hash["Pregnant-Breastfeeding"]["Breastfeeding?"];
+
+                        answers_hash["is_patient_pregnant"] = preganncy_status;
+                        answers_hash["is_patient_breastfeeding"] = breast_feeding_status;
+
+                        $('pregnant').value = preganncy_status.toUpperCase();
+                        $("breastfeeding").value = breast_feeding_status.toUpperCase();
+
                     }
 
                     function changeSubmitFunction(){
@@ -1558,7 +1587,14 @@
                             }
                         }
                     }
-                    
+
+
+                    function setFunctionForSubmittingForm(){
+                        var nextButton =  document.getElementById('nextButton');
+                        //nextButton.removeAttribute("onmousedown");
+                        nextButton.setAttribute("onmousedown", "submitHIVClinicConsultation();")
+                    }
+
                 </script>
 
                 <form action="#" method='post'>
@@ -1577,18 +1613,18 @@
                         <option value="NO">No</option>
                         <option value="UNKNOWN">Unknown</option>
                     </select> -->
-        
 
-                    <input type="text" name="pregnant-breastfeeding-questions"
-                      showCategory2('Clinic consultation');
-                      validationCode="checkPregnancyAndAge() == 'false'" 
-                      validationMessage="Patient (Viral Load) is 25 years old. Is she pregnant / Breastfeeding?"
-                      tt_onLoad="__$('keyboard').style.display = 'none';addPregBreastFeedingYesNo();" 
-                      tt_pageStyleClass= "NoControls" helpText="Pregnant / Breastfeeding" optional = "true"/>
+                    <input allowFreeText="false" id="breastfeeding" name="observations[][value_coded_or_text]" type="hidden" />
+
+                    <input type="text" name="pregnant-breastfeeding-questions" condition="patientGender == 'F'"
+                           validationCode="checkPregnancyAndAge() == 'false'"
+                           validationMessage="Patient (Viral Load) is 25 years old. Is she pregnant / Breastfeeding?"
+                           tt_onLoad="__$('keyboard').style.display = 'none';addPregBreastFeedingYesNo(); showCategory2('Clinic consultation');"
+                           tt_pageStyleClass= "NoControls" helpText="Pregnant / Breastfeeding" optional = "true"/>
 
                     <input type="text" name="weight-summary"
-                      tt_onLoad="__$('keyboard').style.display = 'none';buildWeightHistory();" 
-                      tt_pageStyleClass= "NoControls" helpText="Weight history" optional = "true"/>
+                           tt_onLoad="__$('keyboard').style.display = 'none';buildWeightHistory(); updateBreastFeedingPregnancyAnswers();"
+                           tt_pageStyleClass= "NoControls" helpText="Weight history" optional = "true"/>
 
 
                     <input allowFreeText="false" id="on_fpm" name="observations[][value_coded_or_text]" type="hidden" value="" />
@@ -1800,14 +1836,20 @@
                     <!-- TRANSFER IN END -->
 
                     <input allowFreeText="false" id="pregnant" name="observations[][value_coded_or_text]" type="hidden" />
- 
+
                     <!-- <input conditions="true" helpText="Potential Side effects (select all that apply)" id="side_effects" name="advanced_side_effects" optional="true" tt_onLoad="showCategory2('Clinic consultation'); advancedSideEffects(); __$('keyboard').style.display = 'none';" tt_pageStyleClass="NoControls" type="text" /> -->
 
-                     <input type="text" name="side-effects"
-                      tt_onLoad="__$('keyboard').style.display = 'none';addSideEffectsYesNo();" 
-                      tt_pageStyleClass= "NoControls" 
-                      helpText="Potential Side effects (select all that apply)" optional = "true"/>
+                    <input type="text" name="side-effects"
+                           tt_onLoad="__$('keyboard').style.display = 'none';addSideEffectsYesNo();"
+                           tt_pageStyleClass= "NoControls"
+                           helpText="Potential Side effects (select all that apply)" optional = "true"/>
 
+                    <textarea id="other_side_effects" name="other_side_effects" style="width: 98%;"
+                              helpText="Other side effects (free text)" optional = "false"
+                              tt_onUnLoad ="updateOtherSideEffect();"
+                              tt_onLoad="document.getElementById('inputFrame' + tstCurrentPage).style='width: 95.5%;'"
+                              cols="56" rows="8" condition="OtherSideEffects == true">
+                    </textarea> 
 
                     <select allowFreeText="false" helpText="On TB Treatment?" id="tb_treatment_question" name="observations[][value_coded_or_text]" tt_onLoad="submitWhenOnTBTreatment(); showCategory2('Clinic consultation');" tt_onUnLoad="showCategory2('Clinic consultation'); hideTBStatusQuestion();" tt_pageStyleClass="NoKeyboard">
                         <option value=''></option>
@@ -1821,11 +1863,11 @@
 
 
                     <input type="text" name="tb-associated-symptoms"
-                      tt_onLoad="__$('keyboard').style.display = 'none';addTBassociatedSymptomsYesNo();" 
-                      tt_pageStyleClass= "NoControls"
-                      condition="__$('tb_treatment_question').value == 'No'"
-                      id="routine_tb_screening" 
-                      helpText="TB associated symptoms" optional = "true"/>
+                           tt_onLoad="setFunctionForSubmittingForm(); __$('keyboard').style.display = 'none'; addTBassociatedSymptomsYesNo();"
+                           tt_pageStyleClass= "NoControls"
+                           condition="__$('tb_treatment_question').value == 'No'"
+                           id="routine_tb_screening"
+                           helpText="TB associated symptoms" optional = "true"/>
 
                     <select allowFreeText="false" condition="true && __$('tb_treatment_question').value.toUpperCase() == 'NO'
                             && tbSymptomsHashSelects() == 'YES'" helpText="TB Status" id="tb_status" name="observations[][value_coded_or_text]" tt_onLoad="changeSubmitFunction(); showCategory2('Clinic consultation');checkTbHivStatus(); checkAndSelectTBSuspected(); checkAndSelectConfirmedTBOnTreatment();" tt_pageStyleClass="NoKeyboard">
@@ -1834,6 +1876,13 @@
                         <option value="TB suspected">TB suspected</option>
                         <option value="Confirmed TB NOT on treatment">Confirmed TB NOT on treatment</option>
                     </select>
+
+                    <input type="text" name="lab-investigations-screen"
+                      tt_onLoad="__$('keyboard').style.display = 'none';addLabInvestigationsQuestions();" 
+                      tt_pageStyleClass= "NoControls"
+                      condition=""
+                      id="routine_tb_screening" 
+                      helpText="Order Lab investigations?" optional = "true"/>
 
 
                     <input allowFreeText="false" id="fast-track-input" name="observations[][value_coded_or_text]" type="hidden" value="" />
@@ -2422,8 +2471,3 @@
 
 
             </div>
-        </div>
-    </body>
-
-
-</html>

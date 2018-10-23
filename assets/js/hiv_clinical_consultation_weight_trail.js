@@ -1,3 +1,53 @@
+function getWeights() {
+  passedData = [];
+  var url = 'http://'+apiURL+':'+apiPort+'/api/v1/observations/?person_id='+sessionStorage.patientID+'&concept_id=5089';
+          var req = new XMLHttpRequest();
+          req.onreadystatechange = function(){
+          
+          if (this.readyState == 4) {
+          if (this.status == 200) {
+              var results = JSON.parse(this.responseText);
+              var length = results.length;
+              sessionStorage.currentWeight = results[0].value_numeric;
+              getHeight();
+              sessionStorage.previousWeight = results[length-1].value_numeric;
+              for (let index = 0; index < results.length; index++) {
+                passedData.push([moment(results[index].obs_datetime).format("YYYY-MM-DD"), results[index].value_numeric]);
+              }
+              formatData(passedData);  
+              }
+          }
+          };
+          try {
+              req.open('GET', url, false);
+              req.setRequestHeader('Authorization',sessionStorage.getItem('authorization'));
+              req.send(null);
+              setValues();
+          } catch (e) {
+
+          }
+}
+function getHeight() {
+  var url = 'http://'+apiURL+':'+apiPort+'/api/v1/observations/?person_id='+sessionStorage.patientID+'&concept_id=5090';
+          var req = new XMLHttpRequest();
+          req.onreadystatechange = function(){
+          
+          if (this.readyState == 4) {
+          if (this.status == 200) {
+              var results = JSON.parse(this.responseText);
+              sessionStorage.currentHeight = results[0].value_numeric;
+              }
+          }
+          };
+          try {
+              req.open('GET', url, false);
+              req.setRequestHeader('Authorization',sessionStorage.getItem('authorization'));
+              req.send(null);
+          } catch (e) {
+
+          }
+          
+}
 function buildWeightHistory() {
   var frame = document.getElementById("inputFrame" + tstCurrentPage);
   frame.style = "width: 96%; height: 89%;";
@@ -21,21 +71,59 @@ function buildWeightHistory() {
     }
 
     containerRow.appendChild(containerCell);
+    getWeights();
   }
 
-
-  buildChart();
+  
 }
 
+function setValues() {
+  var weight = sessionStorage.currentWeight;
+  var height = sessionStorage.currentHeight;
+  if (weight < sessionStorage.previousWeight) {
+    var decrease = sessionStorage.previousWeight - weight;
+    var weightPercentage = (decrease/sessionStorage.previousWeight)*100;
+    document.getElementById('weight-percentage').innerHTML += Math.round(weightPercentage) + "% decrease";
+  }
+  else if (weight > sessionStorage.previousWeight) {
+    var decrease = sessionStorage.previousWeight - weight;
+    var weightPercentage = (decrease/sessionStorage.previousWeight)*100;
+    if (weightPercentage < 0) {
+      weightPercentage = weightPercentage * -1;
+    }
+    document.getElementById('weight-percentage').innerHTML += Math.round(weightPercentage) + "% increase";
+  }
+  var gender;
+  var bmindex = (weight /height/ height) * 10000;
+  var bmindex = Math.round( bmindex * 10 ) / 10;
+  if (sessionStorage.patientGender === "F") {
+    gender = "female";
+  }else if (sessionStorage.patientGender === "M") {
+    gender = "male";
+  } 
+  getBMIResult(gender, sessionStorage.patientAge, bmindex);
+  document.getElementById("initial-weight").innerHTML += sessionStorage.previousWeight;
+  document.getElementById("latest-weight").innerHTML += sessionStorage.currentWeight;
+  document.getElementById("patient-age").innerHTML += sessionStorage.patientAge;
+  document.getElementById('patient-bmi').innerHTML += bmindex;
+  document.getElementById('patient-bmiResult').style.backgroundColor = sessionStorage.bmiColor;
+  document.getElementById('patient-bmiResult').innerHTML += sessionStorage.bmiResult;
+
+}
 function weightSummaryTable() {
+  
   var table = "<table id='weight-summary-table'>";
   table += "<tr><th>Initial Weight</th></tr>";
   table += "<tr><td id='initial-weight'>&nbsp;</td></tr>";
   table += "<tr><th>Latest Weight</th></tr>";
   table += "<tr><td id='latest-weight'>&nbsp;</td></tr>";
+  table += "<tr><th>Weight Prercentage</th></tr>";
+  table += "<tr><td id='weight-percentage'>&nbsp;</td></tr>";
   table += "<tr><th>Patient's age</th></tr>";
   table += "<tr><td id='patient-age'>&nbsp;</td></tr>";
-
+  table += "<tr><th>Patient BMI</th></tr>";
+  table += "<tr><td id='patient-bmi'>&nbsp;</td></tr>";
+  table += "<tr><td id='patient-bmiResult' style='height: 70px;color: white;text-align: center; '>&nbsp;</td></tr>";
 
   return table;
 }
@@ -47,18 +135,6 @@ function fallbackHandler(options) {
   } else {
     throw 'Should not have to fall back for this combination. ' + options.type;
   }
-}
-
-
-function buildChart() {
-  passedData = [];
-  passedData.push(['2018-01-15', 48.9]);
-  passedData.push(['2018-06-08', 58.9]);
-  passedData.push(['2018-07-12', 68.9]);
-  passedData.push(['2018-08-19', 78.9]);
-  passedData.push(['2018-10-16', 85.9]);
-
-  formatData(passedData);  
 }
 
 function plotChart(data) {
