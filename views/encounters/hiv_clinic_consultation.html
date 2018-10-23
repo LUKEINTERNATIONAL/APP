@@ -1840,6 +1840,13 @@
                         <option value="Confirmed TB NOT on treatment">Confirmed TB NOT on treatment</option>
                     </select>
 
+                    <input type="text" name="lab-investigations-screen"
+                      tt_onLoad="__$('keyboard').style.display = 'none';addLabInvestigationsQuestions();" 
+                      tt_pageStyleClass= "NoControls"
+                      condition=""
+                      id="routine_tb_screening" 
+                      helpText="Order Lab investigations?" optional = "true"/>
+
 
                     <input allowFreeText="false" id="fast-track-input" name="observations[][value_coded_or_text]" type="hidden" value="" />
 
@@ -2427,8 +2434,3 @@
 
 
             </div>
-        </div>
-    </body>
-
-
-</html>
