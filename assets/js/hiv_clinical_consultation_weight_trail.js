@@ -93,10 +93,15 @@ function setValues() {
     }
     document.getElementById('weight-percentage').innerHTML += Math.round(weightPercentage) + "% increase";
   }
-  
+  var gender;
   var bmindex = (weight /height/ height) * 10000;
   var bmindex = Math.round( bmindex * 10 ) / 10;
-  getBMIResult("male", sessionStorage.patientAge, bmindex);
+  if (sessionStorage.patientGender === "F") {
+    gender = "female";
+  }else if (sessionStorage.patientGender === "M") {
+    gender = "male";
+  } 
+  getBMIResult(gender, sessionStorage.patientAge, bmindex);
   document.getElementById("initial-weight").innerHTML += sessionStorage.previousWeight;
   document.getElementById("latest-weight").innerHTML += sessionStorage.currentWeight;
   document.getElementById("patient-age").innerHTML += sessionStorage.patientAge;
