@@ -80,10 +80,12 @@ function buildWeightHistory() {
 function setValues() {
   var weight = sessionStorage.currentWeight;
   var height = sessionStorage.currentHeight;
+  sessionStorage.weightLoss = 0;
   if (weight < sessionStorage.previousWeight) {
     var decrease = sessionStorage.previousWeight - weight;
     var weightPercentage = (decrease/sessionStorage.previousWeight)*100;
     document.getElementById('weight-percentage').innerHTML += Math.round(weightPercentage) + "% decrease";
+    sessionStorage.setItem("weightLoss", Math.round(weightPercentage));
   }
   else if (weight > sessionStorage.previousWeight) {
     var decrease = sessionStorage.previousWeight - weight;

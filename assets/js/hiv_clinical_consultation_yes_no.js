@@ -47,13 +47,20 @@ function addSideEffectsYesNo() {
 
 }
 
+function checkForWeightLoss(element) {
+  if (element.getAttribute("whichone").toLowerCase() === "no" && parseInt(sessionStorage.weightLoss) >= 10) {
+    var val = element.getAttribute("value");
+    newPopup(val);
+  }
+}
+
 function addTBassociatedSymptomsYesNo() {
   var concept_name = "ROUTINE TUBERCULOSIS SCREENING";
   var TBsymptoms = [
     ["Cough of any duration", 1],
     ["Fever", 2],
     ["Night sweats",3],
-    ["Weight loss / Failure to thrive / malnutrition", 4]
+    ["Weight loss / Failure to thrive / malnutrition", 4, "checkForWeightLoss(this)"]
   ];
 
   var frame   = document.getElementById("inputFrame" + tstCurrentPage);
@@ -61,6 +68,23 @@ function addTBassociatedSymptomsYesNo() {
 
   buildYesNoUI(concept_name, symptoms, frame);
 }
+
+function newPopup(val) {
+  showSafeFamilyPlanningMethodsPopup();
+  var confirm = document.getElementById("confirm-reading");
+  confirm.style.visibility = "visible"
+  confirm.style.backgroundColor = "green";
+  var controlled = document.getElementById("safe-family-planning-yes");
+  controlled.innerHTML = "Confirm Controlled";
+  confirm.setAttribute("onclick", "selectVal("+val+")");
+  document.getElementById("message-header").innerHTML = "patients weight has dropped "+sessionStorage.weightLoss+"% is this controlled weight loss??";
+}
+function selectVal(val) {
+  hideSafeFamillyPlanningPopup();
+  document.getElementById(val+"_yes").setAttribute("class","yes_no_btns clicked");
+    document.getElementById(val+"_no").setAttribute("class","yes_no_btns not-clicked");
+}
+
 
 var OtherSideEffects = false
 
