@@ -8,14 +8,23 @@
         <title>Encounters New</title>
         <script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js" defer="true"></script>
         <!-- <script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/standard.js" defer="true"></script> -->
-        <script type="text/javascript" src="/public/apps/core/assets/js/jquery.min.js"></script>
+        <script type="text/javascript" src="/assets/js/jquery.min.js"></script>
 
         <script type="text/javascript" src="/assets/js/yes_no_ctrls.js"></script>
         <link rel="stylesheet" href="/assets/css/yes_no_ctrls.css" type="text/css"/>
         <script type="text/javascript" src="/assets/js/post_parameters.js"></script>
         <script type="text/javascript" src="/assets/js/generic_ajaxrequest.js"></script>
         <script type="text/javascript" src="/assets/js/moment.js"></script>
+        <script type="text/javascript" src="/assets/js/bmi.js"></script>
 
+        <script type="text/javascript" src="/assets/js/HighCharts/highcharts.js"></script>
+        <script type="text/javascript" src="/assets/js/HighCharts/exporting.js"></script>
+        <script type="text/javascript" src="/assets/js/HighCharts/offline-exporting.js"></script>
+
+        <link rel="stylesheet" href="/apps/ART/assets/css/hiv_clinical_consultation_weight_trail.css" type="text/css"/>
+        <script type="text/javascript" src="/apps/ART/assets/js/hiv_clinical_consultation_weight_trail.js"></script>
+
+        <script type="text/javascript" src="/apps/ART/assets/js/hiv_clinical_consultation_yes_no.js"></script>
         <script type="text/javascript">
             var patient_id = sessionStorage.patientID;
             var tt_cancel_destination = "/views/patient_dashboard.html?patient_id=" + patient_id;
@@ -286,6 +295,8 @@
                     currentBMI = parseFloat(currentBMI);
                     var currentWeight = '58.9'
                     var median_weight_height = [];
+                    var patientGender = sessionStorage.patientGender;
+                    
 
                     function resetPad() {
                         curr_page = tstCurrentPage - 1
@@ -473,6 +484,50 @@
                         return "WHO STAGE " + numeral(stage) + " " + adultOrPeds;
                     }
 
+                    function loadCharts() {
+                        var frame = document.getElementById('inputFrame' + tstCurrentPage);
+                        var chartDiv = document.createElement('div');
+                        chartDiv.setAttribute('class','boxer');
+                        chartDiv.setAttribute('style','width:99%; height:98%; margin:0 auto;')
+                        frame.appendChild(chartDiv);
+
+
+                        var chartDivRow = document.createElement('div');
+                        chartDivRow.setAttribute('class','box-row');
+
+                        var chartDivRow2 = document.createElement('div');
+                        chartDivRow2.setAttribute('class','box-row');
+    
+
+                        chartDiv.appendChild(chartDivRow);
+                        chartDiv.appendChild(chartDivRow2);
+
+
+                        var charts = ['one','two','three','four'];
+                        for(var i = 0; i < charts.length; i++){
+                            var chart = document.createElement('div');
+                            chart.setAttribute('id','container_' + charts[i]);
+                            chart.setAttribute('style',"min-width: 49.5%; height: 280px; margin: 0 auto;");
+                            chart.setAttribute('class','box');
+                            chart.setAttribute('data-toggle','modal');
+                            chart.setAttribute('data-target','.bd-example-modal-lg');
+                            chart.setAttribute('onmousedown',"expandChart('" + charts[i] + "');");
+
+                            if(charts[i] == 'one' || charts[i] == 'two'){
+                                chartDivRow.appendChild(chart);
+                            }else{
+                                chartDivRow2.appendChild(chart);
+                            }
+                        }
+
+                        for(var i = 0; i < charts.length; i++){
+                            //createChart(charts[i]);
+                        }
+
+                        plotWeightTrailGraph('container_one', weightObs);
+                        plotBabyGraph('container_three');
+
+                    }
                     function numeral(num) {
                         switch(num) {
                             case 1:
@@ -1152,6 +1207,17 @@
                 </script>
 
                 <form>
+                        <input allowFreeText="false" id="breastfeeding" name="observations[][value_coded_or_text]" type="hidden" />
+
+                        <input type="text" name="pregnant-breastfeeding-questions" condition="patientGender == 'F'"
+                               validationCode="checkPregnancyAndAge() == 'false'"
+                               validationMessage="Patient (Viral Load) is 25 years old. Is she pregnant / Breastfeeding?"
+                               tt_onLoad="__$('keyboard').style.display = 'none';addPregBreastFeedingYesNo(); showCategory2('Clinic consultation');"
+                               tt_pageStyleClass= "NoControls" helpText="Pregnant / Breastfeeding" optional = "true"/>
+    
+                    <input type="text" name="weight-summary"
+                    tt_onLoad="__$('keyboard').style.display = 'none';buildWeightHistory(); updateBreastFeedingPregnancyAnswers();"
+                    tt_pageStyleClass= "NoControls" helpText="Weight history" optional = "true"/>
 
                     <input allowFreeText="false" id="calculated_who_stage_4" name="observations[][value_coded_or_text]" type="hidden" value="" />
 
