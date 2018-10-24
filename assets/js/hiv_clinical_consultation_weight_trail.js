@@ -96,6 +96,7 @@ function setValues() {
   var gender;
   var bmindex = (weight /height/ height) * 10000;
   var bmindex = Math.round( bmindex * 10 ) / 10;
+  sessionStorage.bmi = bmindex;
   if (sessionStorage.patientGender === "F") {
     gender = "female";
   }else if (sessionStorage.patientGender === "M") {
