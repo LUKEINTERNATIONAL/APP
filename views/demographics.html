@@ -106,7 +106,7 @@
         }
       };
       try {
-        req.open('GET', url, true);
+        req.open('GET', url, false);
         req.setRequestHeader('Authorization', sessionStorage.getItem('authorization'));
         req.send(null);
       } catch (e) {

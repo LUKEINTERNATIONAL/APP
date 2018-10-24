@@ -46,7 +46,7 @@
 <script>
 
   var reports = [
-    ["Cohort / Disaggregated","/apps/ART/assets/images/", "/cohort_tool/revised_cohort_menu.html"],
+    ["Cohort / Disaggregated","/apps/ART/assets/images/", "/apps/ART/views/cohort_tool/revised_cohort_menu.html"],
     ["Cohort analyzer","","/report/summarize_cohort_report?type=summary"],
     ["Cohort Survival Analysis","","/cohort_tool/revised_cohort_survival_analysis_menu"],
     ["Supervision","","/clinic/supervision_tab"],
@@ -93,6 +93,8 @@ function buildReportLinks() {
     tr.appendChild(td);
 
     var td = document.createElement("td");
+    td.setAttribute("id", i.toString());
+    td.addEventListener("click", _testFunc);
     td.innerHTML = reports[i][0];
     tr.appendChild(td);
 
@@ -104,6 +106,11 @@ function buildReportLinks() {
       counter = 0;
 
   }
+}
+
+function _testFunc(){
+   console.log(reports[parseInt(this.id)][2]);
+   location.href = reports[parseInt(this.id)][2];
 }
 
 </script>
