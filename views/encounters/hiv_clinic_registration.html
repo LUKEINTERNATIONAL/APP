@@ -1397,7 +1397,7 @@
                                 { concept_id: 2137, value_numeric: answers_hash["bmi"] }                            ]
                         };
 
-                     submitParameters(obs,"/observations/", "nextPage");
+                        submitParameters(obs,"/observations/", "nextPage");
                     }
 
                     var who_stage_concept_map = {
@@ -1519,7 +1519,7 @@
                         obs= JSON.stringify(obs);
 
 
-                         submitParameters(obs,"/observations", "nextPage");
+                        submitParameters(obs,"/observations", "nextPage");
                     }
 
 
@@ -1599,6 +1599,24 @@
                                     submitHIVStaging();
                                 }
                                 
+                            } else{
+                                gotoNextPage();
+                            }
+                        }
+                    }
+
+                    function submitParametersOnUnknownConfirmatoryTestType(){
+                        var nextButton =  document.getElementById('nextButton');
+                        nextButton.onmousedown = function(){
+                            value = __$('touchscreenInput' + tstCurrentPage).value;
+                            answers_hash["confirmatory_hiv_test_type"] = value;
+                            if (value.match(/NOT DONE/i)){
+                                submitHIVClinicRegistration();
+                                if (showConditions() == true){
+                                    submitVitalsRegistration();
+                                    submitHIVStaging();
+                                }
+
                             } else{
                                 gotoNextPage();
                             }
@@ -2073,7 +2091,7 @@
                     <label for='summary'>Summary</label>
                     <input condition="$('has_transfer_letter').value == 'YES'" id="summary" name="summary" optional="true" tt_onLoad="summary();__$('keyboard').style.display = 'none';" tt_pageStyleClass="NoControls" type="text" />
 
-                    <select allowFreeText="false" tt_onLoad="setNextButtonToGetInputValue('confirmatory_hiv_test_type');" helpText="Confirmatory HIV test" id="type_of_confirmatory_hiv_test" name="observations[][value_coded_or_text]" tt_onLoad="setUnknownConfirmatoryTestForPopup();" tt_pageStyleClass="NoKeyboard">
+                    <select allowFreeText="false" helpText="Confirmatory HIV test" id="type_of_confirmatory_hiv_test" name="observations[][value_coded_or_text]" tt_onLoad="setUnknownConfirmatoryTestForPopup(); submitParametersOnUnknownConfirmatoryTestType();" tt_pageStyleClass="NoKeyboard">
                         <option value=''></option>
                         <option value="HIV RAPID TEST">Rapid antibody test</option>
                         <option value="HIV DNA polymerase chain reaction">DNA PCR</option>
