@@ -39,46 +39,72 @@
   border-width: 0px 0px 1px 0px;
 }
 
-.orders {
-  background-color: #4CAF50; /* Green */
-    border: none;
-    color: white;
-    padding: 15px 32px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    margin: 4px 2px;
-    cursor: pointer;
-    font-size: 15px;
-    width: 50%;
-}
+/* ................................................. 
+##################################################################
+##################################################################
+##################################################################
+##################################################################
+##################################################################
+................................................. */
 
-.orderList {
-  font-size: 20px;
-  margin: 10px;
-  border-bottom: solid 1px black;
-}
 
-.selections {
-  margin: 5%;
-  width: 85%;
-  height: 30px;
-  background-color: rgb(135, 144, 135); /* Green */
-  border: none;
-  border-radius: 10px;
-  color: white;
-  padding: 15px 32px;
+
+
+
+.orders-button {
+  padding-bottom: 5px;
   text-align: center;
-  text-decoration: none;
-  font-size: 30px;
-  display: inline-block;
+  margin-right: auto;
+  margin-left: auto;
+  display: block;
+  margin-top: 5px;
+  border: 1px solid #5480a8;
   cursor: pointer;
+  background-color: white;
+  border-radius: 7px;
+  border: solid black 1px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  -moz-box-shadow: inset 0 0 1px #000000;
+  -webkit-box-shadow: inset 0 0 1px #000000;
+  box-shadow: inset 0 0 10px #000000;
+  text-decoration: none;
+  width: 110px;
+  height: 80px;
 }
 
-.active {
-  background-color: #4CAF50;
+.orders-button-disabled {
+  color: currentColor;
+  cursor: not-allowed;
+  text-decoration: none;
+  background-color: #5480a8;
+  color: white;
+  font-weight: bold;
 }
 
-.inactive {
-  background-color: rgb(135, 144, 135);
+#result-list {
+  margin-top: 5px;
+  margin-bottom: 5px;
+  padding-left: 0px;
+ }
+
+.result-list {
+  color: black;
+  list-style: none;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  font-family: "Nimbus Sans L","Arial Narrow",sans-serif;
+  font-size: 1.2em;
 }
+
+#inner-right {
+  margin-left: 1%;
+  font-size: 2.2em;
+  font-family: "Nimbus Sans L","Arial Narrow",sans-serif;
+  width: 100%;
+
+}
+
