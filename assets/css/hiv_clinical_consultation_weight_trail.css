@@ -38,3 +38,47 @@
   border-style: solid;
   border-width: 0px 0px 1px 0px;
 }
+
+.orders {
+  background-color: #4CAF50; /* Green */
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    margin: 4px 2px;
+    cursor: pointer;
+    font-size: 15px;
+    width: 50%;
+}
+
+.orderList {
+  font-size: 20px;
+  margin: 10px;
+  border-bottom: solid 1px black;
+}
+
+.selections {
+  margin: 5%;
+  width: 85%;
+  height: 30px;
+  background-color: rgb(135, 144, 135); /* Green */
+  border: none;
+  border-radius: 10px;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  font-size: 30px;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.active {
+  background-color: #4CAF50;
+}
+
+.inactive {
+  background-color: rgb(135, 144, 135);
+}
