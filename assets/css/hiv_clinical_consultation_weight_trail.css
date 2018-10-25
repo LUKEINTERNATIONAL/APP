@@ -108,3 +108,21 @@
 
 }
 
+.headers {
+  color: white;
+  border-collapse: collapse;
+  background-color: #413939;
+}
+
+.orders-td {
+  border: solid 1px black;  
+  height: 40px;
+  text-align: center;
+}
+.tests-table{
+  width: 100%;
+  margin: 1%;
+  border: solid 1px black;
+  border-collapse: collapse;
+}
+

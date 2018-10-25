@@ -9,11 +9,11 @@ function buildSummary() {
   var rightSide = document.createElement("div");
   rightSide.setAttribute("id", "right-side");
   rightSide.style.width = "100%";
-  rightSide.style.height = "500px";
+  rightSide.style.height = "600px";
   leftSide.setAttribute("id", "left-side");
-  leftSide.innerHTML = "<div id='lab-tests' class='orders-button' onclick='buildOrders();'> Lab Tests </div>";
+  leftSide.innerHTML = "<div id='lab-tests' class='orders-button' onclick='buildOrders();'> Summary </div>";
   leftSide.innerHTML += "<div id='lab-results' class='orders-button orders-button-disabled' onclick='buildTests();'> Results </div>";
-  leftSide.style.height = "500px";
+  leftSide.style.height = "600px";
   leftSide.style.width = "15%";
   leftSide.style.borderRight = "1px solid black";
   tar.appendChild(leftSide);
@@ -24,15 +24,31 @@ function buildSummary() {
 function buildOrders() {
   var rightSide = document.getElementById("right-side");
   rightSide.style.display ="inline";
-  rightSide.innerHTML = "<p class='orderList'> CD4 count test = not ordered </p><br><p class='orderList'> CRAG Test = not ordered </p><br><p class='orderList'> Urine LAM Test = not ordered </p>"
-
+  rightSide.innerHTML = null;
+  var table = document.createElement("table");
+  table.setAttribute("id", "ordersTable");
+  table.className = "tests-table";
+  // table.style.width = "100%";
+  table.innerHTML= ("<th class='headers orders-td' style='width:33%; text-align:left; padding-left:10px;'>Tests</th> <th class='headers orders-td' style='width:15%;'> Order Date </th> <th class='headers orders-td' style='15%;'> Result Date </th> <th class='headers orders-td' style='width:35%; text-align:right; padding-right:10px;'> Result </th>")
   var btn = document.getElementById("lab-results");
   btn.setAttribute("class", "orders-button orders-button-disabled");
   btn = document.getElementById("lab-tests");
   btn.setAttribute("class", "orders-button");
+  var tests = [["CRAG", "2018-10-10","2018-11-10", "Positive"], ["CD4", "2018-10-10","2018-10-10", ">200"], ["Urine LAM", "2018-10-10","2018-10-10", "Positive"]];
+  
+  rightSide.appendChild(table);
+  addSummaryDetails(tests);
+}
+
+function addSummaryDetails(tests) {
+  var table = document.getElementById("ordersTable");
+  for(var i = 0; i < tests.length; i++) {
+    table.innerHTML += "<tr> <td class='orders-td' style='text-align:left;padding-left: 10px;'>"+tests[i][0]+"</td><td class='orders-td'>"+tests[i][1]+"</td><td class='orders-td'>"+tests[i][2] + "</td> <td class='orders-td' style='text-align:right; padding-right: 10px;'>"+tests[i][3] + "</td></tr>"
+  }
 }
 
 function buildTests() {
+  
   var innerLeft = document.createElement("div");
   innerLeft.style.width = "20%";
   innerLeft.setAttribute("id", "inner-left");
@@ -46,11 +62,11 @@ function buildTests() {
   rightSide.appendChild(innerLeft);
   rightSide.appendChild(innerRight);
   testFunctions();
-
   var btn = document.getElementById("lab-tests");
   btn.setAttribute("class", "orders-button orders-button-disabled");
   btn = document.getElementById("lab-results");
   btn.setAttribute("class", "orders-button");
+  buildKeyPad();
 }
 
 function testFunctions() {
