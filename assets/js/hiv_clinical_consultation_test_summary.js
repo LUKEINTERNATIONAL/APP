@@ -13,6 +13,7 @@ function buildSummary() {
   leftSide.setAttribute("id", "left-side");
   leftSide.innerHTML = "<div id='lab-tests' class='orders-button' onclick='buildOrders();'> Summary </div>";
   leftSide.innerHTML += "<div id='lab-results' class='orders-button orders-button-disabled' onclick='buildTests();'> Results </div>";
+  leftSide.innerHTML += "<div id='lab-results' class='orders-button orders-button-disabled' onclick='buildTests();'> Orders </div>";
   leftSide.style.height = "600px";
   leftSide.style.width = "15%";
   leftSide.style.borderRight = "1px solid black";

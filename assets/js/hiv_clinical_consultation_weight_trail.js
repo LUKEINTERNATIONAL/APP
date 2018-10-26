@@ -10,7 +10,7 @@ function getWeights() {
               var length = results.length;
               sessionStorage.currentWeight = results[0].value_numeric;
               getHeight();
-              sessionStorage.previousWeight = results[length-1].value_numeric;
+              sessionStorage.previousWeight = results[1].value_numeric;
               for (let index = 0; index < results.length; index++) {
                 passedData.push([moment(results[index].obs_datetime).format("YYYY-MM-DD"), results[index].value_numeric]);
               }
@@ -116,7 +116,7 @@ function setValues() {
 function weightSummaryTable() {
   
   var table = "<table id='weight-summary-table'>";
-  table += "<tr><th>Initial Weight</th></tr>";
+  table += "<tr><th>Previous Weight</th></tr>";
   table += "<tr><td id='initial-weight'>&nbsp;</td></tr>";
   table += "<tr><th>Latest Weight</th></tr>";
   table += "<tr><td id='latest-weight'>&nbsp;</td></tr>";
