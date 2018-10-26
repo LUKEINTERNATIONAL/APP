@@ -22,12 +22,13 @@
 
         <link rel="stylesheet" href="/apps/ART/assets/css/hiv_clinical_consultation_weight_trail.css" type="text/css"/>
         <script type="text/javascript" src="/apps/ART/assets/js/hiv_clinical_consultation_weight_trail.js"></script>
+        <script type="text/javascript" src="/apps/ART/assets/js/hiv_clinical_consultation_test_summary.js"></script>
 
 
         <script type="text/javascript" src="/apps/ART/assets/js/hiv_clinical_consultation_yes_no.js"></script>
 
-
-
+        <link rel="stylesheet" href="/apps/ART/assets/css/cd4_kbd.css" type="text/css">
+        <script type="text/javascript" src="/apps/ART/assets/js/cd4_kbd.js"></script>
         <script type="text/javascript">
             var patient_id = sessionStorage.patientID;
             var patientGender = sessionStorage.patientGender;
@@ -1665,7 +1666,7 @@
                         }
                     }
 
-
+                  
                     function setFunctionForSubmittingForm(){
                         var nextButton =  document.getElementById('nextButton');
                         //nextButton.removeAttribute("onmousedown");
@@ -1692,6 +1693,10 @@
                     </select> -->
 
                     <input allowFreeText="false" id="breastfeeding" name="observations[][value_coded_or_text]" type="hidden" />
+
+                    <input type="text" name="lab-summary"
+                           tt_onLoad="__$('keyboard').style.display = 'none';buildSummary();"
+                           tt_pageStyleClass= "NoControls" helpText="Lab Results Summary" optional = "true"/>
 
                     <input type="text" name="pregnant-breastfeeding-questions" condition="patientGender == 'F'"
                            validationCode="checkPregnancyAndAge() == 'false'"
