@@ -99,9 +99,9 @@ function activateOtherSideEffects(btn) {
 function addLabInvestigationsQuestions() {
   var concept_name = "Requested lab test set";
   var labSets = [
-    ["CD4 count", 5497],
-    ["Crag", 1001],
-    ["Urine LAM", 1479]
+    ["CD4 count", 2],
+    ["Crag", 34],
+    ["Urine LAM", 27]
   ];
 
   var frame   = document.getElementById("inputFrame" + tstCurrentPage);
