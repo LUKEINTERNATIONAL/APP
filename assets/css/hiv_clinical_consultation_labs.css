@@ -116,12 +116,12 @@
   background-color: lightblue;
 }
 
-#test-selection {
+.test-selection {
   margin-right: 10px;
   margin-left: -30px;
 }
 
-#test-selection li {
+.available-tests , .available-tests-order {
   color: black;
   list-style: none;
   padding-left: 5px;

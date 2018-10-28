@@ -196,7 +196,7 @@ function specialKeys() {
 
 function addbTests() {
   var ul = document.createElement("ul");
-  ul.setAttribute("id", "test-selection");
+  ul.setAttribute("class", "test-selection");
 
   var activities = [
     ["Grag",23], ["Urine",22], ["CD4 count", 1231]
@@ -235,19 +235,30 @@ function testSelection(e) {
 function buildNewOrderPage() {
   var rightContainer = document.getElementById("order-table-cell-right");
   var container = document.createElement("div");
-  var style = "border-style: solid; border-width: 1px;";
-  style += "margin: 30px; border-radius: 25px;";
-  container.style = style;
-
   rightContainer.appendChild(container);
+  /*var style = "border-style: solid; border-width: 1px;";
+  style += "margin: 30px; border-radius: 25px;";
+  container.style = style; */
 
-  var concept_name = "LAB";
   var tests = [
     ["CD4 count", 23],["Crag",12],["Urine", 34]
   ];
 
-  var tests = tests.join(";").split(";").join("#");
-  buildYesNoUI(concept_name, tests, container);
+  var ul = document.createElement("ul");
+  ul.setAttribute("class","test-selection");
+  container.appendChild(ul);
+
+  for(var i = 0 ; i < tests.length ; i++){
+    var li = document.createElement("li");
+    even_odd = (( i & 1 ) ? "odd" : "even");
+
+    li.setAttribute("id", i );
+    li.setAttribute("value", tests[i][1]);
+    li.setAttribute("onmousedown", "testOrders(this); ");
+    li.setAttribute("class", "available-tests-order row-" + even_odd);
+    li.innerHTML = tests[i][0];
+    ul.appendChild(li); 
+  }
 
 }
 
@@ -345,3 +356,15 @@ function isEmpty(str){
 }
 
 
+function testOrders(e) {
+  var list = document.getElementsByClassName("available-tests-order");
+  var even_odd;
+  
+  for(var i = 0 ; i < list.length ; i++){
+    even_odd = (( i & 1 ) ? "odd" : "even");
+    list[i].setAttribute("class", "available-tests-order row-" + even_odd);
+  }
+
+  var classAttr = e.getAttribute("class") + " list-selected";
+  e.setAttribute("class", classAttr);
+}
