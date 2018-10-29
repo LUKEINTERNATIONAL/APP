@@ -106,6 +106,6 @@ function addLabInvestigationsQuestions() {
 
   var frame   = document.getElementById("inputFrame" + tstCurrentPage);
   var tests  = labSets.join(";").split(";").join("#");
-
+  
   buildYesNoUI(concept_name, tests, frame);
 }

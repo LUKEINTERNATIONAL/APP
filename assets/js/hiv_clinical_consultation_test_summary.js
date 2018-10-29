@@ -13,7 +13,7 @@ function buildSummary() {
   leftSide.setAttribute("id", "left-side");
   leftSide.innerHTML = "<div id='lab-tests' class='orders-button' onclick='buildOrders();'> Summary </div>";
   leftSide.innerHTML += "<div id='lab-results' class='orders-button orders-button-disabled' onclick='buildTests();'> Results </div>";
-  leftSide.innerHTML += "<div id='lab-results' class='orders-button orders-button-disabled' onclick='buildTests();'> Orders </div>";
+  leftSide.innerHTML += "<div id='lab-orders' class='orders-button orders-button-disabled' onclick='getOrders();'> Orders </div>";
   leftSide.style.height = "600px";
   leftSide.style.width = "15%";
   leftSide.style.borderRight = "1px solid black";
@@ -32,6 +32,8 @@ function buildOrders() {
   // table.style.width = "100%";
   table.innerHTML= ("<th class='headers orders-td' style='width:33%; text-align:left; padding-left:10px;'>Tests</th> <th class='headers orders-td' style='width:15%;'> Order Date </th> <th class='headers orders-td' style='15%;'> Result Date </th> <th class='headers orders-td' style='width:35%; text-align:right; padding-right:10px;'> Result </th>")
   var btn = document.getElementById("lab-results");
+  btn.setAttribute("class", "orders-button orders-button-disabled");
+  btn = document.getElementById("lab-orders");
   btn.setAttribute("class", "orders-button orders-button-disabled");
   btn = document.getElementById("lab-tests");
   btn.setAttribute("class", "orders-button");
@@ -64,6 +66,8 @@ function buildTests() {
   rightSide.appendChild(innerRight);
   testFunctions();
   var btn = document.getElementById("lab-tests");
+  btn.setAttribute("class", "orders-button orders-button-disabled");
+  btn = document.getElementById("lab-orders");
   btn.setAttribute("class", "orders-button orders-button-disabled");
   btn = document.getElementById("lab-results");
   btn.setAttribute("class", "orders-button");

@@ -22,18 +22,51 @@
 
         <link rel="stylesheet" href="/apps/ART/assets/css/hiv_clinical_consultation_weight_trail.css" type="text/css"/>
         <script type="text/javascript" src="/apps/ART/assets/js/hiv_clinical_consultation_weight_trail.js"></script>
-        <script type="text/javascript" src="/apps/ART/assets/js/hiv_clinical_consultation_test_summary.js"></script>
+        <!-- script type="text/javascript" src="/apps/ART/assets/js/hiv_clinical_consultation_test_summary.js"></script-->
 
 
         <script type="text/javascript" src="/apps/ART/assets/js/hiv_clinical_consultation_yes_no.js"></script>
 
         <link rel="stylesheet" href="/apps/ART/assets/css/cd4_kbd.css" type="text/css">
         <script type="text/javascript" src="/apps/ART/assets/js/cd4_kbd.js"></script>
+        
+
+        <link rel="stylesheet" href="/apps/ART/assets/css/hiv_clinical_consultation_labs.css" type="text/css" />
+        <script type="text/javascript" src="/apps/ART/assets/js/hiv_clinical_consultation_labs.js"></script>
+
+
+        <!--link rel="stylesheet" href="/assets/css/datatables/uikit.min.css" type="text/css">
+        <link rel="stylesheet" href="/assets/css/datatables/dataTables.uikit.min.css" type="text/css"-->
+
+        <link rel="stylesheet" href="/assets/css/datatables/fixedHeader.dataTables.min.css" type="text/css">
+        <link rel="stylesheet" href="/assets/css/datatables/scroller.dataTables.min.css" type="text/css">
+
+        <script type="text/javascript" src="/assets/js/datatables/jquery.dataTables.min.js"></script>
+        <script type="text/javascript" src="/assets/js/datatables/dataTables.fixedHeader.min.js"></script>
+
+
         <script type="text/javascript">
             var patient_id = sessionStorage.patientID;
             var patientGender = sessionStorage.patientGender;
             var tt_cancel_destination = "/views/patient_dashboard.html?patient_id=" + patient_id;
             var lab_orders_required = true;
+
+
+            var labResultsTable = null;
+
+            function initLabResultsTable() {
+              labResultsTable = jQuery('#result-table').DataTable( {
+                fixedHeader: true,
+                searching: false,
+                paging: false,
+                scrollY: 330,
+                scroller: {
+                  loadingIndicator: true
+                }
+              } );
+            }
+
+
         </script>
 
 
@@ -1695,7 +1728,7 @@
                     <input allowFreeText="false" id="breastfeeding" name="observations[][value_coded_or_text]" type="hidden" />
 
                     <input type="text" name="lab-summary"
-                           tt_onLoad="__$('keyboard').style.display = 'none';buildSummary();"
+                           tt_onLoad="__$('keyboard').style.display = 'none';buildConsultationLabPage();"
                            tt_pageStyleClass= "NoControls" helpText="Lab Results Summary" optional = "true"/>
 
                     <input type="text" name="pregnant-breastfeeding-questions" condition="patientGender == 'F'"
