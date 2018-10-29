@@ -244,20 +244,33 @@ function buildNewOrderPage() {
     ["CD4 count", 23],["Crag",12],["Urine", 34]
   ];
 
-  var ul = document.createElement("ul");
-  ul.setAttribute("class","test-selection");
-  container.appendChild(ul);
+  var table = document.createElement("table");
+  table.setAttribute("class","test-table-selection");
+  container.appendChild(table);
 
   for(var i = 0 ; i < tests.length ; i++){
-    var li = document.createElement("li");
     even_odd = (( i & 1 ) ? "odd" : "even");
 
-    li.setAttribute("id", i );
-    li.setAttribute("value", tests[i][1]);
-    li.setAttribute("onmousedown", "testOrders(this); ");
-    li.setAttribute("class", "available-tests-order row-" + even_odd);
-    li.innerHTML = tests[i][0];
-    ul.appendChild(li); 
+    var tr = document.createElement("tr");
+    tr.setAttribute("class", "available-tests-order row-" + even_odd);
+    tr.setAttribute("id", "row-" + i);
+    tr.setAttribute("onmousedown", "testOrders(this);");
+    table.appendChild(tr)
+
+    var td = document.createElement("td");
+    var img = document.createElement("img");
+    img.setAttribute("src","/public/touchscreentoolkit/lib/images/unticked.jpg");
+    var img_style = "width: 45px;height:45px;";
+    img.setAttribute("style", img_style);
+    img.setAttribute("class", "check-boxes");
+    img.setAttribute("id", "check-box-" + i);
+    td.appendChild(img);
+    td.setAttribute("style", "width: 31px;");
+    tr.appendChild(td);
+
+    var td = document.createElement("td");
+    td.innerHTML = tests[i][0];
+    tr.appendChild(td); 
   }
 
 }
@@ -357,14 +370,14 @@ function isEmpty(str){
 
 
 function testOrders(e) {
-  var list = document.getElementsByClassName("available-tests-order");
-  var even_odd;
-  
-  for(var i = 0 ; i < list.length ; i++){
-    even_odd = (( i & 1 ) ? "odd" : "even");
-    list[i].setAttribute("class", "available-tests-order row-" + even_odd);
-  }
+  var id = e.id.replace("row-","");
+  var selectedCheckBox = document.getElementById("check-box-" + id);
 
-  var classAttr = e.getAttribute("class") + " list-selected";
-  e.setAttribute("class", classAttr);
+  if(selectedCheckBox.getAttribute("src").match(/unticked/i)){
+    selectedCheckBox.setAttribute("src", "/public/touchscreentoolkit/lib/images/ticked.jpg");
+    e.style = "background-color: lightblue;";
+  }else{
+    selectedCheckBox.setAttribute("src", "/public/touchscreentoolkit/lib/images/unticked.jpg");
+    e.style = "background-color: '';";
+  }
 }
