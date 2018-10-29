@@ -1,4 +1,8 @@
 var labResultsHash = {};
+var testOrdersHash = {};
+var apiPort = sessionStorage.apiPort;
+var apiURL = sessionStorage.apiURL;
+var patientID = sessionStorage.patientID;
 
 function buildConsultationLabPage() {
     var frame = document.getElementById("inputFrame" + tstCurrentPage);
@@ -95,9 +99,32 @@ function buildResultTable() {
     
     var tbody = document.createElement("tbody");
     tbody.setAttribute("id","results-body");
+    tbody.innerHTML= "<tr><td>CD4</td><td>2012</td><td>friday</td><td>Positive</td><td>positive</td></tr>" ;
     table.appendChild(tbody);
    
     initLabResultsTable();
+}
+
+function getOrders(tbody) {
+  var url = 'http://' + apiURL + ':' + apiPort + '/api/v1/programs/orders?patient_id=' + patientID;
+  var req = new XMLHttpRequest();
+  req.onreadystatechange = function () {
+
+    if (this.readyState == 4) {
+      if (this.status == 200) {
+        var results = JSON.parse(this.responseText);
+        for (var x = 0; x < results.length; x++) {
+          // console.log(results);
+          tbody.innerHTML("<td></td> <td></td><td></td>" );
+        }
+      }
+    }
+  };
+  try {
+    req.open('GET', url, true);
+    req.setRequestHeader('Authorization', sessionStorage.getItem('authorization'));
+    req.send(null);
+  } catch (e) {}
 }
 
 function buildEnterResultTable() {
@@ -222,7 +249,9 @@ function addbTests() {
 function testSelection(e) {
   var list = document.getElementsByClassName("available-tests");
   var even_odd;
-  
+  var inputBox = document.getElementById('input-box-result');
+  inputBox.value = "";
+  console.log(e.id);
   for(var i = 0 ; i < list.length ; i++){
     even_odd = (( i & 1 ) ? "odd" : "even");
     list[i].setAttribute("class", "available-tests row-" + even_odd);
@@ -313,6 +342,8 @@ function enterTestKeypadValue(e) {
   var inputBox = document.getElementById('input-box-result');
 
   var selected = checkIfTestSelected();
+  labResultsHash = [selected.innerHTML, inputBox.value];
+  console.log(labResultsHash);
  
   if(selected == undefined) {
     showMessage("Please select test first");
@@ -335,7 +366,10 @@ function enterTestKeypadValue(e) {
       inputBox.value = null;
       inputBox.value = "Positive";
     }else if(e.innerHTML.match(/Save/i)){
-      showMessage("Save")
+      
+      showMessage("Save");
+      labResultsHash[selected.innerHTML] = inputBox.value;
+      console.log(labResultsHash);
     }else{
       if(inputBox.value.match(/Positive/i) || inputBox.value.match(/Negative/i))
         return;
@@ -380,4 +414,5 @@ function testOrders(e) {
     selectedCheckBox.setAttribute("src", "/public/touchscreentoolkit/lib/images/unticked.jpg");
     e.style = "background-color: '';";
   }
+  console.log(e.innerHTML);
 }
