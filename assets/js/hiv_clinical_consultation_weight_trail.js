@@ -90,7 +90,8 @@ function setValues() {
   if (weight < sessionStorage.previousWeight) {
     var decrease = sessionStorage.previousWeight - weight;
     var weightPercentage = (decrease/sessionStorage.previousWeight)*100;
-    document.getElementById('weight-percentage').innerHTML += Math.round(weightPercentage) + "% decrease";
+      document.getElementById('weight-percentage').innerHTML += Math.round(weightPercentage) + "% decrease";
+    
     sessionStorage.setItem("weightLoss", Math.round(weightPercentage));
   }
   else if (weight > sessionStorage.previousWeight) {
@@ -99,7 +100,9 @@ function setValues() {
     if (weightPercentage < 0) {
       weightPercentage = weightPercentage * -1;
     }
+    if (sessionStorage.previousWeight != 0) {
     document.getElementById('weight-percentage').innerHTML += Math.round(weightPercentage) + "% increase";
+    }
   }
   var gender;
   var bmindex = (weight /height/ height) * 10000;
@@ -111,7 +114,10 @@ function setValues() {
     gender = "male";
   } 
   getBMIResult(gender, sessionStorage.patientAge, bmindex);
-  document.getElementById("initial-weight").innerHTML += sessionStorage.previousWeight;
+  if (sessionStorage.previousWeight != 0) { 
+    document.getElementById("initial-weight").innerHTML += sessionStorage.previousWeight;
+  }
+  
   document.getElementById("latest-weight").innerHTML += sessionStorage.currentWeight;
   document.getElementById("patient-age").innerHTML += sessionStorage.patientAge;
   document.getElementById('patient-bmi').innerHTML += bmindex;
@@ -153,7 +159,7 @@ function plotChart(data) {
         zoomType: 'x'
       },
       title: {
-        text: 'Weight trail (for 2 year priod)'
+        text: 'Weight trail (for 2 year period)'
       },
       xAxis: {
         type: 'datetime'
