@@ -10,7 +10,13 @@ function getWeights() {
               var length = results.length;
               sessionStorage.currentWeight = results[0].value_numeric;
               getHeight();
-              sessionStorage.previousWeight = results[1].value_numeric;
+              try {
+                sessionStorage.previousWeight = results[1].value_numeric;;
+              }catch(e) {
+                sessionStorage.previousWeight = 0;
+              }
+            
+              //  = 
               for (let index = 0; index < results.length; index++) {
                 passedData.push([moment(results[index].obs_datetime).format("YYYY-MM-DD"), results[index].value_numeric]);
               }

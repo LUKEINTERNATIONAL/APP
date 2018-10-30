@@ -99,23 +99,30 @@ function buildResultTable() {
     
     var tbody = document.createElement("tbody");
     tbody.setAttribute("id","results-body");
-    tbody.innerHTML= "<tr><td>CD4</td><td>2012</td><td>friday</td><td>Positive</td><td>positive</td></tr>" ;
+    
+    getOrders(tbody);
     table.appendChild(tbody);
    
     initLabResultsTable();
 }
 
 function getOrders(tbody) {
-  var url = 'http://' + apiURL + ':' + apiPort + '/api/v1/programs/orders?patient_id=' + patientID;
+  var url = 'http://' + apiURL + ':' + apiPort + '/api/v1/programs/1/lab_tests/orders?patient_id=' + patientID;
   var req = new XMLHttpRequest();
   req.onreadystatechange = function () {
 
     if (this.readyState == 4) {
       if (this.status == 200) {
         var results = JSON.parse(this.responseText);
+        console.log(results);
+        
         for (var x = 0; x < results.length; x++) {
+          if (results[0].lab_samples[0].lab_parameters.length == 0) {
+            var givenResult = "No Result";
+          }
+          tbody.innerHTML= "<tr><td>"+results[0].TestOrdered+"</td><td>"+results[0].OrderDate+"</td><td>"+results[0].OrderDate+"</td><td>"+givenResult+"</td><td>"+givenResult+"</td></tr>" ;
           // console.log(results);
-          tbody.innerHTML("<td></td> <td></td><td></td>" );
+          // tbody.innerHTML("<td></td> <td></td><td></td>" );
         }
       }
     }
