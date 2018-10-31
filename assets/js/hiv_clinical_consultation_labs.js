@@ -349,8 +349,6 @@ function enterTestKeypadValue(e) {
   var inputBox = document.getElementById('input-box-result');
 
   var selected = checkIfTestSelected();
-  labResultsHash = [selected.innerHTML, inputBox.value];
-  console.log(labResultsHash);
  
   if(selected == undefined) {
     showMessage("Please select test first");
@@ -376,7 +374,6 @@ function enterTestKeypadValue(e) {
       
       showMessage("Save");
       labResultsHash[selected.innerHTML] = inputBox.value;
-      console.log(labResultsHash);
     }else{
       if(inputBox.value.match(/Positive/i) || inputBox.value.match(/Negative/i))
         return;
@@ -412,14 +409,30 @@ function isEmpty(str){
 
 function testOrders(e) {
   var id = e.id.replace("row-","");
+  var test = "";
   var selectedCheckBox = document.getElementById("check-box-" + id);
+  switch (parseInt(id)) {
+    case 0: 
+      test = "CD4 count";
+      break;
+    case 1: 
+      test = "Crag";
+      break;
+    case 2: 
+      test = "Urine";
+      break;
+  }
 
+
+  console.log(test);
   if(selectedCheckBox.getAttribute("src").match(/unticked/i)){
     selectedCheckBox.setAttribute("src", "/public/touchscreentoolkit/lib/images/ticked.jpg");
+    testOrdersHash[test] = "ordered";
     e.style = "background-color: lightblue;";
   }else{
     selectedCheckBox.setAttribute("src", "/public/touchscreentoolkit/lib/images/unticked.jpg");
+    testOrdersHash[test] = "not ordered";
     e.style = "background-color: '';";
   }
-  console.log(e.innerHTML);
+  console.log(testOrdersHash);
 }
