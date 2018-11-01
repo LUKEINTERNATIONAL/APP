@@ -47,7 +47,7 @@
 
         <script type="text/javascript">
             var patient_id = sessionStorage.patientID;
-            var patientGender = sessionStorage.gender;
+            var patientGender = sessionStorage.patientGender;
             var tt_cancel_destination = "/views/patient_dashboard.html?patient_id=" + patient_id;
             var lab_orders_required = false;
 
@@ -409,7 +409,7 @@
                     // var patient_id = sessionStorage.patientID;
                     var sideEffectsHash = {};
                     var tbSymptomsHash = {};
-                    var gender = 'M';
+                    var gender = sessionStorage.patientGender;
                     var current_patient_bmi = '22.4'
                     var current_weight_percentile = ''
                     var everReceivedARTAnswer = '';
@@ -1650,6 +1650,7 @@
                     }
 
                     function submitWhenOnTBTreatment(){
+                      return
                         var nextButton =  document.getElementById('nextButton');
                         nextButton.onmousedown = function(){
                             value = $('touchscreenInput'+tstCurrentPage).value;
@@ -1966,7 +1967,9 @@
                               cols="56" rows="8" condition="OtherSideEffects == true">
                     </textarea> 
 
-                    <select allowFreeText="false" helpText="On TB Treatment?" id="tb_treatment_question" name="observations[][value_coded_or_text]" tt_onLoad="submitWhenOnTBTreatment(); showCategory2('Clinic consultation');" tt_onUnLoad="showCategory2('Clinic consultation'); hideTBStatusQuestion();" tt_pageStyleClass="NoKeyboard">
+                    <select allowFreeText="false" helpText="On TB Treatment?" id="tb_treatment_question" name="observations[][value_coded_or_text]" 
+                      tt_onLoad="showCategory2('Clinic consultation');" 
+                      tt_onUnLoad="showCategory2('Clinic consultation'); hideTBStatusQuestion();" tt_pageStyleClass="NoKeyboard">
                         <option value=''></option>
                         <option value=""></option>
                         <option value="Yes">Yes</option>
@@ -1978,14 +1981,16 @@
 
 
                     <input type="text" name="tb-associated-symptoms"
-                           tt_onLoad="__$('keyboard').style.display = 'none'; addTBassociatedSymptomsYesNo(); submitWhenPatientHasTBSymptomsAndLabOrdersNotRequired();"
+                           tt_onLoad="__$('keyboard').style.display = 'none'; addTBassociatedSymptomsYesNo();"
                            tt_pageStyleClass= "NoControls"
                            condition="__$('tb_treatment_question').value == 'No'"
                            id="routine_tb_screening"
                            helpText="TB associated symptoms" optional = "true"/>
 
                     <select allowFreeText="false" condition="true && __$('tb_treatment_question').value.toUpperCase() == 'NO'
-                            && tbSymptomsHashSelects() == 'YES'" helpText="TB Status" id="tb_status" name="observations[][value_coded_or_text]" tt_onLoad="submitWhenNotOnTBTreatmentAndLabOrdersNotRequired(); showCategory2('Clinic consultation');checkTbHivStatus(); checkAndSelectTBSuspected(); checkAndSelectConfirmedTBOnTreatment();" tt_pageStyleClass="NoKeyboard">
+                            && tbSymptomsHashSelects() == 'YES'" helpText="TB Status" id="tb_status" name="observations[][value_coded_or_text]" 
+                            tt_onLoad="showCategory2('Clinic consultation');checkTbHivStatus(); checkAndSelectTBSuspected(); checkAndSelectConfirmedTBOnTreatment();" 
+                            tt_pageStyleClass="NoKeyboard">
                         <option value=''></option>
                         <option value="TB NOT suspected">TB NOT suspected</option>
                         <option value="TB suspected">TB suspected</option>
@@ -1998,6 +2003,59 @@
                            condition=""
                            id="routine_tb_screening"
                            helpText="Order Lab investigations?" optional = "true"/ -->
+                    
+                    <select allowFreeText="false" helpText="Allergic to Cotrimoxazole?" id="allergic_to_cotrimoxazole" 
+                    name="observations[][value_coded_or_text]" 
+                    tt_pageStyleClass="NoKeyboard">
+                        <option value=''></option>
+                        <option value=""></option>
+                        <option value="Yes">Yes</option>
+                        <option value="No">No</option>
+                        <option value="Unknown">Unknown</option>
+                    </select>
+
+                    <script>
+                     var medication_options_allergic_to_sulphur_no = ['ARVs','CPT','IPT','NONE OF THE ABOVE'];
+                     //medication_options_allergic_to_sulphur_yes = ['ARVs','IPT','NONE OF THE ABOVE']
+                     var medication_options_allergic_to_sulphur_yes = ['ARVs','CPT','IPT','NONE OF THE ABOVE'];
+
+                     function loadOptionsMed(e) {
+                      /*var ul = document.getElementById("tt_currentUnorderedListOptions");
+                      var activities = medication_options_allergic_to_sulphur_no;
+
+                      for(var i = 0 ; i < activities.sort().length ; i++){
+                        var innerHTML = '<div style="display: table; border-spacing: 0px;"><div style="display: table-row"><div style="display: table-cell;"><img id="img';
+                        innerHTML += i + '" src="/public/touchscreentoolkit/lib/images/unticked.jpg" alt="[ ]">';
+                        innerHTML += '</div><div style="display: table-cell; vertical-align: middle; ';
+                        innerHTML += 'text-align: left; padding-left: 15px;"';
+                        innerHTML += ' id="optionValue' + i + '">';
+                        innerHTML+= activities[i].trim() + '</div></div></div>';
+                        
+                        var li = document.createElement("li");
+                        li.setAttribute("id", i );
+                        li.setAttribute("tstvalue", activities[i]);
+                        li.setAttribute("onmousedown", "null; updateTouchscreenInputForSelect(__$('optionValue' + this.id), this); ");
+                        li.setAttribute("style","");
+                        li.setAttribute("class","even");
+                        li.innerHTML = innerHTML.trim();
+                        ul.appendChild(li); 
+                      } */
+
+
+
+                     }
+                    </script>
+
+                     
+                    <select allowFreeText="false" helpText="Medication to prescribe during this visit" id="med_to_prescribe" 
+                    name="observations[][value_coded_or_text]" 
+                    tt_pageStyleClass="NoKeyboard" multiple="multiple" tt_onLoad="loadOptionsMed(this);">
+                      <option value="ARVs">ARVs</option>
+                      <option value="CPT">CPT</option>
+                      <option value="IPT">IPT</option>
+                      <option value="NONE OF THE ABOVE">NONE OF THE ABOVE</option>
+                    </select>
+
 
 
                     <input allowFreeText="false" id="fast-track-input" name="observations[][value_coded_or_text]" type="hidden" value="" />
