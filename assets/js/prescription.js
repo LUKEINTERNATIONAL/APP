@@ -487,8 +487,7 @@ function getRegimens() {
       preSelectRegimenSelection();
     }
   };
-  
-  xhttp.open("GET", url + "?weight=60.5", true);
+  xhttp.open("GET", url + "?patient_id="+sessionStorage.patientID, true);
   xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
   xhttp.setRequestHeader('Content-type', "application/json");
   xhttp.send();
