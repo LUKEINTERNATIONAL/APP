@@ -126,6 +126,7 @@
   border-collapse: collapse;
 }
 
-tr {
+#weight-summary-table {
   height: 80px;
+  border-collapse: collapse;
 }
