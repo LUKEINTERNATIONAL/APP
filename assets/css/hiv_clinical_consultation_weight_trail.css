@@ -126,3 +126,6 @@
   border-collapse: collapse;
 }
 
+tr {
+  height: 80px;
+}

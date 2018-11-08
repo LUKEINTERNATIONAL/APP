@@ -127,19 +127,14 @@ function setValues() {
 }
 function weightSummaryTable() {
   
-  var table = "<table id='weight-summary-table'>";
-  table += "<tr><th>Previous Weight</th></tr>";
-  table += "<tr><td id='initial-weight'>&nbsp;</td></tr>";
-  table += "<tr><th>Latest Weight</th></tr>";
-  table += "<tr><td id='latest-weight'>&nbsp;</td></tr>";
-  table += "<tr><th>Weight Prercentage</th></tr>";
-  table += "<tr><td id='weight-percentage'>&nbsp;</td></tr>";
-  table += "<tr><th>Patient's age</th></tr>";
-  table += "<tr><td id='patient-age'>&nbsp;</td></tr>";
-  table += "<tr><th>Patient BMI</th></tr>";
-  table += "<tr><td id='patient-bmi'>&nbsp;</td></tr>";
-  table += "<tr><td id='patient-bmiResult' style='height: 70px;color: white;text-align: center; '>&nbsp;</td></tr>";
-
+  var table = "<table id='weight-summary-table' >";
+  table += "<tr><th>Previous Weight</th> <th id='initial-weight'>&nbsp;</th></tr>";
+  table += "<tr><th>Latest Weight</th><th id='latest-weight'>&nbsp;</th></tr>";
+  table += "<tr><th>Weight Prercentage</th><th id='weight-percentage'>&nbsp;</th></tr>";
+  table += "<tr><th>Patient's age</th><th id='patient-age'>&nbsp;</th></tr>";
+  table += "<tr><th>Patient BMI</th><th id='patient-bmi'>&nbsp;</th></tr>";
+  table += "<tr><td id='patient-bmiResult' style='height: 70px;color: white;text-align: center; ' colspan=2>&nbsp;</td></tr>";
+  
   return table;
 }
 
