@@ -1,0 +1,165 @@
+#clearButton {
+  display: none;
+}
+
+.order-table {
+    display: table;
+    width: 100%;
+}
+
+.order-table-row {
+    display: table-row;
+}
+
+.order-table-cell {
+    display: table-cell;
+    vertical-align: top;
+}
+
+.icons {
+    width: 50px;
+    height: 50px;
+}
+
+.navigation-buttons {
+  padding: 5% 0px 0px 0px;
+  /*float: left;*/
+  text-align: center;
+  margin-right: auto;
+  margin-left: auto;
+  display: block;
+  /*margin: 5px 5px 0px 10px;*/
+  border: 1px solid #5ca6c4;
+  cursor: pointer;
+  box-shadow: inset 2px -4px 2px 0px;
+  background-color: white;
+  border-radius: 7px;
+  border: solid black 3px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  -moz-box-shadow: inset 0 0 10px #000000;
+  -webkit-box-shadow: inset 0 0 10px #5ca6c4;
+  box-shadow: inset 0 0 10px #000000;
+  text-decoration: none !important;
+  font-weight: bold;
+  font-size: 14px;
+  width: 130px;
+  height: 130px;
+  background-color: #5ca6c4;
+  color: white;
+}
+
+#order-table-cell-left {
+  border-style: solid;
+  border-width: 0px 1px 0px 0px;
+  width: 140px;
+  text-align: center;
+  height: 77vh;
+}
+
+.result-table {
+  width: 99%;
+  border-collapse: collapse;
+  margin-left: 5px;
+  margin-right: 10px;
+}
+
+.result-table th {
+  background-color: lightgray;
+  text-align: center;
+}
+
+#test-names {
+  text-align: left;
+  margin-left: 5px;
+  width: 30%;
+}
+
+#lab-results {
+  width: 20%;
+}
+
+
+
+
+.enter-results-table {
+  display: table;
+  width: 100%;
+}
+
+.enter-results-table-row {
+  display: table-row;
+}
+
+.enter-results-table-cell {
+  display: table-cell;
+}
+
+#enter-results-table-cell-left {
+  width: 48%;
+  float: left;
+  height: 77vh;
+  border-style: solid;
+  border-width: 0px 1px 0px 0px;
+}
+
+.row-odd {
+  background-color: #ddd;
+}
+
+.row-even {
+  background-color: #eee;
+}
+
+.list-selected {
+  background-color: lightblue;
+}
+
+.test-selection {
+  margin-right: 10px;
+  margin-left: -30px;
+}
+
+.available-tests , .available-tests-order {
+  color: black;
+  list-style: none;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  font-family: "Nimbus Sans L","Arial Narrow",sans-serif;
+  font-size: 2.2em;
+}
+
+#input-box-result {
+  width: 92%;
+  font-family: "Nimbus Sans L","Arial Narrow",sans-serif;
+  font-size: 2.2em;
+  padding-left: 5px;
+  text-align: center;
+}
+
+#enter-results-keypad {
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+.specialKeys-keypad {
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+.test-table-selection {
+  width: 99%;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+
+
+
+
+

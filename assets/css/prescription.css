@@ -1,0 +1,399 @@
+
+body {
+  color: black;
+}
+
+.regimen-container {
+  display: table;
+  width: 100%;
+  border-collapse: separate;
+}
+
+.regimen-container-row {
+  display: table-row;
+}
+
+.regimen-container-cell {
+  display: table-cell;
+  width: 45%;
+  height: 590px;
+}
+
+.regimen-tables {
+  width: 100%;
+  border-collapse: separate;
+  margin: 5px;
+  border-spacing: 20px;
+  color: black;
+}
+
+.regimen-names {
+  border-style: solid;
+  border-width: 1px;
+  text-align: center;
+  line-height: 20px;
+  height: 50px;
+
+  padding: 10px;
+  box-shadow: 5px 10px #888888;
+}
+
+.assessmentTable {
+  display: table;
+  width: 100%;
+}
+
+.assessmentTableRow {
+  display: table-row;
+}
+
+.assessmentTableCell {
+  display: table-cell;
+  width: 48%;
+}
+
+#assessmentTable-cell-left {
+  float: left;
+  width: 48%;
+}
+
+#assessmentTable-cell-right {
+  float: right;
+  width: 46%;
+}
+
+#selected-medication {
+  width: 99%;
+  margin: 15px 5px 0px 5px;
+  border-collapse: collapse;
+  color: black;
+  font-size: 1.3em;
+}
+
+#selected-medication th {
+  text-align: center;
+  border-style: solid;
+  border-width: 1px 1px 1px 1px;
+}
+
+#next-interval-table-left {
+  float: left;
+  width: 45%;
+}
+
+#next-interval-table-right {
+  float: right;
+  width: 54%;
+
+  height: 90%;
+  border-style: solid;
+  background-color: #fff;
+  border: 2px solid #ccf;
+  border-radius: 10px;
+}
+
+#intervals-table {
+  width: 100%;
+  margin: 5px;
+  color: black;
+  border-collapse: separate;
+  margin: 5px;
+  border-spacing: 20px;
+
+}
+
+.interval-buttons {
+  border-style: solid;
+  border-width: 1px;
+  text-align: center;
+  line-height: 10px;
+  height: 50px;
+  padding: 10px;
+  box-shadow: 5px 10px #888888;
+}
+
+#interval-info-table {
+  width: 100%;
+  color: black;
+  border-collapse: separate;
+  margin: 5px;
+  border-spacing: 20px;
+}
+
+#interval-info-table th, #interval-info-table td {
+  text-align: left;
+  margin-left: 5px;
+  border-style: solid;
+  border-width: 0px 0px 1px 0px;
+}
+
+.separator-rows {
+  border-width: 0px;
+  background-color: darkgrey;
+}
+
+#selected-medication-tbody td {
+  border-style: solid;
+  border-width: 1px;
+}
+
+.med-names {
+  margin-left: 5px;
+}
+
+.numbers {
+  text-align: center;
+}
+
+.adult-category {
+  background-color: #F8EA98;
+  color: black;
+}
+
+.peads-category {
+  background-color: #E2BED6;
+  color: black;
+}
+
+.pack-sizes {
+  float: right;
+  padding-right: 5px;
+}
+
+.custom-regimens {
+  display: table;
+  width: 100%;
+}
+
+.custom-regimens-row {
+  display: table-row;
+}
+
+.custom-regimens-cell {
+  display: table-cell;
+  border-style: solid;
+  border-width: 1px;
+  text-align: center;
+  background-color: #707070;
+  color: #FFFFFF;
+  text-transform: uppercase;
+  height: 70px;
+  margin: auto;
+  padding: 10px;
+  vertical-align: middle;
+}
+
+.controllers-div {
+  display: table;
+  width: 98%;
+  margin: 5px;
+  height: 85%;
+  padding: 5px;
+}
+
+.medication-search {
+  width: 100%;
+  height: 100%;
+}
+
+#keayboard-td {
+  text-align: -moz-center;
+}
+
+.search-results-keyboard {
+  display: table;
+  width: 60%;
+  border-style: solid;
+  border-width: 1px;
+  border-radius: 10px;
+}
+
+.search-results-keyboard-row {
+  display: table-row;
+}
+
+.search-results-keyboard-cell {
+  display: table-cell;
+}
+
+.selected-bar {
+  background-color: #bfff00;
+  color: #000000;
+}
+
+
+.keyboard-buttons {
+  float: left;
+  text-align: center;
+  margin-right: auto;
+  margin-left: auto;
+  display: block;
+  margin: 5px;
+  border: 1px solid #5ca6c4;
+  cursor: pointer;
+  /*box-shadow: inset 2px -4px 2px 0px;*/
+  background-color: white;
+  border-radius: 7px;
+  border: solid black 3px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  border: 1px solid #7eb9d0;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  font-size: 23px;
+  font-family: arial, helvetica, sans-serif;
+  padding: 15px 10px 10px 10px;
+  text-decoration: none;
+  display: inline-block;
+  text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.3);
+  font-weight: bold;
+  color: #FFFFFF;
+  background-color: #a7cfdf;
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#a7cfdf), to(#23538a));
+  background-image: -webkit-linear-gradient(top, #a7cfdf, #23538a);
+  background-image: -moz-linear-gradient(top, #a7cfdf, #23538a);
+  background-image: -ms-linear-gradient(top, #a7cfdf, #23538a);
+  background-image: -o-linear-gradient(top, #a7cfdf, #23538a);
+  background-image: linear-gradient(to bottom, #a7cfdf, #23538a);
+  filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr=#a7cfdf, endColorstr=#23538a);
+  width: 75px;
+  height: 65px;
+  text-align: center;
+    
+}
+
+#selected-results-td {
+  width: 46%;
+  background-color: #fff;
+  border: 2px solid #ccf;
+  border-radius: 10px;
+  vertical-align: top;
+}
+
+#selected-results {
+  height: 200px;
+  overflow: auto;
+}
+
+#search-results {
+  height: 200px;
+  overflow: auto;
+}
+
+#search-results-td {
+  height: 50%;
+  width: 46%;
+  background-color: #fff;
+  border: 2px solid #ccf;
+  border-radius: 10px;
+}
+
+.results-list {
+  font-size: 28px;
+  color: black;
+  list-style: none;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  font-family: "Nimbus Sans L","Arial Narrow",sans-serif;
+}
+
+.icons {
+  width: 30px;
+  height: 30px;
+}
+
+.dosage-container-row {
+  display: table-row;
+}
+
+.dosage-container-cell {
+  display: table-cell;
+}
+
+#dosage-container-cell-right {
+  vertical-align: top;
+  width: 43%;
+  text-align: -moz-center;
+  /*padding: 5px 5px 0px 22px;*/
+}
+
+#dosage-container-cell-left {
+  width: 70%;
+  height: 89%;
+  background-color: #fff;
+  border: 2px solid #ccf;
+  border-radius: 10px;
+  vertical-align: top;
+}
+
+#keypad-table {
+  width: 100%;
+}
+
+.dosage-inputs {
+  width: 80px;
+  height: 55px;
+}
+
+.text-inputs-tds {
+  text-align: center;
+}
+
+.keypad-buttons {
+  padding: 20% 0px 0px 0px;
+  float: left;
+  text-align: center;
+  margin-right: auto;
+  margin-left: auto;
+  display: block;
+  margin: 5px;
+  border: 1px solid #5ca6c4;
+  cursor: pointer;
+  /*box-shadow: inset 2px -4px 2px 0px;*/
+  background-color: white;
+  border-radius: 7px;
+  border: solid black 3px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  border: 1px solid #7eb9d0;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  font-size: 23px;
+  font-family: arial, helvetica, sans-serif;
+  padding: 10px 10px 10px 10px;
+  text-decoration: none;
+  display: inline-block;
+  text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.3);
+  font-weight: bold;
+  color: #FFFFFF;
+  background-color: #a7cfdf;
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#a7cfdf), to(#23538a));
+  background-image: -webkit-linear-gradient(top, #a7cfdf, #23538a);
+  background-image: -moz-linear-gradient(top, #a7cfdf, #23538a);
+  background-image: -ms-linear-gradient(top, #a7cfdf, #23538a);
+  background-image: -o-linear-gradient(top, #a7cfdf, #23538a);
+  background-image: linear-gradient(to bottom, #a7cfdf, #23538a);
+  filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr=#a7cfdf, endColorstr=#23538a);
+
+  text-align: center;
+  width: 75px;
+  height: 65px;
+
+}
+
+#keypad-td {
+  text-align: -moz-center;
+}
+
+.dosage-inputs {
+  text-align: center;
+  font-size: 1.3em;
+  font-weight: bold;
+}
+
