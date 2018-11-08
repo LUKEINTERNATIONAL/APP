@@ -90,7 +90,7 @@ function setValues() {
   if (weight < sessionStorage.previousWeight) {
     var decrease = sessionStorage.previousWeight - weight;
     var weightPercentage = (decrease/sessionStorage.previousWeight)*100;
-      document.getElementById('weight-percentage').innerHTML += Math.round(weightPercentage) + "% decrease";
+      document.getElementById('weight-percentage').innerHTML += Math.round(weightPercentage) + "% <img src='/assets/images/drop-down-arrow.svg' height='50px' width='50px'> </img>";
     
     sessionStorage.setItem("weightLoss", Math.round(weightPercentage));
   }
@@ -101,7 +101,7 @@ function setValues() {
       weightPercentage = weightPercentage * -1;
     }
     if (sessionStorage.previousWeight != 0) {
-    document.getElementById('weight-percentage').innerHTML += Math.round(weightPercentage) + "% increase";
+    document.getElementById('weight-percentage').innerHTML += Math.round(weightPercentage) + "% <img src='/assets/images/drop-up-arrow.svg' height='50px' width='50px'> </img>";
     }
   }
   var gender;
@@ -130,7 +130,7 @@ function weightSummaryTable() {
   var table = "<table id='weight-summary-table' >";
   table += "<tr><th>Previous Weight</th> <th id='initial-weight'>&nbsp;</th></tr>";
   table += "<tr><th>Latest Weight</th><th id='latest-weight'>&nbsp;</th></tr>";
-  table += "<tr><th>Weight Prercentage</th><th id='weight-percentage'>&nbsp;</th></tr>";
+  table += "<tr><th>Weight change</th><th id='weight-percentage'>&nbsp;</th></tr>";
   table += "<tr><th>Patient's age</th><th id='patient-age'>&nbsp;</th></tr>";
   table += "<tr><th>Patient BMI</th><th id='patient-bmi'>&nbsp;</th></tr>";
   table += "<tr><td id='patient-bmiResult' style='height: 70px;color: white;text-align: center; ' colspan=2>&nbsp;</td></tr>";
