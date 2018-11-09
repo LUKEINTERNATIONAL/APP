@@ -425,7 +425,12 @@ function validateResults(testName, value) {
     var cragRegex = /^(positive|negative)$/;
     if(value.toLowerCase().match(cragRegex) != null) {
       labResultsHash[testName] = value;
-      showMessage("Saved");
+      if(value.toLowerCase() === "negative") {
+        showMessage("Do other investigations like CSF analysis");  
+      }else if (value.toLowerCase() === "positive") {
+        showMessage("Start patient on Cryptococcal treatment");
+      }
+      
     }else {
       showMessage("Invalid Input");
     }
@@ -435,7 +440,11 @@ function validateResults(testName, value) {
     var urineRegex = /^(positive|negative)$/;
     if(value.toLowerCase().match(urineRegex) != null) {
       labResultsHash[testName] = value;
-      showMessage("Saved");
+      if(value.toLowerCase() === "negative") {
+        showMessage("Order other tests like Sputum microscopy, Chest XRay, GenExpert");  
+      }else if (value.toLowerCase() === "positive") {
+        showMessage("Start/Refer patient for TB treatment");
+      }
     }else {
       showMessage("Invalid Input");
     }
