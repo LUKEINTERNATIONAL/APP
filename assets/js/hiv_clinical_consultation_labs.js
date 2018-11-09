@@ -233,7 +233,7 @@ function addbTests() {
   ul.setAttribute("class", "test-selection");
 
   var activities = [
-    ["Grag",23], ["Urine",22], ["CD4 count", 1231]
+    ["Crag",23], ["Urine",22], ["CD4 count", 1231]
   ];
   var even_odd;
 
@@ -371,9 +371,7 @@ function enterTestKeypadValue(e) {
       inputBox.value = null;
       inputBox.value = "Positive";
     }else if(e.innerHTML.match(/Save/i)){
-      
-      showMessage("Save");
-      labResultsHash[selected.innerHTML] = inputBox.value;
+      validateResults(selected.innerHTML, inputBox.value);
     }else{
       if(inputBox.value.match(/Positive/i) || inputBox.value.match(/Negative/i))
         return;
@@ -406,6 +404,52 @@ function isEmpty(str){
   }
 }
 
+function validateResults(testName, value) {
+  
+  if(testName === "CD4 count") {
+    var cd4Regex = /^(<|>|=)([0-9]){0,3}$/;
+    if(value.match(cd4Regex) != null) {
+      labResultsHash[testName] = value;
+      value = value.replace(/>|<|=/, "");
+      if(value < 200) {
+        showMessage("Order Urine LAM or Crag tests")  
+      }else {
+        showMessage("Saved");
+      }
+      
+    }else {
+      showMessage("Invalid Input");
+    }
+  }
+  if (testName === "Crag") {
+    var cragRegex = /^(positive|negative)$/;
+    if(value.toLowerCase().match(cragRegex) != null) {
+      labResultsHash[testName] = value;
+      if(value.toLowerCase() === "negative") {
+        showMessage("Do other investigations like CSF analysis");  
+      }else if (value.toLowerCase() === "positive") {
+        showMessage("Start patient on Cryptococcal treatment");
+      }
+      
+    }else {
+      showMessage("Invalid Input");
+    }
+  }
+
+  if(testName === "Urine") {
+    var urineRegex = /^(positive|negative)$/;
+    if(value.toLowerCase().match(urineRegex) != null) {
+      labResultsHash[testName] = value;
+      if(value.toLowerCase() === "negative") {
+        showMessage("Order other tests like Sputum microscopy, Chest XRay, GenExpert");  
+      }else if (value.toLowerCase() === "positive") {
+        showMessage("Start/Refer patient for TB treatment");
+      }
+    }else {
+      showMessage("Invalid Input");
+    }
+  }
+}
 
 function testOrders(e) {
   var id = e.id.replace("row-","");
