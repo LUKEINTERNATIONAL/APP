@@ -410,7 +410,13 @@ function validateResults(testName, value) {
     var cd4Regex = /^(<|>|=)([0-9]){0,3}$/;
     if(value.match(cd4Regex) != null) {
       labResultsHash[testName] = value;
-      showMessage("Saved");
+      value = value.replace(/>|<|=/, "");
+      if(value < 200) {
+        showMessage("Order Urine LAM or Crag tests")  
+      }else {
+        showMessage("Saved");
+      }
+      
     }else {
       showMessage("Invalid Input");
     }
