@@ -84,7 +84,7 @@ function buildResultTable() {
     var tr = document.createElement("tr");
     table.appendChild(tr);
 
-    var heads = ["Test","Order date","Test date","Results","Result given to client"];
+    var heads = ["Test","Order date","Test date","Results","Result given"];
     for(var i = 0 ; i < heads.length ; i++){
         var th = document.createElement("th");
         th.setAttribute("class","heads");
