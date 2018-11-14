@@ -8,6 +8,7 @@ var setSelectedInterval;
 
 var show_custom_regimens = false;
 
+var regimenLines = {"0A": "1", "2A": "1", "4A": "1", "5A": "1", "6A": "1", "13A": "1", "14A": "1", "15A": "1", "7A": "2", "8A": "2", "9A": "2", "10A": "2", "11A": "2", "12A": "3"};
 function buildRegimenPage() {
   var frame = document.getElementById("inputFrame" + tstCurrentPage);
   frame.style = "height: 89%; width: 96%;";
@@ -22,25 +23,46 @@ function buildRegimenPage() {
   regimenContainer.appendChild(regimenContainerRow);
 
 
-  var cells = ["left","right"];
+  var cells = ["left","centre", "right"];
   
   for(var i = 0 ; i < cells.length ; i++){
     var regimenContainerCell = document.createElement("div");
     regimenContainerCell.setAttribute("class","regimen-container-cell");
+    regimenContainerCell.style.border = "1px solid black";
     regimenContainerCell.setAttribute("id","regimen-container-" + cells[i]);
+    if (cells[i] ==  "left") {
+      regimenContainerCell.innerHTML = "<div class='headers'> First Line </div>";
+    }else if(cells[i] ==  "centre") {
+      regimenContainerCell.innerHTML = "<div class='headers'> Second Line Line </div>";
+    }else if (cells[i] ==  "right") {
+      regimenContainerCell.innerHTML = "<div class='headers'> Third Line </div>";
+    }
+    
     regimenContainerRow.appendChild(regimenContainerCell);
     createContainers(cells[i]);
   }
-
-
+ 
   loadRegimens();
 }
 
 function loadRegimens() {
-  var side = "right";
-
+  var side = "right"; 
   for(var regimen in givenRegimens){
-    side = (side == "right" ? "left" : "right");
+    
+    for (lines in regimenLines) {
+      var linear = (regimen.indexOf(lines, 0) );
+      if(linear == 0) {
+        if (regimenLines[lines] == 1) {
+          side = "left";
+        }else if (regimenLines[lines] == 2) {
+          side = "centre";
+        }else if (regimenLines[lines] == 3) {
+          side = "right";
+        }
+        
+      }
+      
+    }
     var table = document.getElementById("regimen-table-" + side);
 
     var tr = document.createElement("tr");
