@@ -1732,6 +1732,10 @@
                            tt_onLoad="__$('keyboard').style.display = 'none';buildConsultationLabPage();"
                            tt_pageStyleClass= "NoControls" helpText="Lab Results Summary" optional = "true"/>
 
+                           <input type="text" name="iac" condition="iac == true"
+                           tt_onLoad="__$('keyboard').style.display = 'none';addIACYesNo(); showCategory2('Clinic consultation');"
+                           tt_pageStyleClass= "NoControls" helpText="intensive adherence counselling" optional = "true"/>
+
                     <input type="text" name="pregnant-breastfeeding-questions" condition="patientGender == 'F'"
                            validationCode="checkPregnancyAndAge() == 'false'"
                            validationMessage="Patient (Viral Load) is 25 years old. Is she pregnant / Breastfeeding?"
