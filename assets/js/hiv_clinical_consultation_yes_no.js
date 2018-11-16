@@ -3,7 +3,21 @@ var sideEffectsLeft = [
   ["Jaundice",2],["Lipodystrophy",3],
   ["Kidney Failure",4]
 ];
+var iacLeft = [
+  ["Explained Key facts about starting ART?", 10],
+  ["Explain how to achieve optimal adherence?", 11],
+  ["Talk about ART failure and drug resistance?",12],
+  ["Tell the patient that his or viral load will be checked again in 3 months?", 13]
 
+];
+
+var iacRight = [
+  ["Identify specific problems that get in the way of good adherence", 14],
+  ["Agree on plan?", 15],
+  ["Supply medications on a monthly basis?", 16],
+  ["If Viral Load undetected- Continue current regimen?", 17]
+
+];
 var sideEffectsRight = [
   ["Psychosis",5],["Gynaecomastia",6],
   ["Anemia",7], ["Other", 8, "activateOtherSideEffects"]
@@ -13,6 +27,43 @@ function addPregBreastFeedingYesNo() {
   var tar = document.getElementById("inputFrame" + tstCurrentPage);
   var attr = 'Pregnant?, 9#Breastfeeding?,10'
   buildYesNoUI('Pregnant-Breastfeeding', attr, tar);
+  if(iac == true) {
+    var nextButton =  document.getElementById('nextButton');
+    nextButton.setAttribute('onmousedown', previousNextButton);
+  }
+  
+}
+
+function addIACYesNo() {
+  var frame   = document.getElementById("inputFrame" + tstCurrentPage);
+  var effectsLeft  = iacLeft.join(";").split(";").join("#");
+  var effectsRight = iacRight.join(";").split(";").join("#");
+
+  var iac_table = document.createElement("div");
+  iac_table.setAttribute("style","display: table;width: 100%;");
+  frame.appendChild(iac_table);
+  
+  var iac_table_row = document.createElement("div");
+  iac_table_row.setAttribute("style","display: table-row;");
+  iac_table.appendChild(iac_table_row);
+  
+  var cells = ["left","right"];
+  
+  for(var i = 0 ; i < cells.length ; i++){
+    var iac_table_cell = document.createElement("div");
+    var style = "display: table-cell; width: 44%; float:";
+    style += (i == 0 ? "left;" : "right;"); 
+    iac_table_cell.setAttribute("style",style);
+    iac_table_row.appendChild(iac_table_cell);
+    
+    if(i == 0) {   
+      buildYesNoUI('Intensive adherence councelling', effectsLeft, iac_table_cell);
+    }else{
+      buildYesNoUI('Intensive adherence councelling', effectsRight, iac_table_cell);
+    }
+
+  }
+
 }
 
 function addSideEffectsYesNo() {

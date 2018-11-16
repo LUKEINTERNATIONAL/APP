@@ -1732,6 +1732,10 @@
                            tt_onLoad="__$('keyboard').style.display = 'none';buildConsultationLabPage();"
                            tt_pageStyleClass= "NoControls" helpText="Lab Results Summary" optional = "true"/>
 
+                    <input type="text" name="iac" condition="iac == true"
+                    tt_onLoad="__$('keyboard').style.display = 'none';addIACYesNo();"
+                    tt_pageStyleClass= "NoControls" helpText="intensive adherence counselling" optional = "true"/> 
+
                     <input type="text" name="pregnant-breastfeeding-questions" condition="patientGender == 'F'"
                            validationCode="checkPregnancyAndAge() == 'false'"
                            validationMessage="Patient (Viral Load) is 25 years old. Is she pregnant / Breastfeeding?"
@@ -2051,7 +2055,7 @@
                      
                     <select allowFreeText="false" helpText="Medication to prescribe during this visit" id="med_to_prescribe" 
                     name="observations[][value_coded_or_text]" 
-                    tt_pageStyleClass="NoKeyboard" multiple="multiple" tt_onLoad="loadOptionsMed(this);">
+                    tt_pageStyleClass="NoKeyboard" multiple="multiple" tt_onLoad="loadOptionsMed(this);setFunctionForSubmittingForm();">
                       <option value="ARVs">ARVs</option>
                       <option value="CPT">CPT</option>
                       <option value="IPT">IPT</option>
