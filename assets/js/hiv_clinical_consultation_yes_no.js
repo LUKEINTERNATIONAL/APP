@@ -4,18 +4,18 @@ var sideEffectsLeft = [
   ["Kidney Failure",4]
 ];
 var iacLeft = [
-  ["Explained Key facts about starting ART?", 1],
-  ["Explain how to achieve optimal adherence?", 2],
-  ["Talk about ART failure and drug resistance?",3],
-  ["Tell the patient that his or viral load will be checked again in 3 months?", 4]
+  ["Explained Key facts about starting ART?", 10],
+  ["Explain how to achieve optimal adherence?", 11],
+  ["Talk about ART failure and drug resistance?",12],
+  ["Tell the patient that his or viral load will be checked again in 3 months?", 13]
 
 ];
 
 var iacRight = [
-  ["Identify specific problems that get in the way of good adherence", 5],
-  ["Agree on plan?", 6],
-  ["Supply medications on a monthly basis?", 7],
-  ["If Viral Load undetected- Continue current regimen?", 8]
+  ["Identify specific problems that get in the way of good adherence", 14],
+  ["Agree on plan?", 15],
+  ["Supply medications on a monthly basis?", 16],
+  ["If Viral Load undetected- Continue current regimen?", 17]
 
 ];
 var sideEffectsRight = [
@@ -27,6 +27,11 @@ function addPregBreastFeedingYesNo() {
   var tar = document.getElementById("inputFrame" + tstCurrentPage);
   var attr = 'Pregnant?, 9#Breastfeeding?,10'
   buildYesNoUI('Pregnant-Breastfeeding', attr, tar);
+  if(iac == true) {
+    var nextButton =  document.getElementById('nextButton');
+    nextButton.setAttribute('onmousedown', previousNextButton);
+  }
+  
 }
 
 function addIACYesNo() {
@@ -41,7 +46,7 @@ function addIACYesNo() {
   var iac_table_row = document.createElement("div");
   iac_table_row.setAttribute("style","display: table-row;");
   iac_table.appendChild(iac_table_row);
-   
+  
   var cells = ["left","right"];
   
   for(var i = 0 ; i < cells.length ; i++){
