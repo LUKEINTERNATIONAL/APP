@@ -1960,12 +1960,14 @@
                            tt_pageStyleClass= "NoControls"
                            helpText="Potential Side effects (select all that apply)" optional = "true"/>
 
-                    <textarea id="other_side_effects" name="other_side_effects" style="width: 98%;"
-                              helpText="Other side effects (free text)" optional = "false"
-                              tt_onUnLoad ="updateOtherSideEffect();"
-                              tt_onLoad="document.getElementById('inputFrame' + tstCurrentPage).style='width: 95.5%;'"
-                              cols="56" rows="8" condition="OtherSideEffects == true">
-                    </textarea> 
+                    <input id="other_side_effects" name="other_side_effects" style="width: 98%;"
+                            type="text"
+                            helpText="Other side effects" optional = "false"
+                            tt_onUnLoad ="updateOtherSideEffect();"
+                            tt_onLoad="document.getElementById('inputFrame' + tstCurrentPage).style='width: 95.5%;'"
+                            validationRule="^\w+((\s+|-)\w+)*$"
+                            cols="56" rows="8" condition="OtherSideEffects == true">
+                    </input> 
 
                     <select allowFreeText="false" helpText="On TB Treatment?" id="tb_treatment_question" name="observations[][value_coded_or_text]" 
                       tt_onLoad="showCategory2('Clinic consultation');" 
@@ -2049,7 +2051,7 @@
                      
                     <select allowFreeText="false" helpText="Medication to prescribe during this visit" id="med_to_prescribe" 
                     name="observations[][value_coded_or_text]" 
-                    tt_pageStyleClass="NoKeyboard" multiple="multiple" tt_onLoad="loadOptionsMed(this);">
+                    tt_pageStyleClass="NoKeyboard" multiple="multiple" tt_onLoad="loadOptionsMed(this);setFunctionForSubmittingForm();">
                       <option value="ARVs">ARVs</option>
                       <option value="CPT">CPT</option>
                       <option value="IPT">IPT</option>
