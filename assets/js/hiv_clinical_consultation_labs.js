@@ -3,7 +3,7 @@ var testOrdersHash = {};
 var apiPort = sessionStorage.apiPort;
 var apiURL = sessionStorage.apiURL;
 var patientID = sessionStorage.patientID;
-
+var iac = false;
 function buildConsultationLabPage() {
     var frame = document.getElementById("inputFrame" + tstCurrentPage);
     frame.style = "width: 96%; height: 90%; background-color: lightyellow;"
@@ -114,7 +114,6 @@ function getOrders(tbody) {
     if (this.readyState == 4) {
       if (this.status == 200) {
         var results = JSON.parse(this.responseText);
-        console.log(results);
         
         for (var x = 0; x < results.length; x++) {
           if (results[0].lab_samples[0].lab_parameters.length == 0) {
@@ -227,6 +226,21 @@ function specialKeys() {
   td.appendChild(table);
 }
 
+function showValidate(message) {
+  if (message == null) {
+    message = "is this a valid input"
+  }
+
+ 
+  messageBar.innerHTML = "";
+  messageBar.innerHTML += "<p>" + ((message.match(/^Value\s/))?(message.replace(/^Value\s/, "The value is ")):message) +
+            ". Have you conudcted intensive adherence councelling?</p><div style='display: block;'>" +
+            "<button class='button' style='float: none;' onclick='this.offsetParent.style.display=\"none\";' onmousedown='this.offsetParent.style.display=\"none\";'"+
+            "><span>Yes</span></button><button class='button' " +
+            "style='float: none; right: 3px;' onmousedown='iac=true;this.offsetParent.style.display=\"none\"; '>" +
+            "<span>No</span></button>";
+            messageBar.style.display = "block";
+}
 
 function addbTests() {
   var ul = document.createElement("ul");
@@ -258,7 +272,6 @@ function testSelection(e) {
   var even_odd;
   var inputBox = document.getElementById('input-box-result');
   inputBox.value = "";
-  console.log(e.id);
   for(var i = 0 ; i < list.length ; i++){
     even_odd = (( i & 1 ) ? "odd" : "even");
     list[i].setAttribute("class", "available-tests row-" + even_odd);
@@ -428,7 +441,10 @@ function validateResults(testName, value) {
       labResultsHash[testName] = value;
       value = value.replace(/>|<|=/, "");
       if(value > 150 && value < 1000) {
-        showMessage("Potential treatment failure. Switch to intensive Adherence Councelling");  
+        showValidate("Potential treatment failure. Switch to intensive Adherence Councelling");  
+      }else {
+        iac = false;
+        showMessage("Saved");
       }
       
     }else {
@@ -485,8 +501,6 @@ function testOrders(e) {
       break;
   }
 
-
-  console.log(test);
   if(selectedCheckBox.getAttribute("src").match(/unticked/i)){
     selectedCheckBox.setAttribute("src", "/public/touchscreentoolkit/lib/images/ticked.jpg");
     testOrdersHash[test] = "ordered";
@@ -496,5 +510,4 @@ function testOrders(e) {
     testOrdersHash[test] = "not ordered";
     e.style = "background-color: '';";
   }
-  console.log(testOrdersHash);
 }
