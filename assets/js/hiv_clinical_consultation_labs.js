@@ -233,7 +233,7 @@ function addbTests() {
   ul.setAttribute("class", "test-selection");
 
   var activities = [
-    ["Crag",23], ["Urine",22], ["CD4 count", 1231]
+    ["Crag",23], ["Urine",22], ["CD4 count", 1231], ["Viral Load", 12]
   ];
   var even_odd;
 
@@ -277,7 +277,7 @@ function buildNewOrderPage() {
   container.style = style; */
 
   var tests = [
-    ["CD4 count", 23],["Crag",12],["Urine", 34]
+    ["CD4 count", 23],["Crag",12],["Urine", 34],["Viral Load", 12]
   ];
 
   var table = document.createElement("table");
@@ -421,6 +421,21 @@ function validateResults(testName, value) {
       showMessage("Invalid Input");
     }
   }
+
+  if(testName === "Viral Load") {
+    var cd4Regex = /^(<|>|=)([0-9]){0,4}$/;
+    if(value.match(cd4Regex) != null) {
+      labResultsHash[testName] = value;
+      value = value.replace(/>|<|=/, "");
+      if(value > 150 && value < 1000) {
+        showMessage("Potential treatment failure. Switch to intensive Adherence Councelling");  
+      }
+      
+    }else {
+      showMessage("Invalid Input");
+    }
+  }
+
   if (testName === "Crag") {
     var cragRegex = /^(positive|negative)$/;
     if(value.toLowerCase().match(cragRegex) != null) {
@@ -464,6 +479,9 @@ function testOrders(e) {
       break;
     case 2: 
       test = "Urine";
+      break;
+    case 3: 
+      test = "Viral Load";
       break;
   }
 
