@@ -235,7 +235,7 @@ function showValidate(message) {
   messageBar.innerHTML = "";
   messageBar.innerHTML += "<p>" + ((message.match(/^Value\s/))?(message.replace(/^Value\s/, "The value is ")):message) +
             ". Have you conudcted intensive adherence councelling?</p><div style='display: block;'>" +
-            "<button class='button' style='float: none;' onclick='this.offsetParent.style.display=\"none\";' onmousedown='this.offsetParent.style.display=\"none\";'"+
+            "<button class='button' style='float: none;' onclick='iac=false;this.offsetParent.style.display=\"none\";' onmousedown='iac=false;this.offsetParent.style.display=\"none\";'"+
             "><span>Yes</span></button><button class='button' " +
             "style='float: none; right: 3px;' onmousedown='iac=true;this.offsetParent.style.display=\"none\"; '>" +
             "<span>No</span></button>";
