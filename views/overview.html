@@ -35,7 +35,7 @@
   display: table-cell;
 }
 
-#pie-chart {
+#chart-column {
   width: 40%;
   height: 315px;
 }
@@ -64,7 +64,7 @@
 <div class="overview-main-container">
   <div class="overview-main-container-row">
   
-    <div class="overview-main-container-cell" id="pie-chart">
+    <div class="overview-main-container-cell" id="chart-column">
     </div>
 
     <div class="overview-main-container-cell" style="width: 30%;">
@@ -90,44 +90,33 @@
 
 function buildPieChart() {
 // Build the chart
-Highcharts.chart('pie-chart', {
-    chart: {
-        type: 'pie',
-        options3d: {
-            enabled: true,
-            alpha: 55,
-            beta: 0
-        }
-    },
-    title: {
-        text: 'Encounters created: January, 2018'
-    },
-    tooltip: {
-        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-    },
-    credits: {
-        enabled: false
-    },
-    exporting: {
-        enabled: false
-    },
-    plotOptions: {
-        pie: {
-            allowPointSelect: true,
-            cursor: 'pointer',
-            depth: 35,
-            dataLabels: {
-                enabled: true,
-                format: '{point.name}'
-            }
-        }
-    },
-    series: [{
-        type: 'pie',
-        name: 'Encounters',
-        data: encounters_created
-    }]
-});
+
+  Highcharts.chart('chart-column', {
+     chart: {
+       type: 'column'
+     },
+      title: {
+        text: 'Complete/Incomplete visits: last five days'
+      },
+      credits: {
+          enabled: false
+      },
+      exporting: {
+          enabled: false
+      },
+      xAxis: {
+          categories: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+      },
+
+      series: [{
+          name: 'Total visits',
+          data: [29, 71, 106, 129, 144, 176, 135]
+      }, {
+          name: 'Total incomplete visits',
+          data: [0, 1, 10, 12, 0, 36, 0],
+          lineWidth: 2
+      }]
+  });
 
 }
 
