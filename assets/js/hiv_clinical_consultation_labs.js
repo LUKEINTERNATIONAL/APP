@@ -324,6 +324,68 @@ function buildNewOrderPage() {
 
 }
 
+function newOrders() {
+  var rightContainer = document.getElementById("order-table-cell-right");
+  var modal = document.createElement("div");
+  rightContainer.appendChild(modal);
+  modal.id = "myModal";
+  modal.innerHTML= "heloo";
+  modal.setAttribute("class", "modal");
+  modal.innerHTML = '  <div class="modal-content">'+
+      '<span class="close-modal">&times;</span>'+
+      '<div id="tests-div"><input class="tests-input" type="text" id="lab-tests" placeholder="lab-tests" style=""/> <ul id="tests-list"> <ul><div>'+
+  '</div>';
+  modal.style.display = "block";
+  showKBD('NEXT');
+var span = document.getElementsByClassName("close-modal")[0];
+
+span.onclick = function() {
+    modal.style.display = "none";
+}
+
+window.onclick = function(event) {
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
+}
+
+}
+
+function loadTests(string){
+  var url = 'http://'+apiURL+':'+apiPort+'/api/v1/programs/1/lab_tests/types/?search_string='+string;
+  var req = new XMLHttpRequest();
+  req.onreadystatechange = function(){
+    if (this.readyState == 4) {
+      if (this.status == 200) {
+        var results = JSON.parse(this.responseText);
+        var list = document.getElementById("tests-list");
+        if (list.innerHTML != null) {
+          list.innerHTML = null;
+        }else {
+
+        }
+        for(var x = 0; x < results.length; x ++){ 
+          list.innerHTML += "<li onmousedown='enterTest(this);' class='test-list-items' panel_id='"+results[x].Panel_ID+"'>" + results[x].TestName + "</li>";
+        }
+      }
+    }
+  };
+  try {
+    req.open('GET', url, true);
+    req.setRequestHeader('Authorization',sessionStorage.getItem('authorization'));
+    req.send(null);
+  } catch (e) {
+
+  }
+}
+
+function enterTest(element) {
+  var inputBox = document.getElementById("lab-tests");
+  console.log(element);
+  inputBox.value = element.innerHTML;
+}
+
+
 function buildPage(e) {
   
   var cells = document.getElementsByClassName("navigation-buttons");
@@ -340,7 +402,8 @@ function buildPage(e) {
   }else if(e.getAttribute("type") == "results"){
     buildResultTable();
   }else if(e.getAttribute("type") == "order"){
-    buildNewOrderPage();
+    newOrders();
+    // buildNewOrderPage();
   }
 
 }
@@ -510,4 +573,32 @@ function testOrders(e) {
     testOrdersHash[test] = "not ordered";
     e.style = "background-color: '';";
   }
+}
+
+function activateModal() {
+  // Get the modal
+var modal = document.getElementById('myModal');
+
+// Get the button that opens the modal
+var btn = document.getElementById("myBtn");
+
+// Get the <span> element that closes the modal
+var span = document.getElementsByClassName("close")[0];
+
+// When the user clicks on the button, open the modal 
+btn.onclick = function() {
+    modal.style.display = "block";
+}
+
+// When the user clicks on <span> (x), close the modal
+span.onclick = function() {
+    modal.style.display = "none";
+}
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
+}
 }
