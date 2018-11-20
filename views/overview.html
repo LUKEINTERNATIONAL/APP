@@ -88,7 +88,7 @@
 
 <script type="text/javascript">
 
-function buildPieChart() {
+function buildChart() {
 // Build the chart
 
   Highcharts.chart('chart-column', {
@@ -151,11 +151,11 @@ function renderStats(stats) {
 
     var td = document.createElement("td");
     td.setAttribute("class","numbers");
-    td.innerHTML = stats[encounter_type_id].F;
+    td.innerHTML = stats[encounter_type_id].F.toLocaleString();
     tr.appendChild(td);
 
     var td = document.createElement("td");
-    td.innerHTML = stats[encounter_type_id].M;
+    td.innerHTML = stats[encounter_type_id].M.toLocaleString();
     td.setAttribute("class","numbers");
     tr.appendChild(td);
 
@@ -177,7 +177,7 @@ function renderStats(stats) {
     counter++;
   }
 
-  buildPieChart();
+  buildChart();
 }
 
 </script>
