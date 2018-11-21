@@ -71,6 +71,8 @@
         
         <script>
   var tt_cancel_destination = "/clinic" // /reports"
+
+
 </script>
 <style>
   .inputFrameClass{
@@ -80,10 +82,14 @@
 	height:550px ! important;
   }
 </style>
-   <form id='quarter' action="revised_cohort" method='post'>
+   <form id='quarter' action="revised_cohort.html" method="get">
  
-  <select helpText="Select Quarter" id="quarter" name="quarter" tt_onLoad="__$('keyboard').style.display = 'none'" tt_onUnLoad="__checkSelected();"><option value=""></option>
-    <option value="Select date range">Select date range</option>
+  <select helpText="Select Quarter" id="quarter" 
+    name="quarter" tt_onLoad="__$('keyboard').style.display = 'none';" 
+    tt_onUnLoad="__checkSelected();">
+    
+    <option value=""></option>
+    <!-- <option value="Select date range">Select date range</option> -->
     <option value="Q4 2018">Q4 2018</option>
     <option value="Q3 2018">Q3 2018</option>
     <option value="Q2 2018">Q2 2018</option>
