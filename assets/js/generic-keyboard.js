@@ -1,7 +1,7 @@
-function hideKeyboard() {
+function hideKBD() {
     
     try {
-      var keyboard = document.getElementById("kebd");
+      var keyboard = document.getElementById("kbd");
       var main = document.getElementsByClassName("modal-content")[0];
       main.removeChild(keyboard);
     }catch(i) {
@@ -71,7 +71,7 @@ function hideKeyboard() {
       inputBox.value += "+";
     }else{
         inputBox.value += e.innerHTML;
-        loadTests(inputBox.value);
+        loadTests("lab_tests/types/?search_string="+inputBox.value );
       }
 
     }catch(x) { }
