@@ -4,6 +4,7 @@ var apiPort = sessionStorage.apiPort;
 var apiURL = sessionStorage.apiURL;
 var patientID = sessionStorage.patientID;
 var iac = false;
+
 function buildConsultationLabPage() {
     var frame = document.getElementById("inputFrame" + tstCurrentPage);
     frame.style = "width: 96%; height: 90%; background-color: lightyellow;"
@@ -424,7 +425,31 @@ function enterTest(element) {
 }
 
 function showDates() {
-  document.getElementById("tests-list").innerHTML = "";
+  var d = new Date();
+  document.getElementById("tests-list").innerHTML = '<div id="dateselector" class="dateselector">'+ 			
+  '<table><tbody> <tr> <td> <div style="display: inline;"> <button id="dateselector_nextDay" onmousedown="addDay();"><span>+</span></button> '+
+  '<input id="dateselector_day" type="text" value=""> <button id="dateselector_preDay" onmousedown="minusDay();"><span>-</span></button> </div> '+
+  '</td><td> <div style="display: inline;"> <button id="dateselector_nextMonth" onmousedown="addMonth();"><span>+</span></button>  '+
+  '<input id="dateselector_month" type="text" value=""> <button id="dateselector_preMonth" onmousedown="minusMonth();"><span>-</span></button> '+
+  '</div> </td><td> <div style="display: inline;"> <button id="dateselector_nextYear" onmousedown="addYear();"><span>+</span></button> '+
+  '<input id="dateselector_year" type="text" value=""> <button id="dateselector_preYear" onmousedown="minusYear();"><span>-</span></button> '+
+  '</div> </td><td> <button id="today" class="red"  style="width: 150px;"><span onmousedown="enterDate(this)">Today</span></button>'+ 			
+  '<!--button id="num" onmousedown="updateKeyColor(this);press(this.id);" style="width: 150px;"><span>Num</span></button-->'+
+  '<button id="Unknown" style="width: 150px;"><span onmousedown="enterDate(this)">Unknown</span></button></td></tr></tbody></table></div>';
+  setDate(d);
+}
+
+function setDate(givenDate) {
+  var d = new Date(givenDate);
+  var month = d.getMonth();
+  var day = d.getDay();
+  var year = d.getFullYear();
+  var monthInput = document.getElementById("dateselector_month");
+  var dayInput = document.getElementById("dateselector_day");
+  var yearInput = document.getElementById("dateselector_year");
+  monthInput.setAttribute("value", moment(month).format("MMM"));
+  dayInput.setAttribute("value", day);
+  yearInput.setAttribute("value", year);
 }
 function buildPage(e) {
   
@@ -446,6 +471,22 @@ function buildPage(e) {
     // buildNewOrderPage();
   }
 
+}
+
+function enterDate (e) {
+    var inputBox = document.getElementById("lab-tests");
+    if(e.innerHTML.match(/unknown/i)){
+      inputBox.value = "unknown";
+    }else if(e.innerHTML.match(/today/i)){
+      var d = new Date();
+      var month = d.getMonth();
+      var day = d.getDay();
+      var year = d.getFullYear();
+      inputBox.value = day +"-"+month+"-"+year;
+    }
+    else{
+        inputBox.value += e.innerHTML;
+    }
 }
 
 function checkIfTestSelected() {
