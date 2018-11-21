@@ -333,7 +333,7 @@ function newOrders() {
   modal.setAttribute("class", "modal");
   modal.innerHTML = '  <div class="modal-content">'+
       '<span class="close-modal">&times;</span>'+
-      '<div id="tests-div"><input class="tests-input" type="text" id="lab-tests" placeholder="lab-tests" style=""/> <ul id="tests-list"> <ul><div>'+
+      '<div id="tests-div"><input class="tests-input" type="text" id="lab-tests" placeholder="lab-tests" style=""/> <ul id="tests-list"> <ul></div> <span id="modal-next" onclick="showDates();"> next </span>'+
   '</div>';
   modal.style.display = "block";
   showKBD('NEXT');
@@ -351,8 +351,8 @@ window.onclick = function(event) {
 
 }
 
-function loadTests(string){
-  var url = 'http://'+apiURL+':'+apiPort+'/api/v1/programs/1/lab_tests/types/?search_string='+string;
+function loadTests(string, checks){
+  var url = 'http://'+apiURL+':'+apiPort+'/api/v1/programs/1/'+string;
   var req = new XMLHttpRequest();
   req.onreadystatechange = function(){
     if (this.readyState == 4) {
@@ -364,8 +364,19 @@ function loadTests(string){
         }else {
 
         }
-        for(var x = 0; x < results.length; x ++){ 
-          list.innerHTML += "<li onmousedown='enterTest(this);' class='test-list-items' panel_id='"+results[x].Panel_ID+"'>" + results[x].TestName + "</li>";
+        if (checks == true) {
+          var table = document.createElement("table");
+          table.id = "test-select-table";
+          list.appendChild(table);
+          for(var x = 0; x < results.length; x ++){ 
+            table.innerHTML += '<tr> <td> <img src="/public/touchscreentoolkit/lib/images/unticked.jpg" onclick="tick(this);" ticked="unticked" testID="'+results[x].ID+'"> </td> <td> '+results[x].TestName+'</td> </tr>'; 
+            testOrdersHash[results[x].ID] = "not ordered";
+          }
+          
+        }else {
+          for(var x = 0; x < results.length; x ++){ 
+            list.innerHTML += "<li onmousedown='enterTest(this);' class='test-list-items' panel_id='"+results[x].Panel_ID+"'>" + results[x].TestName + "</li>";
+          }
         }
       }
     }
@@ -379,13 +390,42 @@ function loadTests(string){
   }
 }
 
-function enterTest(element) {
-  var inputBox = document.getElementById("lab-tests");
-  console.log(element);
-  inputBox.value = element.innerHTML;
+function tick(element) {
+  if(element.getAttribute("ticked") === "ticked") {
+    element.src = "/public/touchscreentoolkit/lib/images/unticked.jpg";
+    element.setAttribute("ticked", "unticked");
+    testOrdersHash[(element.getAttribute("testID"))] = "not ordered";
+  }else {
+    testOrdersHash[(element.getAttribute("testID"))] = "ordered"; 
+    element.setAttribute("ticked", "ticked");
+    element.src = "/public/touchscreentoolkit/lib/images/ticked.jpg";
+  }
 }
 
+function enterTest(element) {
+  loadTests("lab_tests/types?panel_id="+element.getAttribute("panel_id"), true);
+  var inputBox = document.getElementById("lab-tests");
+  inputBox.value = "test selected = " + element.innerHTML;
+  hideKBD();
+  document.getElementById("tests-list").style.height = "100%";
+  document.getElementById("tests-div").style.height = "70%";
+  
+}
 
+function enterTest(element) {
+  loadTests("lab_tests/types?panel_id="+element.getAttribute("panel_id"), true);
+  var inputBox = document.getElementById("lab-tests");
+  inputBox.value = "test selected = " + element.innerHTML;
+  document.getElementById("modal-next").style.visibility ="visible";
+  hideKBD();
+  document.getElementById("tests-list").style.height = "100%";
+  document.getElementById("tests-div").style.height = "70%";
+  
+}
+
+function showDates() {
+  document.getElementById("tests-list").innerHTML = "";
+}
 function buildPage(e) {
   
   var cells = document.getElementsByClassName("navigation-buttons");
