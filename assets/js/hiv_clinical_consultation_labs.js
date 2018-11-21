@@ -3,7 +3,7 @@ var testOrdersHash = {};
 var apiPort = sessionStorage.apiPort;
 var apiURL = sessionStorage.apiURL;
 var patientID = sessionStorage.patientID;
-
+var iac = false;
 function buildConsultationLabPage() {
     var frame = document.getElementById("inputFrame" + tstCurrentPage);
     frame.style = "width: 96%; height: 90%; background-color: lightyellow;"
@@ -114,7 +114,6 @@ function getOrders(tbody) {
     if (this.readyState == 4) {
       if (this.status == 200) {
         var results = JSON.parse(this.responseText);
-        console.log(results);
         
         for (var x = 0; x < results.length; x++) {
           if (results[0].lab_samples[0].lab_parameters.length == 0) {
@@ -227,13 +226,28 @@ function specialKeys() {
   td.appendChild(table);
 }
 
+function showValidate(message) {
+  if (message == null) {
+    message = "is this a valid input"
+  }
+
+ 
+  messageBar.innerHTML = "";
+  messageBar.innerHTML += "<p>" + ((message.match(/^Value\s/))?(message.replace(/^Value\s/, "The value is ")):message) +
+            ". Have you conudcted intensive adherence councelling?</p><div style='display: block;'>" +
+            "<button class='button' style='float: none;' onclick='iac=false;this.offsetParent.style.display=\"none\";' onmousedown='iac=false;this.offsetParent.style.display=\"none\";'"+
+            "><span>Yes</span></button><button class='button' " +
+            "style='float: none; right: 3px;' onmousedown='iac=true;this.offsetParent.style.display=\"none\"; '>" +
+            "<span>No</span></button>";
+            messageBar.style.display = "block";
+}
 
 function addbTests() {
   var ul = document.createElement("ul");
   ul.setAttribute("class", "test-selection");
 
   var activities = [
-    ["Crag",23], ["Urine",22], ["CD4 count", 1231]
+    ["Crag",23], ["Urine",22], ["CD4 count", 1231], ["Viral Load", 12]
   ];
   var even_odd;
 
@@ -258,7 +272,6 @@ function testSelection(e) {
   var even_odd;
   var inputBox = document.getElementById('input-box-result');
   inputBox.value = "";
-  console.log(e.id);
   for(var i = 0 ; i < list.length ; i++){
     even_odd = (( i & 1 ) ? "odd" : "even");
     list[i].setAttribute("class", "available-tests row-" + even_odd);
@@ -277,7 +290,7 @@ function buildNewOrderPage() {
   container.style = style; */
 
   var tests = [
-    ["CD4 count", 23],["Crag",12],["Urine", 34]
+    ["CD4 count", 23],["Crag",12],["Urine", 34],["Viral Load", 12]
   ];
 
   var table = document.createElement("table");
@@ -311,6 +324,108 @@ function buildNewOrderPage() {
 
 }
 
+function newOrders() {
+  var rightContainer = document.getElementById("order-table-cell-right");
+  var modal = document.createElement("div");
+  rightContainer.appendChild(modal);
+  modal.id = "myModal";
+  modal.innerHTML= "heloo";
+  modal.setAttribute("class", "modal");
+  modal.innerHTML = '  <div class="modal-content">'+
+      '<span class="close-modal">&times;</span>'+
+      '<div id="tests-div"><input class="tests-input" type="text" id="lab-tests" placeholder="lab-tests" style=""/> <ul id="tests-list"> <ul></div> <span id="modal-next" onclick="showDates();"> next </span>'+
+  '</div>';
+  modal.style.display = "block";
+  showKBD('NEXT');
+var span = document.getElementsByClassName("close-modal")[0];
+
+span.onclick = function() {
+    modal.style.display = "none";
+}
+
+window.onclick = function(event) {
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
+}
+
+}
+
+function loadTests(string, checks){
+  var url = 'http://'+apiURL+':'+apiPort+'/api/v1/programs/1/'+string;
+  var req = new XMLHttpRequest();
+  req.onreadystatechange = function(){
+    if (this.readyState == 4) {
+      if (this.status == 200) {
+        var results = JSON.parse(this.responseText);
+        var list = document.getElementById("tests-list");
+        if (list.innerHTML != null) {
+          list.innerHTML = null;
+        }else {
+
+        }
+        if (checks == true) {
+          var table = document.createElement("table");
+          table.id = "test-select-table";
+          list.appendChild(table);
+          for(var x = 0; x < results.length; x ++){ 
+            table.innerHTML += '<tr> <td> <img src="/public/touchscreentoolkit/lib/images/unticked.jpg" onclick="tick(this);" ticked="unticked" testID="'+results[x].ID+'"> </td> <td> '+results[x].TestName+'</td> </tr>'; 
+            testOrdersHash[results[x].ID] = "not ordered";
+          }
+          
+        }else {
+          for(var x = 0; x < results.length; x ++){ 
+            list.innerHTML += "<li onmousedown='enterTest(this);' class='test-list-items' panel_id='"+results[x].Panel_ID+"'>" + results[x].TestName + "</li>";
+          }
+        }
+      }
+    }
+  };
+  try {
+    req.open('GET', url, true);
+    req.setRequestHeader('Authorization',sessionStorage.getItem('authorization'));
+    req.send(null);
+  } catch (e) {
+
+  }
+}
+
+function tick(element) {
+  if(element.getAttribute("ticked") === "ticked") {
+    element.src = "/public/touchscreentoolkit/lib/images/unticked.jpg";
+    element.setAttribute("ticked", "unticked");
+    testOrdersHash[(element.getAttribute("testID"))] = "not ordered";
+  }else {
+    testOrdersHash[(element.getAttribute("testID"))] = "ordered"; 
+    element.setAttribute("ticked", "ticked");
+    element.src = "/public/touchscreentoolkit/lib/images/ticked.jpg";
+  }
+}
+
+function enterTest(element) {
+  loadTests("lab_tests/types?panel_id="+element.getAttribute("panel_id"), true);
+  var inputBox = document.getElementById("lab-tests");
+  inputBox.value = "test selected = " + element.innerHTML;
+  hideKBD();
+  document.getElementById("tests-list").style.height = "100%";
+  document.getElementById("tests-div").style.height = "70%";
+  
+}
+
+function enterTest(element) {
+  loadTests("lab_tests/types?panel_id="+element.getAttribute("panel_id"), true);
+  var inputBox = document.getElementById("lab-tests");
+  inputBox.value = "test selected = " + element.innerHTML;
+  document.getElementById("modal-next").style.visibility ="visible";
+  hideKBD();
+  document.getElementById("tests-list").style.height = "100%";
+  document.getElementById("tests-div").style.height = "70%";
+  
+}
+
+function showDates() {
+  document.getElementById("tests-list").innerHTML = "";
+}
 function buildPage(e) {
   
   var cells = document.getElementsByClassName("navigation-buttons");
@@ -327,7 +442,8 @@ function buildPage(e) {
   }else if(e.getAttribute("type") == "results"){
     buildResultTable();
   }else if(e.getAttribute("type") == "order"){
-    buildNewOrderPage();
+    newOrders();
+    // buildNewOrderPage();
   }
 
 }
@@ -421,6 +537,24 @@ function validateResults(testName, value) {
       showMessage("Invalid Input");
     }
   }
+
+  if(testName === "Viral Load") {
+    var cd4Regex = /^(<|>|=)([0-9]){0,4}$/;
+    if(value.match(cd4Regex) != null) {
+      labResultsHash[testName] = value;
+      value = value.replace(/>|<|=/, "");
+      if(value > 150 && value < 1000) {
+        showValidate("Potential treatment failure. Switch to intensive Adherence Councelling");  
+      }else {
+        iac = false;
+        showMessage("Saved");
+      }
+      
+    }else {
+      showMessage("Invalid Input");
+    }
+  }
+
   if (testName === "Crag") {
     var cragRegex = /^(positive|negative)$/;
     if(value.toLowerCase().match(cragRegex) != null) {
@@ -465,10 +599,11 @@ function testOrders(e) {
     case 2: 
       test = "Urine";
       break;
+    case 3: 
+      test = "Viral Load";
+      break;
   }
 
-
-  console.log(test);
   if(selectedCheckBox.getAttribute("src").match(/unticked/i)){
     selectedCheckBox.setAttribute("src", "/public/touchscreentoolkit/lib/images/ticked.jpg");
     testOrdersHash[test] = "ordered";
@@ -478,5 +613,32 @@ function testOrders(e) {
     testOrdersHash[test] = "not ordered";
     e.style = "background-color: '';";
   }
-  console.log(testOrdersHash);
+}
+
+function activateModal() {
+  // Get the modal
+var modal = document.getElementById('myModal');
+
+// Get the button that opens the modal
+var btn = document.getElementById("myBtn");
+
+// Get the <span> element that closes the modal
+var span = document.getElementsByClassName("close")[0];
+
+// When the user clicks on the button, open the modal 
+btn.onclick = function() {
+    modal.style.display = "block";
+}
+
+// When the user clicks on <span> (x), close the modal
+span.onclick = function() {
+    modal.style.display = "none";
+}
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
+}
 }

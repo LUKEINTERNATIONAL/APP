@@ -28,6 +28,7 @@
         <script type="text/javascript" src="/apps/ART/assets/js/hiv_clinical_consultation_yes_no.js"></script>
 
         <link rel="stylesheet" href="/apps/ART/assets/css/cd4_kbd.css" type="text/css">
+        <link rel="stylesheet" href="/apps/ART/assets/css/generic-keyboard.css" type="text/css">
         <script type="text/javascript" src="/apps/ART/assets/js/cd4_kbd.js"></script>
         
 
@@ -43,6 +44,7 @@
 
         <script type="text/javascript" src="/assets/js/datatables/jquery.dataTables.min.js"></script>
         <script type="text/javascript" src="/assets/js/datatables/dataTables.fixedHeader.min.js"></script>
+        <script type="text/javascript" src="/apps/ART/assets/js/generic-keyboard.js"></script>
 
 
         <script type="text/javascript">
@@ -392,6 +394,73 @@
             .disabled-li{
                 text-decoration: line-through;
                 color: gray !important;
+            }
+
+            .modal {
+                display: none; /* Hidden by default */
+                position: fixed; /* Stay in place */
+                z-index: 1; /* Sit on top */
+                left: 0;
+                top: 0;
+                width: 100%; /* Full width */
+                height: 100%; /* Full height */
+                overflow: auto; /* Enable scroll if needed */
+                background-color: rgb(0,0,0); /* Fallback color */
+                background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+            }
+
+            /* Modal Content/Box */
+            .modal-content {
+                background-color: #fefefe;
+                margin: 1% auto; /* 15% from the top and centered */
+                padding: 20px;
+                border: 1px solid #888;
+                width: 90%;
+                height: 90%; /* Could be more or less, depending on screen size */
+            }
+
+            /* The Close Button */
+            .close {
+                color: #aaa;
+                float: right;
+                font-size: 28px;
+                font-weight: bold;
+            }
+
+            .close:hover,
+            .close:focus {
+                color: black;
+                text-decoration: none;
+                cursor: pointer;
+            }
+
+            #modal-next {
+                position: absolute;
+                right:    30px;
+                bottom:   30px;
+                background-color: green;
+                color: green;
+                border: 1px solid #7eb9d0;
+                -webkit-border-radius: 3px;
+                -moz-border-radius: 3px;
+                border-radius: 5px !important;
+                font-size: 25px !important;
+                font-family: arial, helvetica, sans-serif;
+                padding: 10px 10px 10px 10px;
+                text-decoration: none;
+                display: inline-block;
+                text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.3);
+                font-weight: 700;
+                color: #fff;
+                filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr=#a7cfdf, endColorstr=#23538a);
+                min-width: 60px;
+                min-height: 55px;
+                cursor: pointer;
+                width: 45px;
+                height: 35px;
+                text-align: center;
+                margin: 3px;
+                visibility: hidden;
             }
         </style>
     </head>
@@ -1709,6 +1778,9 @@
                         nextButton.setAttribute("onmousedown", "submitHIVClinicConsultation();")
                     }
 
+                    // Get the modal
+                    
+
                 </script>
 
                 <form action="#" method='post'>
@@ -1733,6 +1805,11 @@
                     <input type="text" name="lab-summary"
                            tt_onLoad="__$('keyboard').style.display = 'none';buildConsultationLabPage();"
                            tt_pageStyleClass= "NoControls" helpText="Lab Results Summary" optional = "true"/>
+
+                    <input type="text" name="iac" condition="iac == true"
+                    tt_onLoad="__$('keyboard').style.display = 'none';addIACYesNo();"
+                    tt_pageStyleClass= "NoControls" helpText="intensive adherence counselling" optional = "true"/> 
+
 
                     <input type="text" name="pregnant-breastfeeding-questions" condition="patientGender == 'F'"
                            validationCode="checkPregnancyAndAge() == 'false'"

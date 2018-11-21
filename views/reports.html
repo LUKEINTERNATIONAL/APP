@@ -110,8 +110,8 @@ function buildReportLinks() {
 }
 
 function _testFunc(){
-   console.log(reports[parseInt(this.id)][2]);
-   location.href = reports[parseInt(this.id)][2];
+   var newURL = window.location.protocol + "//" + window.location.host + reports[parseInt(this.id)][2];
+   window.top.location = newURL;
 }
 
 </script>

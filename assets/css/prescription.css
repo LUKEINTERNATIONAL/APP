@@ -34,6 +34,7 @@ body {
   text-align: center;
   line-height: 15px;
   height: 30px;
+  display: block;
 
   padding: 7px;
   box-shadow: 5px 10px #888888;
