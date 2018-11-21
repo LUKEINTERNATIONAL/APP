@@ -25,6 +25,13 @@ function autoSelectGuardian(clickedBtn) {
   }
 }
 
+function autoSelectPatient(clickedBtn) {
+  if(clickedBtn.id.match(/No/i)) {
+    var e = document.getElementById('1805_yes');
+    buttonClicked(e,'HIV Reception','Patient present?');
+  }
+}
+
 function submitHIVreception() {
   	
   var encounter = {
@@ -61,7 +68,7 @@ function changeSubmitFuction() {
 
 function addYesNo() {
   var tar = document.getElementById("inputFrame" + tstCurrentPage);
-  var attr = 'Patient present?,1805,autoSelectGuardian#Guardian present?,2122'
+  var attr = 'Patient present?,1805,autoSelectGuardian#Guardian present?,2122,autoSelectPatient'
   buildYesNoUI('HIV Reception', attr, tar);
 }
 
