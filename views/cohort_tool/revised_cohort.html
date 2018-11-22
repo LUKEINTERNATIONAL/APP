@@ -1721,7 +1721,7 @@ function showDisaggregatedReport(){
           &nbsp;
       </td>
       <td class="number dead_class">
-          <a href="javascript:drillDown('died_within_the_1st_month_of_art_initiation');" class="dead">
+          <a href="javascript:drillDown('died_within_the_1st_month_of_art_initiation');" class="dead" id="died_within_the_1st_month_of_art_initiation">
               0
           </a>
       </td>
@@ -1743,7 +1743,7 @@ function showDisaggregatedReport(){
           &nbsp;
       </td>
       <td class="number dead_class">
-          <a href="javascript:drillDown('died_within_the_2nd_month_of_art_initiation');" class="dead">
+          <a href="javascript:drillDown('died_within_the_2nd_month_of_art_initiation');" class="dead" id="died_within_the_2nd_month_of_art_initiation">
               0
           </a>
       </td>
@@ -1765,7 +1765,7 @@ function showDisaggregatedReport(){
           &nbsp;
       </td>
       <td class="number dead_class">
-          <a href="javascript:drillDown('died_within_the_3rd_month_of_art_initiation');" class="dead">
+          <a href="javascript:drillDown('died_within_the_3rd_month_of_art_initiation');" class="dead" id="died_within_the_3rd_month_of_art_initiation">
               0
           </a>
       </td>
@@ -1787,7 +1787,7 @@ function showDisaggregatedReport(){
           &nbsp;
       </td>
       <td class="number dead_class">
-          <a href="javascript:drillDown('died_after_the_3rd_month_of_art_initiation');" class="dead">
+          <a href="javascript:drillDown('died_after_the_3rd_month_of_art_initiation');" class="dead" id="died_after_the_3rd_month_of_art_initiation">
               0
           </a>
       </td>
@@ -1825,7 +1825,7 @@ function showDisaggregatedReport(){
           &nbsp;
       </td>
       <td class="number reg_on_art_class">
-          <a href="javascript:drillDown('defaulted');" class="registered-on-art">
+          <a href="javascript:drillDown('defaulted');" class="registered-on-art" id="defaulted">
               0
           </a>
       </td>
@@ -1844,7 +1844,7 @@ function showDisaggregatedReport(){
           &nbsp;
       </td>
       <td class="number reg_on_art_class">
-          <a href="javascript:drillDown('stopped_art');" class="registered-on-art">
+          <a href="javascript:drillDown('stopped_art');" class="registered-on-art" id="stopped_art">
               0
           </a>
       </td>
@@ -1863,7 +1863,7 @@ function showDisaggregatedReport(){
           &nbsp;
       </td>
       <td class="number reg_on_art_class">
-          <a href="javascript:drillDown('transfered_out');" class="registered-on-art">
+          <a href="javascript:drillDown('transfered_out');" class="registered-on-art" id="transfered_out">
               0
           </a>
       </td>
@@ -3172,11 +3172,13 @@ function validateReport() {
   /***************************************************************/
 
   if(report_inconsistency > 0){
-    var title_div = document.createElement("div");
-    var title = document.createTextNode("This report has the following ("+report_inconsistency+") inconsistences:");
-    title_div.setAttribute("id", "incosistence_title");
-    title_div.appendChild(title);
-
+    var title_div = document.getElementById("incosistence_title");
+    if(title_div == null) {
+      title_div = document.createElement("div");
+      var title = document.createTextNode("This report has the following ("+report_inconsistency+") inconsistences:");
+      title_div.setAttribute("id", "incosistence_title");
+      title_div.appendChild(title);
+    }
     var current_div = document.getElementById("consistency_check");
     document.body.insertBefore(title_div, current_div);
   }
@@ -3252,17 +3254,22 @@ function getUrlVars() {
 var cohortResults;
 
 function getIndicators() {
-  
+  if(!runningReport)
+    return;
+
   var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1/programs/1/reports/cohort?name=";
   url += Quarter + " " + Year;
 
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
     if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+      runningReport = false
       cohortResults = JSON.parse(this.responseText);
+      myStopFunction();
       renderResults();
     }else{
-      //setInterval("getIndicators()", 30000);
+      runningReport = true;
+      checkIfReportReady();
     }
   };
   xhttp.open("GET", url, true);
@@ -3270,6 +3277,17 @@ function getIndicators() {
   xhttp.setRequestHeader('Content-type', "application/json");
   xhttp.send();
 
+}
+
+var myVar;
+var runningReport = true;
+
+function checkIfReportReady() {
+  myVar = setTimeout("getIndicators()", 60000);
+}
+
+function myStopFunction() {
+  clearTimeout(myVar);
 }
 
 function renderResults() {
@@ -3287,6 +3305,7 @@ function renderResults() {
     }
   }
 
+  runningReport = false;
   validateReport();
 }
 
