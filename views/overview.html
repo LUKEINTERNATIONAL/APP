@@ -3,6 +3,7 @@
 <script src="/assets/js/HighCharts/highcharts-3d.js"></script>
 <script src="/assets/js/HighCharts/exporting.js"></script>
 <script src="/assets/js/HighCharts/export-data.js"></script>
+<script src="/assets/js/moment.js"></script>
 
 <script type="text/javascript" src="/assets/js/post_parameters.js"></script>
 
@@ -68,6 +69,9 @@
     </div>
 
     <div class="overview-main-container-cell" style="width: 30%;">
+      <div style="margin-bottom: 30px;">
+       Encounters created:&nbsp;<span id="encounter-date"></span>
+      </div>
       <table id="stats-table">
         <tr>
           <th>&nbsp;</th>
@@ -135,12 +139,16 @@ encounter_types[52] = "HIV Staging";
 encounter_types[53] = "HIV clinic consultation"; 
 encounter_types[68] = "ART Adherence"; 
 
-submitParameters(stats, "/reports/encounters", "renderStats");
+var encounter_date = moment(new Date()).format("YYYY-MM-DD");
+submitParameters(stats, "/reports/encounters?date=" + encounter_date, "renderStats");
 
 var encounters_created = [];
 var counter = 1;
 
 function renderStats(stats) {
+  var encounter_date = document.getElementById("encounter-date");
+  encounter_date.innerHTML = moment(new Date()).format("DD/MMM/YYYY");
+
   var tby = document.getElementById("stats-table-body");
   for(var encounter_type_id in stats){
     var tr = document.createElement("tr");

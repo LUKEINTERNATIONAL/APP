@@ -232,7 +232,7 @@ function showDisaggregatedReport(){
         </td>
         <td colspan="6" class="bolder">
             Nkhotakota District Hospital
-             <div style="float:right;font-style:italic;font-size:14;font-weight:bold;">Version 16</div>
+             <div style="float:right;font-style:italic;font-size:14;font-weight:bold;">Version 17</div>
         </td>
     </tr>
     <tr>
@@ -300,13 +300,9 @@ function showDisaggregatedReport(){
         <td width="20%" colspan="2" class="border-bottom-dotted border-left-dotted border-null-top">
             Quarter evaluated
         </td>
-        <td class="bolder">
-            
-            Year : 2018
+        <td class="bolder" id="display-quarter-year">
         </td>
-        <td colspan="4" class="bolder">
-            
-            Quarter : 3
+        <td colspan="4" class="bolder" id="display-quarter">
         </td>
     </tr>
     <tr class="row-break">
@@ -883,7 +879,7 @@ function showDisaggregatedReport(){
       </td>
       <td class="number">
           <a href="javascript:drillDown('total_registered');" id="total_registered">
-              1
+              0
           </a>
       </td>
       <td>
@@ -894,7 +890,7 @@ function showDisaggregatedReport(){
       </td>
       <td class="number">
           <a href="javascript:drillDown('cum_total_registered');" id="cum_total_registered">
-              6665
+              0
           </a>
       </td>
       <td>
@@ -918,7 +914,7 @@ function showDisaggregatedReport(){
       </td>
       <td class="clinic-result number patients_on_art">
           <a href="javascript:drillDown('initiated_on_art_first_time');" id="initiated_on_art_first_time" class="on-art">
-              1
+              0
           </a>
       </td>
       <td class="clinic-result">
@@ -929,7 +925,7 @@ function showDisaggregatedReport(){
       </td>
       <td class="clinic-result number cum_patients_on_art">
           <a href="javascript:drillDown('cum_initiated_on_art_first_time');" id="cum_initiated_on_art_first_time" class="cum-on-art">
-              5775
+              0
           </a>
       </td>
       <td class="clinic-result">
@@ -959,7 +955,7 @@ function showDisaggregatedReport(){
       </td>
       <td class="number cum_patients_on_art">
           <a href="javascript:drillDown('cum_re_initiated_on_art');" id="cum_re_initiated_on_art" class="cum-on-art">
-              198
+              0
           </a>
       </td>
       <td>
@@ -989,7 +985,7 @@ function showDisaggregatedReport(){
       </td>
       <td class="number cum_patients_on_art">
           <a href="javascript:drillDown('cum_transfer_in');" id="cum_transfer_in" class="cum-on-art">
-              692
+              0
           </a>
       </td>
       <td>
@@ -1024,7 +1020,7 @@ function showDisaggregatedReport(){
       </td>
       <td class="number cum_gender_class">
           <a href="javascript:drillDown('cum_all_males');" id="cum_all_males" class="cum-gender">
-              2565
+              0
           </a>
       </td>
       <td>
@@ -1043,7 +1039,7 @@ function showDisaggregatedReport(){
       </td>
       <td class="number gender_class">
           <a href="javascript:drillDown('non_pregnant_females');" id="non_pregnant_females" class="gender1">
-              1
+              0
           </a>
       </td>
       <td>
@@ -1054,7 +1050,7 @@ function showDisaggregatedReport(){
       </td>
       <td class="number cum_gender_class">
           <a href="javascript:drillDown('cum_non_pregnant_females');" id="cum_non_pregnant_females" class="cum-gender">
-              3247
+              0
           </a>
       </td>
       <td>
@@ -1084,7 +1080,7 @@ function showDisaggregatedReport(){
       </td>
       <td class="number cum_gender_class">
           <a href="javascript:drillDown('cum_pregnant_females_all_ages');" id="cum_pregnant_females_all_ages" class="cum-gender">
-              853
+              0
           </a>
       </td>
       <td>
@@ -1119,7 +1115,7 @@ function showDisaggregatedReport(){
       </td>
       <td class="number cum_age_class">
           <a href="javascript:drillDown('cum_children_below_24_months_at_art_initiation');" id="cum_children_below_24_months_at_art_initiation" class="cum-age">
-              152
+              0
           </a>
       </td>
       <td>
@@ -1138,7 +1134,7 @@ function showDisaggregatedReport(){
       </td>
       <td class="number age_class">
           <a href="javascript:drillDown('children_24_months_14_years_at_art_initiation');" id="children_24_months_14_years_at_art_initiation" class="age">
-              1
+              0
           </a>
       </td>
       <td>
@@ -1149,7 +1145,7 @@ function showDisaggregatedReport(){
       </td>
       <td class="number cum_age_class">
           <a href="javascript:drillDown('cum_children_24_months_14_years_at_art_initiation');" id="cum_children_24_months_14_years_at_art_initiation" class="cum-age">
-              426
+              0
           </a>
       </td>
       <td>
@@ -1179,7 +1175,7 @@ function showDisaggregatedReport(){
       </td>
       <td class="number cum_age_class">
           <a href="javascript:drillDown('cum_adults_at_art_initiation');" id="cum_adults_at_art_initiation" class="cum-age">
-              6087
+              0
           </a>
       </td>
       <td>
@@ -1247,7 +1243,7 @@ function showDisaggregatedReport(){
       </td>
       <td class="number cum_reason_class">
           <a href="javascript:drillDown('cum_presumed_severe_hiv_disease_in_infants');" id="cum_presumed_severe_hiv_disease_in_infants" class="cum-reason">
-              34
+              0
           </a>
       </td>
       <td>
@@ -1265,7 +1261,7 @@ function showDisaggregatedReport(){
           Infants < 12 mths PCR+
       </td>
       <td class="number reason_class">
-          <a href="javascript:drillDown('confirmed_hiv_infection_in_infants_pcr');" id="confirmed_hiv_infection_in_infants_pcr" class="reason">
+          <a href="javascript:drillDown('confirmed_hiv_infection_in_infants_pcr');" id="confirmed_hiv_infection_in_infants_pcr" class="reason" id="quarterly_confirmed_hiv_infection_in_infants_pcr">
               0
           </a>
       </td>
@@ -1276,8 +1272,8 @@ function showDisaggregatedReport(){
           &nbsp;
       </td>
       <td class="number cum_reason_class">
-          <a href="javascript:drillDown('cum_confirmed_hiv_infection_in_infants_pcr');" id="cum_confirmed_hiv_infection_in_infants_pcr" class="cum-reason">
-              7
+          <a href="javascript:drillDown('cum_confirmed_hiv_infection_in_infants_pcr');" id="cum_confirmed_hiv_infection_in_infants_pcr" class="cum-reason" id="cum_confirmed_hiv_infection_in_infants_pcr">
+              0
           </a>
       </td>
       <td>
@@ -1295,7 +1291,7 @@ function showDisaggregatedReport(){
           Children 12-59 mths
       </td>
       <td class="number reason_class">
-          <a href="javascript:drillDown('children_12_23_months');" id="children_12_23_months" class="reason">
+          <a href="javascript:drillDown('children_12_23_months');" id="quarterly_children_12_59_months" class="reason">
               0
           </a>
       </td>
@@ -1306,8 +1302,8 @@ function showDisaggregatedReport(){
           &nbsp;
       </td>
       <td class="number cum_reason_class">
-          <a href="javascript:drillDown('cum_children_12_23_months');" id="cum_children_12_23_months" class="cum-reason">
-              52
+          <a href="javascript:drillDown('cum_children_12_23_months');" id="cum_children_12_59_months" class="cum-reason">
+              0
           </a>
       </td>
       <td>
@@ -1337,7 +1333,7 @@ function showDisaggregatedReport(){
       </td>
       <td class="number cum_reason_class">
           <a href="javascript:drillDown('cum_pregnant_women');" id="cum_pregnant_women" class="cum-reason">
-              806
+              0
           </a>
       </td>
       <td>
@@ -1367,7 +1363,7 @@ function showDisaggregatedReport(){
       </td>
       <td class="number cum_reason_class">
           <a href="javascript:drillDown('cum_breastfeeding_mothers');" id="cum_breastfeeding_mothers" class="cum-reason">
-              223
+              0
           </a>
       </td>
       <td>
@@ -1397,7 +1393,7 @@ function showDisaggregatedReport(){
       </td>
       <td class="number cum_reason_class">
           <a href="javascript:drillDown('cum_who_stage_two');" id="cum_who_stage_two" class="cum-reason">
-              1146
+              0
           </a>
       </td>
       <td>
@@ -1427,7 +1423,7 @@ function showDisaggregatedReport(){
       </td>
       <td class="number cum_reason_class">
           <a href="javascript:drillDown('cum_asymptomatic');" id="cum_asymptomatic" class="cum-reason">
-              627
+              0
           </a>
       </td>
       <td>
@@ -1457,7 +1453,7 @@ function showDisaggregatedReport(){
       </td>
       <td class="number cum_reason_class">
           <a href="javascript:drillDown('cum_who_stage_three');" id="cum_who_stage_three" class="cum-reason">
-              3130
+              0
           </a>
       </td>
       <td>
@@ -1476,7 +1472,7 @@ function showDisaggregatedReport(){
       </td>
       <td class="number reason_class">
           <a href="javascript:drillDown('who_stage_four');" id="who_stage_four" class="reason">
-              1
+              0
           </a>
       </td>
       <td>
@@ -1487,7 +1483,7 @@ function showDisaggregatedReport(){
       </td>
       <td class="number cum_reason_class">
           <a href="javascript:drillDown('cum_who_stage_four');" id="cum_who_stage_four" class="cum-reason">
-              609
+              0
           </a>
       </td>
       <td>
@@ -1517,7 +1513,7 @@ function showDisaggregatedReport(){
       </td>
       <td class="number cum_reason_class">
           <a href="javascript:drillDown('cum_unknown_other_reason_outside_guidelines');" id="cum_unknown_other_reason_outside_guidelines" class="cum-reason">
-              31
+              0
           </a>
       </td>
       <td>
@@ -1549,7 +1545,7 @@ function showDisaggregatedReport(){
       </td>
       <td class="number condition_class">
           <a href="javascript:drillDown('no_tb');" id="no_tb" class="condition">
-              1
+              0
           </a>
       </td>
       <td>
@@ -1560,7 +1556,7 @@ function showDisaggregatedReport(){
       </td>
       <td class="number cum_condition_class">
           <a href="javascript:drillDown('cum_no_tb');" id="cum_no_tb" class="cum-condition">
-              6350
+              0
           </a>
       </td>
       <td>
@@ -1590,7 +1586,7 @@ function showDisaggregatedReport(){
       </td>
       <td class="number cum_condition_class">
           <a href="javascript:drillDown('cum_tb_within_the_last_two_years');" id="cum_tb_within_the_last_two_years" class="cum-condition">
-              213
+              0
           </a>
       </td>
       <td>
@@ -1620,7 +1616,7 @@ function showDisaggregatedReport(){
       </td>
       <td class="number cum_condition_class">
           <a href="javascript:drillDown('cum_current_episode_of_tb');" id="cum_current_episode_of_tb" class="cum-condition">
-              102
+              0
           </a>
       </td>
       <td>
@@ -1655,7 +1651,7 @@ function showDisaggregatedReport(){
       </td>
       <td class="number">
           <a href="javascript:drillDown('cum_kaposis_sarcoma');">
-              93
+              0
           </a>
       </td>
       <td>
@@ -1699,7 +1695,7 @@ function showDisaggregatedReport(){
       </td>
       <td class="number reg_on_art_class">
           <a href="javascript:drillDown('total_alive_and_on_art');" id="total_alive_and_on_art" class="registered-on-art">
-              1409
+              0
           </a>
       </td>
       <td>
@@ -1726,7 +1722,7 @@ function showDisaggregatedReport(){
       </td>
       <td class="number dead_class">
           <a href="javascript:drillDown('died_within_the_1st_month_of_art_initiation');" class="dead">
-              103
+              0
           </a>
       </td>
       <td>
@@ -1748,7 +1744,7 @@ function showDisaggregatedReport(){
       </td>
       <td class="number dead_class">
           <a href="javascript:drillDown('died_within_the_2nd_month_of_art_initiation');" class="dead">
-              71
+              0
           </a>
       </td>
       <td>
@@ -1770,7 +1766,7 @@ function showDisaggregatedReport(){
       </td>
       <td class="number dead_class">
           <a href="javascript:drillDown('died_within_the_3rd_month_of_art_initiation');" class="dead">
-              33
+              0
           </a>
       </td>
       <td>
@@ -1792,7 +1788,7 @@ function showDisaggregatedReport(){
       </td>
       <td class="number dead_class">
           <a href="javascript:drillDown('died_after_the_3rd_month_of_art_initiation');" class="dead">
-              241
+              0
           </a>
       </td>
       <td>
@@ -1811,7 +1807,7 @@ function showDisaggregatedReport(){
       </td>
       <td class="number reg_on_art_class">
           <a href="javascript:drillDown('died_total');" id="died_total" class="registered-on-art">
-              448
+              0
           </a>
       </td>
       <td>
@@ -1830,7 +1826,7 @@ function showDisaggregatedReport(){
       </td>
       <td class="number reg_on_art_class">
           <a href="javascript:drillDown('defaulted');" class="registered-on-art">
-              3224
+              0
           </a>
       </td>
       <td>
@@ -1849,7 +1845,7 @@ function showDisaggregatedReport(){
       </td>
       <td class="number reg_on_art_class">
           <a href="javascript:drillDown('stopped_art');" class="registered-on-art">
-              12
+              0
           </a>
       </td>
       <td>
@@ -1868,7 +1864,7 @@ function showDisaggregatedReport(){
       </td>
       <td class="number reg_on_art_class">
           <a href="javascript:drillDown('transfered_out');" class="registered-on-art">
-              1572
+              0
           </a>
       </td>
       <td>
@@ -1902,8 +1898,8 @@ function showDisaggregatedReport(){
           Regimen <b>0P</b>
       </td>
       <td colspan="2" class="number regimen_class">
-          <a href="javascript:drillDown('zero_p');" class="regimen">
-              2
+          <a href="javascript:drillDown('zero_p');" class="regimen" id="zero_p">
+              0
           </a>
       </td>
   </tr>
@@ -1920,8 +1916,8 @@ function showDisaggregatedReport(){
           Regimen <b>2P</b>
       </td>
       <td colspan="2" class="number regimen_class">
-          <a href="javascript:drillDown('two_p');" class="regimen">
-              12
+          <a href="javascript:drillDown('two_p');" class="regimen" id="two_p">
+              0
           </a>
       </td>
   </tr>
@@ -1933,8 +1929,8 @@ function showDisaggregatedReport(){
           Regimen <b>4P</b>
       </td>
       <td colspan="2" class="number regimen_class">
-          <a href="javascript:drillDown('four_p');" class="regimen">
-              1
+          <a href="javascript:drillDown('four_p');" class="regimen" id="four_p">
+              0
           </a>
       </td>
   </tr>
@@ -1946,7 +1942,7 @@ function showDisaggregatedReport(){
           Regimen <b>9P</b>
       </td>
       <td colspan="2" class="number regimen_class">
-          <a href="javascript:drillDown('nine_p');" class="regimen">
+          <a href="javascript:drillDown('nine_p');" class="regimen" id="nine_p">
               0
           </a>
       </td>
@@ -1959,7 +1955,7 @@ function showDisaggregatedReport(){
           Regimen <b>11P</b>
       </td>
       <td colspan="2" class="number regimen_class">
-          <a href="javascript:drillDown('elleven_p');" class="regimen">
+          <a href="javascript:drillDown('elleven_p');" class="regimen" id="elleven_p">
               0
           </a>
       </td>
@@ -2009,8 +2005,8 @@ function showDisaggregatedReport(){
           Regimen <b>0A</b>
       </td>
       <td colspan="2" class="number regimen_class">
-          <a href="javascript:drillDown('zero_a');" class="regimen">
-              3
+          <a href="javascript:drillDown('zero_a');" class="regimen" id="zero_a">
+              0
           </a>
       </td>
   </tr>
@@ -2025,8 +2021,8 @@ function showDisaggregatedReport(){
           Regimen <b>2A</b>
       </td>
       <td colspan="2" class="number regimen_class">
-          <a href="javascript:drillDown('two_a');" class="regimen">
-              49
+          <a href="javascript:drillDown('two_a');" class="regimen" id="two_a">
+              0
           </a>
       </td>
   </tr>
@@ -2041,8 +2037,8 @@ function showDisaggregatedReport(){
           Regimen <b>4A</b>
       </td>
       <td colspan="2" class="number regimen_class">
-          <a href="javascript:drillDown('four_a');" class="regimen">
-              1
+          <a href="javascript:drillDown('four_a');" class="regimen" id="four_a">
+              0
           </a>
       </td>
   </tr>
@@ -2057,8 +2053,8 @@ function showDisaggregatedReport(){
           Regimen <b>5A</b>
       </td>
       <td colspan="2" class="number regimen_class">
-          <a href="javascript:drillDown('five_a');" class="regimen">
-              1302
+          <a href="javascript:drillDown('five_a');" class="regimen" id="five_a">
+              0
           </a>
       </td>
   </tr>
@@ -2073,8 +2069,8 @@ function showDisaggregatedReport(){
           Regimen <b>6A</b>
       </td>
       <td colspan="2" class="number regimen_class">
-          <a href="javascript:drillDown('six_a');" class="regimen">
-              13
+          <a href="javascript:drillDown('six_a');" class="regimen" id="six_a">
+              0
           </a>
       </td>
   </tr>
@@ -2089,8 +2085,8 @@ function showDisaggregatedReport(){
           Regimen <b>7A</b>
       </td>
       <td colspan="2" class="number regimen_class">
-          <a href="javascript:drillDown('seven_a');" class="regimen">
-              9
+          <a href="javascript:drillDown('seven_a');" class="regimen" id="seven_a">
+              0
           </a>
       </td>
   </tr>
@@ -2105,8 +2101,8 @@ function showDisaggregatedReport(){
           Regimen <b>8A</b>
       </td>
       <td colspan="2" class="number regimen_class">
-          <a href="javascript:drillDown('eight_a');" class="regimen">
-              16
+          <a href="javascript:drillDown('eight_a');" class="regimen" id="eight_a">
+              0
           </a>
       </td>
   </tr>
@@ -2121,8 +2117,8 @@ function showDisaggregatedReport(){
           Regimen <b>9A</b>
       </td>
       <td colspan="2" class="number regimen_class">
-          <a href="javascript:drillDown('nine_a');" class="regimen">
-              1
+          <a href="javascript:drillDown('nine_a');" class="regimen" id="nine_a">
+              0
           </a>
       </td>
   </tr>
@@ -2137,7 +2133,7 @@ function showDisaggregatedReport(){
           Regimen <b>10A</b>
       </td>
       <td colspan="2" class="number regimen_class">
-          <a href="javascript:drillDown('ten_a');" class="regimen">
+          <a href="javascript:drillDown('ten_a');" class="regimen" id="ten_a">
               0
           </a>
       </td>
@@ -2153,7 +2149,7 @@ function showDisaggregatedReport(){
           Regimen <b>11A</b>
       </td>
       <td colspan="2" class="number regimen_class">
-          <a href="javascript:drillDown('elleven_a');" class="regimen">
+          <a href="javascript:drillDown('elleven_a');" class="regimen" id="elleven_a">
               0
           </a>
       </td>
@@ -2169,12 +2165,43 @@ function showDisaggregatedReport(){
           Regimen <b>12A</b>
       </td>
       <td colspan="2" class="number regimen_class">
-          <a href="javascript:drillDown('twelve_a');" class="regimen">
+          <a href="javascript:drillDown('twelve_a');" class="regimen" id="twelve_a">
               0
           </a>
       </td>
   </tr>
-<!--
+  <tr>
+      <td class="index">
+          77.
+      </td>
+      <td colspan="3" class="border-left-dotted border-null-top border-null-bottom border-null-right">
+          &nbsp;
+      </td>
+      <td colspan="2" class="border-null-bottom border-null-top border-null-left">
+          Regimen <b>13A</b>
+      </td>
+      <td colspan="2" class="number regimen_class">
+          <a href="javascript:drillDown('thirteen_a');" class="regimen" id="thirteen_a">
+              0
+          </a>
+      </td>
+  </tr>
+  <tr>
+      <td class="index">
+          78.
+      </td>
+      <td colspan="3" class="border-left-dotted border-null-top border-null-bottom border-null-right">
+          &nbsp;
+      </td>
+      <td colspan="2" class="border-null-bottom border-null-top border-null-left">
+          Regimen <b>14A</b>
+      </td>
+      <td colspan="2" class="number regimen_class">
+          <a href="javascript:drillDown('fourteen_a');" class="regimen" id="fourteen_a">
+              0
+          </a>
+      </td>
+  </tr>
   <tr>
       <td class="index">
           79.
@@ -2183,31 +2210,14 @@ function showDisaggregatedReport(){
           &nbsp;
       </td>
       <td colspan="2" class="border-null-bottom border-null-top border-null-left">
-          Regimen <b>12A</b>
+          Regimen <b>15A</b>
       </td>
-      <td colspan="2" class="number">
-          <a href="javascript:drillDown('elleven_a');">
+      <td colspan="2" class="number regimen_class">
+          <a href="javascript:drillDown('fifthteen_a');" class="regimen" id="fifthteen_a">
               0
           </a>
       </td>
   </tr>
-  <tr>
-      <td class="index">
-          80.
-      </td>
-      <td colspan="3" class="border-left-dotted border-null-top border-null-bottom border-null-right">
-          &nbsp;
-      </td>
-      <td colspan="2" class="border-null-bottom border-null-top border-null-left">
-          Regimen <b>12A</b>
-      </td>
-      <td colspan="2" class="number">
-          <a href="javascript:drillDown('twelve_a');">
-              0
-          </a>
-      </td>
-  </tr>
--->
   <tr>
       <td class="index">
 
@@ -2219,70 +2229,8 @@ function showDisaggregatedReport(){
           Other (paed. / adult)
       </td>
       <td colspan="2" class="number regimen_class">
-          <a href="javascript:drillDown('unknown_regimen');" class="regimen">
+          <a href="javascript:drillDown('unknown_regimen');" class="regimen" id="unknown_regimen">
               0
-          </a>
-      </td>
-  </tr>
-  <tr class="row-break">
-      <td colspan="7" class="border-null">
-          &nbsp;
-      </td>
-  </tr>
-  <tr>
-      <td class="index">
-          77.
-      </td>
-      <td class="text-bold border-top-dotted border-left-dotted border-null-bottom border-null-right">
-          Pregnant / Breastfeeding
-      </td>
-      <td colspan="2" class="border-top-dotted border-null-bottom border-null-left border-null-right">
-          (as of the last visit before end of quarter)
-      </td>
-      <td colspan="2" class="border-top-dotted border-null-bottom border-null-left" colspan="2">
-          <b>Preg</b>nant
-      </td>
-      <td colspan="2" class="number pregnant_class">
-          <a href="javascript:drillDown('total_pregnant');" class="preg_breastfeed">
-              16
-          </a>
-      </td>
-  </tr>
-  <tr>
-      <td class="index">
-          78.
-      </td>
-      <td class="border-left-dotted border-null-bottom border-null-top border-null-right">
-          &nbsp;
-      </td>
-      <td colspan="2" class="border-null-left border-null-right border-null-top border-null-bottom">
-          &nbsp;
-      </td>
-      <td colspan="2" class="border-null-bottom border-null-top border-null-left">
-          <b>B</b>reast<b>f</b>eeding
-      </td>
-      <td colspan="2" class="number pregnant_class">
-          <a href="javascript:drillDown('total_breastfeeding');" class="preg_breastfeed">
-             86
-          </a>
-      </td>
-  </tr>
-  <tr>
-      <td class="index">
-          79.
-      </td>
-      <td class="border-left-dotted border-bottom-dotted border-null-top border-null-right">
-          &nbsp;
-      </td>
-      <td colspan="2" class="border-bottom-dotted border-null-top border-null-left border-null-right">
-          &nbsp;
-      </td>
-      <td colspan="2" class="border-bottom-dotted border-null-top border-null-left">
-          All <b>others</b> (not circled)
-      </td>
-      <td colspan="2" class="number pregnant_class ">
-          <a href="javascript:drillDown('all_other_patients');" class="preg_breastfeed">
-              1307
           </a>
       </td>
   </tr>
@@ -2295,6 +2243,68 @@ function showDisaggregatedReport(){
       <td class="index">
           80.
       </td>
+      <td class="text-bold border-top-dotted border-left-dotted border-null-bottom border-null-right">
+          Pregnant / Breastfeeding
+      </td>
+      <td colspan="2" class="border-top-dotted border-null-bottom border-null-left border-null-right">
+          (as of the last visit before end of quarter)
+      </td>
+      <td colspan="2" class="border-top-dotted border-null-bottom border-null-left" colspan="2">
+          <b>Preg</b>nant
+      </td>
+      <td colspan="2" class="number pregnant_class">
+          <a href="javascript:drillDown('total_pregnant');" class="preg_breastfeed" id="total_pregnant_women">
+              0
+          </a>
+      </td>
+  </tr>
+  <tr>
+      <td class="index">
+          81.
+      </td>
+      <td class="border-left-dotted border-null-bottom border-null-top border-null-right">
+          &nbsp;
+      </td>
+      <td colspan="2" class="border-null-left border-null-right border-null-top border-null-bottom">
+          &nbsp;
+      </td>
+      <td colspan="2" class="border-null-bottom border-null-top border-null-left">
+          <b>B</b>reast<b>f</b>eeding
+      </td>
+      <td colspan="2" class="number pregnant_class">
+          <a href="javascript:drillDown('total_breastfeeding');" class="preg_breastfeed" id="total_breastfeeding_women">
+             0
+          </a>
+      </td>
+  </tr>
+  <tr>
+      <td class="index">
+          82.
+      </td>
+      <td class="border-left-dotted border-bottom-dotted border-null-top border-null-right">
+          &nbsp;
+      </td>
+      <td colspan="2" class="border-bottom-dotted border-null-top border-null-left border-null-right">
+          &nbsp;
+      </td>
+      <td colspan="2" class="border-bottom-dotted border-null-top border-null-left">
+          All <b>others</b> (not circled)
+      </td>
+      <td colspan="2" class="number pregnant_class ">
+          <a href="javascript:drillDown('all_other_patients');" class="preg_breastfeed" id="total_other_patients">
+              0
+          </a>
+      </td>
+  </tr>
+  <tr class="row-break">
+      <td colspan="7" class="border-null">
+          &nbsp;
+      </td>
+  </tr>
+  <tr>
+      <td class="index">
+          83.
+      </td>
       <td class="border-top-dotted border-left-dotted border-null-bottom border-null-right">
           <b>Current TB status</b> any form of TB
       </td>
@@ -2305,14 +2315,14 @@ function showDisaggregatedReport(){
           TB <b>not</b> suspected
       </td>
       <td colspan="2" class="number tb_status_class">
-          <a href="javascript:drillDown('tb_not_suspected');" class="tb_status">
-              1168
+          <a href="javascript:drillDown('tb_not_suspected');" class="tb_status" id="tb_not_suspected">
+              0
           </a>
       </td>
   </tr>
   <tr>
       <td class="index">
-          81.
+          84.
       </td>
       <td class="border-left-dotted border-null-bottom border-null-top border-null-right">
           &nbsp;
@@ -2324,14 +2334,14 @@ function showDisaggregatedReport(){
           TB <b>suspected</b>
       </td>
       <td colspan="2" class="number tb_status_class">
-          <a href="javascript:drillDown('tb_suspected');" class="tb_status">
-              224
+          <a href="javascript:drillDown('tb_suspected');" class="tb_status" id="tb_suspected">
+              0
           </a>
       </td>
   </tr>
   <tr>
       <td class="index">
-          82.
+          85.
       </td>
       <td colspan="3" class="border-left-dotted border-null-bottom border-null-top border-null-right">
           &nbsp;
@@ -2340,14 +2350,14 @@ function showDisaggregatedReport(){
           TB conf., <b>not</b> on Rx
       </td>
       <td colspan="2" class="number tb_status_class">
-          <a href="javascript:drillDown('tb_confirmed_currently_not_yet_on_tb_treatment');" class="tb_status">
+          <a href="javascript:drillDown('tb_confirmed_currently_not_yet_on_tb_treatment');" class="tb_status" id="tb_confirmed_currently_not_yet_on_tb_treatment">
               0
           </a>
       </td>
   </tr>
   <tr>
       <td class="index">
-          83.
+          86.
       </td>
       <td colspan="3" class="border-left-dotted border-null-right border-null-bottom border-null-top">
           &nbsp;
@@ -2356,14 +2366,14 @@ function showDisaggregatedReport(){
           TB conf., <b>on TB Rx</b>
       </td>
       <td colspan="2" class="number tb_status_class">
-          <a href="javascript:drillDown('tb_confirmed_on_tb_treatment');" class="tb_status">
-              17
+          <a href="javascript:drillDown('tb_confirmed_on_tb_treatment');" class="tb_status" id="tb_confirmed_on_tb_treatment">
+              0
           </a>
       </td>
   </tr>
   <tr>
       <td class="index">
-          84.
+          87.
       </td>
       <td colspan="3" class="border-left-dotted border-bottom-dotted border-null-top border-null-right">
           &nbsp;
@@ -2372,7 +2382,7 @@ function showDisaggregatedReport(){
           Unknown (not circled)
       </td>
       <td colspan="2" class="number tb_status_class">
-          <a href="javascript:drillDown('unknown_tb_status');" class="tb_status">
+          <a href="javascript:drillDown('unknown_tb_status');" class="tb_status" id="unknown_tb_status">
               0
           </a>
       </td>
@@ -2383,7 +2393,7 @@ function showDisaggregatedReport(){
   </tr>
   <tr>
       <td class="index">
-          85.
+          88.
       </td>
       <td class="text-bold border-top-dotted border-left-dotted border-null-bottom border-null-right">
           Side effects
@@ -2395,14 +2405,14 @@ function showDisaggregatedReport(){
           None
       </td>
       <td colspan="2" class="number side_effects_class">
-          <a href="javascript:drillDown('total_patients_without_side_effects');" class="side_effects">
-              1405
+          <a href="javascript:drillDown('total_patients_without_side_effects');" class="side_effects" id="total_patients_without_side_effects">
+              0
           </a>
       </td>
   </tr>
   <tr>
       <td class="index">
-          86.
+          89.
       </td>
       <td class="border-left-dotted border-null-bottom border-null-top border-null-right">
           &nbsp;
@@ -2414,14 +2424,14 @@ function showDisaggregatedReport(){
           <b>Any</b> side effects
       </td>
       <td colspan="2" class="number side_effects_class">
-          <a href="javascript:drillDown('total_patients_with_side_effects');" class="side_effects">
-              4
+          <a href="javascript:drillDown('total_patients_with_side_effects');" class="side_effects" id="total_patients_with_side_effects">
+              0
           </a>
       </td>
   </tr>
   <tr>
       <td class="index">
-          87.
+          90.
       </td>
       <td class="border-left-dotted border-bottom-dotted border-null-top border-null-right">
           &nbsp;
@@ -2433,7 +2443,7 @@ function showDisaggregatedReport(){
           <b>Unk</b>own (not circled)
       </td>
       <td colspan="2" class="number side_effects_class">
-          <a href="javascript:drillDown('unknown_side_effects');" class="side_effects">
+          <a href="javascript:drillDown('unknown_side_effects');" class="side_effects" id="unknown_side_effects">
               0
           </a>
       </td>
@@ -2445,7 +2455,7 @@ function showDisaggregatedReport(){
   </tr>
   <tr>
       <td class="index">
-          88.
+          91.
       </td>
       <td class="text-bold border-left-dotted border-top-dotted border-null-bottom border-null-right">
           Adherence
@@ -2457,14 +2467,14 @@ function showDisaggregatedReport(){
           <b>0 - 3 doses missed</b>
       </td>
       <td colspan="2" class="number adherence_class">
-          <a href="javascript:drillDown('patients_with_0_6_doses_missed_at_their_last_visit');" class="adherence">
-              1041
+          <a href="javascript:drillDown('patients_with_0_6_doses_missed_at_their_last_visit');" class="adherence" id="patients_with_0_6_doses_missed_at_their_last_visit">
+              0
           </a>
       </td>
   </tr>
   <tr>
       <td class="index">
-          89.
+          92.
       </td>
       <td class="border-left-dotted border-null-top border-null-bottom border-null-right">
           &nbsp;
@@ -2476,14 +2486,14 @@ function showDisaggregatedReport(){
           <b>4+</b> doses missed
       </td>
       <td colspan="2" class="number adherence_class">
-          <a href="javascript:drillDown('patients_with_7_plus_doses_missed_at_their_last_visit');" class="adherence">
-              361
+          <a href="javascript:drillDown('patients_with_7_plus_doses_missed_at_their_last_visit');" class="adherence" id="patients_with_7_plus_doses_missed_at_their_last_visit">
+              0
           </a>
       </td>
   </tr>
   <tr>
       <td class="index">
-          90.
+          93.
       </td>
       <td class="border-left-dotted border-bottom-dotted border-null-top border-null-right">
           &nbsp;
@@ -2495,8 +2505,8 @@ function showDisaggregatedReport(){
           <b>Unk</b>nown (not circled)
       </td>
       <td colspan="2" class="number adherence_class">
-          <a href="javascript:drillDown('patients_with_unknown_adhrence');" class="adherence">
-              7
+          <a href="javascript:drillDown('patients_with_unknown_adhrence');" class="adherence" id="patients_with_unknown_adhrence">
+              0
           </a>
       </td>
   </tr>
@@ -2506,7 +2516,7 @@ function showDisaggregatedReport(){
   </tr>
   <tr>
       <td class="index">
-          91.
+          94.
       </td>
       <td class="border-top-dotted border-left-dotted border-bottom-dotted border-null-right">
           <b>CPT</b>
@@ -2517,7 +2527,7 @@ function showDisaggregatedReport(){
       <td colspan="2" class="border-top-dotted border-null-left border-dotted-bottom">
       </td>
       <td colspan="2" class="number">
-            0  %
+            <span id="total_patients_on_arvs_and_cpt">0</span>&nbsp;%
       </td>
   </tr>
   <tr>
@@ -2526,7 +2536,7 @@ function showDisaggregatedReport(){
   </tr>
   <tr>
         <td class="index">
-            92.
+            95.
         </td>
         <td class="text-bold border-top-dotted border-left-dotted border-null-bottom border-null-right">
             IPT
@@ -2552,7 +2562,7 @@ function showDisaggregatedReport(){
         <td colspan="2" class="border-bottom-dotted border-null-top border-null-left">
         </td>
         <td colspan="2" class="number">
-              0  %
+            <span id="total_patients_on_arvs_and_ipt">0</span>&nbsp;%
         </td>
     </tr>
   <tr>
@@ -2561,7 +2571,7 @@ function showDisaggregatedReport(){
   </tr>
   <tr>
       <td class="index">
-          93.
+          96.
       </td>
       <td class="border-top-dotted border-left-dotted border-bottom-dotted border-null-right">
           <b>PIFP</b>
@@ -2572,7 +2582,7 @@ function showDisaggregatedReport(){
       <td colspan="2" class="border-top-dotted border-null-left border-dotted-bottom">
       </td>
       <td colspan="2" class="number">
-              100  %
+            <span id="total_patients_on_family_planning">0</span>&nbsp;%
       </td>
   </tr>
   <tr>
@@ -2581,7 +2591,7 @@ function showDisaggregatedReport(){
   </tr>
   <tr>
       <td class="index">
-          94.
+          97.
       </td>
       <td class="border-top-dotted border-left-dotted border-bottom-dotted border-null-right">
           <b>BP screen</b>
@@ -2592,7 +2602,7 @@ function showDisaggregatedReport(){
       <td colspan="2" class="border-top-dotted border-null-left border-dotted-bottom">
       </td>
       <td colspan="2" class="number">
-        28  %
+        <span id="total_patients_with_screened_bp">0</span>&nbsp;%
       </td>
   </tr>
   <tr>
@@ -2612,7 +2622,7 @@ function showDisaggregatedReport(){
 </div> -->
 <footer class="footer">
     <div class="container-footer">
-        <button id="btnNext" class="green right" style="margin: 5px 0px 0px; padding: 0px; float: right;" onclick="finish();">
+        <button id="btnNext" class="green right" style="margin: 5px 0px 0px; padding: 0px; float: right;" onclick="location='/';">
             <span>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Finish &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;</span>
         </button>
         <button id="activities" class="btn btn-success buttons blue" style="margin-right: 5px;" onmousedown="javascript:printPDF();" >
@@ -2630,6 +2640,9 @@ function showDisaggregatedReport(){
 </form>
 
 <script type="text/javascript">
+
+function validateReport() {  
+  
   /**############### Initializing numbers to be compared #################*/
   var total_registered = parseInt(document.getElementById("total_registered").innerHTML);
   var cum_total_registered = parseInt(document.getElementById("cum_total_registered").innerHTML);
@@ -3168,205 +3181,10 @@ function showDisaggregatedReport(){
     document.body.insertBefore(title_div, current_div);
   }
 
+}
 
 
-
-    
-    print_pdf_attr["six_a"] = "13";
   
-    print_pdf_attr["three_a"] = "0";
-  
-    print_pdf_attr["stopped_art"] = "12";
-  
-    print_pdf_attr["elleven_p"] = "0";
-  
-    print_pdf_attr["no_tb"] = "1";
-  
-    print_pdf_attr["tb_within_the_last_two_years"] = "0";
-  
-    print_pdf_attr["total_patients_on_family_planning"] = "100";
-  
-    print_pdf_attr["cum_who_stage_four"] = "609";
-  
-    print_pdf_attr["four_p"] = "1";
-  
-    print_pdf_attr["presumed_severe_hiv_disease_in_infants"] = "0";
-  
-    print_pdf_attr["total_patients_on_arvs_and_ipt"] = "0";
-  
-    print_pdf_attr["total_pregnant_women"] = "16";
-  
-    print_pdf_attr["unknown_regimen"] = "0";
-  
-    print_pdf_attr["five_a"] = "1302";
-  
-    print_pdf_attr["cum_pregnant_women"] = "806";
-  
-    print_pdf_attr["cum_kaposis_sarcoma"] = "93";
-  
-    print_pdf_attr["cum_who_stage_three"] = "3130";
-  
-    print_pdf_attr["children_12_23_months"] = "0";
-  
-    print_pdf_attr["died_within_the_2nd_month_of_art_initiation"] = "71";
-  
-    print_pdf_attr["total_patients_with_screened_bp"] = "28";
-  
-    print_pdf_attr["eight_a"] = "16";
-  
-    print_pdf_attr["cum_unknown_age"] = "0";
-  
-    print_pdf_attr["total_registered"] = "1";
-  
-    print_pdf_attr["unknown_other_reason_outside_guidelines"] = "0";
-  
-    print_pdf_attr["zero_a"] = "3";
-  
-    print_pdf_attr["died_within_the_1st_month_of_art_initiation"] = "103";
-  
-    print_pdf_attr["cum_transfer_in"] = "692";
-  
-    print_pdf_attr["patients_with_7_plus_doses_missed_at_their_last_visit"] = "361";
-  
-    print_pdf_attr["ten_a"] = "0";
-  
-    print_pdf_attr["transfer_in"] = "0";
-  
-    print_pdf_attr["twelve_a"] = "0";
-  
-    print_pdf_attr["died_total"] = "448";
-  
-    print_pdf_attr["breastfeeding_mothers"] = "0";
-  
-    print_pdf_attr["cum_confirmed_hiv_infection_in_infants_pcr"] = "7";
-  
-    print_pdf_attr["pregnant_women"] = "0";
-  
-    print_pdf_attr["cum_re_initiated_on_art"] = "198";
-  
-    print_pdf_attr["cum_total_registered"] = "6665";
-  
-    print_pdf_attr["two_p"] = "12";
-  
-    print_pdf_attr["cum_adults_at_art_initiation"] = "6087";
-  
-    print_pdf_attr["tb_suspected"] = "224";
-  
-    print_pdf_attr["tb_not_suspected"] = "1168";
-  
-    print_pdf_attr["children_below_24_months_at_art_initiation"] = "0";
-  
-    print_pdf_attr["defaulted"] = "3224";
-  
-    print_pdf_attr["cum_tb_within_the_last_two_years"] = "213";
-  
-    print_pdf_attr["one_p"] = "0";
-  
-    print_pdf_attr["total_patients_on_arvs_and_cpt"] = "0";
-  
-    print_pdf_attr["total_breastfeeding_women"] = "86";
-  
-    print_pdf_attr["nine_a"] = "1";
-  
-    print_pdf_attr["cum_breastfeeding_mothers"] = "223";
-  
-    print_pdf_attr["non_pregnant_females"] = "1";
-  
-    print_pdf_attr["current_episode_of_tb"] = "0";
-  
-    print_pdf_attr["all_males"] = "0";
-  
-    print_pdf_attr["unknown_side_effects"] = "0";
-  
-    print_pdf_attr["cum_non_pregnant_females"] = "3247";
-  
-    print_pdf_attr["who_stage_three"] = "0";
-  
-    print_pdf_attr["re_initiated_on_art"] = "0";
-  
-    print_pdf_attr["who_stage_two"] = "0";
-  
-    print_pdf_attr["who_stage_four"] = "1";
-  
-    print_pdf_attr["cum_pregnant_females_all_ages"] = "853";
-  
-    print_pdf_attr["three_p"] = "0";
-  
-    print_pdf_attr["elleven_a"] = "0";
-  
-    print_pdf_attr["seven_a"] = "9";
-  
-    print_pdf_attr["died_within_the_3rd_month_of_art_initiation"] = "33";
-  
-    print_pdf_attr["initiated_on_art_first_time"] = "1";
-  
-    print_pdf_attr["cum_presumed_severe_hiv_disease_in_infants"] = "34";
-  
-    print_pdf_attr["tb_confirmed_on_tb_treatment"] = "17";
-  
-    print_pdf_attr["four_a"] = "1";
-  
-    print_pdf_attr["died_after_the_3rd_month_of_art_initiation"] = "241";
-  
-    print_pdf_attr["kaposis_sarcoma"] = "0";
-  
-    print_pdf_attr["cum_initiated_on_art_first_time"] = "5775";
-  
-    print_pdf_attr["unknown_tb_status"] = "0";
-  
-    print_pdf_attr["total_alive_and_on_art"] = "1409";
-  
-    print_pdf_attr["transfered_out"] = "1572";
-  
-    print_pdf_attr["zero_p"] = "2";
-  
-    print_pdf_attr["pregnant_females_all_ages"] = "0";
-  
-    print_pdf_attr["cum_who_stage_two"] = "1146";
-  
-    print_pdf_attr["cum_children_24_months_14_years_at_art_initiation"] = "426";
-  
-    print_pdf_attr["cum_children_12_23_months"] = "52";
-  
-    print_pdf_attr["total_other_patients"] = "1307";
-  
-    print_pdf_attr["patients_with_unknown_adhrence"] = "7";
-  
-    print_pdf_attr["patients_with_0_6_doses_missed_at_their_last_visit"] = "1041";
-  
-    print_pdf_attr["total_patients_without_side_effects"] = "1405";
-  
-    print_pdf_attr["adults_at_art_initiation"] = "0";
-  
-    print_pdf_attr["tb_confirmed_currently_not_yet_on_tb_treatment"] = "0";
-  
-    print_pdf_attr["two_a"] = "49";
-  
-    print_pdf_attr["asymptomatic"] = "0";
-  
-    print_pdf_attr["unknown_age"] = "0";
-  
-    print_pdf_attr["cum_asymptomatic"] = "627";
-  
-    print_pdf_attr["nine_p"] = "0";
-  
-    print_pdf_attr["confirmed_hiv_infection_in_infants_pcr"] = "0";
-  
-    print_pdf_attr["one_a"] = "0";
-  
-    print_pdf_attr["total_patients_with_side_effects"] = "4";
-  
-    print_pdf_attr["cum_all_males"] = "2565";
-  
-    print_pdf_attr["cum_children_below_24_months_at_art_initiation"] = "152";
-  
-    print_pdf_attr["cum_unknown_other_reason_outside_guidelines"] = "31";
-  
-    print_pdf_attr["children_24_months_14_years_at_art_initiation"] = "1";
-  
-    print_pdf_attr["cum_current_episode_of_tb"] = "102";
-  
-    print_pdf_attr["cum_no_tb"] = "6350";
   
 
 </script>
@@ -3374,6 +3192,7 @@ function showDisaggregatedReport(){
 <form id="pdf" method="post" action="/cohort_tool/pdf_printout_cohort.pdf" name="pdf_printout">
 </form>
 
+<script type="text/javascript" src="/assets/js/generic_ajaxrequest.js"></script>
 <script>
 function getTotal(app){
         jQuery.ajax({
@@ -3399,9 +3218,9 @@ function printPDF() {
     pdfForm.appendChild(input);
   }
 
-  var year = 2018
+  var year = Year
   
-  var cohort_quarter = ': 3';
+  var cohort_quarter = ': ' + Quarter;
 
   var input = document.createElement('input');
   input.setAttribute('type','hidden');
@@ -3422,5 +3241,61 @@ function printPDF() {
   document.pdf_printout.submit();
 }
 
+function getUrlVars() {
+  var vars = {};
+  var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+    vars[key] = value;
+  });
+  return vars;
+}
+
+var cohortResults;
+
+function getIndicators() {
+  
+  var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1/programs/1/reports/cohort?name=";
+  url += Quarter + " " + Year;
+
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+      cohortResults = JSON.parse(this.responseText);
+      renderResults();
+    }else{
+      //setInterval("getIndicators()", 30000);
+    }
+  };
+  xhttp.open("GET", url, true);
+  xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+  xhttp.setRequestHeader('Content-type', "application/json");
+  xhttp.send();
+
+}
+
+function renderResults() {
+  var cohortValues = cohortResults.values;
+  for(var i = 0 ; i < cohortValues.length ; i++){
+    var id = cohortValues[i].name;
+    var indicator;
+    try{
+      indicator = document.getElementById(id);
+      indicator.innerHTML = cohortValues[i].contents;
+      print_pdf_attr[id] = cohortValues[i].contents;
+    }catch(e){
+      console.log(cohortValues[i].name + ">>>>>>>>>>>>>>>>>>>> " + e);
+      continue;
+    }
+  }
+
+  validateReport();
+}
+
+var Year    = getUrlVars()["quarter"].split("+")[1];
+var Quarter = getUrlVars()["quarter"].split("+")[0];
+
+document.getElementById("display-quarter").innerHTML = "Quarter: " + Quarter;
+document.getElementById("display-quarter-year").innerHTML = "Year: " + Year;
+
+getIndicators();
 </script>
 
