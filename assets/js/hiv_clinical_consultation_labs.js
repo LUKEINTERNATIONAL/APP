@@ -23,6 +23,8 @@ var month_names = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
   "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
 ];
 
+var laborderDate ;
+
 function buildConsultationLabPage() {
     var frame = document.getElementById("inputFrame" + tstCurrentPage);
     frame.style = "width: 96%; height: 90%; background-color: lightyellow;"
@@ -532,7 +534,6 @@ function setDate(givenDate) {
   if(givenDate < minYear) {
     inputDate(minYear);
   }
-  
 }
 
 function inputDate(givenDate) {
@@ -547,6 +548,7 @@ function inputDate(givenDate) {
     dayInput.setAttribute("value", day);
     yearInput.setAttribute("value", year);
     document.getElementById("lab-tests").value = moment(d).format("DD/MMM/YYYY");
+    laborderDate = d; 
 }
 function buildPage(e) {
   
@@ -576,11 +578,7 @@ function enterDate (e) {
       inputBox.value = "unknown";
     }else if(e.innerHTML.match(/today/i)){
       var d = new Date();
-      var month = d.getMonth();
-      var day = d.getDate();
-      var year = d.getFullYear();
       inputDate(d);
-      // inputBox.value = day +"-"+month_names[parseInt(month)]+"-"+year;
     }
     else{
         inputBox.value += e.innerHTML;
