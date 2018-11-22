@@ -11,17 +11,17 @@ function hideKBD() {
 
   var focusInput = document.getElementById("lab-tests");
 
-  function showKBD() {
+  function showKBD(returnString, functionName) {
     var keyboard = document.createElement("div");
     keyboard.setAttribute("id","kbd");
     var main = document.getElementsByClassName("modal-content")[0];
     var styles = "left:50px;top: 50px;";
     keyboard.setAttribute("style", styles);
     main.appendChild(keyboard);
-    keyboardKeys();
+    keyboardKeys(returnString, functionName);
   }
 
-  function keyboardKeys() {
+  function keyboardKeys(returnString, functionName) {
 
     var keypress = [
       ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"],
@@ -41,12 +41,15 @@ function hideKBD() {
         var cell = document.createElement("div")
         cell.setAttribute("class","keyboard-table-cell");
         row.appendChild(cell);
-
         var span = document.createElement("span")
-        span.setAttribute("onmousedown","keyPressed(this);");
+        span.addEventListener("mousedown", function() {
+          keyPressed(this, returnString, functionName);
+        })
         if(keypress[i][x] == 'NEXT' || keypress[i][x] == 'LOGIN') {
           span.setAttribute("class","keyboard-span green_btn");
-          span.setAttribute("onmousedown","hideKeyboard();keyPressed(this)");
+          span.addEventListener("mousedown", function() {
+            keyPressed(this);
+          })
         } else {
           span.setAttribute("class","keyboard-span");
         }
@@ -61,7 +64,7 @@ function hideKBD() {
     keyboard.appendChild(table);
   }
 
-  function keyPressed(e) {
+  function keyPressed(e, returnString, functionName) {
     var inputBox = document.getElementById("lab-tests");
     try{
 
@@ -71,7 +74,7 @@ function hideKBD() {
       inputBox.value += "+";
     }else{
         inputBox.value += e.innerHTML;
-        loadTests("programs/1/lab_tests/types/?search_string="+inputBox.value );
+        functionName(returnString+inputBox.value );
       }
 
     }catch(x) { }

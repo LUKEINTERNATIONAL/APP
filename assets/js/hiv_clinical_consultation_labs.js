@@ -351,10 +351,10 @@ function newOrders() {
   modal.setAttribute("class", "modal");
   modal.innerHTML = '  <div class="modal-content">'+
       '<span class="close-modal">&times;</span>'+
-      '<div id="tests-div"><input class="tests-input" type="text" id="lab-tests" placeholder="lab-tests" style=""/> <ul id="tests-list"> <ul></div> <span id="modal-next" onclick="showDates();"> next </span>'+
+      '<div id="tests-div"><input class="tests-input" type="text" id="lab-tests" placeholder="lab-tests"/> <ul id="tests-list"> <ul></div> <span id="modal-next" onclick="showDates();"> next </span>'+
   '</div>';
   modal.style.display = "block";
-  showKBD('NEXT');
+  showKBD("programs/1/lab_tests/types/?search_string=", loadTests);
 var span = document.getElementsByClassName("close-modal")[0];
 
 span.onclick = function() {
@@ -369,9 +369,8 @@ window.onclick = function(event) {
 
 }
 
-function loadTests(string, checks, locations){
+function loadTests(string, checks){
   var url = 'http://'+apiURL+':'+apiPort+'/api/v1/'+string;
-  console.log(url);
   var req = new XMLHttpRequest();
   req.onreadystatechange = function(){
     if (this.readyState == 4) {
@@ -392,8 +391,6 @@ function loadTests(string, checks, locations){
             testOrdersHash[results[x].ID] = "not ordered";
           }
           
-        }else if(locations == true){
-          list.innerHTML += "<li onmousedown='' class='test-list-items' location_id='"+results[x].location_id+"'>"+results[x].name+"</li>";
         }else {
           for(var x = 0; x < results.length; x ++){ 
             list.innerHTML += "<li onmousedown='enterTest(this);' class='test-list-items' panel_id='"+results[x].Panel_ID+"'>" + results[x].TestName + "</li>";
@@ -418,7 +415,6 @@ function loadLocations(string){
     if (this.readyState == 4) {
       if (this.status == 200) {
         var results = JSON.parse(this.responseText);
-        console.log(results);
         var list = document.getElementById("tests-list");
         if (list.innerHTML != null) {
           list.innerHTML = null;
@@ -492,10 +488,9 @@ function showDates() {
   document.getElementById("modal-next").addEventListener("click", function() {
     document.getElementById("tests-div").style.height = "45%";
     document.getElementById("tests-list").style.height = "80%";
-    // tests-list
-    showKBD();
-    loadLocations("a");
-    loadTests("locations?name=", false, true);
+    document.getElementById("lab-tests").value = "";
+    document.getElementById("tests-list").innerHTML = "";
+    showKBD("", loadLocations);
   })
 }
 
@@ -610,7 +605,6 @@ function buildPage(e) {
     buildResultTable();
   }else if(e.getAttribute("type") == "order"){
     newOrders();
-    // buildNewOrderPage();
   }
 
 }
