@@ -11,7 +11,7 @@ function hideKBD() {
 
   var focusInput = document.getElementById("lab-tests");
 
-  function showKBD(navigation_button) {
+  function showKBD() {
     var keyboard = document.createElement("div");
     keyboard.setAttribute("id","kbd");
     var main = document.getElementsByClassName("modal-content")[0];
@@ -71,7 +71,7 @@ function hideKBD() {
       inputBox.value += "+";
     }else{
         inputBox.value += e.innerHTML;
-        loadTests("lab_tests/types/?search_string="+inputBox.value );
+        loadTests("programs/1/lab_tests/types/?search_string="+inputBox.value );
       }
 
     }catch(x) { }
