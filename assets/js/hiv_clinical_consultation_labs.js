@@ -4,6 +4,27 @@ var apiPort = sessionStorage.apiPort;
 var apiURL = sessionStorage.apiURL;
 var patientID = sessionStorage.patientID;
 var iac = false;
+var monthNumbers  = {
+  "Jan": 0, 
+  "Feb": 1, 
+  "Mar": 2, 
+  "Apr": 3, 
+  "May": 4, 
+  "Jun" : 5,
+  "Jul": 6, 
+  "Aug" :7, 
+  "Sep": 8, 
+  "Oct": 9, 
+  "Nov" : 10, 
+  "Dec": 11
+}
+
+var month_names = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+];
+
+var laborderDate ;
+
 function buildConsultationLabPage() {
     var frame = document.getElementById("inputFrame" + tstCurrentPage);
     frame.style = "width: 96%; height: 90%; background-color: lightyellow;"
@@ -285,9 +306,6 @@ function buildNewOrderPage() {
   var rightContainer = document.getElementById("order-table-cell-right");
   var container = document.createElement("div");
   rightContainer.appendChild(container);
-  /*var style = "border-style: solid; border-width: 1px;";
-  style += "margin: 30px; border-radius: 25px;";
-  container.style = style; */
 
   var tests = [
     ["CD4 count", 23],["Crag",12],["Urine", 34],["Viral Load", 12]
@@ -424,7 +442,113 @@ function enterTest(element) {
 }
 
 function showDates() {
-  document.getElementById("tests-list").innerHTML = "";
+  var d = new Date();
+  document.getElementById("tests-list").innerHTML = '<div id="dateselector" class="dateselector">'+ 			
+  '<table><tbody> <tr> <td> <div style="display: inline;"> <button id="dateselector_nextDay" onmousedown="addDay();"><span>+</span></button> '+
+  '<input id="dateselector_day" type="text" value=""> <button id="dateselector_preDay" onmousedown="minusDay();"><span>-</span></button> </div> '+
+  '</td><td> <div style="display: inline;"> <button id="dateselector_nextMonth" onmousedown="plusMonth();"><span>+</span></button>  '+
+  '<input id="dateselector_month" type="text" value=""> <button id="dateselector_preMonth" onmousedown="minusMonth();"><span>-</span></button> '+
+  '</div> </td><td> <div style="display: inline;"> <button id="dateselector_nextYear" onmousedown="plusYear();"><span>+</span></button> '+
+  '<input id="dateselector_year" type="text" value=""> <button id="dateselector_preYear" onmousedown="minusYear();"><span>-</span></button> '+
+  '</div> </td><td> <button id="today" class="red"  style="width: 150px;"><span onmousedown="enterDate(this)">Today</span></button>'+ 			
+  '<!--button id="num" onmousedown="updateKeyColor(this);press(this.id);" style="width: 150px;"><span>Num</span></button-->'+
+  '<button id="Unknown" style="width: 150px;"><span onmousedown="enterDate(this)">Unknown</span></button></td></tr></tbody></table></div>';
+  setDate(d);
+}
+
+function addDay() {
+  var year = document.getElementById("dateselector_year").value
+  var month = document.getElementById("dateselector_month").value;
+  var day = document.getElementById("dateselector_day").value;
+  var fullDate = month + "-" + day + "-" + year;
+  var f = new Date(fullDate);
+  d = moment(f).add(1, 'days').format("MM/DD/YYYY");
+  d = new Date(d);
+  setDate(d);
+}
+
+function minusDay() {
+  var year = document.getElementById("dateselector_year").value
+  var month = document.getElementById("dateselector_month").value;
+  var day = document.getElementById("dateselector_day").value;
+  var fullDate = month + "-" + day + "-" + year;
+  var f = new Date(fullDate);
+  d = moment(f).subtract(1, 'days').format("MM/DD/YYYY");
+  d = new Date(d);
+  setDate(d);
+}
+
+function plusMonth() {
+  var year = document.getElementById("dateselector_year").value
+  var month = document.getElementById("dateselector_month").value;
+  var day = document.getElementById("dateselector_day").value;
+  var fullDate = month + "-" + day + "-" + year;
+  var f = new Date(fullDate);
+  d = moment(f).add(1, 'months').format("MM/DD/YYYY");
+  d = new Date(d);
+  setDate(d);
+}
+
+function minusMonth() {
+  var year = document.getElementById("dateselector_year").value
+  var month = document.getElementById("dateselector_month").value;
+  var day = document.getElementById("dateselector_day").value;
+  var fullDate = month + "-" + day + "-" + year;
+  var f = new Date(fullDate);
+  d = moment(f).subtract(1, 'months').format("MM/DD/YYYY");
+  d = new Date(d);
+  setDate(d);
+}
+
+function plusYear() {
+  var year = document.getElementById("dateselector_year").value
+  var month = document.getElementById("dateselector_month").value;
+  var day = document.getElementById("dateselector_day").value;
+  var fullDate = month + "-" + day + "-" + year;
+  var f = new Date(fullDate);
+  d = moment(f).add(1, 'years').format("MM/DD/YYYY");
+  d = new Date(d);
+  setDate(d);
+}
+
+function minusYear() {
+  var year = document.getElementById("dateselector_year").value
+  var month = document.getElementById("dateselector_month").value;
+  var day = document.getElementById("dateselector_day").value;
+  var fullDate = month + "-" + day + "-" + year;
+  var f = new Date(fullDate);
+  d = moment(f).subtract(1, 'years').format("MM/DD/YYYY");
+  d = new Date(d);
+  setDate(d); 
+}
+
+function setDate(givenDate) {
+  var maxDate = new Date();
+  var minYear = new Date(sessionStorage.patientDOB);
+  minYear = new Date(minYear);
+  if (givenDate > maxDate ) {
+   inputDate(maxDate);
+  }else if (givenDate < maxDate){
+    inputDate(givenDate);
+  }
+  if(givenDate < minYear) {
+    inputDate(minYear);
+  }
+}
+
+function inputDate(givenDate) {
+  var d = new Date(givenDate);
+    var month = d.getMonth();
+    var day = d.getDate();
+    var year = d.getFullYear();
+    var monthInput = document.getElementById("dateselector_month");
+    var dayInput = document.getElementById("dateselector_day");
+    var yearInput = document.getElementById("dateselector_year");
+    monthInput.setAttribute("value", month_names[month]);
+    dayInput.setAttribute("value", day);
+    yearInput.setAttribute("value", year);
+    document.getElementById("lab-tests").value = moment(d).format("DD/MMM/YYYY");
+    laborderDate = d; 
 }
 function buildPage(e) {
   
@@ -446,6 +570,19 @@ function buildPage(e) {
     // buildNewOrderPage();
   }
 
+}
+
+function enterDate (e) {
+    var inputBox = document.getElementById("lab-tests");
+    if(e.innerHTML.match(/unknown/i)){
+      inputBox.value = "unknown";
+    }else if(e.innerHTML.match(/today/i)){
+      var d = new Date();
+      inputDate(d);
+    }
+    else{
+        inputBox.value += e.innerHTML;
+    }
 }
 
 function checkIfTestSelected() {
