@@ -96,7 +96,6 @@ function buildNavButtons() {
 
 function buildResultTable() {
     var container = document.getElementById("order-table-cell-right");
-
     var table = document.createElement("table");
     table.setAttribute("class","result-table");
     table.setAttribute("id","lab-result-table");
@@ -128,6 +127,7 @@ function buildResultTable() {
 }
 
 function getOrders(tbody) {
+
   var url = 'http://' + apiURL + ':' + apiPort + '/api/v1/programs/1/lab_tests/orders?patient_id=' + patientID;
   var req = new XMLHttpRequest();
   req.onreadystatechange = function () {
@@ -422,7 +422,7 @@ function loadLocations(string){
 
         }
           for(var x = 0; x < results.length; x ++){ 
-            list.innerHTML += "<li onmousedown='' class='test-list-items' location_id='"+results[x].location_id+"'>"+results[x].name+"</li>";
+            list.innerHTML += "<li onmousedown='saveTests();' class='test-list-items' location_id='"+results[x].location_id+"'>"+results[x].name+"</li>";
           }
         
       }
@@ -437,27 +437,28 @@ function loadLocations(string){
   }
 
 }
+
+function saveTests() {
+  document.getElementById("myModal").style.visibility = "hidden";
+  document.getElementById("modal-next").style.visibility = "hidden";
+ var e = document.getElementById("nav-results");
+  buildPage(e)
+}
+
 function tick(element) {
   if(element.getAttribute("ticked") === "ticked") {
     element.src = "/public/touchscreentoolkit/lib/images/unticked.jpg";
     element.setAttribute("ticked", "unticked");
+    element.class = ("unticked");
     testOrdersHash[(element.getAttribute("testID"))] = "not ordered";
   }else {
     testOrdersHash[(element.getAttribute("testID"))] = "ordered"; 
     element.setAttribute("ticked", "ticked");
+    element.class = ("ticked");
     element.src = "/public/touchscreentoolkit/lib/images/ticked.jpg";
   }
 }
 
-// function enterTest(element) {
-//   loadTests("lab_tests/types?panel_id="+element.getAttribute("panel_id"), true);
-//   var inputBox = document.getElementById("lab-tests");
-//   inputBox.value = "test selected = " + element.innerHTML;
-//   hideKBD();
-//   document.getElementById("tests-list").style.height = "100%";
-//   document.getElementById("tests-div").style.height = "70%";
-  
-// }
 
 function enterTest(element) {
   loadTests("/programs/1/lab_tests/types?panel_id="+element.getAttribute("panel_id"), true);
@@ -467,8 +468,6 @@ function enterTest(element) {
   hideKBD();
   document.getElementById("tests-list").style.height = "100%";
   document.getElementById("tests-div").style.height = "70%";
-  // document.getElementById("modal-next").removeAttribute()
-  
   
 }
 
