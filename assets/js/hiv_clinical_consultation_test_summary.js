@@ -22,9 +22,13 @@ function buildSummary() {
   // // buildPage(e)
   // var e = document.getElementById("nav-results");
   // buildPage(e)
-  // buildOrders();
+  buildOrders();
 }
 
+function postOrders(test_type_id, date) {
+  // var encounter_type_id=  53,
+  
+}
 function buildOrders() {
   var rightSide = document.getElementById("right-side");
   rightSide.style.display ="inline";
@@ -138,4 +142,3 @@ function selectTestResult(e){
 
   testResults[e.getAttribute("test")] = e.innerHTML;
 }
-
