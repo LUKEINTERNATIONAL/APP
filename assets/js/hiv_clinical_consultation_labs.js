@@ -351,10 +351,10 @@ function newOrders() {
   modal.setAttribute("class", "modal");
   modal.innerHTML = '  <div class="modal-content">'+
       '<span class="close-modal">&times;</span>'+
-      '<div id="tests-div"><input class="tests-input" type="text" id="lab-tests" placeholder="lab-tests" style=""/> <ul id="tests-list"> <ul></div> <span id="modal-next" onclick="showDates();"> next </span>'+
+      '<div id="tests-div"><input class="tests-input" type="text" id="lab-tests" placeholder="lab-tests"/> <ul id="tests-list"> <ul></div> <span id="modal-next" onclick="showDates();"> next </span>'+
   '</div>';
   modal.style.display = "block";
-  showKBD('NEXT');
+  showKBD("programs/1/lab_tests/types/?search_string=", loadTests);
 var span = document.getElementsByClassName("close-modal")[0];
 
 span.onclick = function() {
@@ -370,7 +370,7 @@ window.onclick = function(event) {
 }
 
 function loadTests(string, checks){
-  var url = 'http://'+apiURL+':'+apiPort+'/api/v1/programs/1/'+string;
+  var url = 'http://'+apiURL+':'+apiPort+'/api/v1/'+string;
   var req = new XMLHttpRequest();
   req.onreadystatechange = function(){
     if (this.readyState == 4) {
@@ -408,6 +408,35 @@ function loadTests(string, checks){
   }
 }
 
+function loadLocations(string){
+  var url = 'http://'+apiURL+':'+apiPort+'/api/v1/locations?name='+string;
+  var req = new XMLHttpRequest();
+  req.onreadystatechange = function(){
+    if (this.readyState == 4) {
+      if (this.status == 200) {
+        var results = JSON.parse(this.responseText);
+        var list = document.getElementById("tests-list");
+        if (list.innerHTML != null) {
+          list.innerHTML = null;
+        }else {
+
+        }
+          for(var x = 0; x < results.length; x ++){ 
+            list.innerHTML += "<li onmousedown='' class='test-list-items' location_id='"+results[x].location_id+"'>"+results[x].name+"</li>";
+          }
+        
+      }
+    }
+  };
+  try {
+    req.open('GET', url, true);
+    req.setRequestHeader('Authorization',sessionStorage.getItem('authorization'));
+    req.send(null);
+  } catch (e) {
+
+  }
+
+}
 function tick(element) {
   if(element.getAttribute("ticked") === "ticked") {
     element.src = "/public/touchscreentoolkit/lib/images/unticked.jpg";
@@ -420,24 +449,26 @@ function tick(element) {
   }
 }
 
-function enterTest(element) {
-  loadTests("lab_tests/types?panel_id="+element.getAttribute("panel_id"), true);
-  var inputBox = document.getElementById("lab-tests");
-  inputBox.value = "test selected = " + element.innerHTML;
-  hideKBD();
-  document.getElementById("tests-list").style.height = "100%";
-  document.getElementById("tests-div").style.height = "70%";
+// function enterTest(element) {
+//   loadTests("lab_tests/types?panel_id="+element.getAttribute("panel_id"), true);
+//   var inputBox = document.getElementById("lab-tests");
+//   inputBox.value = "test selected = " + element.innerHTML;
+//   hideKBD();
+//   document.getElementById("tests-list").style.height = "100%";
+//   document.getElementById("tests-div").style.height = "70%";
   
-}
+// }
 
 function enterTest(element) {
-  loadTests("lab_tests/types?panel_id="+element.getAttribute("panel_id"), true);
+  loadTests("/programs/1/lab_tests/types?panel_id="+element.getAttribute("panel_id"), true);
   var inputBox = document.getElementById("lab-tests");
   inputBox.value = "test selected = " + element.innerHTML;
   document.getElementById("modal-next").style.visibility ="visible";
   hideKBD();
   document.getElementById("tests-list").style.height = "100%";
   document.getElementById("tests-div").style.height = "70%";
+  // document.getElementById("modal-next").removeAttribute()
+  
   
 }
 
@@ -454,6 +485,13 @@ function showDates() {
   '<!--button id="num" onmousedown="updateKeyColor(this);press(this.id);" style="width: 150px;"><span>Num</span></button-->'+
   '<button id="Unknown" style="width: 150px;"><span onmousedown="enterDate(this)">Unknown</span></button></td></tr></tbody></table></div>';
   setDate(d);
+  document.getElementById("modal-next").addEventListener("click", function() {
+    document.getElementById("tests-div").style.height = "45%";
+    document.getElementById("tests-list").style.height = "80%";
+    document.getElementById("lab-tests").value = "";
+    document.getElementById("tests-list").innerHTML = "";
+    showKBD("", loadLocations);
+  })
 }
 
 function addDay() {
@@ -567,7 +605,6 @@ function buildPage(e) {
     buildResultTable();
   }else if(e.getAttribute("type") == "order"){
     newOrders();
-    // buildNewOrderPage();
   }
 
 }
