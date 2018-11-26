@@ -1897,7 +1897,7 @@
 
                     <!-- FOR TRANSFER IN OR VISITING PATIENT -->
 
-                    <select allowFreeText="false" helpText="Last ARV drugs taken <span style='font-size:0.7em;font-style:italic'>(Ntundu wa ma ARV amene munamwa komaliza)</span>" id="last_art_drugs_taken" name="observations[][value_coded_or_text]" tt_onLoad="addCustomRegimenButton(); lastOtherDrugs = ''; $('otherMedications').value = '';" tt_onUnLoad="updateLastARVDrugs(); removeCustomRegimenButton();" tt_pageStyleClass="NoKeyboard">
+ <!--                    <select allowFreeText="false" helpText="Last ARV drugs taken <span style='font-size:0.7em;font-style:italic'>(Ntundu wa ma ARV amene munamwa komaliza)</span>" id="last_art_drugs_taken" name="observations[][value_coded_or_text]" tt_onLoad="addCustomRegimenButton(); lastOtherDrugs = ''; $('otherMedications').value = '';" tt_onUnLoad="updateLastARVDrugs(); removeCustomRegimenButton();" tt_pageStyleClass="NoKeyboard">
                         <option value=''></option>
                         <option value="Regimen 0 (ABC / 3TC + NVP)">Regimen 0 (ABC / 3TC + NVP)</option>
                         <option value="Regimen 2 (AZT / 3TC / NVP)">Regimen 2 (AZT / 3TC / NVP)</option>
@@ -2027,7 +2027,7 @@
                     <input condition="lastOtherDrugs.split(';').indexOf('TDF/3TC (Tenofavir and Lamivudine 300/300mg tablet') != -1" field_type="number" helpText="Total tabs of TDF/3TC (Tenofavir and Lamivudine 300/300mg tablet brought to clinic" id="TDF/3TC (Tenofavir and Lamivudine 300/300mg tablet" name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show();" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
 
                     <input condition="lastOtherDrugs.split(';').indexOf('TDF/3TC/EFV (300/300/600mg tablet)') != -1" field_type="number" helpText="Total tabs of TDF/3TC/EFV (300/300/600mg tablet) brought to clinic" id="TDF/3TC/EFV (300/300/600mg tablet)" name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show();" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
-
+ -->
                     <!-- TRANSFER IN END -->
 
                     <input allowFreeText="false" id="pregnant" name="observations[][value_coded_or_text]" type="hidden" />
