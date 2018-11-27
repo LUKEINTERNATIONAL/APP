@@ -396,7 +396,7 @@ function loadTests(string, checks){
             }else {
               className = "row-odd";
             }
-            table.innerHTML += '<tr class="'+className+'" style="width: 100%;"> <td style="width:5%;"> <img src="/public/touchscreentoolkit/lib/images/unticked.jpg" onclick="tick(this);" ticked="unticked" testID="'+results[x].ID+'"> </td> <td style="width:90%;"> '+results[x].TestName+'</td> </tr>'; 
+            table.innerHTML += '<tr class="'+className+'" style="width: 100%;" id="row-'+results[x].ID+'" testID="'+results[x].ID+'" onclick="tick(this);"> <td style="width:5%;"> <img src="/public/touchscreentoolkit/lib/images/unticked.jpg" ticked="unticked" testID="'+results[x].ID+'" id="img-'+results[x].ID+'"> </td> <td style="width:90%;"> '+results[x].TestName+'</td> </tr>'; 
             testOrdersHash[results[x].ID] = "not ordered";
           }
           
@@ -456,16 +456,23 @@ function saveTests() {
 }
 
 function tick(element) {
-  if(element.getAttribute("ticked") === "ticked") {
-    element.src = "/public/touchscreentoolkit/lib/images/unticked.jpg";
-    element.setAttribute("ticked", "unticked");
-    element.class = ("unticked");
-    testOrdersHash[(element.getAttribute("testID"))] = "not ordered";
+  var imgID =  "img-" + element.getAttribute("testID");
+  var rowID =  "row-" + element.getAttribute("testID");
+  var tickedImage = document.getElementById(imgID);
+  var tickedRow = document.getElementById(rowID);
+  console.log(tickedImage);
+  if(tickedImage.getAttribute("ticked") === "ticked") {
+    tickedImage.src = "/public/touchscreentoolkit/lib/images/unticked.jpg";
+    tickedImage.setAttribute("ticked", "unticked");
+    tickedImage.class = ("unticked");
+    tickedRow.style.backgroundColor = "";
+    testOrdersHash[(tickedImage.getAttribute("testID"))] = "not ordered";
   }else {
-    testOrdersHash[(element.getAttribute("testID"))] = "ordered"; 
-    element.setAttribute("ticked", "ticked");
-    element.class = ("ticked");
-    element.src = "/public/touchscreentoolkit/lib/images/ticked.jpg";
+    testOrdersHash[(tickedImage.getAttribute("testID"))] = "ordered"; 
+    tickedImage.setAttribute("ticked", "ticked");
+    tickedImage.class = ("ticked");
+    tickedImage.src = "/public/touchscreentoolkit/lib/images/ticked.jpg";
+    tickedRow.style.backgroundColor = "lightblue";
   }
 }
 
