@@ -385,8 +385,18 @@ function loadTests(string, checks){
           var table = document.createElement("table");
           table.id = "test-select-table";
           list.appendChild(table);
+          table.style.width = "100%";
+          table.style.borderCollapse = "collapse";
+          table.style.backgroundColor = "#fffee0";
+          list.style.paddingLeft = "0";
+          var className =  "row odd";
           for(var x = 0; x < results.length; x ++){ 
-            table.innerHTML += '<tr> <td> <img src="/public/touchscreentoolkit/lib/images/unticked.jpg" onclick="tick(this);" ticked="unticked" testID="'+results[x].ID+'"> </td> <td> '+results[x].TestName+'</td> </tr>'; 
+            if (x % 2 == 0) {
+              className = "row-even";
+            }else {
+              className = "row-odd";
+            }
+            table.innerHTML += '<tr class="'+className+'" style="width: 100%;"> <td style="width:5%;"> <img src="/public/touchscreentoolkit/lib/images/unticked.jpg" onclick="tick(this);" ticked="unticked" testID="'+results[x].ID+'"> </td> <td style="width:90%;"> '+results[x].TestName+'</td> </tr>'; 
             testOrdersHash[results[x].ID] = "not ordered";
           }
           
@@ -473,7 +483,7 @@ function enterTest(element) {
 
 function showDates() {
   var d = new Date();
-  document.getElementById("tests-list").innerHTML = '<div id="dateselector" class="dateselector">'+ 			
+  document.getElementById("tests-list").innerHTML = '<div id="dateselector" style="margin-left: 20%; margin-top: 15%;" class="dateselector">'+ 			
   '<table><tbody> <tr> <td> <div style="display: inline;"> <button id="dateselector_nextDay" onmousedown="addDay();"><span>+</span></button> '+
   '<input id="dateselector_day" type="text" value=""> <button id="dateselector_preDay" onmousedown="minusDay();"><span>-</span></button> </div> '+
   '</td><td> <div style="display: inline;"> <button id="dateselector_nextMonth" onmousedown="plusMonth();"><span>+</span></button>  '+
