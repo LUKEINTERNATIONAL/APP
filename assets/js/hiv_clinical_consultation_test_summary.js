@@ -19,6 +19,9 @@ function buildSummary() {
   leftSide.style.borderRight = "1px solid black";
   tar.appendChild(leftSide);
   tar.appendChild(rightSide);
+  // // buildPage(e)
+  // var e = document.getElementById("nav-results");
+  // buildPage(e)
   buildOrders();
 }
 
@@ -135,4 +138,3 @@ function selectTestResult(e){
 
   testResults[e.getAttribute("test")] = e.innerHTML;
 }
-

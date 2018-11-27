@@ -4,6 +4,7 @@ var apiPort = sessionStorage.apiPort;
 var apiURL = sessionStorage.apiURL;
 var patientID = sessionStorage.patientID;
 var iac = false;
+var orderDate = {};
 var monthNumbers  = {
   "Jan": 0, 
   "Feb": 1, 
@@ -96,7 +97,6 @@ function buildNavButtons() {
 
 function buildResultTable() {
     var container = document.getElementById("order-table-cell-right");
-
     var table = document.createElement("table");
     table.setAttribute("class","result-table");
     table.setAttribute("id","lab-result-table");
@@ -128,6 +128,7 @@ function buildResultTable() {
 }
 
 function getOrders(tbody) {
+
   var url = 'http://' + apiURL + ':' + apiPort + '/api/v1/programs/1/lab_tests/orders?patient_id=' + patientID;
   var req = new XMLHttpRequest();
   req.onreadystatechange = function () {
@@ -137,12 +138,10 @@ function getOrders(tbody) {
         var results = JSON.parse(this.responseText);
         
         for (var x = 0; x < results.length; x++) {
-          if (results[0].lab_samples[0].lab_parameters.length == 0) {
+          if (results[x].lab_samples[0].lab_parameters.length == 0) {
             var givenResult = "No Result";
           }
-          tbody.innerHTML= "<tr><td>"+results[0].TestOrdered+"</td><td>"+results[0].OrderDate+"</td><td>"+results[0].OrderDate+"</td><td>"+givenResult+"</td><td>"+givenResult+"</td></tr>" ;
-          // console.log(results);
-          // tbody.innerHTML("<td></td> <td></td><td></td>" );
+          tbody.innerHTML += "<tr><td>"+results[x].TestOrdered+"</td><td>"+results[x].OrderDate+"</td><td>"+results[x].OrderDate+"</td><td>"+givenResult+"</td><td>"+givenResult+"</td></tr>" ;
         }
       }
     }
@@ -422,7 +421,7 @@ function loadLocations(string){
 
         }
           for(var x = 0; x < results.length; x ++){ 
-            list.innerHTML += "<li onmousedown='' class='test-list-items' location_id='"+results[x].location_id+"'>"+results[x].name+"</li>";
+            list.innerHTML += "<li onmousedown='saveTests();' class='test-list-items' location_id='"+results[x].location_id+"'>"+results[x].name+"</li>";
           }
         
       }
@@ -437,27 +436,29 @@ function loadLocations(string){
   }
 
 }
+
+function saveTests() {
+  submitOrders();
+  document.getElementById("myModal").style.visibility = "hidden";
+  document.getElementById("modal-next").style.visibility = "hidden";
+ var e = document.getElementById("nav-results");
+  buildPage(e)
+}
+
 function tick(element) {
   if(element.getAttribute("ticked") === "ticked") {
     element.src = "/public/touchscreentoolkit/lib/images/unticked.jpg";
     element.setAttribute("ticked", "unticked");
+    element.class = ("unticked");
     testOrdersHash[(element.getAttribute("testID"))] = "not ordered";
   }else {
     testOrdersHash[(element.getAttribute("testID"))] = "ordered"; 
     element.setAttribute("ticked", "ticked");
+    element.class = ("ticked");
     element.src = "/public/touchscreentoolkit/lib/images/ticked.jpg";
   }
 }
 
-// function enterTest(element) {
-//   loadTests("lab_tests/types?panel_id="+element.getAttribute("panel_id"), true);
-//   var inputBox = document.getElementById("lab-tests");
-//   inputBox.value = "test selected = " + element.innerHTML;
-//   hideKBD();
-//   document.getElementById("tests-list").style.height = "100%";
-//   document.getElementById("tests-div").style.height = "70%";
-  
-// }
 
 function enterTest(element) {
   loadTests("/programs/1/lab_tests/types?panel_id="+element.getAttribute("panel_id"), true);
@@ -467,8 +468,6 @@ function enterTest(element) {
   hideKBD();
   document.getElementById("tests-list").style.height = "100%";
   document.getElementById("tests-div").style.height = "70%";
-  // document.getElementById("modal-next").removeAttribute()
-  
   
 }
 
@@ -486,6 +485,7 @@ function showDates() {
   '<button id="Unknown" style="width: 150px;"><span onmousedown="enterDate(this)">Unknown</span></button></td></tr></tbody></table></div>';
   setDate(d);
   document.getElementById("modal-next").addEventListener("click", function() {
+    orderDate.testDate = document.getElementById("lab-tests").value;
     document.getElementById("tests-div").style.height = "45%";
     document.getElementById("tests-list").style.height = "80%";
     document.getElementById("lab-tests").value = "";
@@ -635,6 +635,58 @@ function checkIfTestSelected() {
   return test;
 }
 
+function submitOrders() {
+
+  var encounter = {
+      encounter_type_id:  57,
+      patient_id: patientID,
+      encounter_datetime: null
+  }
+
+  submitParameters(encounter, "/encounters", "setOrders");
+}
+
+function setOrders(encounter) {
+  
+  keys = Object.keys(testOrdersHash);
+  for (let index = 0; index < keys.length; index++) {
+    if (testOrdersHash[keys[index]] == "ordered") {
+      postOrders(keys[index], encounter.encounter_id);
+    }
+  }
+}
+
+function postOrders(test_type_id, encounter_id) {
+  
+  // var encounter_type_id=  53,
+  // var encounter_date 
+  var date = new Date(orderDate.testDate);
+  var http = new XMLHttpRequest();
+  // var url = apiProtocol + '://' + apiURL + ':' + apiPort + '/api/v1/pr';
+  var url = 'http://' + apiURL + ':' + apiPort + '/api/v1/programs/1/lab_tests/orders?patient_id=' + patientID;
+  var params = JSON.stringify({
+    encounter_id: encounter_id,
+    test_type_id: test_type_id,
+    date: date
+  });
+  http.open('POST', url, true);
+  //Send the proper header information along with the request
+  http.setRequestHeader('Content-type', 'application/json');
+  http.onreadystatechange = function () { //Call a function when the state changes.
+    if (http.readyState == 4) {
+      if (http.status == 201) {
+        var v = JSON.parse(http.responseText);
+      } else if (http.status == 409) {
+        alert('Username already exists');
+      } else {
+        alert('error' + http.status);
+      }
+    }
+  }
+  http.setRequestHeader('Authorization', sessionStorage.getItem('authorization'));
+  http.send(params);
+
+}
 function enterTestKeypadValue(e) {
   var inputBox = document.getElementById('input-box-result');
 
