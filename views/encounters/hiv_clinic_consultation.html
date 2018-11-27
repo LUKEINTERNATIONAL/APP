@@ -28,7 +28,6 @@
         <script type="text/javascript" src="/apps/ART/assets/js/hiv_clinical_consultation_yes_no.js"></script>
 
         <link rel="stylesheet" href="/apps/ART/assets/css/cd4_kbd.css" type="text/css">
-        <link rel="stylesheet" href="/apps/ART/assets/css/generic-keyboard.css" type="text/css">
         <script type="text/javascript" src="/apps/ART/assets/js/cd4_kbd.js"></script>
         
 
@@ -44,7 +43,6 @@
 
         <script type="text/javascript" src="/assets/js/datatables/jquery.dataTables.min.js"></script>
         <script type="text/javascript" src="/assets/js/datatables/dataTables.fixedHeader.min.js"></script>
-        <script type="text/javascript" src="/apps/ART/assets/js/generic-keyboard.js"></script>
 
 
         <script type="text/javascript">
@@ -394,73 +392,6 @@
             .disabled-li{
                 text-decoration: line-through;
                 color: gray !important;
-            }
-
-            .modal {
-                display: none; /* Hidden by default */
-                position: fixed; /* Stay in place */
-                z-index: 1; /* Sit on top */
-                left: 0;
-                top: 0;
-                width: 100%; /* Full width */
-                height: 100%; /* Full height */
-                overflow: auto; /* Enable scroll if needed */
-                background-color: rgb(0,0,0); /* Fallback color */
-                background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-            }
-
-            /* Modal Content/Box */
-            .modal-content {
-                background-color: #fefefe;
-                margin: 1% auto; /* 15% from the top and centered */
-                padding: 20px;
-                border: 1px solid #888;
-                width: 90%;
-                height: 90%; /* Could be more or less, depending on screen size */
-            }
-
-            /* The Close Button */
-            .close {
-                color: #aaa;
-                float: right;
-                font-size: 28px;
-                font-weight: bold;
-            }
-
-            .close:hover,
-            .close:focus {
-                color: black;
-                text-decoration: none;
-                cursor: pointer;
-            }
-
-            #modal-next {
-                position: absolute;
-                right:    30px;
-                bottom:   30px;
-                background-color: green;
-                color: green;
-                border: 1px solid #7eb9d0;
-                -webkit-border-radius: 3px;
-                -moz-border-radius: 3px;
-                border-radius: 5px !important;
-                font-size: 25px !important;
-                font-family: arial, helvetica, sans-serif;
-                padding: 10px 10px 10px 10px;
-                text-decoration: none;
-                display: inline-block;
-                text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.3);
-                font-weight: 700;
-                color: #fff;
-                filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr=#a7cfdf, endColorstr=#23538a);
-                min-width: 60px;
-                min-height: 55px;
-                cursor: pointer;
-                width: 45px;
-                height: 35px;
-                text-align: center;
-                margin: 3px;
-                visibility: hidden;
             }
         </style>
     </head>
@@ -1778,9 +1709,6 @@
                         nextButton.setAttribute("onmousedown", "submitHIVClinicConsultation();")
                     }
 
-                    // Get the modal
-                    
-
                 </script>
 
                 <form action="#" method='post'>
@@ -1804,12 +1732,8 @@
 
                     <input type="text" name="lab-summary"
                            tt_onLoad="__$('keyboard').style.display = 'none';buildConsultationLabPage();"
+                           condition="sessionStorage.patient_type == 'New patient' || sessionStorage.patient_type=='undefined' || sessionStorage.patient_type==+undefined"
                            tt_pageStyleClass= "NoControls" helpText="Lab Results Summary" optional = "true"/>
-
-                    <input type="text" name="iac" condition="iac == true"
-                    tt_onLoad="__$('keyboard').style.display = 'none';addIACYesNo();"
-                    tt_pageStyleClass= "NoControls" helpText="intensive adherence counselling" optional = "true"/> 
-
 
                     <input type="text" name="pregnant-breastfeeding-questions" condition="patientGender == 'F'"
                            validationCode="checkPregnancyAndAge() == 'false'"
@@ -1834,7 +1758,7 @@
                         <option value="TUBAL LIGATION">Tubal ligation</option>
                         <option value="NONE">None of the above</option></select>
 
-                    <select allowFreeText="false" condition="patientGender == 'F' && $('pregnant').value != 'YES' && sessionStorage.patient_type == 'New Patient'" helpText="What method are you providing today?" id="fpm_used" multiple="multiple" name="observations[][value_coded_or_text_multiple][]" tt_onLoad="setNextButtonToGetInputValue('todays_fpm'); showCategory2('Clinic consultation'); fpm_used=false; startFamilyPlanningTimer(); window.setTimeout('controlNoneSelectionForFamilyPlanning(); setOptionsForSafeFamilyPlanningMethodsPopup();', 300)" tt_onUnLoad="stopFamilyPlanningTimer();" tt_pageStyleClass="NoKeyboard"><option value=''></option><option value=""></option>
+                    <select allowFreeText="false" condition="patientGender == 'F' && $('pregnant').value != 'YES'" helpText="What method are you providing today?" id="fpm_used" multiple="multiple" name="observations[][value_coded_or_text_multiple][]" tt_onLoad="setNextButtonToGetInputValue('todays_fpm'); showCategory2('Clinic consultation'); fpm_used=false; startFamilyPlanningTimer(); window.setTimeout('controlNoneSelectionForFamilyPlanning(); setOptionsForSafeFamilyPlanningMethodsPopup();', 300)" tt_onUnLoad="stopFamilyPlanningTimer();" tt_pageStyleClass="NoKeyboard"><option value=''></option><option value=""></option>
                         <option value="ORAL CONTRACEPTIVE PILLS">Oral contraceptive pills</option>
                         <option value="DEPO-PROVERA">Depo-Provera</option>
                         <option value="INTRAUTERINE CONTRACEPTION">Intrauterine device/loop</option>
@@ -1897,7 +1821,7 @@
 
                     <!-- FOR TRANSFER IN OR VISITING PATIENT -->
 
- <!--                    <select allowFreeText="false" helpText="Last ARV drugs taken <span style='font-size:0.7em;font-style:italic'>(Ntundu wa ma ARV amene munamwa komaliza)</span>" id="last_art_drugs_taken" name="observations[][value_coded_or_text]" tt_onLoad="addCustomRegimenButton(); lastOtherDrugs = ''; $('otherMedications').value = '';" tt_onUnLoad="updateLastARVDrugs(); removeCustomRegimenButton();" tt_pageStyleClass="NoKeyboard">
+                    <select allowFreeText="false" helpText="Last ARV drugs taken <span style='font-size:0.7em;font-style:italic'>(Ntundu wa ma ARV amene munamwa komaliza)</span>" id="last_art_drugs_taken" name="observations[][value_coded_or_text]" tt_onLoad="addCustomRegimenButton(); lastOtherDrugs = ''; $('otherMedications').value = '';" tt_onUnLoad="updateLastARVDrugs(); removeCustomRegimenButton();" tt_pageStyleClass="NoKeyboard">
                         <option value=''></option>
                         <option value="Regimen 0 (ABC / 3TC + NVP)">Regimen 0 (ABC / 3TC + NVP)</option>
                         <option value="Regimen 2 (AZT / 3TC / NVP)">Regimen 2 (AZT / 3TC / NVP)</option>
@@ -1914,51 +1838,51 @@
                     </select>
 
 
-                    <input condition="parseInt($('last_art_drugs_taken').value.trim().match(/\d+/)) == parseInt(5)" field_type="number" helpText="Total tabs of TDF/3TC/EFV brought to clinic" id="TDF/3TC/EFV" name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show(); showCategory2('Transfer-In patient');" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
+                    <input condition="parseInt($('last_art_drugs_taken').value.trim().match(/\d+/)) == parseInt(5)" field_type="number" helpText="Total tabs of TDF/3TC/EFV brought to clinic" id="TDF/3TC/EFV" name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show();" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
 
 
-                    <input condition="parseInt($('last_art_drugs_taken').value.trim().match(/\d+/)) == parseInt(11)" field_type="number" helpText="Total tabs of AZT/3TC brought to clinic" id="AZT/3TC " name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show(); showCategory2('Transfer-In patient');" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
+                    <input condition="parseInt($('last_art_drugs_taken').value.trim().match(/\d+/)) == parseInt(11)" field_type="number" helpText="Total tabs of AZT/3TC brought to clinic" id="AZT/3TC " name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show();" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
 
 
-                    <input condition="parseInt($('last_art_drugs_taken').value.trim().match(/\d+/)) == parseInt(11)" field_type="number" helpText="Total tabs of LPV/r brought to clinic" id=" LPV/r" name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show(); showCategory2('Transfer-In patient');" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
+                    <input condition="parseInt($('last_art_drugs_taken').value.trim().match(/\d+/)) == parseInt(11)" field_type="number" helpText="Total tabs of LPV/r brought to clinic" id=" LPV/r" name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show();" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
 
-                    <input condition="parseInt($('last_art_drugs_taken').value.trim().match(/\d+/)) == parseInt(0)" field_type="number" helpText="Total tabs of ABC/3TC brought to clinic" id="ABC/3TC " name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show(); showCategory2('Transfer-In patient');" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
+                    <input condition="parseInt($('last_art_drugs_taken').value.trim().match(/\d+/)) == parseInt(0)" field_type="number" helpText="Total tabs of ABC/3TC brought to clinic" id="ABC/3TC " name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show();" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
 
-                    <input condition="parseInt($('last_art_drugs_taken').value.trim().match(/\d+/)) == parseInt(0)" field_type="number" helpText="Total tabs of NVP brought to clinic" id=" NVP" name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show(); showCategory2('Transfer-In patient');" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
+                    <input condition="parseInt($('last_art_drugs_taken').value.trim().match(/\d+/)) == parseInt(0)" field_type="number" helpText="Total tabs of NVP brought to clinic" id=" NVP" name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show();" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
 
-                    <input condition="parseInt($('last_art_drugs_taken').value.trim().match(/\d+/)) == parseInt(6)" field_type="number" helpText="Total tabs of TDF/3TC brought to clinic" id="TDF/3TC " name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show(); showCategory2('Transfer-In patient');" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
+                    <input condition="parseInt($('last_art_drugs_taken').value.trim().match(/\d+/)) == parseInt(6)" field_type="number" helpText="Total tabs of TDF/3TC brought to clinic" id="TDF/3TC " name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show();" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
 
-                    <input condition="parseInt($('last_art_drugs_taken').value.trim().match(/\d+/)) == parseInt(6)" field_type="number" helpText="Total tabs of NVP brought to clinic" id=" NVP" name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show(); showCategory2('Transfer-In patient');" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
+                    <input condition="parseInt($('last_art_drugs_taken').value.trim().match(/\d+/)) == parseInt(6)" field_type="number" helpText="Total tabs of NVP brought to clinic" id=" NVP" name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show();" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
 
-                    <input condition="parseInt($('last_art_drugs_taken').value.trim().match(/\d+/)) == parseInt(12)" field_type="number" helpText="Total tabs of Darunavir brought to clinic" id="Darunavir" name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show(); showCategory2('Transfer-In patient');" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
+                    <input condition="parseInt($('last_art_drugs_taken').value.trim().match(/\d+/)) == parseInt(12)" field_type="number" helpText="Total tabs of Darunavir brought to clinic" id="Darunavir" name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show();" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
 
-                    <input condition="parseInt($('last_art_drugs_taken').value.trim().match(/\d+/)) == parseInt(12)" field_type="number" helpText="Total tabs of Ritonavir brought to clinic" id="Ritonavir" name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show(); showCategory2('Transfer-In patient');" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
+                    <input condition="parseInt($('last_art_drugs_taken').value.trim().match(/\d+/)) == parseInt(12)" field_type="number" helpText="Total tabs of Ritonavir brought to clinic" id="Ritonavir" name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show();" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
 
-                    <input condition="parseInt($('last_art_drugs_taken').value.trim().match(/\d+/)) == parseInt(12)" field_type="number" helpText="Total tabs of ETV brought to clinic" id=" ETV " name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show(); showCategory2('Transfer-In patient');" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
+                    <input condition="parseInt($('last_art_drugs_taken').value.trim().match(/\d+/)) == parseInt(12)" field_type="number" helpText="Total tabs of ETV brought to clinic" id=" ETV " name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show();" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
 
-                    <input condition="parseInt($('last_art_drugs_taken').value.trim().match(/\d+/)) == parseInt(12)" field_type="number" helpText="Total tabs of RAL brought to clinic" id=" RAL" name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show(); showCategory2('Transfer-In patient');" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
+                    <input condition="parseInt($('last_art_drugs_taken').value.trim().match(/\d+/)) == parseInt(12)" field_type="number" helpText="Total tabs of RAL brought to clinic" id=" RAL" name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show();" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
 
-                    <input condition="parseInt($('last_art_drugs_taken').value.trim().match(/\d+/)) == parseInt(7)" field_type="number" helpText="Total tabs of TDF/3TC brought to clinic" id="TDF/3TC " name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show(); showCategory2('Transfer-In patient');" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
+                    <input condition="parseInt($('last_art_drugs_taken').value.trim().match(/\d+/)) == parseInt(7)" field_type="number" helpText="Total tabs of TDF/3TC brought to clinic" id="TDF/3TC " name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show();" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
 
-                    <input condition="parseInt($('last_art_drugs_taken').value.trim().match(/\d+/)) == parseInt(7)" field_type="number" helpText="Total tabs of ATV/r brought to clinic" id=" ATV/r" name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show(); showCategory2('Transfer-In patient');" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
+                    <input condition="parseInt($('last_art_drugs_taken').value.trim().match(/\d+/)) == parseInt(7)" field_type="number" helpText="Total tabs of ATV/r brought to clinic" id=" ATV/r" name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show();" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
 
-                    <input condition="parseInt($('last_art_drugs_taken').value.trim().match(/\d+/)) == parseInt(2)" field_type="number" helpText="Total tabs of AZT/3TC/NVP brought to clinic" id="AZT/3TC/NVP" name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show(); showCategory2('Transfer-In patient');" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
+                    <input condition="parseInt($('last_art_drugs_taken').value.trim().match(/\d+/)) == parseInt(2)" field_type="number" helpText="Total tabs of AZT/3TC/NVP brought to clinic" id="AZT/3TC/NVP" name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show();" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
 
-                    <input condition="parseInt($('last_art_drugs_taken').value.trim().match(/\d+/)) == parseInt(8)" field_type="number" helpText="Total tabs of AZT/3TC brought to clinic" id="AZT/3TC " name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show(); showCategory2('Transfer-In patient');" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
+                    <input condition="parseInt($('last_art_drugs_taken').value.trim().match(/\d+/)) == parseInt(8)" field_type="number" helpText="Total tabs of AZT/3TC brought to clinic" id="AZT/3TC " name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show();" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
 
-                    <input condition="parseInt($('last_art_drugs_taken').value.trim().match(/\d+/)) == parseInt(8)" field_type="number" helpText="Total tabs of ATV/r brought to clinic" id=" ATV/r" name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show(); showCategory2('Transfer-In patient');" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
+                    <input condition="parseInt($('last_art_drugs_taken').value.trim().match(/\d+/)) == parseInt(8)" field_type="number" helpText="Total tabs of ATV/r brought to clinic" id=" ATV/r" name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show();" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
 
-                    <input condition="parseInt($('last_art_drugs_taken').value.trim().match(/\d+/)) == parseInt(9)" field_type="number" helpText="Total tabs of ABC/3TC brought to clinic" id="ABC/3TC " name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show(); showCategory2('Transfer-In patient');" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
+                    <input condition="parseInt($('last_art_drugs_taken').value.trim().match(/\d+/)) == parseInt(9)" field_type="number" helpText="Total tabs of ABC/3TC brought to clinic" id="ABC/3TC " name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show();" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
 
-                    <input condition="parseInt($('last_art_drugs_taken').value.trim().match(/\d+/)) == parseInt(9)" field_type="number" helpText="Total tabs of LPV/r brought to clinic" id=" LPV/r" name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show(); showCategory2('Transfer-In patient');" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
+                    <input condition="parseInt($('last_art_drugs_taken').value.trim().match(/\d+/)) == parseInt(9)" field_type="number" helpText="Total tabs of LPV/r brought to clinic" id=" LPV/r" name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show();" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
 
-                    <input condition="parseInt($('last_art_drugs_taken').value.trim().match(/\d+/)) == parseInt(4)" field_type="number" helpText="Total tabs of AZT/3TC brought to clinic" id="AZT/3TC " name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show(); showCategory2('Transfer-In patient');" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
+                    <input condition="parseInt($('last_art_drugs_taken').value.trim().match(/\d+/)) == parseInt(4)" field_type="number" helpText="Total tabs of AZT/3TC brought to clinic" id="AZT/3TC " name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show();" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
 
-                    <input condition="parseInt($('last_art_drugs_taken').value.trim().match(/\d+/)) == parseInt(4)" field_type="number" helpText="Total tabs of EFV brought to clinic" id=" EFV" name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show(); showCategory2('Transfer-In patient');" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
+                    <input condition="parseInt($('last_art_drugs_taken').value.trim().match(/\d+/)) == parseInt(4)" field_type="number" helpText="Total tabs of EFV brought to clinic" id=" EFV" name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show();" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
 
-                    <input condition="parseInt($('last_art_drugs_taken').value.trim().match(/\d+/)) == parseInt(10)" field_type="number" helpText="Total tabs of TDF/3TC brought to clinic" id="TDF/3TC " name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show(); showCategory2('Transfer-In patient');" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
+                    <input condition="parseInt($('last_art_drugs_taken').value.trim().match(/\d+/)) == parseInt(10)" field_type="number" helpText="Total tabs of TDF/3TC brought to clinic" id="TDF/3TC " name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show();" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
 
-                    <input condition="parseInt($('last_art_drugs_taken').value.trim().match(/\d+/)) == parseInt(10)" field_type="number" helpText="Total tabs of LPV/r brought to clinic" id=" LPV/r" name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show(); showCategory2('Transfer-In patient');" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
+                    <input condition="parseInt($('last_art_drugs_taken').value.trim().match(/\d+/)) == parseInt(10)" field_type="number" helpText="Total tabs of LPV/r brought to clinic" id=" LPV/r" name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show();" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
 
                     <select allowFreeText="false" condition="$('last_art_drugs_taken').value.trim().toUpperCase() == 'OTHER'" field_type="number" helpText="Last ARV drugs taken <span style='font-size:0.7em;font-style:italic'>(Ntundu wa ma ARV amene munamwa komaliza)</span>" id="otherMedications" multiple="multiple" name="observations[][value_coded_or_text_multiple][]" tt_onLoad="jQuery('#Unknown').show();" tt_onUnLoad="updateLastOtherMedications();" tt_pageStyleClass="NoKeyboard">
                         <option value=''></option>
@@ -2027,7 +1951,7 @@
                     <input condition="lastOtherDrugs.split(';').indexOf('TDF/3TC (Tenofavir and Lamivudine 300/300mg tablet') != -1" field_type="number" helpText="Total tabs of TDF/3TC (Tenofavir and Lamivudine 300/300mg tablet brought to clinic" id="TDF/3TC (Tenofavir and Lamivudine 300/300mg tablet" name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show();" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
 
                     <input condition="lastOtherDrugs.split(';').indexOf('TDF/3TC/EFV (300/300/600mg tablet)') != -1" field_type="number" helpText="Total tabs of TDF/3TC/EFV (300/300/600mg tablet) brought to clinic" id="TDF/3TC/EFV (300/300/600mg tablet)" name="observations[][value_numeric]" tt_onLoad="jQuery('#Unknown').show();" tt_pageStyleClass="NumbersOnly" type="text" validationMessage="You must enter numbers only (for example 90)" validationRule="^([0-9><]+)|Unknown$" />
- -->
+
                     <!-- TRANSFER IN END -->
 
                     <input allowFreeText="false" id="pregnant" name="observations[][value_coded_or_text]" type="hidden" />
