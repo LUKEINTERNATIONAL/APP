@@ -72,7 +72,13 @@ function hideKBD() {
         inputBox.value = inputBox.value.substring(0, inputBox.value.length - 1);
       }else if(e.innerHTML.match(/space/i)){
       inputBox.value += "+";
-    }else{
+    }else if(e.innerHTML.match(/close/i)){
+      document.getElementById("myModal").style.display = "none";
+      var e = document.getElementById("nav-results");
+      buildPage(e)
+    }
+    else{
+
         inputBox.value += e.innerHTML;
         functionName(returnString+inputBox.value );
       }

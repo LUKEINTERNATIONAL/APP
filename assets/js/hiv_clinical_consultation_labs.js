@@ -136,12 +136,8 @@ function getOrders(tbody) {
     if (this.readyState == 4) {
       if (this.status == 200) {
         var results = JSON.parse(this.responseText);
-        
         for (var x = 0; x < results.length; x++) {
-          if (results[x].lab_samples[0].lab_parameters.length == 0) {
-            var givenResult = "No Result";
-          }
-          tbody.innerHTML += "<tr><td>"+results[x].TestOrdered+"</td><td>"+results[x].OrderDate+"</td><td>"+results[x].OrderDate+"</td><td>"+givenResult+"</td><td>"+givenResult+"</td></tr>" ;
+          tbody.innerHTML += "<tr><td>"+results[x].lab_sample.lab_parameter.test_type.TestName.replace(/_/g, " ")+"</td><td>"+results[x].OrderDate+"</td><td> "+results[x].OrderDate+"</td><td></td><td></td></tr>" ;
         }
       }
     }
@@ -350,7 +346,7 @@ function newOrders() {
   modal.setAttribute("class", "modal");
   modal.innerHTML = '  <div class="modal-content">'+
       '<span class="close-modal">&times;</span>'+
-      '<div id="tests-div"><input class="tests-input" type="text" id="lab-tests" placeholder="lab-tests"/> <ul id="tests-list"> <ul></div> <span id="modal-next" onclick="showDates();"> next </span>'+
+      '<div id="tests-div"><input class="tests-input" type="text" id="lab-tests" placeholder="lab-tests"/> <ul id="tests-list" style="width: 96%;"> <ul></div> <span id="modal-next" onclick="showDates();"> next </span>'+
   '</div>';
   modal.style.display = "block";
   showKBD("programs/1/lab_tests/types/?search_string=", loadTests);
@@ -460,7 +456,6 @@ function tick(element) {
   var rowID =  "row-" + element.getAttribute("testID");
   var tickedImage = document.getElementById(imgID);
   var tickedRow = document.getElementById(rowID);
-  console.log(tickedImage);
   if(tickedImage.getAttribute("ticked") === "ticked") {
     tickedImage.src = "/public/touchscreentoolkit/lib/images/unticked.jpg";
     tickedImage.setAttribute("ticked", "unticked");
