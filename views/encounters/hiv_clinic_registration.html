@@ -1329,24 +1329,34 @@
 
                     function submitVitalsRegistration() {
 
+                        if (!(showConditions() == true)){
+                            console.log("NOT a transfer in patient. Can't create vitals encounter")
+                           return nextPage();
+                        }
+                        console.log("Creating vitals encounter........")
                         var encounter = {
                             encounter_type_id:  6,
                             patient_id: patient_id,
                             encounter_datetime: answers_hash["date_art_started"]
                         }
 
-                        submitParameters(encounter, "postVitalsObs");
+                        submitParameters(encounter,"/encounters/", "postVitalsObs");
+
+
                     }
 
                     function submitHIVStaging() {
-
+                        if (!(showConditions() == true)){
+                            console.log("NOT a transfer in patient. Can't create HIV staging encounter")
+                            return nextPage();
+                        }
+                        console.log("Creating HIV staging encounter........")
                         var encounter = {
                             encounter_type_id:  52,
                             patient_id: patient_id,
                             encounter_datetime: answers_hash["date_art_started"]
                         }
-
-                        submitParameters(encounter, "postHIVStagingObs");
+                        submitParameters(encounter,"/encounters/", "postHIVStagingObs");
                     }
 
                     var answers_hash = {
@@ -1385,7 +1395,7 @@
                             ]
                         };
 
-                        submitParameters(obs,"/observations/", "nextPage");
+                        submitParameters(obs,"/observations/", "submitVitalsRegistration()");
                     }
 
                     function postVitalsObs(encounter){
@@ -1397,7 +1407,7 @@
                                 { concept_id: 2137, value_numeric: answers_hash["bmi"] }                            ]
                         };
 
-                        submitParameters(obs,"/observations/", "nextPage");
+                        submitParameters(obs,"/observations/", "submitHIVStaging");
                     }
 
                     var who_stage_concept_map = {
@@ -1516,8 +1526,8 @@
                                 }
                             }
                         }
-                        obs= JSON.stringify(obs);
 
+                        //obs= JSON.stringify(obs);
 
                         submitParameters(obs,"/observations", "nextPage");
                     }
@@ -1594,10 +1604,6 @@
                             value = $('touchscreenInput'+tstCurrentPage).value;
                             if (value.match(/UNKNOWN/i)){
                                 submitHIVClinicRegistration();
-                                if (showConditions() == true){
-                                    submitVitalsRegistration();
-                                    submitHIVStaging();
-                                }
                                 
                             } else{
                                 gotoNextPage();
@@ -1612,10 +1618,6 @@
                             answers_hash["confirmatory_hiv_test_type"] = value;
                             if (value.match(/NOT DONE/i)){
                                 submitHIVClinicRegistration();
-                                if (showConditions() == true){
-                                    submitVitalsRegistration();
-                                    submitHIVStaging();
-                                }
 
                             } else{
                                 gotoNextPage();
@@ -1739,10 +1741,6 @@
                         var nextButton =  document.getElementById('nextButton');
                         nextButton.onmousedown = function(){
                             submitHIVClinicRegistration();
-                            if (showConditions() == true){
-                                submitVitalsRegistration();
-                                submitHIVStaging();
-                            }
                             // alert("Form submitted")
                         }
                     }
