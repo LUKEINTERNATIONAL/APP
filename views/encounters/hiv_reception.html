@@ -9,6 +9,34 @@
 <script type="text/javascript" src="/assets/js/generic_ajaxrequest.js"></script>
 
 <script>
+var guardianAvailable = false;
+var apiProtocol = sessionStorage.apiProtocol;
+var apiURL = sessionStorage.apiURL;
+var apiPort = sessionStorage.apiPort;
+var patientID = sessionStorage.patientID;
+function getGuardian(){
+  var url = 'http://'+apiURL+':'+apiPort+'/api/v1/people/'+patientID+'/relationships' ;
+  var req = new XMLHttpRequest();
+  req.onreadystatechange = function(){
+  
+  if (this.readyState == 4) {
+  if (this.status == 200) {
+  var results = JSON.parse(this.responseText);
+    if(results.length > 0) {
+      guardianAvailable = true;
+    }
+  }
+  }
+  };
+  try {
+  req.open('GET', url, true);
+  req.setRequestHeader('Authorization',sessionStorage.getItem('authorization'));
+  req.send(null);
+  } catch (e) {
+  }
+}
+
+getGuardian();
 
 var patientID = sessionStorage.getItem("patientID");
 var programID = sessionStorage.getItem("programID");
@@ -58,7 +86,11 @@ function postVitalsObs(encounter) {
 }
 
 function nextPage(obs){
-  nextEncounter(sessionStorage.patientID, 1);
+  if(guardianAvailable == true) {
+    nextEncounter(sessionStorage.patientID, 1);
+  }else {
+    window.location.href = "/views/patient/relationships/guardian_search.html?patient_id="+patientID;
+  }
 }
 
 function changeSubmitFuction() {
