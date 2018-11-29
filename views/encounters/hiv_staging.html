@@ -295,7 +295,7 @@
                     currentBMI = parseFloat(currentBMI);
                     var currentWeight = '58.9'
                     var median_weight_height = [];
-                    var patientGender = sessionStorage.gender;
+                    var patientGender = sessionStorage.patientGender;
 
 
                     
@@ -1210,7 +1210,7 @@
                 </script>
 
                 <form>
-                        <input allowFreeText="false" id="breastfeeding" name="observations[][value_coded_or_text]" type="hidden" />
+                        <input allowFreeText="false" id="breastfeeding" name="observations[][value_coded_or_text]" condition="patientGender == 'F'"type="hidden" />
 
                         <input type="text" name="pregnant-breastfeeding-questions" condition="patientGender == 'F'"
                                validationCode="checkPregnancyAndAge() == 'false'"
