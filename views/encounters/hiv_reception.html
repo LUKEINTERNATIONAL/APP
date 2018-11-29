@@ -86,10 +86,17 @@ function postVitalsObs(encounter) {
 }
 
 function nextPage(obs){
-  if(guardianAvailable == true) {
+  console.log(obs);
+  console.log(yesNo_Hash);
+  if(guardianAvailable == true && yesNo_Hash["HIV Reception"]["Guardian present?"] === "Yes") {
     nextEncounter(sessionStorage.patientID, 1);
-  }else {
+  }else if (guardianAvailable == false && yesNo_Hash["HIV Reception"]["Guardian present?"] === "Yes"){
     window.location.href = "/views/patient/relationships/guardian_search.html?patient_id="+patientID;
+  }else if (guardianAvailable == false && yesNo_Hash["HIV Reception"]["Guardian present?"] === "Yes" && yesNo_Hash["HIV Reception"]["Patient present?"] === "No") {
+    window.location.href = "/views/patient/relationships/guardian_search.html?patient_id="+patientID;
+  }
+  else {
+    nextEncounter(sessionStorage.patientID, 1);
   }
 }
 
