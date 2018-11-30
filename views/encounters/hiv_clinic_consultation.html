@@ -1702,6 +1702,7 @@
 
                     function nextPage(){
                         sessionStorage.showWeightChart = false;
+                        sessionStorage.showPregnantQuestion = false;
                         nextEncounter(sessionStorage.patientID, 1);
                     }
 
@@ -1837,7 +1838,8 @@
                         <option value="UNKNOWN">Unknown</option>
                     </select> -->
 
-                    <input allowFreeText="false" id="breastfeeding" name="observations[][value_coded_or_text]" type="hidden" />
+                    <input allowFreeText="false" id="breastfeeding" name="observations[][value_coded_or_text]" type="hidden" condition=""/>
+  
 
                     <input type="text" name="lab-summary"
                            tt_onLoad="__$('keyboard').style.display = 'none';buildConsultationLabPage();"
@@ -1848,7 +1850,7 @@
                     tt_pageStyleClass= "NoControls" helpText="intensive adherence counselling" optional = "true"/> 
 
 
-                    <input type="text" name="pregnant-breastfeeding-questions" condition="patientGender == 'F'"
+                    <input type="text" name="pregnant-breastfeeding-questions" condition="patientGender == 'F' && sessionStorage.showPregnantQuestion === 'true'"
                            validationCode="checkPregnancyAndAge() == 'false'"
                            validationMessage="Patient (Viral Load) is 25 years old. Is she pregnant / Breastfeeding?"
                            tt_onLoad="__$('keyboard').style.display = 'none';addPregBreastFeedingYesNo(); showCategory2('Clinic consultation');"
