@@ -1663,6 +1663,7 @@
                     }
 
                     function nextPage(){
+                        sessionStorage.showWeightChart = false;
                         nextEncounter(sessionStorage.patientID, 1);
                     }
 
@@ -1815,9 +1816,9 @@
                            tt_onLoad="__$('keyboard').style.display = 'none';addPregBreastFeedingYesNo(); showCategory2('Clinic consultation');"
                            tt_pageStyleClass= "NoControls" helpText="Pregnant / Breastfeeding" optional = "true"/>
 
-                    <input type="text" name="weight-summary"
+                    <input type="text" name="weight-summary" condition="sessionStorage.showWeightChart === 'true'" 
                            tt_onLoad="__$('keyboard').style.display = 'none';buildWeightHistory(); updateBreastFeedingPregnancyAnswers();"
-                           tt_pageStyleClass= "NoControls" helpText="Weight history" optional = "true"/>
+                           tt_pageStyleClass= "NoControls" helpText="Weight history" optional = "true" tt_onUnload=""/>
 
 
                     <input allowFreeText="false" id="on_fpm" name="observations[][value_coded_or_text]" type="hidden" value="" />
