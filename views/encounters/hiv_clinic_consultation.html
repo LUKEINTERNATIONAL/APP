@@ -1512,7 +1512,8 @@
                         Weight_loss: "", last_arv_drugs_taken: "", side_effects: "",
                         on_tb_treatment: "", tb_status: "", is_patient_pregnant: "",
                         is_patient_breastfeeding: "", current_fpm: "", todays_fpm: "",
-                        on_tb_treatment: "", on_fpm: "", cd4_count: "", crag: "", urine_lam: ""
+                        on_tb_treatment: "", on_fpm: "", cd4_count: "", crag: "", urine_lam: "",
+                        arvs: "", cpt: "", inh: "", prescribe_drugs: ""
                     }
 
                     function submitHIVClinicConsultation() {
@@ -1562,6 +1563,12 @@
                         var other_concept_id = 6408;
                         var test_ordered_concept_id = 1271;
                         var yes_concept_id = 1065;
+
+                        var medication_orders_concept_id = 1282
+                        var prescribe_drugs_concept_id = 7874;
+                        var arv_concept_id = 1085
+                        var cpt_concept_id = 916
+                        var ipt_concept_id = 656
 
                         var obs = {
                             encounter_id: encounter.encounter_id,
@@ -1613,6 +1620,37 @@
                         obs.observations.push({concept_id: test_ordered_concept_id, value_coded: answers_hash["cd4_count"], value_text: "CD4 count"})
                         obs.observations.push({concept_id: test_ordered_concept_id, value_coded: answers_hash["crag"], value_text: "Crag"})
                         obs.observations.push({concept_id: test_ordered_concept_id, value_coded: answers_hash["urine_lam"], value_text: "Urine LAM"})
+
+
+                        var medication_orders = ["ARV", "CPT", "IPT"];
+                        if (__$('touchscreenInput' + tstCurrentPage)){
+                            var current_input_help_text = __$('touchscreenInput' + tstCurrentPage).getAttribute("helptext")
+
+                            if (current_input_help_text.match(/Medication/i)) {
+                                //Becareful here. We will assume the help text for prescription contains this phrase
+                                selected_drugs = __$('touchscreenInput' + tstCurrentPage).value.split(";")
+                                if (selected_drugs.includes("NONE OF THE ABOVE")) {
+                                    obs.observations.push({concept_id: prescribe_drugs_concept_id, value_coded: 1066})
+                                }
+                                else {
+                                    for (var i = 0; i <= selected_drugs.length - 1; i++) {
+                                        if (selected_drugs[i] == "ARVs") {
+                                            obs.observations.push({concept_id: medication_orders_concept_id, value_coded: arv_concept_id})
+                                        }
+                                        if (selected_drugs[i] == "CPT") {
+                                            obs.observations.push({concept_id: medication_orders_concept_id, value_coded: cpt_concept_id})
+                                        }
+                                        if (selected_drugs[i] == "IPT") {
+                                            obs.observations.push({concept_id: medication_orders_concept_id, value_coded: ipt_concept_id})
+                                        }
+                                    }
+
+                                    obs.observations.push({concept_id: prescribe_drugs_concept_id, value_coded: 1065})
+
+                                }
+                            }
+                        }
+
 
                         submitParameters(obs, "/observations", "nextPage")
                     }
@@ -1770,7 +1808,7 @@
                         }
                     }
 
-                  
+
                     function setFunctionForSubmittingForm(){
                         var nextButton =  document.getElementById('nextButton');
                         //nextButton.removeAttribute("onmousedown");
