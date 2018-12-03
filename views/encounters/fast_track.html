@@ -1,0 +1,71 @@
+<script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js" defer="true"></script>
+<!-- <script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/standard.js" defer="true"></script> -->
+<script type="text/javascript" src="/assets/js/jquery.min.js"></script>
+<script type="text/javascript" src="/assets/js/post_parameters.js"></script>
+<script type="text/javascript" src="/assets/js/generic_ajaxrequest.js"></script>
+
+<style>
+#clearButton{
+	display: none;
+}
+
+#noButton{
+	margin-right: 20px; 
+}
+
+</style>
+
+<script type="text/javascript">
+	
+function changeSubmitFuction() {
+  var nextButton =  document.getElementById('nextButton');
+  nextButton.setAttribute("onmousedown","submitHIVreception();");
+  nextButton.innerHTML = "<span>Yes</span>";
+
+  var buttonDiv = document.getElementById('buttons');
+  var noButton = document.createElement('button');
+  noButton.setAttribute("class","button navButton blue");
+  noButton.setAttribute("id","noButton");
+  noButton.setAttribute("onmousedown", "");
+  noButton.innerHTML = "<span>No</span>";
+  buttonDiv.appendChild(noButton); 
+}
+
+var inclusion_list_arr = [
+  ['Adult  18 years +', 9533], 
+  ['On ART for 12 months +', 9534],
+  ['On 1<sup>st</sup> line ART',9535],
+  ['Good current adherence', 9537], ['Last VL <1000', 9536]
+];
+
+var exclusion_list_arr = [
+  ['Pregnant / Breastfeeding', 9538],
+  ["Side effects / HIV-rel. diseases", 9539],
+  ["Needs BP / diabetes treatment", 9540],
+  ['Started IPT <12m ago', 9527],
+  ["Any sign for TB",2186]
+];
+
+function buildFastTrackPage(){
+	
+
+}
+
+</script>
+
+<body id="mateme">
+  <div id="container">
+    <div id="content">
+
+
+      <form>
+
+        <input type="text" name="summary"
+          tt_onLoad="__$('keyboard').style.display = 'none';changeSubmitFuction(); buildFastTrackPage();" 
+          tt_pageStyleClass= "NoControls" helpText="Fast track assessment" optional = "true"/>
+
+      </form>
+
+   </div>
+ </div>
+</body>

@@ -1186,6 +1186,8 @@
                     }
 
                     function nextPage(){
+                        sessionStorage.showWeightChart = false;
+                        sessionStorage.showPregnantQuestion = false;
                         nextEncounter(sessionStorage.patientID, 1);
 
                     }
@@ -1212,15 +1214,16 @@
                 <form>
                         <input allowFreeText="false" id="breastfeeding" name="observations[][value_coded_or_text]" condition="patientGender == 'F'"type="hidden" />
 
-                        <input type="text" name="pregnant-breastfeeding-questions" condition="patientGender == 'F'"
+                        <input type="text" name="pregnant-breastfeeding-questions" condition="patientGender == 'F' &&  sessionStorage.showPregnantQuestion === 'true';"
+                        
                                validationCode="checkPregnancyAndAge() == 'false'"
                                validationMessage="Patient (Viral Load) is 25 years old. Is she pregnant / Breastfeeding?"
                                tt_onLoad="__$('keyboard').style.display = 'none';addPregBreastFeedingYesNo(); showCategory2('Clinic consultation');"
                                tt_pageStyleClass= "NoControls" helpText="Pregnant / Breastfeeding" optional = "true"/>
     
-                    <input type="text" name="weight-summary"
+                    <input type="text" name="weight-summary" condition="sessionStorage.showWeightChart === 'true';"
                     tt_onLoad="__$('keyboard').style.display = 'none';buildWeightHistory(); updateBreastFeedingPregnancyAnswers();"
-                    tt_pageStyleClass= "NoControls" helpText="Weight history" optional = "true"/>
+                    tt_pageStyleClass= "NoControls" tt_onUnload="" helpText="Weight history" optional = "true"/>
 
                     <input allowFreeText="false" id="calculated_who_stage_4" name="observations[][value_coded_or_text]" type="hidden" value="" />
 
