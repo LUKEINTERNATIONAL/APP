@@ -9,26 +9,76 @@
 	display: none;
 }
 
-#noButton{
-	margin-right: 20px; 
+.table-div {
+  display: table;
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 15px;
+}
+
+.table-div-row {
+  display: table-row;
+}
+
+.table-div-cell {
+  display: table-cell;
+  width: 40%;
+  height: 77vh;
+}
+
+.ft-icons {
+  height: 60px;
+  width: 60px;
+}
+
+.ft-tables {
+  width: 100%;
+  padding: 10px;
+  border-collapse: collapse;
+}
+
+.ft-tables th {
+  width: 90%;
+  text-align: left;
+  margin-left: 10px;
+  border-style: solid;
+  border-width: 0px 0px 1px 0px;
+}
+
+.ft-tables td {
+  border-style: solid;
+  border-width: 0px 0px 1px 0px;
+}
+
+.ft-buttons {
+  width: 250px;
 }
 
 </style>
 
 <script type="text/javascript">
+var tt_cancel_destination = "/views/patient_dashboard.html?patient_id=" + sessionStorage.patientID;
+
+function submitFTVencounter(e) {
+  gotoNextPage();
+}
 	
 function changeSubmitFuction() {
   var nextButton =  document.getElementById('nextButton');
-  nextButton.setAttribute("onmousedown","submitHIVreception();");
-  nextButton.innerHTML = "<span>Yes</span>";
+  nextButton.setAttribute("onmousedown","submitFTVencounter(this);");
+  var classAttr = nextButton.getAttribute("class");
+  nextButton.setAttribute("class",classAttr + " ft-buttons");
+  nextButton.innerHTML = "<span>FT appointment</span>";
 
   var buttonDiv = document.getElementById('buttons');
   var noButton = document.createElement('button');
-  noButton.setAttribute("class","button navButton blue");
+  noButton.setAttribute("class","button navButton blue ft-buttons");
   noButton.setAttribute("id","noButton");
-  noButton.setAttribute("onmousedown", "");
-  noButton.innerHTML = "<span>No</span>";
-  buttonDiv.appendChild(noButton); 
+  noButton.setAttribute("onmousedown","submitFTVencounter(this);");
+  noButton.innerHTML = "<span>Regular appointment</span>";
+
+  var backButn = document.getElementById("backButton");
+  buttonDiv.insertBefore(noButton, backButton); 
 }
 
 var inclusion_list_arr = [
@@ -46,9 +96,65 @@ var exclusion_list_arr = [
   ["Any sign for TB",2186]
 ];
 
-function buildFastTrackPage(){
-	
+function buildFastTrackPage(){	
+  var frame = document.getElementById("inputFrame" + tstCurrentPage);
+  frame.setAttribute("style", "width: 95.5%; height: 90%;");
 
+  var ftContainer = document.createElement("div");
+  ftContainer.setAttribute("class","table-div");
+
+  var ftContainerRow = document.createElement("div");
+  ftContainerRow.setAttribute("class","table-div-row");
+  ftContainer.appendChild(ftContainerRow);
+
+  var cells = ["left","right"];
+  var list_arr = [];
+  list_arr.push(inclusion_list_arr);
+  list_arr.push(exclusion_list_arr);
+
+  for(var i = 0 ; i < cells.length ; i++){
+    var ftContainerCell = document.createElement("div");
+    ftContainerCell.setAttribute("class","table-div-cell");
+    ftContainerCell.setAttribute("id","table-div-cell-" + cells[i]);
+    ftContainerRow.appendChild(ftContainerCell);
+  
+    var table = document.createElement("table");
+    table.setAttribute("class","ft-tables");
+    addQuestionAnswers(ftContainerCell, table, list_arr[i]);
+  }
+
+  frame.appendChild(ftContainer);
+}
+
+function addQuestionAnswers(cell, table, questions){
+  for(var i = 0 ; i < questions.length ; i++){
+    var tr = document.createElement("tr");
+    var th = document.createElement("th");
+    th.setAttribute("concept_id", questions[i][1]);
+    th.innerHTML = questions[i][0];
+    tr.appendChild(th);
+
+    var td = document.createElement("td");
+    var img = document.createElement("img");
+    img.setAttribute("src","/apps/ART/assets/images/yes.png");
+    img.setAttribute("class","ft-icons");
+    td.appendChild(img);
+    tr.appendChild(td);
+
+    table.appendChild(tr);
+  }
+  cell.appendChild(table);
+}
+
+function removeTempButtons() {
+  var noButton = document.getElementById("noButton");
+  var nextButton = document.getElementById("nextButton");
+
+  var footer = document.getElementById("buttons");
+  footer.removeChild(noButton);
+  nextButton.setAttribute("onmousedown","gotoNextPage();");
+  nextButton.innerHTML = "<span>Next</span>";
+  nextButton.setAttribute("class","button green navButton")
 }
 
 </script>
@@ -60,9 +166,16 @@ function buildFastTrackPage(){
 
       <form>
 
+        <select allowFreeText="false" helpText="Patient needs BP / diabetes treatment?" 
+          id="bp_treatment" name="bp_treatment">
+          <option value=""></option>
+          <option value="Yes">Yes</option>
+          <option value="No">No</option>
+        </select>
+
         <input type="text" name="summary"
-          tt_onLoad="__$('keyboard').style.display = 'none';changeSubmitFuction(); buildFastTrackPage();" 
-          tt_pageStyleClass= "NoControls" helpText="Fast track assessment" optional = "true"/>
+          tt_onLoad="__$('keyboard').style.display = 'none';changeSubmitFuction(); buildFastTrackPage();"
+          tt_onUnload="removeTempButtons();" tt_pageStyleClass= "NoControls" helpText="Fast track assessment" optional = "true"/>
 
       </form>
 
