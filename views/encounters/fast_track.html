@@ -96,6 +96,10 @@ var exclusion_list_arr = [
   ["Any sign for TB",2186]
 ];
 
+if(sessionStorage.patientGender != 'F') {
+  exclusion_list_arr.shift();
+}
+
 function buildFastTrackPage(){	
   var frame = document.getElementById("inputFrame" + tstCurrentPage);
   frame.setAttribute("style", "width: 95.5%; height: 90%;");
