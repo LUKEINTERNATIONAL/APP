@@ -8,6 +8,10 @@ var selectedRegimens
 var setSelectedInterval;
 
 var show_custom_regimens = false;
+var prescribe_arv = false;
+var prescribe_cpt = false;
+var prescribe_ipt = false;
+var medication_orders = ["CPT", "INH", "ARV"];
 
 var regimenLines = {"0A": "1", "2A": "1", "4A": "1", "5A": "1", "6A": "1", "13A": "1", "14A": "1", "15A": "1", "7A": "2", "8A": "2", "9A": "2", "10A": "2", "11A": "2", "12A": "3"};
 function buildRegimenPage() {
@@ -461,6 +465,55 @@ function getRegimens() {
   xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
   xhttp.setRequestHeader('Content-type', "application/json");
   xhttp.send();
+}
+
+function getMedicationOrders() {
+    var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1/observations/";
+  var medication_order_concept_id = 1282;
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+            medication_orders_observations = JSON.parse(this.responseText);
+            console.log(medication_orders_observations)
+        }
+    };
+
+    xhttp.open("GET", url + "?patient_id=" + sessionStorage.patientID + "&concept_id=" + medication_order_concept_id + "&obs_datetime=" + sessionStorage.sessionDate, true);
+    xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+    xhttp.setRequestHeader('Content-type', "application/json");
+    xhttp.send();
+}
+
+function getCPTDosage() {
+    var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1/cpt_dosage/";
+
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+            cpt_dosage = JSON.parse(this.responseText);
+            console.log(cpt_dosage)
+        }
+    };
+    xhttp.open("GET", url + "?patient_id="+sessionStorage.patientID, true);
+    xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+    xhttp.setRequestHeader('Content-type', "application/json");
+    xhttp.send();
+}
+
+function getIPTDosage() {
+    var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1/ipd_dosage/";
+
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+            ipt_dosage = JSON.parse(this.responseText);
+            console.log(ipt_dosage)
+        }
+    };
+    xhttp.open("GET", url + "?patient_id="+sessionStorage.patientID, true);
+    xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+    xhttp.setRequestHeader('Content-type', "application/json");
+    xhttp.send();
 }
 
 
