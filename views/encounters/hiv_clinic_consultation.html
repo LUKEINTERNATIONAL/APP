@@ -869,23 +869,9 @@
                     }
 
                     function checkAndSelectTBSuspected(){
-                        tb_suspected_option_input = jQuery("[tstvalue='TB suspected']")[0]
-                        selected_tb_associated_symptoms = __$("routine_tb_screening").value;
-
-                        /*if (selected_tb_associated_symptoms.length > 0){
-                      if (tb_suspected_option_input) updateTouchscreenInputForSelect(tb_suspected_option_input);
-                    }*/
-
-                        yesTBSymptoms = [];
-                        for (var key in tbSymptomsHash){
-                            yesValue = tbSymptomsHash[key]["yes"];
-                            noValue = tbSymptomsHash[key]["no"];
-                            if (yesValue.length > 0){
-                                yesTBSymptoms.push(key);
-                            }
-                        }
-
-                        if (yesTBSymptoms.length > 0){
+                        var tb_suspected_option_input = jQuery("[tstvalue='TB suspected']")[0]
+                        var tb_status = tbSymptomsHashSelects();
+                        if (tb_status == "YES"){
                             if (tb_suspected_option_input) updateTouchscreenInputForSelect(tb_suspected_option_input);
                         }
 
@@ -1298,8 +1284,10 @@
                     }
 
                     function tbSymptomsHashSelects() {
-                        for(k in tbSymptomsHash) {
-                            if(tbSymptomsHash[k]['yes'].length > 0) {
+                        tb_symptoms =  yesNo_Hash["ROUTINE TUBERCULOSIS SCREENING"]
+
+                        for(key in tb_symptoms) {
+                            if(tb_symptoms[key].match(/YES/i)) {
                                 $('tb_status_hack').value = '';
                                 return 'YES'
                             }
