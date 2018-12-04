@@ -1,106 +1,1389 @@
 
-<style>
-  .vl-container {
-    width: 100%;
-  }
+<!DOCTYPE html>
+<html>
+<head lang="en">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+  <title>Viral Load &#8259; Facility Monthly Report</title>
+  <link rel="stylesheet" href="/assets/css/maindashboard/footer.css">
+  <link rel="stylesheet" href="/assets/css/custom.css">
+ <style>
+    th {
+        font-weight: normal;
+    }
 
-  .vl-header {
-    width: 100%;
-  }
+    .bold {
+        font-weight: bold;
+        color: #000;
+    }
 
-  .vl-header {
-    border-collapse: collapse;
-  }
+    body {
+        padding: 0px;
+        margin: 1px;
+        font: 18px "Lucida Grande", Helvetica, Arial, sans-serif;
+        overflow: auto;
+        -moz-user-select: none;
+    }
 
-  .vl-header th {
-    border-style: dotted;
-    border-width: 1px;
-  }
+    a {
+        color: #00B7FF;
+    }
 
-  .vl-header td {
-    border-style: dotted;
-    border-width: 1px;
-  }
+    button {
+        font-size: 22px !important;
+        padding: 15px;
+        min-width: 120px;
+        cursor: pointer;
+        min-height: 55px;
+        border-radius: 5px !important;
+        margin: 3px;
+    }
 
-  #facility-name {
-    width: 80%;
-    border-style: solid !important;
-  }
+    button:active {
+        background-color: #ffc579 !important;
+        background-image: -webkit-gradient(linear, left top, left bottom, from(#ffc579), to(#fb9d23)) !important;
+        background-image: -webkit-linear-gradient(top, #ffc579, #fb9d23) !important;
+        background-image: -moz-linear-gradient(top, #ffc579, #fb9d23) !important;
+        background-image: -ms-linear-gradient(top, #ffc579, #fb9d23) !important;
+        background-image: -o-linear-gradient(top, #ffc579, #fb9d23) !important;
+        background-image: linear-gradient(to bottom, #ffc579, #fb9d23);
+        filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr=#ffc579, endColorstr=#fb9d23) !important;
+    }
 
-  .header th, .header td {
-    border-width: 0px;
-  }
+    .button {
+        font-size: 18px !important;
+        padding: 15px;
+        min-width: 120px;
+        cursor: pointer;
+        min-height: 55px;
+        border-radius: 0px !important;
+        margin: 3px;
+
+    }
+
+    .button:active {
+        color: white !important;
+        background-color: #ffc579 !important;
+        background-image: -webkit-gradient(linear, left top, left bottom, from(#ffc579), to(#fb9d23)) !important;
+        background-image: -webkit-linear-gradient(top, #ffc579, #fb9d23) !important;
+        background-image: -moz-linear-gradient(top, #ffc579, #fb9d23) !important;
+        background-image: -ms-linear-gradient(top, #ffc579, #fb9d23) !important;
+        background-image: -o-linear-gradient(top, #ffc579, #fb9d23) !important;
+        background-image: linear-gradient(to bottom, #ffc579, #fb9d23);
+        filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr=#ffc579, endColorstr=#fb9d23) !important;
+    }
+
+    .blue {
+        border: 1px solid #7eb9d0;
+        -webkit-border-radius: 3px;
+        -moz-border-radius: 3px;
+        border-radius: 3px;
+        font-size: 28px;
+        font-family: arial, helvetica, sans-serif;
+        padding: 10px 10px 10px 10px;
+        text-decoration: none;
+        display: inline-block;
+        text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.3);
+        font-weight: bold;
+        color: #FFFFFF;
+        background-color: #a7cfdf;
+        background-image: -webkit-gradient(linear, left top, left bottom, from(#a7cfdf), to(#23538a));
+        background-image: -webkit-linear-gradient(top, #a7cfdf, #23538a);
+        background-image: -moz-linear-gradient(top, #a7cfdf, #23538a);
+        background-image: -ms-linear-gradient(top, #a7cfdf, #23538a);
+        background-image: -o-linear-gradient(top, #a7cfdf, #23538a);
+        background-image: linear-gradient(to bottom, #a7cfdf, #23538a);
+        filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr=#a7cfdf, endColorstr=#23538a);
+    }
+
+    .blue:hover {
+        border: 1px solid #5ca6c4;
+        background-color: #82bbd1;
+        background-image: -webkit-gradient(linear, left top, left bottom, from(#82bbd1), to(#193b61));
+        background-image: -webkit-linear-gradient(top, #82bbd1, #193b61);
+        background-image: -moz-linear-gradient(top, #82bbd1, #193b61);
+        background-image: -ms-linear-gradient(top, #82bbd1, #193b61);
+        background-image: -o-linear-gradient(top, #82bbd1, #193b61);
+        background-image: linear-gradient(to bottom, #82bbd1, #193b61);
+        filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr=#82bbd1, endColorstr=#193b61);
+    }
+
+    .green {
+        border: 1px solid #34740e;
+        -webkit-border-radius: 3px;
+        -moz-border-radius: 3px;
+        border-radius: 3px;
+        font-size: 28px;
+        font-family: arial, helvetica, sans-serif;
+        padding: 10px 10px 10px 10px;
+        text-decoration: none;
+        display: inline-block;
+        text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.3);
+        font-weight: bold;
+        color: #FFFFFF;
+        background-color: #4ba614;
+        background-image: -webkit-gradient(linear, left top, left bottom, from(#4ba614), to(#008c00));
+        background-image: -webkit-linear-gradient(top, #4ba614, #008c00);
+        background-image: -moz-linear-gradient(top, #4ba614, #008c00);
+        background-image: -ms-linear-gradient(top, #4ba614, #008c00);
+        background-image: -o-linear-gradient(top, #4ba614, #008c00);
+        background-image: linear-gradient(to bottom, #4ba614, #008c00);
+        filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr=#4ba614, endColorstr=#008c00);
+    }
+
+    .green:hover {
+        border: 1px solid #224b09;
+        background-color: #36780f;
+        background-image: -webkit-gradient(linear, left top, left bottom, from(#36780f), to(#005900));
+        background-image: -webkit-linear-gradient(top, #36780f, #005900);
+        background-image: -moz-linear-gradient(top, #36780f, #005900);
+        background-image: -ms-linear-gradient(top, #36780f, #005900);
+        background-image: -o-linear-gradient(top, #36780f, #005900);
+        background-image: linear-gradient(to bottom, #36780f, #005900);
+        filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr=#36780f, endColorstr=#005900);
+    }
+
+    .red {
+        border: 1px solid #72021c;
+        -webkit-border-radius: 3px;
+        -moz-border-radius: 3px;
+        border-radius: 3px;
+        font-size: 28px;
+        font-family: arial, helvetica, sans-serif;
+        padding: 10px 10px 10px 10px;
+        text-decoration: none;
+        display: inline-block;
+        text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.3);
+        font-weight: bold;
+        color: #FFFFFF;
+        background-color: #a90329;
+        background-image: -webkit-gradient(linear, left top, left bottom, from(#a90329), to(#6d0019));
+        background-image: -webkit-linear-gradient(top, #a90329, #6d0019);
+        background-image: -moz-linear-gradient(top, #a90329, #6d0019);
+        background-image: -ms-linear-gradient(top, #a90329, #6d0019);
+        background-image: -o-linear-gradient(top, #a90329, #6d0019);
+        background-image: linear-gradient(to bottom, #a90329, #6d0019);
+        filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr=#a90329, endColorstr=#6d0019);
+    }
+
+    .red:hover {
+        border: 1px solid #450111;
+        background-color: #77021d;
+        background-image: -webkit-gradient(linear, left top, left bottom, from(#77021d), to(#3a000d));
+        background-image: -webkit-linear-gradient(top, #77021d, #3a000d);
+        background-image: -moz-linear-gradient(top, #77021d, #3a000d);
+        background-image: -ms-linear-gradient(top, #77021d, #3a000d);
+        background-image: -o-linear-gradient(top, #77021d, #3a000d);
+        background-image: linear-gradient(to bottom, #77021d, #3a000d);
+        filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr=#77021d, endColorstr=#3a000d);
+    }
+
+    .gray {
+        border: 1px solid #ccc;
+        -webkit-border-radius: 3px;
+        -moz-border-radius: 3px;
+        border-radius: 3px;
+        font-size: 28px;
+        font-family: arial, helvetica, sans-serif;
+        padding: 10px 10px 10px 10px;
+        text-decoration: none;
+        display: inline-block;
+        text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.3);
+        font-weight: bold;
+        color: #FFFFFF;
+        background-color: #ccc;
+        background-image: -webkit-gradient(linear, left top, left bottom, from(#ccc), to(#999));
+        background-image: -webkit-linear-gradient(top, #ccc, #999);
+        background-image: -moz-linear-gradient(top, #ccc, #999);
+        background-image: -ms-linear-gradient(top, #ccc, #999);
+        background-image: -o-linear-gradient(top, #ccc, #999);
+        background-image: linear-gradient(to bottom, #ccc, #999);
+        filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr=#ccc, endColorstr=#999);
+    }
+
+    .gray:hover {
+        border: 1px solid #ccc;
+        background-color: #ddd;
+        background-image: -webkit-gradient(linear, left top, left bottom, from(#333), to(#ccc));
+        background-image: -webkit-linear-gradient(top, #333, #ccc);
+        background-image: -moz-linear-gradient(top, #333, #ccc);
+        background-image: -ms-linear-gradient(top, #333, #ccc);
+        background-image: -o-linear-gradient(top, #333, #ccc);
+        background-image: linear-gradient(to bottom, #333, #ccc);
+        filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr=#333, endColorstr=#ccc);
+    }
+
+    .textbox {
+        padding: 5px;
+        border: 1px solid #ccc;
+        width: 100%;
+    }
+
+
+    .table {
+        display: table;
+        border-spacing: 1px;
+    }
+
+    .row {
+        display: table-row;
+    }
+
+    .cell {
+        display: table-cell;
+    }
+
+    .bold {
+        font-weight: bold;
+        color: #284b38;
+    }
+
+    .label_cell {
+        font-size: 1.2em;
+        padding: 5px;
+        text-align: right;
+        border-bottom: 1px dotted #999;
+        border-right: 1px dotted #999;
+        width: 25%;
+    }
+
+    .input_cell {
+        font-size: 1.5em;
+        padding: 5px;
+        border-bottom: 1px dotted #999;
+    }
+
+    .no_bottom {
+        border-bottom: none;
+    }
+
+    .arrow-up {
+        width: 0;
+        height: 0;
+        border-left: 30px solid transparent;
+        border-right: 30px solid transparent;
+        cursor: pointer;
+        border-bottom: 30px solid #3465a4;
+    }
+
+    .arrow-up-gray {
+        width: 0;
+        height: 0;
+        border-left: 30px solid transparent;
+        border-right: 30px solid transparent;
+        cursor: pointer;
+        border-bottom: 30px solid #ccc;
+    }
+
+    .arrow-up:hover {
+        border-bottom: 30px solid #5ca6c4;
+    }
+
+    .arrow-up:active {
+        border-bottom: 30px solid #ef8544;
+    }
+
+    .arrow-down {
+        width: 0;
+        height: 0;
+        border-left: 30px solid transparent;
+        border-right: 30px solid transparent;
+        cursor: pointer;
+        border-top: 30px solid #3465a4;
+    }
+
+    .arrow-down-gray {
+        width: 0;
+        height: 0;
+        border-left: 30px solid transparent;
+        border-right: 30px solid transparent;
+        cursor: pointer;
+        border-top: 30px solid #ccc;
+    }
+
+    .arrow-down:hover {
+        border-top: 30px solid #5ca6c4;
+    }
+
+    .arrow-down:active {
+        border-top: 30px solid #ef8544;
+    }
+
+    .listing {
+        overflow: auto;
+        height: 100%;
+        margin-top: 0px;
+        margin-bottom: 0px;
+        padding-left: 0px;
+    }
+
+    .listing li {
+        color: black;
+        list-style: none;
+        padding: 10px;
+        padding-left: 20px;
+        padding-right: 10px;
+        margin-top: 1px;
+        margin-bottom: 1px;
+        font-family: "Nimbus Sans L", "Arial Narrow", sans-serif;
+        font-size: 2.5em;
+    }
+
+    .selected {
+        background-color: lightblue !important;
+    }
+
+    .odd {
+        background-color: #eee;
+    }
+
+    .element {
+        border: 1px solid #999;
+        background-color: #cadcd3;
+        color: #000;
+        padding: 3px;
+        margin: 3px;
+        font-size: 24px;
+        cursor: pointer;
+        border-radius: 10px
+    }
 
 </style>
 
+</head>
+<body lang="en-GB" text="#000000" link="#0000ff" dir="ltr">
+<div id="TextSection" dir="ltr">
+  <table width="100%" cellpadding="7" cellspacing="0" style="page-break-before: always">
+    <colgroup>
+      <col width="5">
+    </colgroup>
+    <colgroup>
+      <col width="128">
+      <col width="148">
+    </colgroup>
+    <colgroup>
+      <col width="147">
+    </colgroup>
+    <colgroup>
+      <col width="166">
+      <col width="62">
+    </colgroup>
+    <tr>
+      <td colspan="2" width="147" style="border: none; padding: 0in">
+        <p align="center" style="font-variant: small-caps; page-break-before: auto; page-break-after: auto">
+        <br/>
 
-<div class="vl-container">
-
-
-
-  <table class="vl-header">
-    <tr class="header">
-      <th colspan="4" style="width: 90%;">Viral Load &#8259; Facility Monthly Report</th>
-      <th style="font-size: 10px; text-align: middle;">Version 2</th>
+        </p>
+      </td>
+      <td colspan="3" width="488" valign="bottom" style="border-top: none; border-bottom: 1px solid #00000a; border-left: none; border-right: none; padding: 0in">
+        <p align="center" style="font-variant: small-caps; page-break-before: auto; page-break-after: auto">
+        <font size="4" style="font-size: 14pt"><b>Viral Load – Facility
+        Monthly Report</b></font></p>
+      </td>
+      <td width="62" valign="bottom" style="border: none; padding: 0in">
+        <p align="center">Version 2</p>
+      </td>
     </tr>
     <tr>
-      <td style="width: 100px;">Facility Name</td>
-      <td id="facility-name" colspan="3">&nbsp;</td>
-      <td id="reporting-month">&nbsp;</td>
+      <td width="5" style="border-top: none; border-bottom: none; border-left: none; border-right: 1px dotted #00000a; padding-top: 0in; padding-bottom: 0in; padding-left: 0in; padding-right: 0.08in">
+        <p align="left" style="margin-top: 0.06in"><br/>
+
+        </p>
+      </td>
+      <td width="128" style="border-top: 1px dotted #00000a; border-bottom: none; border-left: 1px dotted #00000a; border-right: 1.00pt solid #00000a; padding-top: 0in; padding-bottom: 0in; padding-left: 0.08in; padding-right: 0.08in">
+        <p align="left" style="margin-top: 0.06in">Facility Name</p>
+      </td>
+      <td colspan="3" width="488" valign="top" style="border-top: 1px solid #00000a; border-bottom: 1.00pt solid #00000a; border-left: 1.00pt solid #00000a; border-right: 1px solid #00000a; padding-top: 0in; padding-bottom: 0in; padding-left: 0.08in; padding-right: 0.08in">
+        <p align="left" style="margin-top: 0.06in"><br/>
+
+        </p>
+      </td>
+      <td width="62" style="border-top: none; border-bottom: none; border-left: 1px solid #00000a; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.08in; padding-right: 0in">
+        <p align="center" style="margin-top: 0.06in"><i><span style="font-weight: normal">Sept</span></i></p>
+      </td>
     </tr>
     <tr>
-      <td style="width: 100px;">Reporting Year</td>
-      <td style="border-width: solid;">&nbsp;</td>
-      <td id="reporting-month">&nbsp;</td>
-      <td id="reporting-month">&nbsp;</td>
-      <td id="reporting-month">&nbsp;</td>
+      <td width="5" style="border-top: none; border-bottom: none; border-left: none; border-right: 1px dotted #00000a; padding-top: 0in; padding-bottom: 0in; padding-left: 0in; padding-right: 0.08in">
+        <p align="left" style="margin-top: 0.06in"><br/>
+
+        </p>
+      </td>
+      <td width="128" style="border-top: 1px dotted #00000a; border-bottom: 1px dotted #00000a; border-left: 1px dotted #00000a; border-right: 1px solid #00000a; padding-top: 0in; padding-bottom: 0in; padding-left: 0.08in; padding-right: 0.08in">
+        <p align="left" style="margin-top: 0.06in">Reporting Year</p>
+      </td>
+      <td width="148" style="border-top: 1px solid #00000a; border-bottom: 1.00pt solid #00000a; border-left: 1px solid #00000a; border-right: 1px solid #00000a; padding-top: 0in; padding-bottom: 0in; padding-left: 0.08in; padding-right: 0.08in">
+        <p align="left" style="margin-top: 0.06in"><br/>
+
+        </p>
+      </td>
+      <td width="147" style="border-top: 1px solid #00000a; border-bottom: 1px dotted #00000a; border-left: 1px solid #00000a; border-right: 1px solid #00000a; padding-top: 0in; padding-bottom: 0in; padding-left: 0.08in; padding-right: 0.08in">
+        <p align="right" style="margin-top: 0.06in">Reporting Month</p>
+      </td>
+      <td width="166" style="border-top: 1px solid #00000a; border-bottom: 1.00pt solid #00000a; border-left: 1px solid #00000a; border-right: 1px solid #00000a; padding-top: 0in; padding-bottom: 0in; padding-left: 0.08in; padding-right: 0.08in">
+        <p align="left" style="margin-top: 0.06in"><br/>
+
+        </p>
+      </td>
+      <td width="62" style="border-top: none; border-bottom: none; border-left: 1px solid #00000a; border-right: none; padding-top: 0in; padding-bottom: 0in; padding-left: 0.08in; padding-right: 0in">
+        <p class="western" align="center" style="margin-top: 0.06in"><i>2018</i></p>
+      </td>
     </tr>
   </table>
+  <p class="western" align="left" style="margin-top: 0in; margin-bottom: 0in">
+  <br/>
 
+  </p>
+  <table width="100%" cellpadding="2" cellspacing="0">
+    <col width="15">
+    <col width="157">
+    <col width="42">
+    <col width="42">
+    <col width="42">
+    <col width="42">
+    <col width="42">
+    <col width="42">
+    <col width="42">
+    <col width="42">
+    <col width="42">
+    <col width="42">
+    <col width="42">
+    <col width="42">
+    <tr>
+      <td width="15" valign="top" style="border-top: none; border-bottom: none; border-left: none; border-right: 1px dotted #00000a; padding-top: 0in; padding-bottom: 0in; padding-left: 0in; padding-right: 0.08in">
+        <p align="left" style="margin-top: 0.06in"><br/>
 
+        </p>
+      </td>
+      <td width="157" style="border-top: 1px dotted #00000a; border-bottom: none; border-left: 1px dotted #00000a; border-right: 1px dotted #00000a; padding-top: 0in; padding-bottom: 0in; padding-left: 0.08in; padding-right: 0.02in">
+        <p align="left" style="margin-top: 0.06in"><i><b>Reporting Month</b></i></p>
+      </td>
+      <td width="42" style="border-top: 1px dotted #00000a; border-bottom: none; border-left: 1px dotted #00000a; border-right: 1px dotted #00000a; padding-top: 0in; padding-bottom: 0in; padding-left: 0.08in; padding-right: 0.08in">
+        <p align="center" style="margin-top: 0.06in"><i>Jan</i></p>
+      </td>
+      <td width="42" style="border-top: 1px dotted #00000a; border-bottom: none; border-left: 1px dotted #00000a; border-right: 1px dotted #00000a; padding-top: 0in; padding-bottom: 0in; padding-left: 0.08in; padding-right: 0.08in">
+        <p align="center" style="margin-top: 0.06in"><i>Feb</i></p>
+      </td>
+      <td width="42" style="border-top: 1px dotted #00000a; border-bottom: none; border-left: 1px dotted #00000a; border-right: 1px dotted #00000a; padding-top: 0in; padding-bottom: 0in; padding-left: 0.08in; padding-right: 0.08in">
+        <p align="center" style="margin-top: 0.06in"><i>Mar</i></p>
+      </td>
+      <td width="42" style="border-top: 1px dotted #00000a; border-bottom: none; border-left: 1px dotted #00000a; border-right: 1px dotted #00000a; padding-top: 0in; padding-bottom: 0in; padding-left: 0.08in; padding-right: 0.08in">
+        <p align="center" style="margin-top: 0.06in"><i>Apr</i></p>
+      </td>
+      <td width="42" style="border-top: 1px dotted #00000a; border-bottom: none; border-left: 1px dotted #00000a; border-right: 1px dotted #00000a; padding-top: 0in; padding-bottom: 0in; padding-left: 0.08in; padding-right: 0.08in">
+        <p align="center" style="margin-top: 0.06in"><i>May</i></p>
+      </td>
+      <td width="42" style="border-top: 1px dotted #00000a; border-bottom: none; border-left: 1px dotted #00000a; border-right: 1px dotted #00000a; padding-top: 0in; padding-bottom: 0in; padding-left: 0.08in; padding-right: 0.08in">
+        <p align="center" style="margin-top: 0.06in"><i>Jun</i></p>
+      </td>
+      <td width="42" style="border-top: 1px dotted #00000a; border-bottom: none; border-left: 1px dotted #00000a; border-right: 1px dotted #00000a; padding-top: 0in; padding-bottom: 0in; padding-left: 0.08in; padding-right: 0.08in">
+        <p align="center" style="margin-top: 0.06in"><i>Jul</i></p>
+      </td>
+      <td width="42" style="border-top: 1px dotted #00000a; border-bottom: none; border-left: 1px dotted #00000a; border-right: 1px dotted #00000a; padding-top: 0in; padding-bottom: 0in; padding-left: 0.08in; padding-right: 0.08in">
+        <p align="center" style="margin-top: 0.06in"><i>Aug</i></p>
+      </td>
+      <td width="42" style="border-top: 1px dotted #00000a; border-bottom: none; border-left: 1px dotted #00000a; border-right: 1px dotted #00000a; padding-top: 0in; padding-bottom: 0in; padding-left: 0.08in; padding-right: 0.08in">
+        <p align="center" style="margin-top: 0.06in"><i>Sep</i></p>
+      </td>
+      <td width="42" style="border-top: 1px dotted #00000a; border-bottom: none; border-left: 1px dotted #00000a; border-right: 1px dotted #00000a; padding-top: 0in; padding-bottom: 0in; padding-left: 0.08in; padding-right: 0.08in">
+        <p align="center" style="margin-top: 0.06in"><i>Oct</i></p>
+      </td>
+      <td width="42" style="border-top: 1px dotted #00000a; border-bottom: none; border-left: 1px dotted #00000a; border-right: 1px dotted #00000a; padding-top: 0in; padding-bottom: 0in; padding-left: 0.08in; padding-right: 0.08in">
+        <p align="center" style="margin-top: 0.06in"><i>Nov</i></p>
+      </td>
+      <td width="42" style="border-top: 1px dotted #00000a; border-bottom: none; border-left: 1px dotted #00000a; border-right: 1px dotted #00000a; padding-top: 0in; padding-bottom: 0in; padding-left: 0.08in; padding-right: 0.08in">
+        <p align="center" style="margin-top: 0.06in"><i>Dec</i></p>
+      </td>
+    </tr>
+    <tr>
+      <td width="15" valign="top" style="border-top: none; border-bottom: none; border-left: none; border-right: 1px dotted #00000a; padding-top: 0in; padding-bottom: 0in; padding-left: 0in; padding-right: 0.08in">
+        <p align="left" style="margin-top: 0in"><br/>
 
+        </p>
+      </td>
+      <td width="157" style="border-top: none; border-bottom: none; border-left: 1px dotted #00000a; border-right: 1px dotted #00000a; padding-top: 0in; padding-bottom: 0in; padding-left: 0.08in; padding-right: 0.08in">
+        <p align="left" style="margin-top: 0in"><i>(circle)</i></p>
+      </td>
+      <td width="42" style="border-top: none; border-bottom: none; border-left: 1px dotted #00000a; border-right: 1px dotted #00000a; padding-top: 0in; padding-bottom: 0in; padding-left: 0.08in; padding-right: 0.08in">
+        <p align="center" style="margin-top: 0in">↓</p>
+      </td>
+      <td width="42" style="border-top: none; border-bottom: none; border-left: 1px dotted #00000a; border-right: 1px dotted #00000a; padding-top: 0in; padding-bottom: 0in; padding-left: 0.08in; padding-right: 0.08in">
+        <p align="center" style="margin-top: 0in">↓</p>
+      </td>
+      <td width="42" style="border-top: none; border-bottom: none; border-left: 1px dotted #00000a; border-right: 1px dotted #00000a; padding-top: 0in; padding-bottom: 0in; padding-left: 0.08in; padding-right: 0.08in">
+        <p align="center" style="margin-top: 0in">↓</p>
+      </td>
+      <td width="42" style="border-top: none; border-bottom: none; border-left: 1px dotted #00000a; border-right: 1px dotted #00000a; padding-top: 0in; padding-bottom: 0in; padding-left: 0.08in; padding-right: 0.08in">
+        <p align="center" style="margin-top: 0in">↓</p>
+      </td>
+      <td width="42" style="border-top: none; border-bottom: none; border-left: 1px dotted #00000a; border-right: 1px dotted #00000a; padding-top: 0in; padding-bottom: 0in; padding-left: 0.08in; padding-right: 0.08in">
+        <p align="center" style="margin-top: 0in">↓</p>
+      </td>
+      <td width="42" style="border-top: none; border-bottom: none; border-left: 1px dotted #00000a; border-right: 1px dotted #00000a; padding-top: 0in; padding-bottom: 0in; padding-left: 0.08in; padding-right: 0.08in">
+        <p align="center" style="margin-top: 0in">↓</p>
+      </td>
+      <td width="42" style="border-top: none; border-bottom: none; border-left: 1px dotted #00000a; border-right: 1px dotted #00000a; padding-top: 0in; padding-bottom: 0in; padding-left: 0.08in; padding-right: 0.08in">
+        <p align="center" style="margin-top: 0in">↓</p>
+      </td>
+      <td width="42" style="border-top: none; border-bottom: none; border-left: 1px dotted #00000a; border-right: 1px dotted #00000a; padding-top: 0in; padding-bottom: 0in; padding-left: 0.08in; padding-right: 0.08in">
+        <p align="center" style="margin-top: 0in">↓</p>
+      </td>
+      <td width="42" style="border-top: none; border-bottom: none; border-left: 1px dotted #00000a; border-right: 1px dotted #00000a; padding-top: 0in; padding-bottom: 0in; padding-left: 0.08in; padding-right: 0.08in">
+        <p align="center" style="margin-top: 0in">↓</p>
+      </td>
+      <td width="42" style="border-top: none; border-bottom: none; border-left: 1px dotted #00000a; border-right: 1px dotted #00000a; padding-top: 0in; padding-bottom: 0in; padding-left: 0.08in; padding-right: 0.08in">
+        <p align="center" style="margin-top: 0in">↓</p>
+      </td>
+      <td width="42" style="border-top: none; border-bottom: none; border-left: 1px dotted #00000a; border-right: 1px dotted #00000a; padding-top: 0in; padding-bottom: 0in; padding-left: 0.08in; padding-right: 0.08in">
+        <p align="center" style="margin-top: 0in">↓</p>
+      </td>
+      <td width="42" style="border-top: none; border-bottom: none; border-left: 1px dotted #00000a; border-right: 1px dotted #00000a; padding-top: 0in; padding-bottom: 0in; padding-left: 0.08in; padding-right: 0.08in">
+        <p align="center" style="margin-top: 0in">↓</p>
+      </td>
+    </tr>
+    <tr>
+      <td width="15" valign="top" style="border-top: none; border-bottom: none; border-left: none; border-right: 1px dotted #00000a; padding-top: 0in; padding-bottom: 0in; padding-left: 0in; padding-right: 0.08in">
+        <p align="left" style="margin-top: 0.06in"><br/>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        </p>
+      </td>
+      <td width="157" style="border: 1px dotted #00000a; padding-top: 0in; padding-bottom: 0in; padding-left: 0.08in; padding-right: 0.08in">
+        <p align="left" style="margin-top: 0.06in; margin-bottom: 0.06in">
+        <i><b>Monitoring Cohort   and</b></i></p>
+        <p align="left" style="margin-top: 0.06in"><i><b>High VL Cohort</b></i></p>
+      </td>
+      <td width="42" style="border: 1px dotted #00000a; padding-top: 0in; padding-bottom: 0in; padding-left: 0.08in; padding-right: 0.08in">
+        <p align="center" style="margin-top: 0.06in"><i>Jul</i></p>
+      </td>
+      <td width="42" style="border: 1px dotted #00000a; padding-top: 0in; padding-bottom: 0in; padding-left: 0.08in; padding-right: 0.08in">
+        <p align="center" style="margin-top: 0.06in"><i>Aug</i></p>
+      </td>
+      <td width="42" style="border: 1px dotted #00000a; padding-top: 0in; padding-bottom: 0in; padding-left: 0.08in; padding-right: 0.08in">
+        <p align="center" style="margin-top: 0.06in"><i>Sep</i></p>
+      </td>
+      <td width="42" style="border: 1px dotted #00000a; padding-top: 0in; padding-bottom: 0in; padding-left: 0.08in; padding-right: 0.08in">
+        <p align="center" style="margin-top: 0.06in"><i>Oct</i></p>
+      </td>
+      <td width="42" style="border: 1px dotted #00000a; padding-top: 0in; padding-bottom: 0in; padding-left: 0.08in; padding-right: 0.08in">
+        <p align="center" style="margin-top: 0.06in"><i>Nov</i></p>
+      </td>
+      <td width="42" style="border: 1px dotted #00000a; padding-top: 0in; padding-bottom: 0in; padding-left: 0.08in; padding-right: 0.08in">
+        <p align="center" style="margin-top: 0.06in"><i>Dec</i></p>
+      </td>
+      <td width="42" style="border: 1px dotted #00000a; padding-top: 0in; padding-bottom: 0in; padding-left: 0.08in; padding-right: 0.08in">
+        <p align="center" style="margin-top: 0.06in"><i>Jan</i></p>
+      </td>
+      <td width="42" style="border: 1px dotted #00000a; padding-top: 0in; padding-bottom: 0in; padding-left: 0.08in; padding-right: 0.08in">
+        <p align="center" style="margin-top: 0.06in"><i>Feb</i></p>
+      </td>
+      <td width="42" style="border: 1px dotted #00000a; padding-top: 0in; padding-bottom: 0in; padding-left: 0.08in; padding-right: 0.08in">
+        <p align="center" style="margin-top: 0.06in"><i>Mar</i></p>
+      </td>
+      <td width="42" style="border: 1px dotted #00000a; padding-top: 0in; padding-bottom: 0in; padding-left: 0.08in; padding-right: 0.08in">
+        <p align="center" style="margin-top: 0.06in"><i>Apr</i></p>
+      </td>
+      <td width="42" style="border: 1px dotted #00000a; padding-top: 0in; padding-bottom: 0in; padding-left: 0.08in; padding-right: 0.08in">
+        <p align="center" style="margin-top: 0.06in"><i>May</i></p>
+      </td>
+      <td width="42" style="border: 1px dotted #00000a; padding-top: 0in; padding-bottom: 0in; padding-left: 0.08in; padding-right: 0.08in">
+        <p align="center" style="margin-top: 0.06in"><i>Jun</i></p>
+      </td>
+    </tr>
+  </table>
 </div>
+<tr>
+<td colspan="7">
+<table width="100%" cellpadding="8" style="border-collapse: collapse;">
+<tr>
+    <td>
+        &nbsp;
+    </td>
+    <th align="left" colspan="3" class="bold">
+        ▼Source: VL Sample Log ▼
+    </th>
+    <th align="left" colspan="3" class="bold">
+        &nbsp;
+    </th>
+    <th align="left" colspan="2" style=" min-width: 300px;" class="bold">
+        &nbsp;
+    </th>
+</tr>
+<tr>
+    <td>
+        &nbsp;
+    </td>
+    <th align="left" colspan="3" class="bold" bgcolor="#d9d9d9">
+        Reporting Month (New Samples)
+    </th>
+    <th align="left" colspan="3" class="bold">
+        &nbsp;
+    </th>
+    <th align="left" colspan="2" style=" min-width: 300px;" class="bold">
+        &nbsp;
+    </th>
+</tr>
+<tr>
+    <td>
+        &nbsp;
+    </td>
+    <th align="left" colspan="3" class="bold">
+        Reason for Test
+    </th>
+    <th align="left" colspan="3" class="bold">
+        Client Notification
+    </th>
+    <th align="left" colspan="2" style=" min-width: 300px;" class="bold">
+        Initial Decision
+    </th>
+</tr>
+<tr>
+    <td style="width: 30px; text-align: right;">
+        1
+    </td>
+    <td style="border-top: 1px solid #333; border-left: 1px solid #333;">
+        Routine
+    </td>
+    <td style="border: 1px solid #333; width: 80px; text-align: right;" id="M">
+        &nbsp;
+    </td>
+    <td align="right">
+        15
+    </td>
+    <td style="border-top: 1px solid #333; border-left: 1px solid #333;">
+        0-4 Weeks
+    </td>
+    <td style="border: 1px solid #333; width: 80px; text-align: right;" id="LNEV">
+        &nbsp;
+    </td>
+    <td align="right">
+        30
+    </td>
+    <td style="border-top: 1px solid #333; border-left: 1px solid #333;">
+        Initial decision pending
+    </td>
+    <td style="border: 1px solid #333; width: 80px; text-align: right;" id="N">
+        &nbsp;
+    </td>
+</tr>
+<tr>
+    <td style="width: 30px; text-align: right;">
+        2
+    </td>
+    <td style="border-left: 1px solid #333;">
+        Targeted
+    </td>
+    <td style="border: 1px solid #333; width: 80px; text-align: right;" id="FNP">
+        &nbsp;
+    </td>
+    <td align="right">
+        16
+    </td>
+    <td style="border-left: 1px solid #333;">
+        5-8 Weeks
+    </td>
+    <td style="border: 1px solid #333; width: 80px; text-align: right;" id="LN">
+        &nbsp;
+    </td>
+    <td align="right">
+        31
+    </td>
+    <td style="border-left: 1px solid #333;">
+        Cont. current regimen
+    </td>
+    <td style="border: 1px solid #333; width: 80px; text-align: right;" id="P">
+        &nbsp;
+    </td>
+</tr>
+<tr>
+    <td style="width: 30px; text-align: right;">
+        3
+    </td>
+    <td style="border-left: 1px solid #333;">
+        Follow-up after high VL
+    </td>
+    <td style="border: 1px solid #333; width: 80px; text-align: right;" id="FP">
+        &nbsp;
+    </td>
+    <td align="right">
+        17
+    </td>
+    <td style="border-left: 1px solid #333;">
+        9-12 Weeks
+    </td>
+    <td style="border: 1px solid #333; width: 80px; text-align: right;" id="LP">
+        &nbsp;
+    </td>
+    <td align="right">
+        32
+    </td>
+    <td style="border-left: 1px solid #333; border-bottom: 1px solid #333;">
+        Switch
+    </td>
+    <td style="border: 1px solid #333; width: 80px; text-align: right;" id="T12N">
+        &nbsp;
+    </td>
+</tr>
+<tr>
+    <td style="width: 30px; text-align: right;">
+        4
+    </td>
+    <td style="border-left: 1px solid #333; border-bottom: 1px solid #333;">
+        Repeat / lost / missing
+    </td>
+    <td style="border: 1px solid #333; width: 80px; text-align: right;" id="FP">
+        &nbsp;
+    </td>
+    <td align="right">
+        18
+    </td>
+    <td style="border-left: 1px solid #333; border-bottom: 1px solid #333;">
+        13+ Weeks / missing
+    </td>
+    <td style="border: 1px solid #333; width: 80px; text-align: right;" id="LP">
+        &nbsp;
+    </td>
+    <td align="right">
+        &nbsp;
+    </td>
+    <td style="font-style: italic; text-align: right; min-width: 200px;">
+        Total high VL patients
+    </td>
+    <td style="border: 2px solid #333; width: 80px; text-align: right;" id="outcome_summary">
+        &nbsp;
+    </td>
+</tr>
+<tr>
+    <td style="width: 30px; text-align: right;">
+        &nbsp;
+    </td>
+    <td style="text-align: right; font-style: italic;">
+        Total Samples
+    </td>
+    <td style="border: 2px solid #333; width: 80px; text-align: right;" id="sex_pregnancy">
+        &nbsp;
+    </td>
+    <td align="right">
+        &nbsp;
+    </td>
+    <td style="font-style: italic; text-align: right; min-width: 200px;">
+        Total Samples
+    </td>
+    <td style="border: 2px solid #333; width: 80px; text-align: right;" id="outcome_summary">
+        &nbsp;
+    </td>
+    <td align="right">
+        &nbsp;
+    </td>
+    <td>
+        &nbsp;
+    </td>
+    <td>
+        &nbsp;
+    </td>
+</tr>
+<tr>
+    <td style="width: 30px; text-align: right;">
+        &nbsp;
+    </td>
+    <td style="text-align: left; font-weight: bold;">
+        &nbsp;
+    </td>
+    <td style="">
+        &nbsp;
+    </td>
+    <td align="right">
+        &nbsp;
+    </td>
+    <td>
+        &nbsp;
+    </td>
+    <td>
+        &nbsp;
+    </td>
+    <td align="right">
+        &nbsp;
+    </td>
+    <td>
+        &nbsp;
+    </td>
+    <td>
+        &nbsp;
+    </td>
+</tr>
+<tr>
+    <td style="width: 30px; text-align: right;">
+        &nbsp;
+    </td>
+    <td>
+        &nbsp;
+    </td>
+    <td>
+        &nbsp;
+    </td>
+    <td align="right">
+        &nbsp;
+    </td>
+    <td style="font-weight: bold;">
+        ▼Source: High VL Register ▼
+    </td>
+    <td>
+        &nbsp;
+    </td>
+    <td align="right">
+        &nbsp;
+    </td>
+    <td style="font-weight: bold;" colspan="4">
+        &nbsp;
+    </td>
+</tr>
+<tr>
+    <td style="width: 30px; text-align: right;">
+        &nbsp;
+    </td>
+    <td bgcolor="#d9d9d9" style="font-weight: bold;">
+        Monitoring Cohort Outcomes
+    </td>
+    <td>
+        &nbsp;
+    </td>
+    <td align="right">
+        &nbsp;
+    </td>
+    <td bgcolor="#d9d9d9" style="font-weight: bold;">
+        High VL Cohort Outcomes
+    </td>
+    <td>
+        &nbsp;
+    </td>
+    <td align="right">
+        &nbsp;
+    </td>
+    <td style="font-weight: bold;" colspan="4">
+        &nbsp;
+    </td>
+</tr>
+<tr>
+    <td style="width: 30px; text-align: right;">
+        &nbsp;
+    </td>
+    <td style="font-weight: bold;">
+        Receipt of Results
+    </td>
+    <td>
+        &nbsp;
+    </td>
+    <td align="right">
+        &nbsp;
+    </td>
+    <td style="font-weight: bold;">
+        Initial High VL: Reason for Test
+    </td>
+    <td>
+        &nbsp;
+    </td>
+    <td align="right">
+        &nbsp;
+    </td>
+    <td style="font-weight: bold;" colspan="4">
+        Final Decision
+    </td>
+</tr>
+<tr>
+    <td style="width: 30px; text-align: right;">
+        5
+    </td>
+    <td style="border-left: 1px solid #333; border-top: 1px solid #333;">
+        0-4 Weeks
+    </td>
+    <td style="border: 1px solid #333; width: 80px; text-align: right;" id="15_24Y">
+        &nbsp;
+    </td>
+    <td align="right">
+        20
+    </td>
+    <td style="border-left: 1px solid #333; border-top: 1px solid #333;">
+        Routine
+    </td>
+    <td style="border: 1px solid #333; width: 80px; text-align: right;" id="PPY">
+        &nbsp;
+    </td>
+    <td align="right">
+        33
+    </td>
+    <td style="border-left: 1px solid #333; border-top: 1px solid #333; width: 80px;">
+        Final decision pending
+    </td>
+    <td style="width: 80px; border: 1px solid #333; text-align: right;" id="RGTCNN">
+        &nbsp;
+    </td>
+</tr>
+<tr>
+    <td style="width: 30px; text-align: right;">
+        6
+    </td>
+    <td style="border-left: 1px solid #333;">
+        5-8 Weeks
+    </td>
+    <td style="border: 1px solid #333; width: 80px; text-align: right;" id="15_24Y">
+        &nbsp;
+    </td>
+    <td align="right">
+        21
+    </td>
+    <td style="border-left: 1px solid #333;">
+        Targeted
+    </td>
+    <td style="border: 1px solid #333; width: 80px; text-align: right;" id="PPY">
+        &nbsp;
+    </td>
+    <td align="right">
+        34
+    </td>
+    <td style="border-left: 1px solid #333; width: 80px;">
+        Cont. current regimen
+    </td>
+    <td style="width: 80px; border: 1px solid #333; text-align: right;" id="RGTCNN">
+        &nbsp;
+    </td>
+</tr>
+<tr>
+    <td style="width: 30px; text-align: right;">
+        7
+    </td>
+    <td style="border-left: 1px solid #333;">
+        9-12 Weeks
+    </td>
+    <td style="border: 1px solid #333; width: 80px; text-align: right;" id="15_24Y">
+        &nbsp;
+    </td>
+    <td align="right">
+        22
+    </td>
+    <td style="border-bottom: 1px solid #333; border-left: 1px solid #333;">
+        Repeat
+    </td>
+    <td style="border: 1px solid #333; width: 80px; text-align: right;" id="PPY">
+        &nbsp;
+    </td>
+    <td align="right">
+        35
+    </td>
+    <td style="border-left: 1px solid #333; width: 80px;">
+        Switch
+    </td>
+    <td style="width: 80px; border: 1px solid #333; text-align: right;" id="RGTCNN">
+        &nbsp;
+    </td>
+</tr>
+<tr>
+    <td style="width: 30px; text-align: right;">
+        8
+    </td>
+    <td style="border-left: 1px solid #333; border-bottom: 1px solid #333;">
+        13+ Weeks / missing
+    </td>
+    <td style="border: 1px solid #333; width: 80px; text-align: right;" id="25P">
+        &nbsp;
+    </td>
+    <td align="right">
+        &nbsp;
+    </td>
+    <td style="text-align: right;">
+        Total high VL patients
+    </td>
+    <td style="border: 2px solid #333; width: 80px; text-align: right;" id="age_group">
+        &nbsp;
+    </td>
+    <td align="right">
+        36
+    </td>
+    <td style="border-left: 1px solid #333; width: 80px;">
+        Refer to HIV Specialist
+    </td>
+    <td style="width: 80px; border: 1px solid #333; text-align: right;" id="RGTCNP">
+        &nbsp;
+    </td>
+</tr>
+<tr>
+    <td style="width: 30px; text-align: right;">
+        &nbsp;
+    </td>
+    <td style="text-align: right; font-style: italic;">
+        Total Samples
+    </td>
+    <td style="border: 2px solid #333; width: 80px; text-align: right;" id="age_group">
+        &nbsp;
+    </td>
+    <td align="right">
+        &nbsp;
+    </td>
+    <td style="text-align: right; font-style: italic;">
+        &nbsp;
+    </td>
+    <td style="width: 80px; text-align: right;" id="partner_present">
+        &nbsp;
+    </td>
+    <td align="right">
+        &nbsp;
+    </td>
+    <td style="border-top: 1px solid #333; width: 80px;">
+        Total high VL patients
+    </td>
+    <td style="border: 2px solid #333; width: 80px; text-align: right;" id="age_group">
+        &nbsp;
+    </td>
+</tr>
+<tr>
+    <td style="width: 30px; text-align: right;">
+        &nbsp;
+    </td>
+    <td style="font-weight: bold;">
+        Results Type
+    </td>
+    <td>
+        &nbsp;
+    </td>
+    <td align="right">
+        &nbsp;
+    </td>
+    <td style="font-weight: bold;">
+        Intensive Adherence Counselling
+    </td>
+    <td>
+        &nbsp;
+    </td>
+    <td align="right">
+        &nbsp;
+    </td>
+    <td style="font-weight: bold;" colspan="4">
+        Report filled
+    </td>
+</tr>
+<tr>
+    <td style="width: 30px; text-align: right;">
+        9
+    </td>
+    <td style="border-top: 1px solid #333; border-left: 1px solid #333;">
+        Electronic
+    </td>
+    <td style="border: 1px solid #333; width: 80px; text-align: right;" id="PITC">
+        &nbsp;
+    </td>
+    <td style="width: 30px; text-align: right;">
+        23
+    </td>
+    <td style="border-top: 1px solid #333; border-left: 1px solid #333;">
+        3 Sessions completed
+    </td>
+    <td style="border: 1px solid #333; width: 80px; text-align: right;" id="PITC">
+        &nbsp;
+    </td>
+    <td align="right">
+        &nbsp;
+    </td>
+    <td style="border: 1px dotted #00000a;">
+        Date
+    </td>
+    <td style="border: 2px solid #333; width: 80px; text-align: right;" id="age_group">
+        &nbsp;
+    </td>
+</tr>
+<tr>
+    <td style="width: 30px; text-align: right;">
+        10
+    </td>
+    <td style="border-left: 1px solid #333;">
+        Paper
+    </td>
+    <td style="border: 1px solid #333; width: 80px; text-align: right;" id="PITC">
+        &nbsp;
+    </td>
+    <td style="width: 30px; text-align: right;">
+        24
+    </td>
+    <td style="border-left: 1px solid #333;">
+        Sess. not completed
+    </td>
+    <td style="border: 1px solid #333; width: 80px; text-align: right;" id="PITC">
+        &nbsp;
+    </td>
+    <td align="right">
+        &nbsp;
+    </td>
+    <td style="border: 1px dotted #00000a;">
+        Name
+    </td>
+    <td style="border: 2px solid #333; width: 80px; text-align: right;" id="age_group">
+        &nbsp;
+    </td>
+</tr>
+<tr>
+    <td style="width: 30px; text-align: right;">
+        &nbsp;
+    </td>
+    <td style="border: 1px dotted #00000a;">
+        Missing results
+    </td>
+    <td style="border: 1px solid #333; width: 80px; text-align: right;" id="PITC">
+        &nbsp;
+    </td>
+    <td style="width: 30px; text-align: right;">
+        &nbsp;
+    </td>
+    <td style="border-top: 1px solid #333;">
+        Total high VL patients
+    </td>
+    <td style="border: 2px solid #333; width: 80px; text-align: right;" id="age_group">
+        &nbsp;
+    </td>
+    <td align="right">
+        &nbsp;
+    </td>
+    <td style="border: 1px dotted #00000a;">
+        Phone
+    </td>
+    <td style="border: 2px solid #333; width: 80px; text-align: right;" id="age_group">
+        &nbsp;
+    </td>
+</tr>
+<tr>
+    <td align="right">
+        &nbsp;
+    </td>
+    <td style="text-align: right; font-style: italic;">
+        Tot. clients (check)
+    </td>
+    <td style="border: 2px solid #333; width: 80px; text-align: right;" id="htc_access_type">
+        &nbsp;
+    </td>
+    <td align="right">
+        &nbsp;
+    </td>
+    <td>
+        &nbsp;
+    </td>
+    <td>
+        &nbsp;
+    </td>
+    <td align="right">
+        &nbsp;
+    </td>
+    <td style="font-weight: bold;" colspan="2">
+        Notes
+    </td>
+</tr>
+
+
+<tr>
+    <td style="width: 30px; text-align: right;">
+        &nbsp;
+    </td>
+    <td style="font-weight: bold;">
+        VL Results
+    </td>
+    <td>
+        &nbsp;
+    </td>
+    <td align="right">
+        &nbsp;
+    </td>
+    <td style="font-weight: bold;">
+        Follow-up VL Results
+    </td>
+    <td>
+        &nbsp;
+    </td>
+    <td align="right">
+        &nbsp;
+    </td>
+    <td style="font-weight: bold;" colspan="4">
+        &nbsp;
+    </td>
+</tr>
+<tr>
+    <td style="width: 30px; text-align: right;">
+        11
+    </td>
+    <td style="border-left: 1px solid #333; border-top: 1px solid #333;">
+        < 1000
+    </td>
+    <td style="border: 1px solid #333; width: 80px; text-align: right;" id="15_24Y">
+        &nbsp;
+    </td>
+    <td align="right">
+        25
+    </td>
+    <td style="border-left: 1px solid #333; border-top: 1px solid #333;">
+        Not yet collected
+    </td>
+    <td style="border: 1px solid #333; width: 80px; text-align: right;" id="PPY">
+        &nbsp;
+    </td>
+    <td align="right">
+        &nbsp;
+    </td>
+    <td style="width: 80px;">
+        &nbsp;
+    </td>
+    <td style="width: 80px; text-align: right;" id="RGTCNN">
+        &nbsp;
+    </td>
+</tr>
+<tr>
+    <td style="width: 30px; text-align: right;">
+        12
+    </td>
+    <td style="border-left: 1px solid #333;">
+        1000+
+    </td>
+    <td style="border: 1px solid #333; width: 80px; text-align: right;" id="15_24Y">
+        &nbsp;
+    </td>
+    <td align="right">
+        26
+    </td>
+    <td style="border-left: 1px solid #333;">
+        < 1000
+    </td>
+    <td style="border: 1px solid #333; width: 80px; text-align: right;" id="PPY">
+        &nbsp;
+    </td>
+    <td align="right">
+        &nbsp;
+    </td>
+    <td style="width: 80px;">
+        &nbsp;
+    </td>
+    <td style="width: 80px; text-align: right;" id="RGTCNN">
+        &nbsp;
+    </td>
+</tr>
+<tr>
+    <td style="width: 30px; text-align: right;">
+        13
+    </td>
+    <td style="border-left: 1px solid #333;">
+        Samples rejected
+    </td>
+    <td style="border: 1px solid #333; width: 80px; text-align: right;" id="15_24Y">
+        &nbsp;
+    </td>
+    <td align="right">
+        28
+    </td>
+    <td style="border-left: 1px solid #333;">
+        Sample Rejected
+    </td>
+    <td style="border: 1px solid #333; width: 80px; text-align: right;" id="PPY">
+        &nbsp;
+    </td>
+    <td style="width: 30px; text-align: right;">
+        &nbsp;
+    </td>
+    <td style="font-weight: bold;">
+        Report received
+    </td>
+    <td>
+        &nbsp;
+    </td>
+</tr>
+<tr>
+    <td style="width: 30px; text-align: right;">
+        14
+    </td>
+    <td style="border-left: 1px solid #333;">
+        Results missing
+    </td>
+    <td style="border: 1px solid #333; width: 80px; text-align: right;" id="PITC">
+        &nbsp;
+    </td>
+    <td style="width: 30px; text-align: right;">
+        29
+    </td>
+    <td style="border-left: 1px solid #333;">
+        Results missing
+    </td>
+    <td style="border: 1px solid #333; width: 80px; text-align: right;" id="PITC">
+        &nbsp;
+    </td>
+    <td align="right">
+        &nbsp;
+    </td>
+    <td style="border: 1px dotted #00000a;">
+        Date
+    </td>
+    <td style="border: 2px solid #333; width: 80px; text-align: right;" id="age_group">
+        &nbsp;
+    </td>
+</tr>
+<tr>
+    <td style="width: 30px; text-align: right;">
+        &nbsp;
+    </td>
+    <td style="border-top: 1px solid #333;">
+        Total Samples
+    </td>
+    <td style="border: 2px solid #333; width: 80px; text-align: right;" id="age_group">
+        &nbsp;
+    </td>
+    <td style="width: 30px; text-align: right;">
+        &nbsp;
+    </td>
+    <td style="border-top: 1px solid #333;">
+        Total high VL patients
+    </td>
+    <td style="border: 2px solid #333; width: 80px; text-align: right;" id="age_group">
+        &nbsp;
+    </td>
+    <td align="right">
+        &nbsp;
+    </td>
+    <td style="border: 1px dotted #00000a;">
+        Name
+    </td>
+    <td style="border: 2px solid #333; width: 80px; text-align: right;" id="age_group">
+        &nbsp;
+    </td>
+</tr>
+<tr>
+    <td style="width: 30px; text-align: right;">
+        &nbsp;
+    </td>
+    <td>
+        &nbsp;
+    </td>
+    <td style="width: 80px; text-align: right;" id="PITC">
+        &nbsp;
+    </td>
+    <td style="width: 30px; text-align: right;">
+        &nbsp;
+    </td>
+    <td>
+        &nbsp;
+    </td>
+    <td style="width: 80px; text-align: right;" id="PITC">
+        &nbsp;
+    </td>
+    <td align="right">
+        &nbsp;
+    </td>
+    <td style="border: 1px dotted #00000a;">
+        Phone
+    </td>
+    <td style="border: 2px solid #333; width: 80px; text-align: right;" id="age_group">
+        &nbsp;
+    </td>
+</tr>
+</table>
+</td>
+</tr>
+</body>
+<footer class="footer">
+    <div class="container-footer">
+        <button id="btnNext" class="green right" style="margin: 5px 0px 0px; padding: 0px; float: right;" onclick="location='/';">
+            <span>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Finish &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;</span>
+        </button>
+        <button id="activities" class="btn btn-success buttons blue" style="margin-right: 5px;" onmousedown="javascript:printPDF();" >
+            <span>&nbsp; &nbsp; &nbsp; Print &nbsp; &nbsp; &nbsp;</span>
+        </button>
+    </div>
+</footer>
+</html>
