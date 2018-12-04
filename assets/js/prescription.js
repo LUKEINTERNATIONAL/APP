@@ -1,4 +1,5 @@
-var sessionDate = new Date("2018-10-16");
+var formattedDate = sessionStorage.sessionDate;
+var sessionDate = new Date(moment(formattedDate).format('YYYY-MM-DD'));
 
 var givenRegimens = {};
 var passedRegimens = {};
@@ -7,6 +8,10 @@ var selectedRegimens
 var setSelectedInterval;
 
 var show_custom_regimens = false;
+var prescribe_arv = false;
+var prescribe_cpt = false;
+var prescribe_ipt = false;
+var medication_orders = ["CPT", "INH", "ARV"];
 
 var regimenLines = {"0A": "1", "2A": "1", "4A": "1", "5A": "1", "6A": "1", "13A": "1", "14A": "1", "15A": "1", "7A": "2", "8A": "2", "9A": "2", "10A": "2", "11A": "2", "12A": "3"};
 function buildRegimenPage() {
@@ -246,53 +251,6 @@ function showSelectedMeds() {
 
 
 /* ###################################################### */
-
-var assessment_questions = "Patient present?,1805#Guardian present?,2122"
-
-var inclusion_list_arr = [
-  ['Adult  18 years +', 9533], 
-  ['On ART for 12 months +', 9534],
-  ['On 1<sup>st</sup> line ART',9535],
-  ['Good current adherence', 9537], ['Last VL <1000', 9536]
-];
-
-var exclusion_list_arr = [
-  ['Pregnant / Breastfeeding', 9538],
-  ["Side effects / HIV-rel. diseases", 9539],
-  ["Needs BP / diabetes treatment", 9540],
-  ['Started IPT <12m ago', 9527],
-  ["Any sign for TB",2186]
-];
-
-function buildFTassessmentPage() {
-  var frame = document.getElementById("inputFrame" + tstCurrentPage)
-  //buildYesNoUI("Fast track", assessment_questions, targetElement);
-
-  var assessmentTable = document.createElement("div");
-  assessmentTable.setAttribute("class","assessmentTable");
-  frame.appendChild(assessmentTable)
-
-  var assessmentTableRow = document.createElement("div");
-  assessmentTableRow.setAttribute("class","assessmentTable-row");
-  assessmentTable.appendChild(assessmentTableRow);
-
-  var cells = ["left","right"];
-
-  for(var i = 0 ; i < cells.length ; i++){
-    var assessmentTableCell = document.createElement("div");
-    assessmentTableCell.setAttribute("class","assessmentTable-cell");
-    assessmentTableCell.setAttribute("id","assessmentTable-cell-" + cells[i]);
-    assessmentTableRow.appendChild(assessmentTableCell);
-  }
-
-  var leftCell = document.getElementById("assessmentTable-cell-left");
-  buildYesNoUI("Fast track", inclusion_list_arr.join("#").split(",").join(","), leftCell);
-
-  var rightCell = document.getElementById("assessmentTable-cell-right");
-  buildYesNoUI("Fast track", exclusion_list_arr.join("#").split(",").join(","), rightCell);
-
-}
-
 var setDataTable = null;
 
 function initDataTable() {
@@ -429,24 +387,18 @@ function preSelectInterval() {
 function adjustFrameHeight() {
   var frame = document.getElementById('inputFrame' + tstCurrentPage);
   frame.style = 'height: 89% !important; width: 96%;';
-
-  var lis = frame.getElementsByTagName("li")
-  for(var i = 0 ; i < lis.length ; i++){
-    var attr = lis[i].getAttribute("onmousedown");
-    lis[i].setAttribute("onmousedown", attr + "; changeNextBtn(this);");
-  }
+  
+  var btn = document.getElementById("nextButton");
+  btn.setAttribute("onmousedown","validateEntries();");
 }
 
-function changeNextBtn(e) {
-  var btn = document.getElementById("nextButton");
-
-  if(e.innerHTML == "No"){
-    btn.innerHTML = "<span>Finish</span>";
-    btn.setAttribute("onmousedown", "submitFastTrackAssesment();")
-  }else{
-    btn.innerHTML = "<span>Next</span>";
-    btn.setAttribute("onmousedown", "gotoNextPage();")
+function validateEntries() {
+  var inputBox = document.getElementById('touchscreenInput4');
+  if(inputBox.value < 1){
+    showMessage('Please select No/Yes from the list');
   }
+
+  submitRegimen();
 }
 
 function getRegimens() {
@@ -513,6 +465,55 @@ function getRegimens() {
   xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
   xhttp.setRequestHeader('Content-type', "application/json");
   xhttp.send();
+}
+
+function getMedicationOrders() {
+    var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1/observations/";
+  var medication_order_concept_id = 1282;
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+            medication_orders_observations = JSON.parse(this.responseText);
+            console.log(medication_orders_observations)
+        }
+    };
+
+    xhttp.open("GET", url + "?patient_id=" + sessionStorage.patientID + "&concept_id=" + medication_order_concept_id + "&obs_datetime=" + sessionStorage.sessionDate, true);
+    xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+    xhttp.setRequestHeader('Content-type', "application/json");
+    xhttp.send();
+}
+
+function getCPTDosage() {
+    var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1/cpt_dosage/";
+
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+            cpt_dosage = JSON.parse(this.responseText);
+            console.log(cpt_dosage)
+        }
+    };
+    xhttp.open("GET", url + "?patient_id="+sessionStorage.patientID, true);
+    xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+    xhttp.setRequestHeader('Content-type', "application/json");
+    xhttp.send();
+}
+
+function getIPTDosage() {
+    var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1/ipd_dosage/";
+
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+            ipt_dosage = JSON.parse(this.responseText);
+            console.log(ipt_dosage)
+        }
+    };
+    xhttp.open("GET", url + "?patient_id="+sessionStorage.patientID, true);
+    xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+    xhttp.setRequestHeader('Content-type', "application/json");
+    xhttp.send();
 }
 
 
@@ -1139,17 +1140,6 @@ function resetCustomRegimens() {
 
     var patient_id = sessionStorage.patientID;
     
-    function submitFastTrackAssesment() {
-
-        var encounter = {
-            encounter_type_id:  156,
-            patient_id: patient_id,
-            encounter_datetime: null
-        }
-
-        submitParameters(encounter, "/encounters", "postFastTrackAssesmentObs");
-    }
-
     function submitRegimen(){
         var encounter = {
             encounter_type_id:  25,
@@ -1206,63 +1196,38 @@ function resetCustomRegimens() {
         }
 
 
-        submitParameters(drug_orders_params, "/drug_orders", "nextPage");
+        submitParameters(drug_orders_params, "/drug_orders", "submitFastTrack");
     }
 
 
-    function postFastTrackAssesmentObs(encounter){
-        var obs = {
-            encounter_id: encounter.encounter_id,
-            observations: [
-                { concept_id: 9561, value_coded: assessForFastTrackAnswer() },
-                { concept_id: 9533, value_coded: getFastTrackAssesmentAnswerConcept('Adult  18 years +') },
-                { concept_id: 9534, value_coded: getFastTrackAssesmentAnswerConcept('On ART for 12 months +') },
-                { concept_id: 9535, value_coded: getFastTrackAssesmentAnswerConcept('On 1<sup>st</sup> line ART') },
-                { concept_id: 9537, value_coded: getFastTrackAssesmentAnswerConcept('Good current adherence') },
-                { concept_id: 9536, value_coded: getFastTrackAssesmentAnswerConcept('Last VL <1000') },
-                { concept_id: 9538, value_coded: getFastTrackAssesmentAnswerConcept('Pregnant / Breastfeeding') },
-                { concept_id: 9539, value_coded: getFastTrackAssesmentAnswerConcept('Side effects / HIV-rel. diseases') },
-                { concept_id: 9540, value_coded: getFastTrackAssesmentAnswerConcept('Needs BP / diabetes treatment') },
-                { concept_id: 9527, value_coded: getFastTrackAssesmentAnswerConcept('Started IPT <12m ago') },
-                { concept_id: 2186, value_coded: getFastTrackAssesmentAnswerConcept('Any sign for TB') }
-            ]
-        };
-
-        submitParameters(obs, "/observations", "submitRegimen")
+    function submitFastTrack(e){
+      var encounter = {                                                       
+          encounter_type_id:  156,                                            
+          patient_id: patient_id,                                             
+          encounter_datetime: null                                            
+      }                                                                       
+                                                                                
+      submitParameters(encounter, "/encounters", "postFastTrackAssesmentObs");
     }
 
-    function assessForFastTrackAnswer(){
-        value = __$("assess_for_ft").value;
-        if (value.trim().toUpperCase() == "YES"){
-            return 1065;
-        } else {
-            return 1066;
-        }
+    function postFastTrackAssesmentObs(encounter) {
+      var obs = {                                                             
+        encounter_id: encounter.encounter_id,                               
+          observations: [                                                     
+            { concept_id: 9561, value_coded: assessForFastTrackAnswer() }
+          ]                                                                    
+        };                                                                 
+
+      submitParameters(obs, "/observations", "nextPage");
     }
 
-    function changeSubmitFunction(){
-        var nextButton =  document.getElementById('nextButton');
-        nextButton.onmousedown = function(){
-            submitFastTrackAssesment();
-            //submitRegimen();
-        }
-    }
-
-
-    function getFastTrackAssesmentAnswerConcept(key){
-        try{
-            value = yesNo_Hash["Fast track"][key];
-
-            if (value.match(/YES/i)){
-                return "1065";
-            } else {
-                return "1066";
-            }
-
-        } catch(e){
-            return "";
-        }
-
+    function assessForFastTrackAnswer(){                                        
+      value = __$("assess_for_ft").value;                                     
+      if (value.trim().toUpperCase() == "YES"){                               
+        return 1065;                                                        
+      } else {                                                                
+        return 1066;                                                        
+      }                                                                       
     }
 
     function getFormattedDate(set_date) {

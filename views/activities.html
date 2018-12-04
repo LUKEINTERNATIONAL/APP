@@ -26,14 +26,42 @@
 var patientID = sessionStorage.getItem("patientID");
 var programID = sessionStorage.getItem("programID");
 var tt_cancel_destination = "/";
+var apiProtocol = sessionStorage.apiProtocol;
+var apiURL = sessionStorage.apiURL;
+var apiPort = sessionStorage.apiPort;
+var patient_id = sessionStorage.patientID;
+var previousActivities = null;
+function getActivities(){
+  var url = 'http://'+apiURL+':'+apiPort+'/api/v1/user_properties?property=activities';
+  var req = new XMLHttpRequest();
+  req.onreadystatechange = function(){
 
-function loadActivities() {
+  if (this.readyState == 4) {
+    if (this.status == 200) {
+      var results = JSON.parse(this.responseText);
+        previousActivities = results.property_value;
+        loadActivities(previousActivities);
+    }else {
+
+        loadActivities("");
+    }
+    }
+    };
+    try {
+      req.open('GET', url, true);
+      req.setRequestHeader('Authorization',sessionStorage.getItem('authorization'));
+      req.send(null);
+    } catch (e) {
+    
+    }
+}
+
+function loadActivities(previousActivities) {
   var activities = [];
-
   jQuery.getJSON("/apps/ART/application.json")
     .done(function (data) {
       activities = data.activities.tasks;
-      renderActivities(activities);
+      renderActivities(activities, previousActivities);
 
     })
     .fail(function () {
@@ -45,7 +73,7 @@ function loadActivities() {
 <li id="0" tstvalue="vitals" class="even" tag="even" onmousedown="" onclick="null; updateTouchscreenInputForSelect(__$('optionValue' + this.id), this); " style=""><div style="display: table; border-spacing: 0px;"><div style="display: table-row"><div style="display: table-cell;"><img id="img0" src="/public/touchscreentoolkit/lib/images/unticked.jpg" alt="[ ]"></div><div style="display: table-cell; vertical-align: middle; text-align: left; padding-left: 15px;" id="optionValue0">Vitals</div></div></div></li
 */
 
-function renderActivities(activities) {
+function renderActivities(activities, previousActivities) {
   var ul = document.getElementById("tt_currentUnorderedListOptions");
   for(var i = 0 ; i < activities.sort().length ; i++){
     var innerHTML = '<div style="display: table; border-spacing: 0px;"><div style="display: table-row"><div style="display: table-cell;"><img id="img';
@@ -61,9 +89,15 @@ function renderActivities(activities) {
     li.setAttribute("class","even");
     li.innerHTML = innerHTML;
     ul.appendChild(li); 
+     if(previousActivities.search(activities[i][0]) >= 0) {
+      updateInputs(i);
+    }
   } 
 }
 
+function updateInputs(i) {
+  updateTouchscreenInputForSelect(__$('optionValue' + i), document.getElementById(i)); 
+}
 function changeNextBTN() {
   var nextBTN = document.getElementById("nextButton");
   nextButton.setAttribute("onmousedown","setActivities();");
@@ -106,7 +140,7 @@ function isEmpty(str){
       <form action="post">
 
         <select id="activity" tt_pageStyleClass="NoKeyboard NoInput small" 
-          multiple="multiple" helpText="Activities" name="activities" tt_onLoad="changeNextBTN();loadActivities();">
+          multiple="multiple" helpText="Activities" name="activities" tt_onLoad="changeNextBTN();getActivities();">
         </select>
 
       </form>
