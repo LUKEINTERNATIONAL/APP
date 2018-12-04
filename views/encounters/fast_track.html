@@ -60,10 +60,37 @@
 <script type="text/javascript">
 var tt_cancel_destination = "/views/patient_dashboard.html?patient_id=" + sessionStorage.patientID;
 
+var ftAnswers;
+YesConceptID = 1065;
+NoConceptID  = 1066;
+
 function submitFTVencounter(e) {
-  gotoNextPage();
+  var encounter = {                                                       
+    encounter_type_id:  156,                                            
+    patient_id: sessionStorage.patientID,                                             
+    encounter_datetime: null                                            
+  }                                                                       
+  submitParameters(encounter, "/encounters", "postFastTrackAssesmentObs");
 }
-	
+
+function postFastTrackAssesmentObs(encounter) {
+  var obs = [{concept_id: 9561, value_coded: YesConceptID}];
+  for(var concept_id in ftAnswers){
+    obs.push({concept_id: concept_id, value_coded: ftAnswers[concept_id]})
+  } 
+
+  var observations = {                                                             
+    encounter_id: encounter.encounter_id, 
+    observations: obs 
+  }
+  
+  submitParameters(observations, "/observations", "nextPage");
+}
+
+function nextPage(e){
+  nextEncounter(sessionStorage.patientID, 1);
+}
+
 function changeSubmitFuction() {
   var nextButton =  document.getElementById('nextButton');
   nextButton.setAttribute("onmousedown","submitFTVencounter(this);");
@@ -117,6 +144,8 @@ function buildFastTrackPage(){
   list_arr.push(inclusion_list_arr);
   list_arr.push(exclusion_list_arr);
 
+  ftAnswers = {};
+
   for(var i = 0 ; i < cells.length ; i++){
     var ftContainerCell = document.createElement("div");
     ftContainerCell.setAttribute("class","table-div-cell");
@@ -132,6 +161,7 @@ function buildFastTrackPage(){
 }
 
 function addQuestionAnswers(cell, table, questions){
+
   for(var i = 0 ; i < questions.length ; i++){
     var tr = document.createElement("tr");
     var th = document.createElement("th");
@@ -155,6 +185,8 @@ function addQuestionAnswers(cell, table, questions){
     td.appendChild(img);
     tr.appendChild(td);
 
+    var ans = img.getAttribute("src");
+    ftAnswers[questions[i][1]] = (ans.match(/no.png/i) ? NoConceptID : YesConceptID);  
     table.appendChild(tr);
   }
 
@@ -203,7 +235,7 @@ var exclusion_list_arr = [
   }else{
     img.setAttribute("src","/apps/ART/assets/images/yes.png");
   }
-  
+ 
 }  
   
 function removeTempButtons() {
