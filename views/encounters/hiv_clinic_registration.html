@@ -1067,6 +1067,10 @@
                         if (conditions.length > 0) {
                             $('inputFrame' + tstCurrentPage).innerHTML += '<div id="selected_stage_conditions"><hr /><br />' + conditions + '</div>';
                         }
+
+                        __$('nextButton').onmousedown = function(){
+                            gotoNextPage(); //The Next Button was misbehaving. I couldn't trace where the problem was. mangochiman 2018-12-03 @ 17:42. At least this is working
+                        }
                     }
 
                     function selectedConditions() {
