@@ -1,0 +1,273 @@
+<script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js" defer="true"></script>
+<!-- <script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/standard.js" defer="true"></script> -->
+<script type="text/javascript" src="/assets/js/jquery.min.js"></script>
+<script type="text/javascript" src="/assets/js/post_parameters.js"></script>
+<script type="text/javascript" src="/assets/js/generic_ajaxrequest.js"></script>
+<script src="/assets/js/moment.js"></script>
+
+<style>
+#clearButton{
+	display: none;
+}
+
+.table-div {
+  display: table;
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 15px;
+}
+
+.table-div-row {
+  display: table-row;
+}
+
+.table-div-cell {
+  display: table-cell;
+  width: 40%;
+  height: 77vh;
+}
+
+.ft-icons {
+  height: 60px;
+  width: 60px;
+}
+
+.ft-tables {
+  width: 100%;
+  padding: 10px;
+  border-collapse: collapse;
+}
+
+.ft-tables th {
+  width: 90%;
+  text-align: left;
+  margin-left: 10px;
+  border-style: solid;
+  border-width: 0px 0px 1px 0px;
+}
+
+.ft-tables td {
+  border-style: solid;
+  border-width: 0px 0px 1px 0px;
+}
+
+.ft-buttons {
+  width: 250px;
+}
+
+</style>
+
+<script type="text/javascript">
+var tt_cancel_destination = "/views/patient_dashboard.html?patient_id=" + sessionStorage.patientID;
+
+function submitFTVencounter(e) {
+  gotoNextPage();
+}
+	
+function changeSubmitFuction() {
+  var nextButton =  document.getElementById('nextButton');
+  nextButton.setAttribute("onmousedown","submitFTVencounter(this);");
+  var classAttr = nextButton.getAttribute("class");
+  nextButton.setAttribute("class",classAttr + " ft-buttons");
+  nextButton.innerHTML = "<span>FT appointment</span>";
+
+  var buttonDiv = document.getElementById('buttons');
+  var noButton = document.createElement('button');
+  noButton.setAttribute("class","button navButton blue ft-buttons");
+  noButton.setAttribute("id","noButton");
+  noButton.setAttribute("onmousedown","submitFTVencounter(this);");
+  noButton.innerHTML = "<span>Regular appointment</span>";
+
+  var backButn = document.getElementById("backButton");
+  buttonDiv.insertBefore(noButton, backButton); 
+}
+
+var inclusion_list_arr = [
+  ['Adult  18 years +', 9533], 
+  ['On ART for 12 months +', 9534],
+  ['On 1<sup>st</sup> line ART',9535],
+  ['Good current adherence', 9537], ['Last VL <1000', 9536]
+];
+
+var exclusion_list_arr = [
+  ['Pregnant / Breastfeeding', 9538],
+  ["Side effects / HIV-rel. diseases", 9539],
+  ["Needs BP / diabetes treatment", 9540],
+  ['Started IPT <12m ago', 9527],
+  ["Any sign for TB",2186]
+];
+
+if(sessionStorage.patientGender != 'F') {
+  exclusion_list_arr.shift();
+}
+
+function buildFastTrackPage(){	
+  var frame = document.getElementById("inputFrame" + tstCurrentPage);
+  frame.setAttribute("style", "width: 95.5%; height: 90%;");
+
+  var ftContainer = document.createElement("div");
+  ftContainer.setAttribute("class","table-div");
+
+  var ftContainerRow = document.createElement("div");
+  ftContainerRow.setAttribute("class","table-div-row");
+  ftContainer.appendChild(ftContainerRow);
+
+  var cells = ["left","right"];
+  var list_arr = [];
+  list_arr.push(inclusion_list_arr);
+  list_arr.push(exclusion_list_arr);
+
+  for(var i = 0 ; i < cells.length ; i++){
+    var ftContainerCell = document.createElement("div");
+    ftContainerCell.setAttribute("class","table-div-cell");
+    ftContainerCell.setAttribute("id","table-div-cell-" + cells[i]);
+    ftContainerRow.appendChild(ftContainerCell);
+  
+    var table = document.createElement("table");
+    table.setAttribute("class","ft-tables");
+    addQuestionAnswers(ftContainerCell, table, list_arr[i]);
+  }
+
+  frame.appendChild(ftContainer);
+}
+
+function addQuestionAnswers(cell, table, questions){
+  for(var i = 0 ; i < questions.length ; i++){
+    var tr = document.createElement("tr");
+    var th = document.createElement("th");
+    th.setAttribute("concept_id", questions[i][1]);
+    th.innerHTML = questions[i][0];
+    tr.appendChild(th);
+
+    var td = document.createElement("td");
+    var img = document.createElement("img");
+    img.setAttribute("src","/apps/ART/assets/images/yes.png");
+  
+    if(questions[i][0] == 'Needs BP / diabetes treatment')  {
+      var bp_diabetes_treatment = document.getElementById('bp_treatment');
+      var answer = bp_treatment.value == 'Yes' ? true : false; 
+      ftAssessment.needs_bp_diabetes_treatment = answer;
+    }
+
+    setIcon(questions[i][0], img);
+
+    img.setAttribute("class","ft-icons");
+    td.appendChild(img);
+    tr.appendChild(td);
+
+    table.appendChild(tr);
+  }
+
+  cell.appendChild(table);
+}
+
+function setIcon(name, img){
+/*var inclusion_list_arr = [
+  ['Adult  18 years +', 9533], 
+  ['On ART for 12 months +', 9534],
+  ['On 1<sup>st</sup> line ART',9535],
+  ['Good current adherence', 9537], ['Last VL <1000', 9536]
+];
+
+var exclusion_list_arr = [
+  ['Pregnant / Breastfeeding', 9538],
+  ["Side effects / HIV-rel. diseases", 9539],
+  ["Needs BP / diabetes treatment", 9540],
+  ['Started IPT <12m ago', 9527],
+  ["Any sign for TB",2186]
+];*/
+
+  var ans = false;
+  if(name == 'Adult  18 years +'){
+    ans = ftAssessment.adult;
+  }else if(name == 'On ART for 12 months +'){
+    ans = ftAssessment.on_art_for_12_plus_months;
+  }else if(name == 'On 1<sup>st</sup> line ART'){
+    ans = ftAssessment.on_first_line_regimen
+  }else if(name == 'Good current adherence'){
+    ans = ftAssessment.good_adherence;
+  }else if(name == 'Pregnant / Breastfeeding'){
+    ans = ftAssessment.pregnant_breastfeeding;
+  }else if(name == 'Side effects / HIV-rel. diseases'){
+    ans = ftAssessment.any_side_effects;
+  }else if(name == 'Needs BP / diabetes treatment'){
+    ans = ftAssessment.needs_bp_diabetes_treatment;
+  }else if(name == 'Started IPT <12m ago'){
+    ans = ftAssessment.started_ipt_less_than_12_months_ago
+  }else if(name == 'Any sign for TB'){
+    ans = ftAssessment.any_signs_of_tb;
+  }
+
+  if(ans == false) {
+    img.setAttribute("src","/apps/ART/assets/images/no.png");
+  }else{
+    img.setAttribute("src","/apps/ART/assets/images/yes.png");
+  }
+  
+}  
+  
+function removeTempButtons() {
+  var noButton = document.getElementById("noButton");
+  var nextButton = document.getElementById("nextButton");
+
+  var footer = document.getElementById("buttons");
+  footer.removeChild(noButton);
+  nextButton.setAttribute("onmousedown","gotoNextPage();");
+  nextButton.innerHTML = "<span>Next</span>";
+  nextButton.setAttribute("class","button green navButton")
+}
+
+var ftAssessment;
+function getFTassessment() {
+
+  var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1";
+  url += "/fast_track_assessment?date=";
+  var setDate = new Date(sessionStorage.sessionDate);
+  url += moment(setDate).format("YYYY-MM-DD");
+  url += "&patient_id=" + sessionStorage.patientID;
+
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+      var nextButton =  document.getElementById('nextButton');
+      nextButton.setAttribute("onmousedown","gotoNextPage();");
+      ftAssessment = JSON.parse(this.responseText);
+	  }
+  };
+  xhttp.open("GET", url, true);
+  xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+  xhttp.setRequestHeader('Content-type', "application/json");
+  xhttp.send();
+}
+
+
+function disableNextButton() {
+  var nextButton =  document.getElementById('nextButton');
+  nextButton.setAttribute("onmousedown","");
+  getFTassessment();
+}
+</script>
+
+<body id="mateme">
+  <div id="container">
+    <div id="content">
+
+
+      <form>
+
+        <select allowFreeText="false" helpText="Patient needs BP / diabetes treatment?" 
+          id="bp_treatment" name="bp_treatment" tt_onLoad="disableNextButton();">
+          <option value=""></option>
+          <option value="Yes">Yes</option>
+          <option value="No">No</option>
+        </select>
+
+        <input type="text" name="summary"
+          tt_onLoad="__$('keyboard').style.display = 'none';changeSubmitFuction(); buildFastTrackPage();"
+          tt_onUnload="removeTempButtons();" tt_pageStyleClass= "NoControls" helpText="Fast track assessment" optional = "true"/>
+
+      </form>
+
+   </div>
+ </div>
+</body>
