@@ -41,6 +41,9 @@ function getActivities(){
       var results = JSON.parse(this.responseText);
         previousActivities = results.property_value;
         loadActivities(previousActivities);
+    }else {
+
+        loadActivities("");
     }
     }
     };
