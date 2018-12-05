@@ -25,6 +25,10 @@
 <script type="text/javascript">
 var patient_id = sessionStorage.patientID;
 var tt_cancel_destination = "/views/patient_dashboard.html?patient_id=" + patient_id;
+function showWeight() {
+    document.getElementById('helpText2').innerHTML = "Current patient weight: "+ sessionStorage.currentWeight;
+    document.getElementById('helpText2').setAttribute("helptext", "Current patient weight: "+ sessionStorage.currentWeight);
+}
 </script>
 
 <body id="mateme">
@@ -47,8 +51,8 @@ var tt_cancel_destination = "/views/patient_dashboard.html?patient_id=" + patien
 
 
                 <input type="text" name="selected-medications"
-                       tt_onLoad="__$('keyboard').style.display = 'none'; showSelectedMeds(); initDataTable();"
-                       tt_pageStyleClass= "NoControls" helpText="Current patient weight: <span='patient_weight'></span>" optional = "true"/>
+                       tt_onLoad="__$('keyboard').style.display = 'none'; showSelectedMeds(); initDataTable(); showWeight();"
+                       tt_pageStyleClass= "NoControls" helpText="Current patient weight: <span id='patient_weight'></span>" optional = "true"/>
 
                 <input type="text" name="duration"
                        tt_onLoad="__$('keyboard').style.display = 'none'; buildNextIntervalPage();preSelectInterval();"
