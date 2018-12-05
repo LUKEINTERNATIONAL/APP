@@ -31,15 +31,15 @@ function hideKBD() {
     ];
 
     var table = document.createElement("div");
-    table.setAttribute("class","keyboard-table");
+    table.setAttribute("class","keyboards-table");
     for(var i = 0 ; i < keypress.length ; i++){
       var row = document.createElement("div")
-      row.setAttribute("class","keyboard-table-row");
+      row.setAttribute("class","keyboards-table-row");
       table.appendChild(row);
 
       for(var x = 0 ; x < keypress[i].length ; x++){
         var cell = document.createElement("div")
-        cell.setAttribute("class","keyboard-table-cell");
+        cell.setAttribute("class","keyboards-table-cell");
         row.appendChild(cell);
         var span = document.createElement("span")
         span.addEventListener("mousedown", function() {
@@ -51,7 +51,7 @@ function hideKBD() {
             keyPressed(this);
           })
         } else {
-          span.setAttribute("class","keyboard-span");
+          span.setAttribute("class","keyboards-span");
         }
 
         span.innerHTML = keypress[i][x];

@@ -137,7 +137,7 @@ function getOrders(tbody) {
       if (this.status == 200) {
         var results = JSON.parse(this.responseText);
         for (var x = 0; x < results.length; x++) {
-          tbody.innerHTML += "<tr><td>"+results[x].lab_sample.lab_parameter.test_type.TestName.replace(/_/g, " ")+"</td><td>"+results[x].OrderDate+"</td><td> "+results[x].OrderDate+"</td><td></td><td></td></tr>" ;
+          tbody.innerHTML += "<tr><td>"+results[x].lab_sample.lab_parameter.test_type.TestName.replace(/_/g, " ")+"</td><td>"+moment(results[x].OrderDate).format("DD/MMM/YYYY")+"</td><td> "+moment(results[x].OrderDate).format("DD/MMM/YYYY")+"</td><td></td><td></td></tr>" ;
         }
       }
     }
@@ -346,7 +346,12 @@ function newOrders() {
   modal.setAttribute("class", "modal");
   modal.innerHTML = '  <div class="modal-content">'+
       '<span class="close-modal">&times;</span>'+
-      '<div id="tests-div"><input class="tests-input" type="text" id="lab-tests" placeholder="lab-tests"/> <ul id="tests-list" style="width: 96%;"> <ul></div> <span id="modal-next" onclick="showDates();"> next </span>'+
+      '<div id="tests-div"><input class="tests-input" type="text" id="lab-tests" placeholder="lab-tests"/> '+
+      '<ul id="tests-list" style="width: 96%;"> <ul></div> '+
+      '<button class="green" style="margin: 5px; width: 150px; padding: 0px;" visibility: hidden; id="modal-next" onmousedown="showDates();" >'+
+      '<span>Next</span></button>'+
+      '<button class="green" style="margin: 5px; width: 150px; padding: 0px;" visibility: hidden; id="modal-submit" onmousedown="saveTests()" >'+
+      '<span>Finish</span></button>'+
   '</div>';
   modal.style.display = "block";
   showKBD("programs/1/lab_tests/types/?search_string=", loadTests);
@@ -414,6 +419,8 @@ function loadTests(string, checks){
 }
 
 function loadLocations(string){
+ document.getElementById("modal-next").style.visibility = "hidden";
+document.getElementById("modal-submit").style.visibility = "visible";
   var url = 'http://'+apiURL+':'+apiPort+'/api/v1/locations?name='+string;
   var req = new XMLHttpRequest();
   req.onreadystatechange = function(){
@@ -427,7 +434,7 @@ function loadLocations(string){
 
         }
           for(var x = 0; x < results.length; x ++){ 
-            list.innerHTML += "<li onmousedown='saveTests();' class='test-list-items' location_id='"+results[x].location_id+"'>"+results[x].name+"</li>";
+            list.innerHTML += "<li onmousedown='enterLocation(this);' class='test-list-items' location_id='"+results[x].location_id+"'>"+results[x].name+"</li>";
           }
         
       }
@@ -443,13 +450,18 @@ function loadLocations(string){
 
 }
 
+function enterLocation(element) {
+  document.getElementById('lab-tests').value = element.innerHTML;
+}
 function saveTests() {
   submitOrders();
-  document.getElementById("myModal").style.visibility = "hidden";
-  document.getElementById("modal-next").style.visibility = "hidden";
- var e = document.getElementById("nav-results");
-  buildPage(e)
+  
+  // var e = document.getElementById("nav-results");
+  // buildResultTable();
+  // document.getElementById()
+  // buildPage(e)
 }
+
 
 function tick(element) {
   var imgID =  "img-" + element.getAttribute("testID");
@@ -496,15 +508,19 @@ function showDates() {
   '<!--button id="num" onmousedown="updateKeyColor(this);press(this.id);" style="width: 150px;"><span>Num</span></button-->'+
   '<button id="Unknown" style="width: 150px;"><span onmousedown="enterDate(this)">Unknown</span></button></td></tr></tbody></table></div>';
   setDate(d);
-  document.getElementById("modal-next").addEventListener("click", function() {
+  document.getElementById("modal-next").addEventListener("mousedown", function() {
     orderDate.testDate = document.getElementById("lab-tests").value;
+    document.getElementById("lab-tests").setAttribute("placeholder", "lab location");
     document.getElementById("tests-div").style.height = "45%";
     document.getElementById("tests-list").style.height = "80%";
     document.getElementById("lab-tests").value = "";
     document.getElementById("tests-list").innerHTML = "";
+   
     showKBD("", loadLocations);
   })
 }
+
+
 
 function addDay() {
   var year = document.getElementById("dateselector_year").value
@@ -666,15 +682,13 @@ function setOrders(encounter) {
       postOrders(keys[index], encounter.encounter_id);
     }
   }
+  
+  
 }
 
 function postOrders(test_type_id, encounter_id) {
-  
-  // var encounter_type_id=  53,
-  // var encounter_date 
   var date = new Date(orderDate.testDate);
   var http = new XMLHttpRequest();
-  // var url = apiProtocol + '://' + apiURL + ':' + apiPort + '/api/v1/pr';
   var url = 'http://' + apiURL + ':' + apiPort + '/api/v1/programs/1/lab_tests/orders?patient_id=' + patientID;
   var params = JSON.stringify({
     encounter_id: encounter_id,
@@ -682,14 +696,22 @@ function postOrders(test_type_id, encounter_id) {
     date: date
   });
   http.open('POST', url, true);
-  //Send the proper header information along with the request
   http.setRequestHeader('Content-type', 'application/json');
   http.onreadystatechange = function () { //Call a function when the state changes.
     if (http.readyState == 4) {
       if (http.status == 201) {
-        var v = JSON.parse(http.responseText);
-      } else if (http.status == 409) {
-        alert('Username already exists');
+        try {
+          document.getElementById("myModal").style.visibility = "hidden";
+          document.getElementById("modal-next").style.visibility = "hidden";
+          document.getElementById("popupBox").style.visibility = "hidden";
+        }catch(e) {
+
+        }
+        
+        var e = document.getElementById("nav-results");
+        buildPage(e)
+      } else if (http.status == 404) {
+        alert('error submitting lab test');
       } else {
         alert('error' + http.status);
       }
