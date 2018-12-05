@@ -447,8 +447,9 @@ function saveTests(element) {
   // submitOrders();
   document.getElementById("modal-next").removeAttribute("mousedown");
   // document.getElementById("modal-next").addEventListener("mousedown", function() {
-    console.log("here");
   // })
+
+  
   document.getElementById("lab-tests").value = element.innerHTML;
 }
 
