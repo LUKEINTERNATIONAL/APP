@@ -346,7 +346,12 @@ function newOrders() {
   modal.setAttribute("class", "modal");
   modal.innerHTML = '  <div class="modal-content">'+
       '<span class="close-modal">&times;</span>'+
-      '<div id="tests-div"><input class="tests-input" type="text" id="lab-tests" placeholder="lab-tests"/> <ul id="tests-list" style="width: 96%;"> <ul></div> <button class="green" style="margin: 5px; width: 150px; padding: 0px;" visibility: hidden; id="modal-next" onmousedown="showDates();" ><span>Next</span></button>'+
+      '<div id="tests-div"><input class="tests-input" type="text" id="lab-tests" placeholder="lab-tests"/> '+
+      '<ul id="tests-list" style="width: 96%;"> <ul></div> '+
+      '<button class="green" style="margin: 5px; width: 150px; padding: 0px;" visibility: hidden; id="modal-next" onmousedown="showDates();" >'+
+      '<span>Next</span></button>'+
+      '<button class="green" style="margin: 5px; width: 150px; padding: 0px;" visibility: hidden; id="modal-submit" onmousedown="saveTests()" >'+
+      '<span>Finish</span></button>'+
   '</div>';
   modal.style.display = "block";
   showKBD("programs/1/lab_tests/types/?search_string=", loadTests);
@@ -414,6 +419,8 @@ function loadTests(string, checks){
 }
 
 function loadLocations(string){
+ document.getElementById("modal-next").style.visibility = "hidden";
+document.getElementById("modal-submit").style.visibility = "visible";
   var url = 'http://'+apiURL+':'+apiPort+'/api/v1/locations?name='+string;
   var req = new XMLHttpRequest();
   req.onreadystatechange = function(){
@@ -427,7 +434,7 @@ function loadLocations(string){
 
         }
           for(var x = 0; x < results.length; x ++){ 
-            list.innerHTML += "<li onmousedown='saveTests(this);' class='test-list-items' location_id='"+results[x].location_id+"'>"+results[x].name+"</li>";
+            list.innerHTML += "<li onmousedown='enterLocation(this);' class='test-list-items' location_id='"+results[x].location_id+"'>"+results[x].name+"</li>";
           }
         
       }
@@ -443,15 +450,18 @@ function loadLocations(string){
 
 }
 
-function saveTests(element) {
-  // submitOrders();
-  document.getElementById("modal-next").removeAttribute("mousedown");
-  // document.getElementById("modal-next").addEventListener("mousedown", function() {
-  // })
-
-  
-  document.getElementById("lab-tests").value = element.innerHTML;
+function enterLocation(element) {
+  document.getElementById('lab-tests').value = element.innerHTML;
 }
+function saveTests() {
+  submitOrders();
+  
+  // var e = document.getElementById("nav-results");
+  // buildResultTable();
+  // document.getElementById()
+  // buildPage(e)
+}
+
 
 function tick(element) {
   var imgID =  "img-" + element.getAttribute("testID");
@@ -505,6 +515,7 @@ function showDates() {
     document.getElementById("tests-list").style.height = "80%";
     document.getElementById("lab-tests").value = "";
     document.getElementById("tests-list").innerHTML = "";
+   
     showKBD("", loadLocations);
   })
 }
@@ -671,15 +682,13 @@ function setOrders(encounter) {
       postOrders(keys[index], encounter.encounter_id);
     }
   }
+  
+  
 }
 
 function postOrders(test_type_id, encounter_id) {
-  
-  // var encounter_type_id=  53,
-  // var encounter_date 
   var date = new Date(orderDate.testDate);
   var http = new XMLHttpRequest();
-  // var url = apiProtocol + '://' + apiURL + ':' + apiPort + '/api/v1/pr';
   var url = 'http://' + apiURL + ':' + apiPort + '/api/v1/programs/1/lab_tests/orders?patient_id=' + patientID;
   var params = JSON.stringify({
     encounter_id: encounter_id,
@@ -687,14 +696,16 @@ function postOrders(test_type_id, encounter_id) {
     date: date
   });
   http.open('POST', url, true);
-  //Send the proper header information along with the request
   http.setRequestHeader('Content-type', 'application/json');
   http.onreadystatechange = function () { //Call a function when the state changes.
     if (http.readyState == 4) {
       if (http.status == 201) {
-        var v = JSON.parse(http.responseText);
-      } else if (http.status == 409) {
-        alert('Username already exists');
+        document.getElementById("myModal").style.visibility = "hidden";
+        document.getElementById("modal-next").style.visibility = "hidden";
+        var e = document.getElementById("nav-results");
+        buildPage(e)
+      } else if (http.status == 404) {
+        alert('error submitting lab test');
       } else {
         alert('error' + http.status);
       }
