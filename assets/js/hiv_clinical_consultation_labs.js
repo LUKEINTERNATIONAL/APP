@@ -137,7 +137,7 @@ function getOrders(tbody) {
       if (this.status == 200) {
         var results = JSON.parse(this.responseText);
         for (var x = 0; x < results.length; x++) {
-          tbody.innerHTML += "<tr><td>"+results[x].lab_sample.lab_parameter.test_type.TestName.replace(/_/g, " ")+"</td><td>"+results[x].OrderDate+"</td><td> "+results[x].OrderDate+"</td><td></td><td></td></tr>" ;
+          tbody.innerHTML += "<tr><td>"+results[x].lab_sample.lab_parameter.test_type.TestName.replace(/_/g, " ")+"</td><td>"+moment(results[x].OrderDate).format("DD/MMM/YYYY")+"</td><td> "+moment(results[x].OrderDate).format("DD/MMM/YYYY")+"</td><td></td><td></td></tr>" ;
         }
       }
     }
@@ -346,7 +346,7 @@ function newOrders() {
   modal.setAttribute("class", "modal");
   modal.innerHTML = '  <div class="modal-content">'+
       '<span class="close-modal">&times;</span>'+
-      '<div id="tests-div"><input class="tests-input" type="text" id="lab-tests" placeholder="lab-tests"/> <ul id="tests-list" style="width: 96%;"> <ul></div> <span id="modal-next" onclick="showDates();"> next </span>'+
+      '<div id="tests-div"><input class="tests-input" type="text" id="lab-tests" placeholder="lab-tests"/> <ul id="tests-list" style="width: 96%;"> <ul></div> <button class="green" style="margin: 5px; width: 150px; padding: 0px;" visibility: hidden; id="modal-next" onmousedown="showDates();" ><span>Next</span></button>'+
   '</div>';
   modal.style.display = "block";
   showKBD("programs/1/lab_tests/types/?search_string=", loadTests);
@@ -427,7 +427,7 @@ function loadLocations(string){
 
         }
           for(var x = 0; x < results.length; x ++){ 
-            list.innerHTML += "<li onmousedown='saveTests();' class='test-list-items' location_id='"+results[x].location_id+"'>"+results[x].name+"</li>";
+            list.innerHTML += "<li onmousedown='saveTests(this);' class='test-list-items' location_id='"+results[x].location_id+"'>"+results[x].name+"</li>";
           }
         
       }
@@ -443,12 +443,13 @@ function loadLocations(string){
 
 }
 
-function saveTests() {
-  submitOrders();
-  document.getElementById("myModal").style.visibility = "hidden";
-  document.getElementById("modal-next").style.visibility = "hidden";
- var e = document.getElementById("nav-results");
-  buildPage(e)
+function saveTests(element) {
+  // submitOrders();
+  document.getElementById("modal-next").removeAttribute("mousedown");
+  // document.getElementById("modal-next").addEventListener("mousedown", function() {
+    console.log("here");
+  // })
+  document.getElementById("lab-tests").value = element.innerHTML;
 }
 
 function tick(element) {
@@ -496,8 +497,9 @@ function showDates() {
   '<!--button id="num" onmousedown="updateKeyColor(this);press(this.id);" style="width: 150px;"><span>Num</span></button-->'+
   '<button id="Unknown" style="width: 150px;"><span onmousedown="enterDate(this)">Unknown</span></button></td></tr></tbody></table></div>';
   setDate(d);
-  document.getElementById("modal-next").addEventListener("click", function() {
+  document.getElementById("modal-next").addEventListener("mousedown", function() {
     orderDate.testDate = document.getElementById("lab-tests").value;
+    document.getElementById("lab-tests").setAttribute("placeholder", "lab location");
     document.getElementById("tests-div").style.height = "45%";
     document.getElementById("tests-list").style.height = "80%";
     document.getElementById("lab-tests").value = "";
@@ -505,6 +507,8 @@ function showDates() {
     showKBD("", loadLocations);
   })
 }
+
+
 
 function addDay() {
   var year = document.getElementById("dateselector_year").value
