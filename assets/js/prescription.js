@@ -1,4 +1,5 @@
 var formattedDate = sessionStorage.sessionDate;
+formattedDate = (new Date(formattedDate));
 var sessionDate = new Date(moment(formattedDate).format('YYYY-MM-DD'));
 
 var givenRegimens = {};
