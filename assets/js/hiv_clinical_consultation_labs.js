@@ -700,8 +700,13 @@ function postOrders(test_type_id, encounter_id) {
   http.onreadystatechange = function () { //Call a function when the state changes.
     if (http.readyState == 4) {
       if (http.status == 201) {
-        document.getElementById("myModal").style.visibility = "hidden";
-        document.getElementById("modal-next").style.visibility = "hidden";
+        try {
+          document.getElementById("myModal").style.visibility = "hidden";
+          document.getElementById("modal-next").style.visibility = "hidden";
+        }catch(e) {
+
+        }
+        
         var e = document.getElementById("nav-results");
         buildPage(e)
       } else if (http.status == 404) {
