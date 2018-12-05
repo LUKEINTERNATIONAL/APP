@@ -91,6 +91,8 @@ function selectRegimen(e) {
 
     e.setAttribute("style","background-color: lightblue;");
     selectedRegimens = e.innerHTML;
+
+    //checkForPossibleSideEffects(e);
 }
 
 function calculateEstimatedNextApp() {

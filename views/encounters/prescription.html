@@ -77,4 +77,77 @@ function showWeight() {
     </div>
 </body>
 
+<!-- ####################################################################### -->
+<script type="text/javascript" src="/assets/js/regimenSideEfectsPopup.js"></script>
+<style>
+ 
+ #confirmatory-test-popup-div {
+    display: none;
+    background-color: #F4F4F4;
+    border: 2px solid #E0E0E0;
+    border-radius: 15px;
+    height: 200px;
+    padding: 5px;
+    position: absolute;
+    margin-top: 100px;
+    width: 530px;
+    /*margin-left: 430px;*/
+    left: 20%;
+    z-index: 991;
+  }
+
+  #confirmatory-test-popup-header{
+    border-bottom: 2px solid #7D9EC0;
+    margin-left: -5px;
+    width: 101.5%;
+    background-color: #FFFFFF;
+    margin-top: -5px;
+    padding-top: 5px;
+    border-radius: 15px 15px 0 0;
+    font-size: 14pt;
+    font-weight: bolder;
+  }
+
+  #confirmatory-test-cover{
+    display: inline;
+    position: absolute;
+    background-color: black;
+    width: 100%;
+    height: 102%;
+    left: 0%;
+    top: 0%;
+    z-index: 990;
+    opacity: 0.65;
+  }
+
+</style>
+
+
+
+<div id="confirmatory-test-popup-div">
+  <div id="confirmatory-test-popup-header">
+    <center style='color: orange;' id="main-pop-header">Starter pack needed for 14 days</center>
+  </div><br />
+  <div>
+
+    <span style="font-size: 16pt;">
+      <span id='initiation_type' style="color: green; padding-left: 20px;"></span>&nbsp;<span id='selected_starter_pack'></span>
+    </span>
+    <div style="padding-top: 65px;">
+      <span id="confirmatory-test-yes"
+        onclick="recordNotification('Starter pack needed for 14 days','Yes');hideConfirmatoryTestPopup();resetRegimen();gotoNextPage();"
+            class="confirmatory-test-my_button"
+            style="position: relative;">Prescribe starter pack</span>
+
+      <span id="confirmatory-test-no" onclick="recordNotification('Starter pack needed for 14 days','Cancel');hideConfirmatoryTestPopup();"
+            class="confirmatory-test-my_button"
+            style="position: relative;">Cancel</span>
+    </div>
+  </div>
+</div>
+
+
+<div id="confirmatory-test-cover"></div>
+
+
 
