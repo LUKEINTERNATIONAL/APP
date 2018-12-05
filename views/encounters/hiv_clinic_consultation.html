@@ -1705,12 +1705,12 @@
 
                     function changeCPTMedicationOption(){
                         var cpt_option_input = jQuery("[tstvalue='CPT']")[0];
-                        var arv_option_input = jQuery("[tstvalue='ARVs']")[0];
-                        img_src = arv_option_input.getElementsByTagName("img")[0].src;
-                        img_alt = arv_option_input.getElementsByTagName("img")[0].alt;
+                        img_src = "/public/touchscreentoolkit/lib/images/unticked.jpg";
+                        img_alt = "[]";
                         var cpt_id = cpt_option_input.id;
                         var cpt_input = document.getElementById('optionValue' + cpt_id);
                         var allergic_to_cpt_answer = answers_hash["allergic_to_cpt"].toUpperCase();
+                        var selected_values = __$('touchscreenInput' + tstCurrentPage).value.split(";");
 
                         if (allergic_to_cpt_answer.toUpperCase() == 'YES'){
                             cpt_input.innerHTML = "<span class='disabled_check'>CPT (Allergic)</span>";
@@ -1721,6 +1721,18 @@
                             img_input = cpt_option_input.getElementsByTagName("img")[0];
                             img_input.src = '';
                             img_input.alt = '';
+
+                            if (selected_values.includes("CPT")){
+                                selected_values = removeFromArray(selected_values, "CPT")
+                                selected_values = selected_values.join(";")
+                                cpt_option_input.style = "";
+                                try{
+                                    jQuery("[tstvalue='CPT']")[0].children[0].children[0].children[1].style.backgroundColor = ""
+                                } catch (e){
+
+                                }
+                                __$('touchscreenInput' + tstCurrentPage).value = selected_values;
+                            }
                         }
 
                         if (allergic_to_cpt_answer.toUpperCase() == 'NO'){
