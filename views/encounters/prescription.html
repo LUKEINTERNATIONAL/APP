@@ -26,8 +26,8 @@
 var patient_id = sessionStorage.patientID;
 var tt_cancel_destination = "/views/patient_dashboard.html?patient_id=" + patient_id;
 function showWeight() {
-    document.getElementById('helpText2').innerHTML = "Current patient weight: "+ sessionStorage.currentWeight;
-    document.getElementById('helpText2').setAttribute("helptext", "Current patient weight: "+ sessionStorage.currentWeight);
+    document.getElementById('helpText2').innerHTML = "Current patient weight: "+ sessionStorage.currentWeight + "KG";
+    document.getElementById('helpText2').setAttribute("helptext", "Current patient weight: "+ sessionStorage.currentWeight + "KG") ;
 }
 </script>
 
