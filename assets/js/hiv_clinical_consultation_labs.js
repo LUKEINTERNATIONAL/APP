@@ -703,6 +703,7 @@ function postOrders(test_type_id, encounter_id) {
         try {
           document.getElementById("myModal").style.visibility = "hidden";
           document.getElementById("modal-next").style.visibility = "hidden";
+          document.getElementById("popupBox").style.visibility = "hidden";
         }catch(e) {
 
         }
