@@ -1703,9 +1703,40 @@
                         submitParameters(obs, "/observations", "nextPage")
                     }
 
+                    function changeCPTMedicationOption(){
+                        var cpt_option_input = jQuery("[tstvalue='CPT']")[0];
+                        var arv_option_input = jQuery("[tstvalue='ARVs']")[0];
+                        img_src = arv_option_input.getElementsByTagName("img")[0].src;
+                        img_alt = arv_option_input.getElementsByTagName("img")[0].alt;
+                        var cpt_id = cpt_option_input.id;
+                        var cpt_input = document.getElementById('optionValue' + cpt_id);
+                        var allergic_to_cpt_answer = answers_hash["allergic_to_cpt"].toUpperCase();
+
+                        if (allergic_to_cpt_answer.toUpperCase() == 'YES'){
+                            cpt_input.innerHTML = "<span class='disabled_check'>CPT (Allergic)</span>";
+                            cpt_option_input.onclick = null;
+                            cpt_option_input.onmousedown = null;
+                            cpt_option_input.onmouseup = null;
+
+                            img_input = cpt_option_input.getElementsByTagName("img")[0];
+                            img_input.src = '';
+                            img_input.alt = '';
+                        }
+
+                        if (allergic_to_cpt_answer.toUpperCase() == 'NO'){
+                            cpt_input.innerHTML = "CPT";
+                            cpt_option_input.setAttribute("onclick", "null; updateTouchscreenInputForSelect(__$('optionValue' + this.id), this);");
+                            var img_input = cpt_option_input.getElementsByTagName("img")[0];
+                            img_input.src = img_src;
+                            img_input.alt = img_alt;
+                        }
+                    }
+
                     function updateAllergicToCotrimoxazoleObservation(value){
                         answers_hash["allergic_to_cpt"] = value;
                         hideAllergicToCPTChange();
+                        changeCPTMedicationOption();
+                        return true;
                     }
 
                     var othe_side_effect_value = "";
