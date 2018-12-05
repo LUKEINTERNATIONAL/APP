@@ -198,6 +198,39 @@
                 margin-top: -5px;
             }
 
+            .cpt_button{
+                -moz-user-select: none;
+                background-image: none;
+                border: 1px solid transparent;
+                border-radius: 4px;
+                cursor: pointer;
+                display: inline-block;
+                font-size: 16px;
+                font-weight: bolder;
+                line-height: 2.29;
+                margin-bottom: 0;
+                padding: 6px 50px;
+                text-align: center;
+                vertical-align: middle;
+                white-space: nowrap;
+                background-color: #337ab7;
+                border-color: #2e6da4;
+                color: #fff;
+                margin-top: -5px;
+            }
+
+            #cpt-popup-div {
+                display: none;
+                background-color: #F4F4F4;
+                border: 2px solid #E0E0E0;
+                border-radius: 15px;
+                padding: 5px;
+                position: absolute;
+                margin-top: 100px;
+                width: 600px;
+                margin-left: 18%;
+                z-index: 991;
+            }
 
             #regimen-change-popup-div {
                 display: none;
@@ -225,7 +258,31 @@
                 font-weight: bolder;
             }
 
+            #cpt-popup-header{
+                border-bottom: 2px solid #7D9EC0;
+                margin-left: -5px;
+                width: 101.5%;
+                background-color: #FFFFFF;
+                margin-top: -5px;
+                padding-top: 5px;
+                border-radius: 15px 15px 0 0;
+                font-size: 14pt;
+                font-weight: bolder;
+            }
+
             #regimen-change-cover{
+                display: none;
+                position: absolute;
+                background-color: black;
+                width: 100%;
+                height: 102%;
+                left: 0%;
+                top: 0%;
+                z-index: 990;
+                opacity: 0.65;
+            }
+
+            #cpt-cover{
                 display: none;
                 position: absolute;
                 background-color: black;
@@ -1501,7 +1558,7 @@
                         on_tb_treatment: "", tb_status: "", is_patient_pregnant: "",
                         is_patient_breastfeeding: "", current_fpm: "", todays_fpm: "",
                         on_tb_treatment: "", on_fpm: "", cd4_count: "", crag: "", urine_lam: "",
-                        arvs: "", cpt: "", inh: "", prescribe_drugs: ""
+                        arvs: "", cpt: "", inh: "", prescribe_drugs: "", allergic_to_cpt: ""
                     }
 
                     function submitHIVClinicConsultation() {
@@ -1558,6 +1615,8 @@
                         var cpt_concept_id = 916
                         var ipt_concept_id = 656
 
+                        var allergic_to_sulphur_concept_id = 8012;
+
                         var obs = {
                             encounter_id: encounter.encounter_id,
                             observations: [
@@ -1578,6 +1637,7 @@
 
                                 { concept_id: 7459, value_coded: getTBStatusConceptID(answers_hash["tb_status"])},
                                 { concept_id: 1717, value_coded: answers_hash["on_fpm"].trim().toUpperCase() == "YES" ? 1065: 1066 },
+                                { concept_id: allergic_to_sulphur_concept_id, value_coded: getAllergicToCPTConceptID(answers_hash["allergic_to_cpt"])},
                                 { concept_id: 2690, value_coded: answers_hash["on_tb_treatment"] }
                             ]
                         };
@@ -1643,10 +1703,27 @@
                         submitParameters(obs, "/observations", "nextPage")
                     }
 
+                    function updateAllergicToCotrimoxazoleObservation(value){
+                        answers_hash["allergic_to_cpt"] = value;
+                        hideAllergicToCPTChange();
+                    }
+
                     var othe_side_effect_value = "";
                     function updateOtherSideEffect(){
                         value = __$('touchscreenInput' + tstCurrentPage).value;
                         othe_side_effect_value = value;
+                    }
+
+                    function getAllergicToCPTConceptID(concept_name){
+                        concept_name = concept_name.toUpperCase();
+                        var allergic_to_cpt_concepts = {
+                            "": "",
+                            "YES": 1065,
+                            "NO": 1066,
+                            "UNKNOWN": 1067
+                        }
+
+                        return allergic_to_cpt_concepts[concept_name]
                     }
 
                     function getTBStatusConceptID(concept_name){
@@ -2127,7 +2204,7 @@
                            id="routine_tb_screening"
                            helpText="Order Lab investigations?" optional = "true"/ -->
                     
-                    <select allowFreeText="false" helpText="Allergic to Cotrimoxazole?" id="allergic_to_cotrimoxazole" 
+                    <select allowFreeText="false" helpText="Allergic to Cotrimoxazole?" id="allergic_to_cotrimoxazole"  tt_onLoad="setNextButtonToGetInputValue('allergic_to_cpt');"
                     name="observations[][value_coded_or_text]" 
                     tt_pageStyleClass="NoKeyboard">
                         <option value=''></option>
@@ -2172,7 +2249,7 @@
                      
                     <select allowFreeText="false" helpText="Medication to prescribe during this visit" id="med_to_prescribe" 
                     name="observations[][value_coded_or_text]" 
-                    tt_pageStyleClass="NoKeyboard" multiple="multiple" tt_onLoad="controlNoneSelection(); setFunctionForSubmittingForm();">
+                    tt_pageStyleClass="NoKeyboard" multiple="multiple" tt_onLoad="controlNoneSelection(); setFunctionForSubmittingForm(); controlCPTIPTOptions(); addChangeAllergicToCPTValue();">
                       <option value="ARVs">ARVs</option>
                       <option value="CPT">CPT</option>
                       <option value="IPT">IPT</option>
@@ -2405,6 +2482,96 @@
                         }
 
                     }
+
+                    function controlCPTIPTOptions(){
+                        var ipt_option_input = jQuery("[tstvalue='IPT']")[0];
+                        var cpt_option_input = jQuery("[tstvalue='CPT']")[0];
+                        var ipt_id = ipt_option_input.id;
+                        var cpt_id = cpt_option_input.id;
+                        var ipt_input = document.getElementById('optionValue' + ipt_id);
+                        var cpt_input = document.getElementById('optionValue' + cpt_id);
+                        var tb_treatment__status = __$('tb_treatment_question').value.toUpperCase();
+                        var tb_status = __$('tb_status').value.toUpperCase();
+                        var allergicToSulphur = $('allergic_to_cotrimoxazole').value.toUpperCase();
+
+                        if (allergicToSulphur.toUpperCase() == 'YES'){
+                            //cpt_option_input.style.backgroundColor = '#CDBA96';
+                            cpt_input.innerHTML = "<span class='disabled_check'>CPT (Allergic)</span>";
+                            cpt_option_input.onclick = null;
+                            cpt_option_input.onmousedown = null;
+                            cpt_option_input.onmouseup = null;
+
+                            img_input = cpt_option_input.getElementsByTagName("img")[0];
+                            img_input.src = '';
+                            img_input.alt = '';
+                        }
+
+                        if (tb_treatment__status == 'YES'){
+                            ipt_input.innerHTML = "<span class='disabled_check'>IPT (TB SUSPECTED)</span>";
+                            ipt_option_input.onclick = null;
+                            ipt_option_input.onmousedown = null;
+                            ipt_option_input.onmouseup = null;
+
+                            img_input = ipt_option_input.getElementsByTagName("img")[0];
+                            img_input.src = '';
+                            img_input.alt = '';
+                        }
+
+                        if (tb_status == 'CONFIRMED TB ON TREATMENT'){
+                            //ipt_option_input.style.backgroundColor = '#CDBA96';
+                            ipt_input.innerHTML = "<span class='disabled_check'>IPT (CONFIRMED TB ON TREATMENT)</span>";
+                            ipt_option_input.onclick = null;
+                            ipt_option_input.onmousedown = null;
+                            ipt_option_input.onmouseup = null;
+
+                            img_input = ipt_option_input.getElementsByTagName("img")[0];
+                            img_input.src = '';
+                            img_input.alt = '';
+                        }
+
+                        if (tb_status == 'CONFIRMED TB NOT ON TREATMENT'){
+                            //ipt_option_input.style.backgroundColor = '#CDBA96';
+                            ipt_input.innerHTML = "<span class='disabled_check'>IPT (CONFIRMED TB NOT ON TREATMENT)</span>";
+                            ipt_option_input.onclick = null;
+                            ipt_option_input.onmousedown = null;
+                            ipt_option_input.onmouseup = null;
+
+                            img_input = ipt_option_input.getElementsByTagName("img")[0];
+                            img_input.src = '';
+                            img_input.alt = '';
+                        }
+
+                        if (tb_status == 'TB SUSPECTED'){
+                            //ipt_option_input.style.backgroundColor = '#CDBA96';
+                            ipt_input.innerHTML = "<span class='disabled_check'>IPT (TB Suspected)</span>";
+                            ipt_option_input.onclick = null;
+                            ipt_option_input.onmousedown = null;
+                            ipt_option_input.onmouseup = null;
+
+                            img_input = ipt_option_input.getElementsByTagName("img")[0];
+                            img_input.src = '';
+                            img_input.alt = '';
+                        }
+
+                    }
+
+                    function addChangeAllergicToCPTValue(){
+                        jQuery("#changeCPTValueBtn").remove();
+                        var button = document.createElement("button");
+                        button.id = "changeCPTValueBtn";
+                        button.innerHTML = "<span>Update Allergic to CPT</span>";
+                        button.style.cssFloat = "right";
+
+                        button.onclick = function(){
+                            showAllergicToCPTChange();
+                        }
+
+                        if(__$("buttons")){
+                            __$("buttons").appendChild(button);
+                        }
+                    }
+
+
                 </script>
 
                 <style type="text/css">
@@ -2633,7 +2800,44 @@
 
 
 
+                <div id="cpt-popup-div">
+                    <div id="cpt-popup-header">
+
+                        <center id='weight_readings_header'> Allergic to Cotrimoxazole update</center>
+
+                    </div><br />
+                    <div>
+
+                        <span style="font-size: 16pt;">
+                            <center>
+                                <!--i><b id="regimen-change-header">Patient has a low BMI: <span id='low-bmi'></span></b></i><br /-->
+                                <br />
+                                    Is the patient allergic to cotrimoxazole?
+                                <br />
+                            </center>
+                        </span>
+                        <div style="padding-top: 65px;">
+                            <span id="regimen-change-yes" onclick="updateAllergicToCotrimoxazoleObservation('Yes');" class="cpt_button">Allergic</span>
+                            <span id="regimen-change-no" onclick="updateAllergicToCotrimoxazoleObservation('No');" class="cpt_button">NOT Allergic</span>
+                            <span id="regimen-change-no" onclick="hideAllergicToCPTChange();" class="cpt_button" style="float: right; margin-right: 10px;">Cancel</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="cpt-cover"></div>
+
+
                 <script type="text/javascript">
+                    function showAllergicToCPTChange(){
+                        jQuery("#cpt-cover").show();
+                        jQuery("#cpt-popup-div").show();
+                    }
+
+                    function hideAllergicToCPTChange(){
+                        jQuery("#cpt-cover").hide();
+                        jQuery("#cpt-popup-div").hide()
+                    }
+
                     function hideRegimenChangePopup(){
                         document.getElementById("regimen-change-popup-div").style.display = 'none';
                         document.getElementById("regimen-change-cover").style.display = 'none';
