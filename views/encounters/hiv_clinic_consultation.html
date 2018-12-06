@@ -2660,19 +2660,22 @@
                     }
 
                     function addChangeAllergicToCPTValue(){
-                        jQuery("#changeCPTValueBtn").remove();
-                        var button = document.createElement("button");
-                        button.id = "changeCPTValueBtn";
-                        button.innerHTML = "<span>Update Allergic to CPT</span>";
-                        button.style.cssFloat = "right";
+                        if (allergic_to_suphur.match(/YES|NO/i)) {
+                            jQuery("#changeCPTValueBtn").remove();
+                            var button = document.createElement("button");
+                            button.id = "changeCPTValueBtn";
+                            button.innerHTML = "<span>Update Allergic to CPT</span>";
+                            button.style.cssFloat = "right";
 
-                        button.onclick = function(){
-                            showAllergicToCPTChange();
+                            button.onclick = function () {
+                                showAllergicToCPTChange();
+                            }
+
+                            if (__$("buttons")) {
+                                __$("buttons").appendChild(button);
+                            }
                         }
 
-                        if(__$("buttons")){
-                            __$("buttons").appendChild(button);
-                        }
                     }
 
 
