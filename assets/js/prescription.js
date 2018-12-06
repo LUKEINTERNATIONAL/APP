@@ -53,7 +53,7 @@ function buildRegimenPage() {
 function loadRegimens() {
     var side = "right";
     for(var regimen in givenRegimens){
-
+/*
         for (lines in regimenLines) {
             var linear = (regimen.indexOf(lines, 0) );
             if(linear == 0) {
@@ -68,6 +68,19 @@ function loadRegimens() {
             }
 
         }
+*/
+        var regimenNum = parseInt(regimen.match(/\d+/)[0]);
+        
+        if(regimenNum <= 6){
+          side = 'left';
+        }else if(regimenNum > 6 && regimenNum <= 11){
+          side = 'centre';
+        }else if(regimenNum == 12){
+          side = 'right';
+        }else{
+          side = 'left';
+        }
+
         var table = document.getElementById("regimen-table-" + side);
 
         var tr = document.createElement("tr");
@@ -589,7 +602,8 @@ function validateRegimenSelection() {
         return;
     }
 
-    gotoNextPage();
+    checkForPossibleSideEffects(selectedRegimens)
+    checkIFStartPackApplies();
 }
 
 function validateIntervalSelection() {
