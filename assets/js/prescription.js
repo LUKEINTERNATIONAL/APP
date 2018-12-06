@@ -14,11 +14,15 @@ var prescribe_cpt = false;
 var prescribe_ipt = false;
 var medication_orders = {};
 
+var starterPackSelected = false;
+
 var regimenLines = {"0A": "1", "2A": "1", "4A": "1", "5A": "1", "6A": "1", "13A": "1", "14A": "1", "15A": "1", "7A": "2", "8A": "2", "9A": "2", "10A": "2", "11A": "2", "12A": "3"};
 function buildRegimenPage() {
     var frame = document.getElementById("inputFrame" + tstCurrentPage);
     frame.style = "height: 89%; width: 96%;";
     document.getElementById("clearButton").style = "display: none;";
+
+    starterPackSelected = false;
 
     var regimenContainer = document.createElement("div");
     regimenContainer.setAttribute("class","regimen-container");
@@ -54,7 +58,7 @@ function buildRegimenPage() {
 function loadRegimens() {
     var side = "right";
     for(var regimen in givenRegimens){
-
+/*
         for (lines in regimenLines) {
             var linear = (regimen.indexOf(lines, 0) );
             if(linear == 0) {
@@ -69,6 +73,19 @@ function loadRegimens() {
             }
 
         }
+*/
+        var regimenNum = parseInt(regimen.match(/\d+/)[0]);
+        
+        if(regimenNum <= 6){
+          side = 'left';
+        }else if(regimenNum > 6 && regimenNum <= 11){
+          side = 'centre';
+        }else if(regimenNum == 12){
+          side = 'right';
+        }else{
+          side = 'left';
+        }
+
         var table = document.getElementById("regimen-table-" + side);
 
         var tr = document.createElement("tr");
@@ -92,6 +109,8 @@ function selectRegimen(e) {
 
     e.setAttribute("style","background-color: lightblue;");
     selectedRegimens = e.innerHTML;
+
+    //checkForPossibleSideEffects(e);
 }
 
 function calculateEstimatedNextApp() {
@@ -142,11 +161,11 @@ function calculateEstimatedNextApp() {
         if(packs_rounded > packs){
             packs = packs_rounded;
         }else{
-            packs = packs_rounded + parseInt(selectedMeds[i].pack_size)
+            packs = packs_rounded + 1; //parseInt(selectedMeds[i].pack_size)
         }
 
-        estimated_packs.push([selectedMeds[i].drug_name, packs]);
-        console.log(estimated_packs[i][0] + "      Zzzz         " + estimated_packs[i][1])
+
+        estimated_packs.push([selectedMeds[i].drug_name, packs, pills_per_day]);
     }
 
     var td = document.getElementById("estimated-next-appointment-date");
@@ -363,7 +382,7 @@ function addIntervalInfoSection() {
     var table = document.createElement("table");
     table.setAttribute("id", "interval-info-table");
 
-    var innerHTML = "<tr><th>Estimated next appointment date:</th></tr>";
+    var innerHTML = "<tr><th>Medication run-out date:</th></tr>";
     innerHTML +="<tr><td id='estimated-next-appointment-date'>&nbsp;</th></tr>";
     innerHTML += "<tr><td class='separator-rows'>&nbsp;</td></tr>";
     innerHTML += "<tr><th>Estimated packs/tins:</th></tr>";
@@ -395,7 +414,6 @@ function addIntervals() {
         }
 
         var td = document.createElement("td");
-        td.setAttribute("class","interval-buttons");
 
         var days;
 
@@ -408,7 +426,12 @@ function addIntervals() {
         }
 
         td.setAttribute("interval", days);
-        td.setAttribute("onmousedown","setNextInterval(this)");
+        if(starterPackSelected && !intervals[i].match(/week/i)) {
+          td.setAttribute("class","interval-buttons interval-buttons-strike");
+        }else{
+          td.setAttribute("onmousedown","setNextInterval(this)");
+          td.setAttribute("class","interval-buttons");
+        }
         td.innerHTML = intervals[i];
         tr.appendChild(td);
 
@@ -433,9 +456,20 @@ function setNextInterval(e){
 
 function preSelectInterval() {
     var cells = document.getElementsByClassName("interval-buttons");
-    for(var i = 0 ; i < cells.length ; i++){
-        if(cells[i].getAttribute("interval") == setSelectedInterval)
-            setNextInterval(cells[i]);
+    
+    if(starterPackSelected){
+      if(cells[0].getAttribute("interval") == setSelectedInterval){
+          setNextInterval(cells[0]);
+      }else if(setSelectedInterval){
+          setNextInterval(cells[0]);
+      }
+    }else{
+
+      for(var i = 0 ; i < cells.length ; i++){
+          if(cells[i].getAttribute("interval") == setSelectedInterval)
+              setNextInterval(cells[i]);
+
+      }
 
     }
 }
@@ -616,7 +650,8 @@ function validateRegimenSelection() {
         return;
     }
 
-    gotoNextPage();
+    checkForPossibleSideEffects(selectedRegimens)
+    checkIFStartPackApplies();
 }
 
 function validateIntervalSelection() {

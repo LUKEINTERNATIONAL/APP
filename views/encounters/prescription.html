@@ -26,6 +26,50 @@
 var patient_id = sessionStorage.patientID;
 var tt_cancel_destination = "/views/patient_dashboard.html?patient_id=" + patient_id;
 
+getMedicationOrders();
+function showWeight() {
+  var clientInfo = document.getElementById('helpText' + tstCurrentPage);
+  var table = document.createElement('table');
+  var cssText = 'float: right; font-size: 14px;';
+  table.setAttribute('style', cssText);
+  clientInfo.appendChild(table);
+
+
+  var tr = document.createElement('tr');
+  table.appendChild(tr);
+  var th = document.createElement('th');
+  th.innerHTML = "Client's age:";
+  tr.appendChild(th);
+
+  var td = document.createElement('td');
+  td.innerHTML = sessionStorage.patientAge + ' year(s)';
+  tr.appendChild(td);
+
+
+  var tr = document.createElement('tr');
+  table.appendChild(tr);
+  var th = document.createElement('th');
+  th.innerHTML = "Current weight:";
+  tr.appendChild(th);
+
+  var td = document.createElement('td');
+  td.innerHTML = sessionStorage.currentWeight + ' KG';
+  tr.appendChild(td);
+
+
+
+
+  var th = document.createElement('th');
+  th.innerHTML = "Current regimen:";
+  tr.appendChild(th);
+
+  var td = document.createElement('td');
+  td.innerHTML = 'N/A';
+  tr.appendChild(td);
+
+
+  //document.getElementById('helpText2').setAttribute("helptext", "Current patient weight: "+ sessionStorage.currentWeight + "KG") ;
+}
 
 </script>
 
@@ -38,7 +82,6 @@ var tt_cancel_destination = "/views/patient_dashboard.html?patient_id=" + patien
 
                 <input type="text" name="regimens"
                        tt_onLoad="__$('keyboard').style.display = 'none';getRegimens();showWeight();"
-                       condition = "prescribe_arv == true;"
                        tt_onUnLoad = "removeCustomBtn();"
                        tt_pageStyleClass= "NoControls" helpText="ARV Regimen(s)" optional = "true"/>
 
@@ -50,8 +93,8 @@ var tt_cancel_destination = "/views/patient_dashboard.html?patient_id=" + patien
 
 
                 <input type="text" name="selected-medications"
-                       tt_onLoad="__$('keyboard').style.display = 'none'; showSelectedMeds(); initDataTable(); "
-                       tt_pageStyleClass= "NoControls" helpText="Current patient weight: <span id='patient_weight'></span>" optional = "true"/>
+                       tt_onLoad="__$('keyboard').style.display = 'none'; showSelectedMeds(); initDataTable(); showWeight();"
+                       tt_pageStyleClass= "NoControls" helpText="Selected medication" optional = "true"/>
 
                 <input type="text" name="duration"
                        tt_onLoad="__$('keyboard').style.display = 'none'; buildNextIntervalPage();preSelectInterval();"
@@ -73,10 +116,55 @@ var tt_cancel_destination = "/views/patient_dashboard.html?patient_id=" + patien
     </div>
 </body>
 
-<script type="text/javascript"> 
-    function showWeight() {
-    document.getElementById('helpText0').innerHTML = "ARV Regimen(s), Weight "+ sessionStorage.currentWeight + "KG";
-    document.getElementById('helpText0').setAttribute("helptext", "Current patient weight: "+ sessionStorage.currentWeight + "KG") ;
-    console.log("hello");
-}
-</script>
+<!-- ####################################################################### -->
+<script type="text/javascript" src="/apps/ART/assets/js/regimenSideEfectsPopup.js"></script>
+<style>
+ 
+ #confirmatory-test-popup-div {
+    display: none;
+    background-color: #F4F4F4;
+    border: 2px solid #E0E0E0;
+    border-radius: 15px;
+    height: 200px;
+    padding: 5px;
+    position: absolute;
+    margin-top: 100px;
+    width: 530px;
+    /*margin-left: 430px;*/
+    left: 20%;
+    z-index: 991;
+  }
+
+  #confirmatory-test-popup-header{
+    border-bottom: 2px solid #7D9EC0;
+    margin-left: -5px;
+    width: 101.5%;
+    background-color: #FFFFFF;
+    margin-top: -5px;
+    padding-top: 5px;
+    border-radius: 15px 15px 0 0;
+    font-size: 14pt;
+    font-weight: bolder;
+  }
+
+  #confirmatory-test-cover{
+    display: inline;
+    position: absolute;
+    background-color: black;
+    width: 100%;
+    height: 102%;
+    left: 0%;
+    top: 0%;
+    z-index: 990;
+    opacity: 0.65;
+  }
+
+</style>
+
+
+
+<div id="confirmatory-test-popup-div"></div>
+<div id="confirmatory-test-cover"></div>
+
+
+

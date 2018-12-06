@@ -1,8 +1,14 @@
 var sideEffectsLeft = [
-  ["Peripheral neuropathy", 1],
-  ["Jaundice",2],["Lipodystrophy",3],
-  ["Kidney Failure",4]
+  ["Peripheral neuropathy", 821],
+  ["Jaundice", 215],["Lipodystrophy", 2148],
+  ["Kidney Failure",  9242]
 ];
+
+var sideEffectsRight = [
+  ["Psychosis", 219],["Gynaecomastia", 9440],
+  ["Anemia", 3], ["Other", 6408, "activateOtherSideEffects"]
+];
+
 var iacLeft = [
   ["Explained Key facts about starting ART?", 10],
   ["Explain how to achieve optimal adherence?", 11],
@@ -17,10 +23,6 @@ var iacRight = [
   ["Supply medications on a monthly basis?", 16],
   ["If Viral Load undetected- Continue current regimen?", 17]
 
-];
-var sideEffectsRight = [
-  ["Psychosis",5],["Gynaecomastia",6],
-  ["Anemia",7], ["Other", 8, "activateOtherSideEffects"]
 ];
 
 function addPregBreastFeedingYesNo() {
