@@ -291,7 +291,7 @@
                     var selected_stage_conditions = {};
                     var retrospective_entry = false
                     var tstCurrentDate = moment().format("DD-MM-YYYY");
-                    var currentBMI = parseFloat('21.9');
+                    var currentBMI = parseFloat('10.0');
                     currentBMI = parseFloat(currentBMI);
                     var currentWeight = '58.9'
                     var median_weight_height = [];
@@ -1209,6 +1209,73 @@
                         }
                     }
 
+                    var moderate_wasting = "";
+                    var severe_wasting = "";
+
+                    function setStagingVariables() {
+                        patientAge = parseInt(sessionStorage.patientAge);
+                        if (patientAge >= 15){
+                            if (currentBMI >= 16.0 && currentBMI <= 18.5) {
+                                moderate_wasting = "Moderate weight loss less than or equal to 10 percent, unexplained";
+                            }
+                            else if (currentBMI < 16) {
+                                severe_wasting = "Severe weight loss >10% and/or BMI <18.5kg/m^2, unexplained";
+                                moderate_wasting = ""
+                            }
+                        }
+
+                        if (patientAge < 15){
+                            var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1/patients/" + sessionStorage.patientID + "/median_weight_height";
+                            var xhttp = new XMLHttpRequest();
+                            xhttp.onreadystatechange = function() {
+                                if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                                    var patient_median_Weight_height = JSON.parse(this.responseText);
+                                    var current_weight_percentile = (parseFloat(currentWeight) / (parseFloat(patient_median_Weight_height["weight"])) * 100)
+
+                                    if (current_weight_percentile >= 70 && current_weight_percentile <= 79){
+                                        moderate_wasting = "Moderate unexplained wasting/malnutrition not responding to treatment (weight-for-height/ -age 70-79% or muac 11-12 cm)";
+                                        severe_wasting = ""
+                                    }
+
+                                    else if (current_weight_percentile < 70){
+                                        severe_wasting = "Severe unexplained wasting or malnutrition not responding to treatment (weight-for-height/ -age <70% or MUAC less than 11cm or oedema)";
+                                        moderate_wasting = ""
+                                    }
+
+
+                                }
+                            };
+
+                            xhttp.open("GET", url, true);
+                            xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                            xhttp.setRequestHeader('Content-type', "application/json");
+                            xhttp.send();
+                        }
+                    }
+
+                    setStagingVariables();
+
+                    function preselectSevereWasting(){
+                        var severe_weight_loss_option_input = jQuery("[tstvalue='" + severe_wasting + "']")[0];
+                        if (severe_weight_loss_option_input){
+                            var current_input_values = $('touchscreenInput'+tstCurrentPage).value.split(';');
+                            if (current_input_values.indexOf(severe_wasting) == -1){
+                                updateTouchscreenInputForSelect(__$("optionValue" + severe_weight_loss_option_input.id), severe_weight_loss_option_input); //Run this only when the option is not selected;
+                            }
+                        }
+                    }
+
+                    function preselectModerateWasting(){
+                        var moderate_wasting_option_input = jQuery("[tstvalue='" + moderate_wasting + "']")[0];
+                        if (moderate_wasting_option_input){
+                            var current_input_values = $('touchscreenInput'+tstCurrentPage).value.split(';');
+                            if (current_input_values.indexOf(moderate_wasting) == -1){
+                                updateTouchscreenInputForSelect(__$("optionValue" + moderate_wasting_option_input.id), moderate_wasting_option_input)
+                            }
+                        }
+                    }
+
+
                 </script>
 
                 <form>
@@ -1231,7 +1298,7 @@
 
                     <input allowFreeText="false" id="reason_for_art_eligibility" name="observations[][value_coded_or_text]" type="hidden" value="" />
 
-                    <select allowFreeText="false" condition="showConditions() == true && age >= 15" helpText="Stage 4 Conditions" id="stage_4_conditions" multiple="multiple" name="observations[][value_coded_or_text_multiple][]" optional="true" tt_onLoad="showCategory2('HIV staging');checkEptb(); hideTextInput(); displayCountOfSelectedConditions();" tt_onUnLoad="setSelectedStageConditions(4);" tt_pageStyleClass="NoKeyboard NoInput small">
+                    <select allowFreeText="false" condition="showConditions() == true && age >= 15" helpText="Stage 4 Conditions" id="stage_4_conditions" multiple="multiple" name="observations[][value_coded_or_text_multiple][]" optional="true" tt_onLoad="showCategory2('HIV staging');checkEptb(); hideTextInput(); displayCountOfSelectedConditions(); preselectSevereWasting();" tt_onUnLoad="setSelectedStageConditions(4);" tt_pageStyleClass="NoKeyboard NoInput small">
                         <option value=''></option>
                         <option value="Cryptococcal meningitis or other extrapulmonary cryptococcosis">Cryptococcal meningitis or other extrapulmonary cryptococcosis</option>
                         <option value="Candidiasis of oseophagus, trachea and bronchi or lungs">Candidiasis of oseophagus, trachea and bronchi or lungs</option>
@@ -1250,7 +1317,7 @@
                         <option value="Other">Other</option>
                     </select>
 
-                    <select allowFreeText="false" class="stage_4_conditions" condition="showConditions() == true && age <= 14" helpText="Stage 4 Conditions" id="stage_4_conditions" multiple="multiple" name="observations[][value_coded_or_text_multiple][]" optional="true" tt_onLoad="showCategory2('HIV staging');checkEptb(); hideTextInput(); displayCountOfSelectedConditions();" tt_onUnLoad="setSelectedStageConditions(4);" tt_pageStyleClass="NoKeyboard NoInput small">
+                    <select allowFreeText="false" class="stage_4_conditions" condition="showConditions() == true && age <= 14" helpText="Stage 4 Conditions" id="stage_4_conditions" multiple="multiple" name="observations[][value_coded_or_text_multiple][]" optional="true" tt_onLoad="showCategory2('HIV staging');checkEptb(); hideTextInput(); displayCountOfSelectedConditions(); preselectSevereWasting()" tt_onUnLoad="setSelectedStageConditions(4);" tt_pageStyleClass="NoKeyboard NoInput small">
                         <option value=''></option>
                         <option value="Pneumocystis pneumonia">Pneumocystis pneumonia</option>
                         <option value="Candidiasis of oseophagus, trachea and bronchi or lungs">Candidiasis of oseophagus, trachea and bronchi or lungs</option>
@@ -1273,7 +1340,7 @@
                         <option value="Recto-vaginal fistula, HIV-associated">Recto-vaginal fistula, HIV-associated</option>
                     </select>
 
-                    <select allowFreeText="false" condition="showConditions() == true && age >= 15" helpText="Stage 3 Conditions" id="stage_3_conditions" multiple="multiple" name="observations[][value_coded_or_text_multiple][]" optional="true" tt_onLoad="showCategory2('HIV staging');checkPtb();checkPastTb(); disableSevereWeightLossInputForNormalBMI(); hideTextInput(); displayCountOfSelectedConditions();" tt_onUnLoad="setSelectedStageConditions(3);" tt_pageStyleClass="NoKeyboard NoInput small">
+                    <select allowFreeText="false" condition="showConditions() == true && age >= 15" helpText="Stage 3 Conditions" id="stage_3_conditions" multiple="multiple" name="observations[][value_coded_or_text_multiple][]" optional="true" tt_onLoad="showCategory2('HIV staging');checkPtb();checkPastTb(); disableSevereWeightLossInputForNormalBMI(); hideTextInput(); displayCountOfSelectedConditions(); preselectSevereWasting();" tt_onUnLoad="setSelectedStageConditions(3);" tt_pageStyleClass="NoKeyboard NoInput small">
                         <option value=''></option>
                         <option value="Severe weight loss >10% and/or BMI <18.5kg/m^2, unexplained">Severe weight loss >10% and/or BMI <18.5kg/m^2, unexplained</option>
                         <option value="Diarrhoea, chronic (>1 month) unexplained">Diarrhoea, chronic (>1 month) unexplained</option>
@@ -1291,7 +1358,7 @@
                         <option value="Unspecified stage 3 condition">Unspecified stage 3 condition</option>
                     </select>
 
-                    <select allowFreeText="false" class="stage_3_conditions" condition="showConditions() == true && age <= 14" helpText="Stage 3 Conditions" id="stage_3_conditions" multiple="multiple" name="observations[][value_coded_or_text_multiple][]" optional="true" tt_onLoad="showCategory2('HIV staging');checkPtb();checkPastTb(); hideTextInput(); displayCountOfSelectedConditions();" tt_onUnLoad="setSelectedStageConditions(3);" tt_pageStyleClass="NoKeyboard NoInput small">
+                    <select allowFreeText="false" class="stage_3_conditions" condition="showConditions() == true && age <= 14" helpText="Stage 3 Conditions" id="stage_3_conditions" multiple="multiple" name="observations[][value_coded_or_text_multiple][]" optional="true" tt_onLoad="showCategory2('HIV staging');checkPtb();checkPastTb(); hideTextInput(); displayCountOfSelectedConditions(); preselectModerateWasting();" tt_onUnLoad="setSelectedStageConditions(3);" tt_pageStyleClass="NoKeyboard NoInput small">
                         <option value=''></option>
                         <option value="Fever, persistent unexplained, intermittent or constant, >1 month">Fever, persistent unexplained, intermittent or constant, >1 month</option>
                         <option value="Oral hairy leukoplakia">Oral hairy leukoplakia</option>
@@ -1310,7 +1377,7 @@
                         <option value="Chronic HIV-associated lung disease, including bronchiectasis">Chronic HIV-associated lung disease, including bronchiectasis</option>
                     </select>
 
-                    <select allowFreeText="false" condition="showConditions() == true && age >= 15" helpText="Stage 2 Conditions" id="stage_2_conditions" multiple="multiple" name="observations[][value_coded_or_text_multiple][]" optional="true" tt_onLoad="showCategory2('HIV staging'); disableModerateWeightLossOption(); hideTextInput(); displayCountOfSelectedConditions();" tt_onUnLoad="setSelectedStageConditions(2);" tt_pageStyleClass="NoKeyboard NoInput small">
+                    <select allowFreeText="false" condition="showConditions() == true && age >= 15" helpText="Stage 2 Conditions" id="stage_2_conditions" multiple="multiple" name="observations[][value_coded_or_text_multiple][]" optional="true" tt_onLoad="showCategory2('HIV staging'); disableModerateWeightLossOption(); hideTextInput(); displayCountOfSelectedConditions(); preselectModerateWasting();" tt_onUnLoad="setSelectedStageConditions(2);" tt_pageStyleClass="NoKeyboard NoInput small">
                         <option value=''></option>
                         <option value="Moderate weight loss less than or equal to 10 percent, unexplained">Moderate weight loss less than or equal to 10 percent, unexplained</option>
                         <option value="Respiratory tract infections, recurrent (sinusitis, tonsilitus, otitis media, pharyngitis)">Respiratory tract infections, recurrent (sinusitis, tonsilitus, otitis media, pharyngitis)</option>
