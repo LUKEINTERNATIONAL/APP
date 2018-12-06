@@ -547,7 +547,7 @@ function isARTPrescribed() {
     todays_date = todays_date.getFullYear() + "-" + (todays_date.getMonth() + 1) + "-" + todays_date.getDate()
     var medication_order_concept_id = 1282;
     var antiretroviral_drugs_value_coded  = 1085;
-    var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1/observations?person_id=" + sessionStorage.patientID + "&concept_id=" + medication_order_concept_id + "&value_coded=" + antiretroviral_drugs_value_coded + "&date=" + todays_date;
+    var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1/observations?person_id=" + sessionStorage.patientID + "&concept_id=" + medication_order_concept_id + "&value_coded=" + antiretroviral_drugs_value_coded + "&obs_datetime=" + todays_date;
 
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
