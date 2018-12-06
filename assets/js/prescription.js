@@ -542,6 +542,32 @@ function getMedicationOrders() {
     xhttp.send();
 }
 
+function isARTPrescribed() {
+    var todays_date = new Date(sessionStorage.sessionDate);
+    todays_date = todays_date.getFullYear() + "-" + (todays_date.getMonth() + 1) + "-" + todays_date.getDate()
+    var medication_order_concept_id = 1282;
+    var antiretroviral_drugs_value_coded  = 1085;
+    var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1/observations?person_id=" + sessionStorage.patientID + "&concept_id=" + medication_order_concept_id + "&value_coded=" + antiretroviral_drugs_value_coded + "&date=" + todays_date;
+
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+            var art_prescription_obs = JSON.parse(this.responseText);
+            if (art_prescription_obs.length > 0){
+                prescribe_arv = true;
+                return prescribe_arv
+            }
+        }
+    };
+
+    xhttp.open("GET", url, true);
+    xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+    xhttp.setRequestHeader('Content-type', "application/json");
+    xhttp.send();
+}
+
+isARTPrescribed();
+
 function getCPTDosage() {
     var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1/cpt_dosage/";
 
