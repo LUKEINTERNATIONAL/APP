@@ -1772,6 +1772,38 @@
                         }
                     }
 
+                    var allergic_to_suphur = "";
+                    function getAllergicToSuphurObservation() {
+                        var allergic_to_sulphur_concept_id = 8012;
+                        var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1/observations?person_id=" + sessionStorage.patientID + "&concept_id=" + allergic_to_sulphur_concept_id + "&page_size=1";
+                        var xhttp = new XMLHttpRequest();
+                        xhttp.onreadystatechange = function() {
+                            if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                                var latest_allergic_to_suphur_observation = JSON.parse(this.responseText)[0];
+                                if (latest_allergic_to_suphur_observation){
+                                    value_coded = parseInt(latest_allergic_to_suphur_observation.value_coded)
+                                    if (value_coded == 1065){
+                                        allergic_to_suphur = "Yes"
+                                    }
+                                    if (value_coded == 1066){
+                                        allergic_to_suphur = "No"
+                                    }
+                                    if (value_coded == 1067){
+                                        allergic_to_suphur = "Unknown"
+                                    }
+                                }
+                            }
+                        };
+
+                        xhttp.open("GET", url, true);
+                        xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                        xhttp.setRequestHeader('Content-type', "application/json");
+                        xhttp.send();
+                    }
+
+                    getAllergicToSuphurObservation();
+
+
                     function updateAllergicToCotrimoxazoleObservation(value){
                         answers_hash["allergic_to_cpt"] = value;
                         hideAllergicToCPTChange();
@@ -2276,6 +2308,7 @@
                            helpText="Order Lab investigations?" optional = "true"/ -->
                     
                     <select allowFreeText="false" helpText="Allergic to Cotrimoxazole?" id="allergic_to_cotrimoxazole"  tt_onLoad="setNextButtonToGetInputValue('allergic_to_cpt');"
+                            condition = "allergic_to_suphur == '' || allergic_to_suphur.match(/UNKNOWN/i)"
                     name="observations[][value_coded_or_text]" 
                     tt_pageStyleClass="NoKeyboard">
                         <option value=''></option>
