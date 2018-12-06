@@ -1384,3 +1384,22 @@ function nextPage(){
 
 }
 
+function getCurrentRegimen() {
+    var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1/";
+    url +=  "programs/1/patients/" + sessionStorage.patientID + "?date=";
+    url += moment(sessionDate).format('YYYY-MM-DD');
+
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+      if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+          var data = JSON.parse(this.responseText);
+          document.getElementById('current-regimen').innerHTML = data.current_regimen;
+      }
+    };
+
+    xhttp.open("GET", url, true);
+    xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+    xhttp.setRequestHeader('Content-type', "application/json");
+    xhttp.send();
+}
+
