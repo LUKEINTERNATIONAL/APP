@@ -431,7 +431,7 @@ function showStartPackMessage(medication) {
     if(i == 0) {
       buttonContainerCell.setAttribute('onmousedown','closePopUp();');
     }else{
-      buttonContainerCell.setAttribute('onmousedown','closePopUp();gotoNextPage();');
+      buttonContainerCell.setAttribute('onmousedown','getStaterPackBreakDown();');
     }
 
     buttonContainerRow.appendChild(buttonContainerCell);
@@ -567,6 +567,30 @@ function getEarliestStartDate() {
   xhttp.onreadystatechange = function() {
     if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
       earliest_start_dates = JSON.parse(this.responseText);
+    }
+  };
+  xhttp.open("GET", url, true);
+  xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+  xhttp.setRequestHeader('Content-type', "application/json");
+  xhttp.send();
+}
+
+function getStaterPackBreakDown() {
+  var regimen_index = parseInt(selectedRegimens.match(/\d+/)[0]);
+  var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1";
+  url += '/programs/1/regimen_starter_packs?regimen=';
+  url += regimen_index + '&weight=' + sessionStorage.currentWeight;
+
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+       var data = JSON.parse(this.responseText);
+       if(data.length > 0) {
+         givenRegimens[selectedRegimens] = data;
+       }
+       starterPackSelected = true;
+       closePopUp();
+       gotoNextPage();
     }
   };
   xhttp.open("GET", url, true);

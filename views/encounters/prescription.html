@@ -28,8 +28,47 @@ var tt_cancel_destination = "/views/patient_dashboard.html?patient_id=" + patien
 
 getMedicationOrders();
 function showWeight() {
-    document.getElementById('helpText2').innerHTML = "Current patient weight: "+ sessionStorage.currentWeight + "KG";
-    document.getElementById('helpText2').setAttribute("helptext", "Current patient weight: "+ sessionStorage.currentWeight + "KG") ;
+  var clientInfo = document.getElementById('helpText' + tstCurrentPage);
+  var table = document.createElement('table');
+  var cssText = 'float: right; font-size: 14px;';
+  table.setAttribute('style', cssText);
+  clientInfo.appendChild(table);
+
+
+  var tr = document.createElement('tr');
+  table.appendChild(tr);
+  var th = document.createElement('th');
+  th.innerHTML = "Client's age:";
+  tr.appendChild(th);
+
+  var td = document.createElement('td');
+  td.innerHTML = sessionStorage.patientAge + ' year(s)';
+  tr.appendChild(td);
+
+
+  var tr = document.createElement('tr');
+  table.appendChild(tr);
+  var th = document.createElement('th');
+  th.innerHTML = "Current weight:";
+  tr.appendChild(th);
+
+  var td = document.createElement('td');
+  td.innerHTML = sessionStorage.currentWeight + ' KG';
+  tr.appendChild(td);
+
+
+
+
+  var th = document.createElement('th');
+  th.innerHTML = "Current regimen:";
+  tr.appendChild(th);
+
+  var td = document.createElement('td');
+  td.innerHTML = 'N/A';
+  tr.appendChild(td);
+
+
+  //document.getElementById('helpText2').setAttribute("helptext", "Current patient weight: "+ sessionStorage.currentWeight + "KG") ;
 }
 
 </script>
@@ -42,7 +81,7 @@ function showWeight() {
             <form action="post">
 
                 <input type="text" name="regimens"
-                       tt_onLoad="__$('keyboard').style.display = 'none';getRegimens();"
+                       tt_onLoad="__$('keyboard').style.display = 'none';getRegimens();showWeight();"
                        tt_onUnLoad = "removeCustomBtn();"
                        tt_pageStyleClass= "NoControls" helpText="ARV Regimen(s)" optional = "true"/>
 
@@ -55,7 +94,7 @@ function showWeight() {
 
                 <input type="text" name="selected-medications"
                        tt_onLoad="__$('keyboard').style.display = 'none'; showSelectedMeds(); initDataTable(); showWeight();"
-                       tt_pageStyleClass= "NoControls" helpText="Current patient weight: <span id='patient_weight'></span>" optional = "true"/>
+                       tt_pageStyleClass= "NoControls" helpText="Selected medication" optional = "true"/>
 
                 <input type="text" name="duration"
                        tt_onLoad="__$('keyboard').style.display = 'none'; buildNextIntervalPage();preSelectInterval();"
@@ -124,29 +163,7 @@ function showWeight() {
 
 
 
-<div id="confirmatory-test-popup-div">
-  <div id="confirmatory-test-popup-header">
-    <center style='color: orange;' id="main-pop-header">Starter pack needed for 14 days</center>
-  </div><br />
-  <div>
-
-    <span style="font-size: 16pt;">
-      <span id='initiation_type' style="color: green; padding-left: 20px;"></span>&nbsp;<span id='selected_starter_pack'></span>
-    </span>
-    <div style="padding-top: 65px;">
-      <span id="confirmatory-test-yes"
-        onclick="recordNotification('Starter pack needed for 14 days','Yes');hideConfirmatoryTestPopup();resetRegimen();gotoNextPage();"
-            class="confirmatory-test-my_button"
-            style="position: relative;">Prescribe starter pack</span>
-
-      <span id="confirmatory-test-no" onclick="recordNotification('Starter pack needed for 14 days','Cancel');hideConfirmatoryTestPopup();"
-            class="confirmatory-test-my_button"
-            style="position: relative;">Cancel</span>
-    </div>
-  </div>
-</div>
-
-
+<div id="confirmatory-test-popup-div"></div>
 <div id="confirmatory-test-cover"></div>
 
 
