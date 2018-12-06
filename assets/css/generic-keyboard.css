@@ -1,4 +1,4 @@
-#keyboard {
+/* #eyboard {
     height: 50px;
     width: 910px;
     bottom: 10px;
@@ -10,9 +10,9 @@
     z-index: 100;
     text-align: center;
     display: block;
-  }
+  } */
   
-  .keyboard-table {
+  .keyboards-table {
     display: table;
     width: 100%;
     margin: 10px 10px 10px 0px;
@@ -43,15 +43,15 @@
       overflow: scroll;
   }
   
-  .keyboard-table-row {
+  .keyboards-table-row {
     display: block;
   }
   
-  .keyboard-table-cell {
+  .keyboards-table-cell {
     display: inline-block;
   }
   
-  .keyboard-span {
+  .keyboards-span {
     border: 1px solid #7eb9d0;
     -webkit-border-radius: 3px;
     -moz-border-radius: 3px;

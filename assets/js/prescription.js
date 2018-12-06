@@ -1,4 +1,5 @@
 var formattedDate = sessionStorage.sessionDate;
+formattedDate = (new Date(formattedDate));
 var sessionDate = new Date(moment(formattedDate).format('YYYY-MM-DD'));
 
 var givenRegimens = {};
@@ -574,6 +575,34 @@ function getMedicationOrders() {
     xhttp.setRequestHeader('Content-type', "application/json");
     xhttp.send();
 }
+
+getMedicationOrders();
+
+function isARTPrescribed() {
+    var todays_date = new Date(sessionStorage.sessionDate);
+    todays_date = todays_date.getFullYear() + "-" + (todays_date.getMonth() + 1) + "-" + todays_date.getDate()
+    var medication_order_concept_id = 1282;
+    var antiretroviral_drugs_value_coded  = 1085;
+    var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1/observations?person_id=" + sessionStorage.patientID + "&concept_id=" + medication_order_concept_id + "&value_coded=" + antiretroviral_drugs_value_coded + "&obs_datetime=" + todays_date;
+
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+            var art_prescription_obs = JSON.parse(this.responseText);
+            if (art_prescription_obs.length > 0){
+                prescribe_arv = true;
+                return prescribe_arv
+            }
+        }
+    };
+
+    xhttp.open("GET", url, true);
+    xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+    xhttp.setRequestHeader('Content-type', "application/json");
+    xhttp.send();
+}
+
+isARTPrescribed();
 
 function getCPTDosage() {
     var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1/cpt_dosage/";
@@ -1252,6 +1281,9 @@ function postRegimenOrders(encounter){
     var auto_expire_date = start_date.setDate(start_date.getDate() + duration);
     var auto_expire_date_formated = getFormattedDate(new Date(auto_expire_date));
     var drug_orders = givenRegimens[selectedRegimens];
+    if (!drug_orders){
+         drug_orders = [];
+    }
 
     for (var drugName in medication_orders){
         var am_dose = medication_orders[drugName]["am"];
