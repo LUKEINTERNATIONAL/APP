@@ -1298,7 +1298,7 @@
 
                     <input allowFreeText="false" id="reason_for_art_eligibility" name="observations[][value_coded_or_text]" type="hidden" value="" />
 
-                    <select allowFreeText="false" condition="showConditions() == true && age >= 15" helpText="Stage 4 Conditions" id="stage_4_conditions" multiple="multiple" name="observations[][value_coded_or_text_multiple][]" optional="true" tt_onLoad="showCategory2('HIV staging');checkEptb(); hideTextInput(); displayCountOfSelectedConditions();" tt_onUnLoad="setSelectedStageConditions(4);" tt_pageStyleClass="NoKeyboard NoInput small">
+                    <select allowFreeText="false" condition="showConditions() == true && age >= 15" helpText="Stage 4 Conditions" id="stage_4_conditions" multiple="multiple" name="observations[][value_coded_or_text_multiple][]" optional="true" tt_onLoad="showCategory2('HIV staging');checkEptb(); hideTextInput(); displayCountOfSelectedConditions(); preselectSevereWasting();" tt_onUnLoad="setSelectedStageConditions(4);" tt_pageStyleClass="NoKeyboard NoInput small">
                         <option value=''></option>
                         <option value="Cryptococcal meningitis or other extrapulmonary cryptococcosis">Cryptococcal meningitis or other extrapulmonary cryptococcosis</option>
                         <option value="Candidiasis of oseophagus, trachea and bronchi or lungs">Candidiasis of oseophagus, trachea and bronchi or lungs</option>
@@ -1317,7 +1317,7 @@
                         <option value="Other">Other</option>
                     </select>
 
-                    <select allowFreeText="false" class="stage_4_conditions" condition="showConditions() == true && age <= 14" helpText="Stage 4 Conditions" id="stage_4_conditions" multiple="multiple" name="observations[][value_coded_or_text_multiple][]" optional="true" tt_onLoad="showCategory2('HIV staging');checkEptb(); hideTextInput(); displayCountOfSelectedConditions();" tt_onUnLoad="setSelectedStageConditions(4);" tt_pageStyleClass="NoKeyboard NoInput small">
+                    <select allowFreeText="false" class="stage_4_conditions" condition="showConditions() == true && age <= 14" helpText="Stage 4 Conditions" id="stage_4_conditions" multiple="multiple" name="observations[][value_coded_or_text_multiple][]" optional="true" tt_onLoad="showCategory2('HIV staging');checkEptb(); hideTextInput(); displayCountOfSelectedConditions(); preselectSevereWasting()" tt_onUnLoad="setSelectedStageConditions(4);" tt_pageStyleClass="NoKeyboard NoInput small">
                         <option value=''></option>
                         <option value="Pneumocystis pneumonia">Pneumocystis pneumonia</option>
                         <option value="Candidiasis of oseophagus, trachea and bronchi or lungs">Candidiasis of oseophagus, trachea and bronchi or lungs</option>
@@ -1340,7 +1340,7 @@
                         <option value="Recto-vaginal fistula, HIV-associated">Recto-vaginal fistula, HIV-associated</option>
                     </select>
 
-                    <select allowFreeText="false" condition="showConditions() == true && age >= 15" helpText="Stage 3 Conditions" id="stage_3_conditions" multiple="multiple" name="observations[][value_coded_or_text_multiple][]" optional="true" tt_onLoad="showCategory2('HIV staging');checkPtb();checkPastTb(); disableSevereWeightLossInputForNormalBMI(); hideTextInput(); displayCountOfSelectedConditions();" tt_onUnLoad="setSelectedStageConditions(3);" tt_pageStyleClass="NoKeyboard NoInput small">
+                    <select allowFreeText="false" condition="showConditions() == true && age >= 15" helpText="Stage 3 Conditions" id="stage_3_conditions" multiple="multiple" name="observations[][value_coded_or_text_multiple][]" optional="true" tt_onLoad="showCategory2('HIV staging');checkPtb();checkPastTb(); disableSevereWeightLossInputForNormalBMI(); hideTextInput(); displayCountOfSelectedConditions(); preselectSevereWasting();" tt_onUnLoad="setSelectedStageConditions(3);" tt_pageStyleClass="NoKeyboard NoInput small">
                         <option value=''></option>
                         <option value="Severe weight loss >10% and/or BMI <18.5kg/m^2, unexplained">Severe weight loss >10% and/or BMI <18.5kg/m^2, unexplained</option>
                         <option value="Diarrhoea, chronic (>1 month) unexplained">Diarrhoea, chronic (>1 month) unexplained</option>
@@ -1358,7 +1358,7 @@
                         <option value="Unspecified stage 3 condition">Unspecified stage 3 condition</option>
                     </select>
 
-                    <select allowFreeText="false" class="stage_3_conditions" condition="showConditions() == true && age <= 14" helpText="Stage 3 Conditions" id="stage_3_conditions" multiple="multiple" name="observations[][value_coded_or_text_multiple][]" optional="true" tt_onLoad="showCategory2('HIV staging');checkPtb();checkPastTb(); hideTextInput(); displayCountOfSelectedConditions();" tt_onUnLoad="setSelectedStageConditions(3);" tt_pageStyleClass="NoKeyboard NoInput small">
+                    <select allowFreeText="false" class="stage_3_conditions" condition="showConditions() == true && age <= 14" helpText="Stage 3 Conditions" id="stage_3_conditions" multiple="multiple" name="observations[][value_coded_or_text_multiple][]" optional="true" tt_onLoad="showCategory2('HIV staging');checkPtb();checkPastTb(); hideTextInput(); displayCountOfSelectedConditions(); preselectModerateWasting();" tt_onUnLoad="setSelectedStageConditions(3);" tt_pageStyleClass="NoKeyboard NoInput small">
                         <option value=''></option>
                         <option value="Fever, persistent unexplained, intermittent or constant, >1 month">Fever, persistent unexplained, intermittent or constant, >1 month</option>
                         <option value="Oral hairy leukoplakia">Oral hairy leukoplakia</option>
@@ -1377,7 +1377,7 @@
                         <option value="Chronic HIV-associated lung disease, including bronchiectasis">Chronic HIV-associated lung disease, including bronchiectasis</option>
                     </select>
 
-                    <select allowFreeText="false" condition="showConditions() == true && age >= 15" helpText="Stage 2 Conditions" id="stage_2_conditions" multiple="multiple" name="observations[][value_coded_or_text_multiple][]" optional="true" tt_onLoad="showCategory2('HIV staging'); disableModerateWeightLossOption(); hideTextInput(); displayCountOfSelectedConditions();" tt_onUnLoad="setSelectedStageConditions(2);" tt_pageStyleClass="NoKeyboard NoInput small">
+                    <select allowFreeText="false" condition="showConditions() == true && age >= 15" helpText="Stage 2 Conditions" id="stage_2_conditions" multiple="multiple" name="observations[][value_coded_or_text_multiple][]" optional="true" tt_onLoad="showCategory2('HIV staging'); disableModerateWeightLossOption(); hideTextInput(); displayCountOfSelectedConditions(); preselectModerateWasting();" tt_onUnLoad="setSelectedStageConditions(2);" tt_pageStyleClass="NoKeyboard NoInput small">
                         <option value=''></option>
                         <option value="Moderate weight loss less than or equal to 10 percent, unexplained">Moderate weight loss less than or equal to 10 percent, unexplained</option>
                         <option value="Respiratory tract infections, recurrent (sinusitis, tonsilitus, otitis media, pharyngitis)">Respiratory tract infections, recurrent (sinusitis, tonsilitus, otitis media, pharyngitis)</option>
