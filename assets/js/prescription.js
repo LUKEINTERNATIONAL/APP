@@ -542,6 +542,8 @@ function getMedicationOrders() {
     xhttp.send();
 }
 
+getMedicationOrders();
+
 function isARTPrescribed() {
     var todays_date = new Date(sessionStorage.sessionDate);
     todays_date = todays_date.getFullYear() + "-" + (todays_date.getMonth() + 1) + "-" + todays_date.getDate()
@@ -1244,6 +1246,9 @@ function postRegimenOrders(encounter){
     var auto_expire_date = start_date.setDate(start_date.getDate() + duration);
     var auto_expire_date_formated = getFormattedDate(new Date(auto_expire_date));
     var drug_orders = givenRegimens[selectedRegimens];
+    if (!drug_orders){
+         drug_orders = [];
+    }
 
     for (var drugName in medication_orders){
         var am_dose = medication_orders[drugName]["am"];
