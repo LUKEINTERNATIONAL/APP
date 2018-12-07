@@ -1419,12 +1419,17 @@ function getCurrentRegimen() {
 function checkIfSwitchingRegimen(e) {
   var selectedRegimenIndex = parseInt(e.id.match(/\d+/)[0]);
   var current_regimen = document.getElementById('current-regimen');
-  current_regimen = parseInt(current_regimen.innerHTML.match(/\d+/)[0]);
+
+  try {
+    current_regimen = parseInt(current_regimen.innerHTML.match(/\d+/)[0]);
+  }catch(i){
+    current_regimen = selectedRegimenIndex;
+  }
 
   if(selectedRegimenIndex != current_regimen){
     buildResonForSwitchinPopup();
   }else{
-    selectedSwitchReason = null;
+    selectedSwitchReason = '';
   }
 }
 
@@ -1495,7 +1500,7 @@ function buildResonForSwitchinPopup() {
   }
 }
 
-var selectedSwitchReason;
+var selectedSwitchReason = '';
 
 function cancelSwitch() {
   var current_regimen = document.getElementById('current-regimen');
@@ -1511,7 +1516,7 @@ function cancelSwitch() {
     }
   }
 
-  selectedSwitchReason = null;
+  selectedSwitchReason = '';
   closePopUp();
   selectRegimen(prev_regimen);
 }
