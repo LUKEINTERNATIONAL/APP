@@ -269,38 +269,67 @@
             #yes, #no {
                 -webkit-box-sizing: border-box;
                 -moz-box-sizing: border-box;
-                box-sizing: border-box;
-                bottom: 0px;
-            }
 
-            #yes {
                 margin-right: 13px;
             }
 
         </style>
-    </head>
+    </head>   box-sizing: border-box;
+    bottom: 0px;
+    }
+
+    #yes {
     <body id="mateme">
         <div id="container">
             <div id="content">
                 <script type="text/javascript">
 
-                    var age = 136;
-                    var ageInMonths = 1637;
-                    var firstPositiveHivTestType = "HIV rapid test";
+                    var age = parseInt(sessionStorage.patientAge);
+                    var ageInMonths = age * 12;
+                    var firstPositiveHivTestType = "";
                     var cd4_count_numeric, cd4_count_estimate, cd4_count_modifier;
                     var selected_stage_conditions = {};
                     var retrospective_entry = false
                     var tstCurrentDate = moment().format("DD-MM-YYYY");
-                    var currentBMI = parseFloat('10.0');
-                    currentBMI = parseFloat(currentBMI);
-                    var currentWeight = '58.9'
-                    var median_weight_height = [];
+                    var currentBMI = parseFloat(sessionStorage.bmi);
+                    var currentWeight = parseFloat(sessionStorage.currentWeight)
                     var patientGender = sessionStorage.patientGender;
 
+                     function getFirstPositiveHivTestTypeObservation() {
+                        var confirmatory_hiv_test_type_concept_id = 7880;
+                        var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1/observations?person_id=" + sessionStorage.patientID + "&concept_id=" + confirmatory_hiv_test_type_concept_id + "&page_size=1";
+                        var xhttp = new XMLHttpRequest();
+                        xhttp.onreadystatechange = function() {
+                            if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                                var latest_hiv_confirmatory_test_observation = JSON.parse(this.responseText)[0];
+                                if (latest_hiv_confirmatory_test_observation){
+                                    value_coded = parseInt(latest_hiv_confirmatory_test_observation.value_coded)
+                                    firstPositiveHivTestType = hivTestTypeConceptIDMap(value_coded)
+                                }
+                            }
+                        };
 
+                        xhttp.open("GET", url, true);
+                        xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                        xhttp.setRequestHeader('Content-type', "application/json");
+                        xhttp.send();
+                    }
+                    
+                    getFirstPositiveHivTestTypeObservation();
+
+                    function hivTestTypeConceptIDMap(conceptID){
+                      conceptMap = {
+                        "": "",
+                        "1040": "HIV rapid test",
+                        "844": "HIV DNA polymerase chain reaction",
+                        "1118": "Not done",
+                        "1067": "Unknown"
+		      }
+
+		      return conceptMap[conceptID]
+		   }
                     
                     
-
                     function resetPad() {
                         curr_page = tstCurrentPage - 1
                         buttons = document.getElementsByClassName("keyboardButton");
@@ -784,7 +813,7 @@
                     }
 
                     function checkPregnancyAndAge() {
-                        var patientAge = "136";
+                        var patientAge = age;
                         var pregnancyStatus = $('pregnant').value;
 
                         if ((patientAge < 12 || patientAge > 55) && pregnancyStatus == "YES") {
@@ -795,7 +824,7 @@
                     }
 
                     function checkBreastfeedingAndAge() {
-                        var patientAge = "136";
+                        var patientAge = age;
                         var breastfeedingStatus = $('breast_feeding').value;
 
                         if ((patientAge < 12 || patientAge > 55) && breastfeedingStatus == "YES") {
@@ -856,7 +885,7 @@
 
                     function showPresumed() {
                         try {
-                            age_in_months = parseInt("1637");
+                            age_in_months = ageInMonths;
                             if (age_in_months < 12) {
                                 return true;
                             }
@@ -1211,9 +1240,11 @@
 
                     var moderate_wasting = "";
                     var severe_wasting = "";
+                    var patient_median_Weight_height;
+                    var current_weight_percentile;
 
                     function setStagingVariables() {
-                        patientAge = parseInt(sessionStorage.patientAge);
+                        patientAge = age;
                         if (patientAge >= 15){
                             if (currentBMI >= 16.0 && currentBMI <= 18.5) {
                                 moderate_wasting = "Moderate weight loss less than or equal to 10 percent, unexplained";
@@ -1229,8 +1260,13 @@
                             var xhttp = new XMLHttpRequest();
                             xhttp.onreadystatechange = function() {
                                 if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
-                                    var patient_median_Weight_height = JSON.parse(this.responseText);
-                                    var current_weight_percentile = (parseFloat(currentWeight) / (parseFloat(patient_median_Weight_height["weight"])) * 100)
+                                    patient_median_Weight_height = JSON.parse(this.responseText);
+
+                                    try {
+                                      current_weight_percentile = (parseFloat(currentWeight) / (parseFloat(patient_median_Weight_height["weight"])) * 100)
+				    } catch(e){
+                                      current_weight_percentile = 0;
+                                    }
 
                                     if (current_weight_percentile >= 70 && current_weight_percentile <= 79){
                                         moderate_wasting = "Moderate unexplained wasting/malnutrition not responding to treatment (weight-for-height/ -age 70-79% or muac 11-12 cm)";
