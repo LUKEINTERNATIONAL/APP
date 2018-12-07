@@ -271,7 +271,7 @@ function showSelectedMeds() {
         var am_dose = medication_orders[drugName]["am"];
         var concept_id = medication_orders[drugName]["concept_id"];
         var drug_id = medication_orders[drugName]["drug_id"];
-        var drug_name = medication_orders[drugName]["name"];
+        var drug_name = medication_orders[drugName]["drug_name"];
         var pm_dose = medication_orders[drugName]["pm"];
         var units = medication_orders[drugName]["units"];
 
@@ -1288,7 +1288,7 @@ function postRegimenOrders(encounter){
     for (var drugName in medication_orders){
         var am_dose = medication_orders[drugName]["am"];
         var drug_id = medication_orders[drugName]["drug_id"];
-        var drug_name = medication_orders[drugName]["name"];
+        var drug_name = medication_orders[drugName]["drug_name"];
         var pm_dose = medication_orders[drugName]["pm"];
         var units = medication_orders[drugName]["units"];
 
