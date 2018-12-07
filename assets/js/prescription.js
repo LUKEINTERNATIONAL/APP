@@ -1334,7 +1334,7 @@ function postRegimenOrders(encounter){
     if(selectedSwitchReason.length > 0) {
       treatmentObs(drug_orders_params, "/drug_orders", "treatmentObs");
     }else{
-      submitParameters(drug_orders_params, "/drug_orders", "postFastTrackAssesmentObs");
+      submitParameters(drug_orders_params, "/drug_orders", "submitFastTrack");
     }
 }
 
