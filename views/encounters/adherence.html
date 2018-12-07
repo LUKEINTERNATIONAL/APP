@@ -11,137 +11,94 @@
 </script>
 
 <style>
-
 #clearButton {
   display: none;
 }
 
-.main-container-table {
+.orders-table {
   display: table;
   width: 100%;
+  border-collapse: separate;
+  border-spacing: 5px 10px;
 }
 
-.main-container-table-row {
+.orders-table-row {
   display: table-row;
 }
 
-.main-container-table-cell {
+
+.orders-table-cell {
   display: table-cell;
-  height: 550px;
 }
 
-#main-container-table-cell-left {
+.medication-cells {
   border-style: solid;
-  border-width: 0px 1px 0px 0px;
-  width: 150px;
+  border-width: 1px;
+  box-shadow: 0 8px 6px -6px black;
+  vertical-align: middle;
+  height: 75px;
+  line-height: 75px;
+}
 
+#num-pills {
+  width: 100%;
+  height: 60px;
   text-align: center;
-  vertical-align: top;
+  font-size: 2.3em;
+}
+
+#summary-table {
+  width: 100%;
+  height: 100%;
+  border-collapse: collapse;
+}
+
+#summary-table th {
+  text-align: right;
+  padding-right: 5px;
+
+  border-style: solid;
+  border-width: 1px;
+}
+
+.table-headers {
+  background-color: lightslategrey;
+}
+
+#days-gone {
+  float: right;
+  padding-right: 2px;
 }
 
 
 
-.main-ctrl-table {
-  display: table;
-  vertical-align: top;
-  height: 300px;
-  margin: 5px;
-
-  border-collapse:separate;border-spacing:5px;
-}
-
-.main-container-table-row {
-  display: table-row;
-}
-
-.main-ctrl-table-cell {
-  display: table-cell;
-}
 
 
-.btn-ctrl {
-  padding: 5% 0px 0px 0px;
+
+
+
+.keypad-buttons {
+  padding: 20% 0px 0px 0px;
   float: left;
   text-align: center;
   margin-right: auto;
   margin-left: auto;
   display: block;
-  margin: 5px 5px 0px 10px;
+  margin: 5px;
   border: 1px solid #5ca6c4;
   cursor: pointer;
-  box-shadow: inset 2px -4px 2px 0px;
+  /*box-shadow: inset 2px -4px 2px 0px;*/
   background-color: white;
   border-radius: 7px;
   border: solid black 3px;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
-  -moz-box-shadow: inset 0 0 10px #000000;
-  -webkit-box-shadow: inset 0 0 10px #5ca6c4;
-  box-shadow: inset 0 0 10px #000000;
-  text-decoration: none !important;
-  font-weight: bold;
-  font-size: 14px;
-  width: 100px;
-  height: 100px;
-  background-color: #5ca6c4;
-  color: white;
-}
-
-.btns-icons {
-  width: 30px;
-  height: 30px;
-}
-
-.btns-icons-selected-none {
-  color: black;
-  background-color: #dddddd;
-}
-
-.medication-table {
-  display: table;
-  width: 100%;
-  margin: 5px;
-}
-
-.medication-table-row {
-  display: table-row;
-}
-
-.medication-table-cell {
-  display: table-cell;
-}
-
-#medication-list {
-  background-color: lightyellow;
-  height: 550px;
-  margin-left: 24px;
-  width: 65%;
-  border-radius: 25px;
-}
-
-.keypad-table {
-  display: table;
-  border-collapse: separate;
-  border-spacing: 5px;
-  width: 245px;
-  margin-left: 10%;
-}
-
-.keypad-table-row {
-  display: table-row;
-}
-
-.keypad-table-cell {
-  display: table-cell;
-}
-
-.keypad-buttons {
   border: 1px solid #7eb9d0;
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
   border-radius: 3px;
-  font-size: 28px;
+  font-size: 23px;
   font-family: arial, helvetica, sans-serif;
   padding: 10px 10px 10px 10px;
   text-decoration: none;
@@ -157,65 +114,14 @@
   background-image: -o-linear-gradient(top, #a7cfdf, #23538a);
   background-image: linear-gradient(to bottom, #a7cfdf, #23538a);
   filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr=#a7cfdf, endColorstr=#23538a);
-  width: 50px;
-  height: 50px;
+
   text-align: center;
+  width: 75px;
+  height: 65px;
+
 }
 
-#pills-brought {
-  width: 230px;
-  text-align: center;
 
-
-  border-top: none;
-  border-left: none;
-  border-right: none;
-  border-bottom: 1px solid silver;
-  font-family: "Nimbus Sans L","Arial Narrow",sans-serif;
-  font-size: 2.2em;
-}
-
-.list {
-  color: black;
-  list-style: none;
-  padding-left: 5px;
-  padding-right: 5px;
-  margin-top: 5px;
-  margin-bottom: 5px;
-  font-family: "Nimbus Sans L","Arial Narrow",sans-serif;
-  font-size: 1.2em;
-  width: 90%;
-  line-height: 50px;
-}
-
-.list-selected {
-  background-color: lightblue;
-}
-table {
-  width: 98%;
-  margin: 2%;
-  height: 100%;
-}
- table, td, tbody, thead {
-  border: 1px solid black;
-  border-collapse: collapse;
-  padding: 1%;
-}
-
-.headers {
-  border: 0px;
-  color: white;
-  background-color: #5d5a5a;
-  /* width: 100%; */
-}
-
-.red {
-  color: red;
-}
-
-.green {
-  color: green;
-}
 </style>
 
 
@@ -224,439 +130,400 @@ localStorage.clear();
 var apiURL = sessionStorage.getItem("apiURL");
 var apiPort = sessionStorage.getItem("apiPort");
 
-function buildEntryPage() {
-  var frame = document.getElementById("inputFrame" + tstCurrentPage);
-  frame.style = "width: 96%; height: 90%;";
-  
-  var mainContainer = document.createElement("div");
-  mainContainer.setAttribute("class","main-container-table");
-  frame.appendChild(mainContainer);
-
-  var mainContainerRow = document.createElement("div");
-  mainContainerRow.setAttribute("class","main-container-table-row");
-  mainContainer.appendChild(mainContainerRow);
-
-  var cells = ["left","right"];
-  for(var i = 0; i < cells.length ; i++){
-    var mainContainerCell = document.createElement("div");
-    mainContainerCell.setAttribute("class","main-container-table-cell");
-    mainContainerCell.setAttribute("id","main-container-table-cell-" + cells[i]);
-    mainContainerRow.appendChild(mainContainerCell);
-  }
-
-
-  buildBtnCtrls();
-}
-
-function buildBtnCtrls() {
-  var mainContainer = document.getElementById("main-container-table-cell-left");
-
-  
-  var mainBtnContainer = document.createElement("div");
-  mainBtnContainer.setAttribute("class","main-ctrl-table");
-  mainContainer.appendChild(mainBtnContainer);
-
-  var cells = [["Medication","medication.png"],["Summary","prescription.png"]];
-
-  for(var i = 0 ; i < cells.length ; i++) {
-    var mainBtnContainerRow = document.createElement("div");
-    mainBtnContainerRow.setAttribute("class","main-ctrl-table-row");
-    mainBtnContainer.appendChild(mainBtnContainerRow);
-
-    var mainBtnContainerCell = document.createElement("div");
-    mainBtnContainerCell.setAttribute("class","main-ctrl-table-cell");
-    
-    var img = document.createElement("img");
-    img.setAttribute("src","../../../../assets/images/prescription/" + cells[i][1]);
-    img.setAttribute("class","btns-icons");
-
-    var btn = document.createElement("span");
-    btn.setAttribute("class","btn-ctrl");
-    btn.appendChild(img);
-    btn.innerHTML += "<br /><br />" + cells[i][0];
-    btn.setAttribute("onmousedown","buildEntry(this);");
-    btn.setAttribute("id", cells[i][0]);
-    mainBtnContainerCell.appendChild(btn);
-
-
-    mainBtnContainerRow.appendChild(mainBtnContainerCell);
-    mainBtnContainer.appendChild(mainBtnContainerRow);
-
-  
-  }
-
-  buildEntry(document.getElementById("Medication"));
-}
-
-function buildEntry(e) {
-  var cells = document.getElementsByClassName("btn-ctrl");
-  for(var i = 0 ; i < cells.length ; i++){
-    cells[i].setAttribute("class","btn-ctrl btns-icons-selected-none");
-  }
-    
-  e.setAttribute("class","btn-ctrl");
-
-  if(e.id == "Medication") {
-    buildPillCountScreen();
-  }else if (e.id == "Summary") {
-    buildSummaryPage();
-  }
-    
-
-}
-
-var medication = [];
 
 function buildPillCountScreen() {
-  var mainContainer = document.getElementById("main-container-table-cell-right");
-  mainContainer.innerHTML = null;
+  var session_date = moment(new Date(sessionStorage.sessionDate)).format('YYYY-MM-DD');
+  var url = 'http://' + apiURL + ':' + apiPort + '/api/v1/programs/1/patients/';
+  url += sessionStorage.patientID + "/last_drugs_received?date=" + session_date;
+
+  var req = new XMLHttpRequest();
+    req.onreadystatechange = function () {
+      if (this.readyState == 4) {
+        if (this.status == 200) {
+           medication = JSON.parse(this.responseText);
+           showMedication(medication);
+        }
+      }
+    };
+    try {
+      req.open('GET', url, true);
+      req.setRequestHeader('Authorization', sessionStorage.getItem('authorization'));
+      req.send(null);
+    } catch (e) {
+    }
+  
+}
+
+function showMedication(medication) {
+  var frame = document.getElementById('inputFrame' + tstCurrentPage);
+  frame.style = 'width: 96%; height: 89%;';
+
+  var ordersTable = document.createElement('div');
+  ordersTable.setAttribute('class','orders-table');
+  frame.appendChild(ordersTable);
 
 
-  var table = document.createElement("div");
-  table.setAttribute("class","medication-table");
-  mainContainer.appendChild(table);
 
-  var tr = document.createElement("div");
-  tr.setAttribute("class","medication-table-row");
+  var theaders = ['Medication','Amount remaining'];
+  var ordersTableRow = document.createElement('div');
+  ordersTableRow.setAttribute('class','orders-table-row');
+  ordersTable.appendChild(ordersTableRow)
+
+  for(var x = 0 ; x < theaders.length ; x++){
+    var th = document.createElement('div');
+    th.setAttribute('class','orders-table-row-cell');
+    th.innerHTML = theaders[x];
+    ordersTableRow.appendChild(th)
+    if(x == 1) {
+      th.style = "text-align: center; width: 20%; float: right;";
+    }else{
+      th.style = "width: 78%; float: left; padding-left: 10px;";
+    }
+  }
+
+
+  for(var i = 0 ; i < medication.length ; i++) {
+    var ordersTableRow = document.createElement('div');
+    ordersTableRow.setAttribute('class','orders-table-row');
+    ordersTable.appendChild(ordersTableRow)
+
+    var ordersTableCell = document.createElement('div');
+    ordersTableCell.setAttribute('class','orders-table-cell medication-cells');
+    ordersTableCell.innerHTML = medication[i].drug.name;
+    ordersTableCell.style = "padding-left: 10px;width: 78%; float: left;font-weight: bold;";
+    ordersTableRow.appendChild(ordersTableCell)
+
+    var ordersTableCell = document.createElement('div');
+    ordersTableCell.setAttribute('class','orders-table-cell medication-cells pill-counts');
+    ordersTableCell.innerHTML = '?';
+    ordersTableCell.setAttribute('id', medication[i].order_id);
+    ordersTableCell.setAttribute('quantity', medication[i].quantity);
+    ordersTableCell.setAttribute('drug_name', medication[i].drug.name);
+    ordersTableCell.setAttribute('start_date', medication[i].order.start_date);
+    ordersTableCell.setAttribute('equivalent_daily_dose', medication[i].equivalent_daily_dose);
+    ordersTableCell.setAttribute('onmousedown','enterPillsRemaining(this);');
+    ordersTableCell.style = "font-weight: bold;font-size: 1.3em;text-align: center; width: 20%; float: right;";
+    ordersTableRow.appendChild(ordersTableCell)
+
+  }
+
+  document.getElementById('confirmatory-test-cover').style = 'display: none;';
+}
+
+function enterPillsRemaining(e) {
+  document.getElementById('confirmatory-test-cover').style = 'display: inline;';
+  var popUpBox = document.getElementById('confirmatory-test-popup-div');
+  popUpBox.style = 'display: inline';
+  popUpBox.innerHTML = null;
+
+  var table = document.createElement('table');
+  table.style = 'width: 99%; height: 98%';
+  popUpBox.appendChild(table);
+  
+  var tr = document.createElement('tr');
   table.appendChild(tr);
-
-  var cells = ["medication-list","keypad"];
   
-  for(var i = 0 ; i < cells.length ; i++){
-    var td = document.createElement("div");
-    td.setAttribute("class","medication-table-cell");
-    td.setAttribute("id", cells[i]);
-    tr.appendChild(td);
-  }
-    
+  var td = document.createElement('td');
+  td.style = 'vertical-align: top;';
+  tr.appendChild(td);
 
-
-  var medicationList = document.getElementById("medication-list");
-  var ul = document.createElement("ul");
-
-  ul.setAttribute("id","medication-ul");
-  medicationList.appendChild(ul);
-  var todaysDate = moment().format("YYYY-MM-DD");
-  var url = 'http://' + apiURL + ':' + apiPort + '/api/v1/programs/1/patients/'+ sessionStorage.patientID + "/last_drugs_received?date="+todaysDate;
-    var req = new XMLHttpRequest();
-    req.onreadystatechange = function () {
-
-      if (this.readyState == 4) {
-        if (this.status == 200) {
-           medication = JSON.parse(this.responseText);
-           sessionStorage.setItem("orderID", medication.order_id);
-          for(var i = 0 ; i < medication.length ; i++){
-            var li = document.createElement("li");
-            li.setAttribute("class","list");
-            li.setAttribute("onmousedown","selectMed(this)");
-            li.innerHTML = medication[i].drug.name;
-            ul.appendChild(li);
-          }
-        }
-      }
-    };
-    try {
-      req.open('GET', url, true);
-      req.setRequestHeader('Authorization', sessionStorage.getItem('authorization'));
-      req.send(null);
-    } catch (e) {
-    }
+  var inputBox = document.createElement('input');
+  inputBox.setAttribute('type','text');
+  inputBox.setAttribute('id','num-pills');
+  td.appendChild(inputBox);
   
-
+    
+  var tr = document.createElement('tr');
+  table.appendChild(tr);
   
+  var td = document.createElement('td');
+  td.style = 'vertical-align: top; text-align: center;';
+  tr.appendChild(td);
+  createKeyPad(td, e);
+}
 
-  buildKeyPad();
+function createKeyPad(e, cell) {
+  var table = document.createElement('table');                                
+  table.setAttribute("class","prescription-keypad");                          
+  /* ........................................ */                              
+  /* ........................................ */                              
+  var keypad_attributes = [];                                                 
+  keypad_attributes.push([1,2,3]);                                            
+  keypad_attributes.push([4,5,6]);                                            
+  keypad_attributes.push([7,8,9]);                                            
+  keypad_attributes.push(["Del.",0,"Done"]);                                     
+  //keypad_attributes.push(["Clear","%","/"]);                                
+                                                                              
+  for(var i = 0 ; i < keypad_attributes.length ; i++) {                       
+    var tr = document.createElement("tr");                                  
+    table.appendChild(tr);                                                  
+                                                                                
+    for(var j = 0 ; j < keypad_attributes[i].length ; j++){                 
+      var td = document.createElement('td');                              
+      tr.appendChild(td);                                                 
+                                                                            
+      var span = document.createElement('span');                          
+      span.setAttribute("class","keypad-buttons");                        
+      span.setAttribute("onmousedown","enterKeypadValue(this,'" + cell.id + "');");         
+      span.innerHTML = keypad_attributes[i][j];                           
+      td.appendChild(span);                                               
+    }                                                                       
+  }                                                                           
+                                                                                
+  e.appendChild(table);
 
 }
 
-function buildSummaryPage() {
-  var mainContainer = document.getElementById("main-container-table-cell-right");
-  mainContainer.innerHTML = null;
-  generateTable(mainContainer);
-  var table = document.createElement("TAB")
-}
+function enterKeypadValue(e, cell_id){
+  var inputBox = document.getElementById('num-pills');
 
-function createTable(rownName) {
-
-    var pillsRow = document.createElement("TR");
-    pillsRow.setAttribute("id", rownName + "TR");
-    document.getElementById("myTable").appendChild(pillsRow);
-
-    var d = document.createElement("TD");
-    var e = document.createTextNode(rownName);
-    d.appendChild(e);
-    document.getElementById("dailyTabsTR").appendChild(d);
-    
-}
-
-function generateTable(mainContainer) {
-    
-    var x = document.createElement("TABLE");
-    x.setAttribute("id", "myTable");
-    mainContainer.appendChild(x);
-    
-    var y = document.createElement("TR");
-    y.setAttribute("id", "headerTR");
-    y.setAttribute("class", "headers");
-    document.getElementById("myTable").appendChild(y);
-    document.getElementById("headerTR").innerHTML = "<td class='headers'> Prescription </td> <td class='headers' id='last-visit'>  </td>";
-
-    var y = document.createElement("TR");
-    y.setAttribute("id", "myTR");
-    document.getElementById("myTable").appendChild(y);
-    document.getElementById("myTR").innerHTML = "<td> Drug Name </td>";
-
-    var pillsRow = document.createElement("TR");
-    pillsRow.setAttribute("id", "numberTR");
-    document.getElementById("myTable").appendChild(pillsRow);
-    document.getElementById("numberTR").innerHTML = "<td> Tabs Given </td>"
-
-    var TabsPerDayRow = document.createElement("TR");
-    TabsPerDayRow.setAttribute("id", "dailyTabsTR");
-    document.getElementById("myTable").appendChild(TabsPerDayRow);
-    document.getElementById("dailyTabsTR").innerHTML = "<td> Tabs Per Day </td>"
-
-    var DosesPerDayRow = document.createElement("TR");
-    DosesPerDayRow.setAttribute("id", "dosesTabsTR");
-    document.getElementById("myTable").appendChild(DosesPerDayRow);
-    document.getElementById("dosesTabsTR").innerHTML = "<td> Doses Per Day </td>";
-    
-    var y = document.createElement("TR");
-    y.setAttribute("id", "expectedTR");
-    y.setAttribute("class", "headers");
-    document.getElementById("myTable").appendChild(y);
-    document.getElementById("expectedTR").innerHTML = "<td class='headers'> Tabs Remaining </td> <td class='headers' id='days-elapsed'> Prescription </td>";
-
-    var ExpectedRow = document.createElement("TR");
-    ExpectedRow.setAttribute("id", "ExpectedTabsTR");
-    document.getElementById("myTable").appendChild(ExpectedRow);
-    document.getElementById("ExpectedTabsTR").innerHTML = "<td> Expected </td>";
-
-    var actualRow = document.createElement("TR");
-    actualRow.setAttribute("id", "actualTabsTR");
-    document.getElementById("myTable").appendChild(actualRow);
-    document.getElementById("actualTabsTR").innerHTML = "<td> Actual (Counted) </td>";
-
-    var y = document.createElement("TR");
-    y.setAttribute("id", "adherenceTR");
-    y.setAttribute("class", "headers");
-    document.getElementById("myTable").appendChild(y);
-    document.getElementById("adherenceTR").innerHTML = "<td class='headers'> Adherence </td> <td class='headers'></td>";
-    
-    var dosesMissedRow = document.createElement("TR");
-    dosesMissedRow.setAttribute("id", "dosesMissedTabsTR");
-    document.getElementById("myTable").appendChild(dosesMissedRow);
-    document.getElementById("dosesMissedTabsTR").innerHTML = "<td> Doses Missed/ unaccounted for </td>";
-
-
-    var dosesConsumedRow = document.createElement("TR");
-    dosesConsumedRow.setAttribute("id", "dosesConsumedTabsTR");
-    document.getElementById("myTable").appendChild(dosesConsumedRow);
-    document.getElementById("dosesConsumedTabsTR").innerHTML = "<td> Doses consumed </td>";
-
-    var artAdherenceRow = document.createElement("TR");
-    artAdherenceRow.setAttribute("id", "artAdherenceTabsTR");
-    document.getElementById("myTable").appendChild(artAdherenceRow);
-    document.getElementById("artAdherenceTabsTR").innerHTML = "<td> ART Adherence </td>";
-    
-  var todaysDate = moment().format("YYYY-MM-DD");
-  var url = 'http://' + apiURL + ':' + apiPort + '/api/v1/programs/1/patients/'+ sessionStorage.patientID + "/last_drugs_received?date="+todaysDate;
-    var req = new XMLHttpRequest();
-    var counted = "0";
-    req.onreadystatechange = function () {
-
-      if (this.readyState == 4) {
-        if (this.status == 200) {
-           medication = JSON.parse(this.responseText);
-          for(var i = 0 ; i < medication.length ; i++){
-            var z = document.createElement("TD");
-            var t = document.createTextNode(medication[i].drug.name);
-            z.appendChild(t);
-            var today = moment();
-            var givenDay = moment(medication[i].order.start_date);
-            var dayDiffernece = today.diff(givenDay, 'days');
-            
-            document.getElementById("myTR").appendChild(z);
-            var b = document.createElement("TD");
-            var c = document.createTextNode(localStorage.getItem(medication[i].drug.name));
-            b.appendChild(c);
-            var expected = (medication[i].quantity - (dayDiffernece * (medication[i].equivalent_daily_dose * medication[i].dose)));
-            var remaining = localStorage.getItem(medication[i].drug.name);
-            var consumed = medication[i].quantity - remaining;
-            var adherencePercentage = Math.round(100*(medication[i].quantity - remaining) / (medication[i].quantity - expected));            
-            sessionStorage.setItem("adherencePercentage", adherencePercentage);
-            var missed = (expected - remaining);
-            if (localStorage.getItem(medication[i].drug.name) != null) {
-              counted = localStorage.getItem(medication[i].drug.name);
-            }else {
-              counted = 0;
-            }
-            
-            if (adherencePercentage < 0) {
-              adherencePercentage = 0;
-            }
-            
-            if (expected < 0) {
-              expected = 0;
-            }
-
-            if (missed < 0) {
-              // missed += (-missed) + (-missed);
-              missed = missed * (-1);
-            } 
-
-            document.getElementById("numberTR").innerHTML += "<td>" +medication[i].quantity+"</td>";
-            document.getElementById("days-elapsed").innerHTML = dayDiffernece +" days elapsed";
-            document.getElementById("last-visit").innerHTML = "Last Visit " + moment(medication[i].order.start_date).format("DD/MMM/YYYY") ;
-            document.getElementById("dailyTabsTR").innerHTML += "<td>" +medication[i].equivalent_daily_dose+"</td>";
-            document.getElementById("dosesTabsTR").innerHTML += "<td>" +medication[i].dose+"</td>";
-            document.getElementById("actualTabsTR").innerHTML += "<td>" +counted+"</td>";
-            document.getElementById("ExpectedTabsTR").innerHTML += "<td>" +expected+"</td>";
-            document.getElementById("dosesMissedTabsTR").innerHTML += "<td>" +missed+" doses Missed</td>";
-            document.getElementById("dosesConsumedTabsTR").innerHTML += "<td>" +adherencePercentage+"%</td>";
-            document.getElementById("artAdherenceTabsTR").innerHTML += "<td class='red'>Explore Problems</td>";
-              if (i == 3) {
-                break;
-              }
-
-          }
-        }
-      }
-    };
-    try {
-      req.open('GET', url, true);
-      req.setRequestHeader('Authorization', sessionStorage.getItem('authorization'));
-      req.send(null);
-    } catch (e) {
-    }
-
-}
-
-function buildKeyPad() {
-  var mainContainer = document.getElementById("keypad");
-  var keypad = document.createElement("div");
-  keypad.setAttribute("class","keypad-table");
-  mainContainer.appendChild(keypad);
-
-  /* ............................ */
-  var row = document.createElement("div");
-  row.setAttribute("class","keypad-table-row");
-  keypad.appendChild(row);
-
-  var cell = document.createElement("div");
-  cell.setAttribute("class","keypad-table-cell");
-  cell.innerHTML = "Pill(s) brought"
-  cell.style = "text-align: center; font-size: 2.2em;"
-  row.appendChild(cell);
-  /* ............................ */
-
-
-  var row = document.createElement("div");
-  row.setAttribute("class","keypad-table-row");
-  keypad.appendChild(row);
-
-  var cell = document.createElement("div");
-  cell.setAttribute("class","keypad-table-cell");
-  row.appendChild(cell);
-   
-  var inputText = document.createElement("input");
-  inputText.setAttribute("type","text");
-  inputText.setAttribute("id","pills-brought");
-  cell.appendChild(inputText); 
-
-  var keypad = document.createElement("div");
-  keypad.setAttribute("class","keypad-table");
-  mainContainer.appendChild(keypad);
-
-
-  var qwerty = [];
-  qwerty.push(["1","2","3"]);
-  qwerty.push(["4","5","6"]);
-  qwerty.push(["7","8","9"]);
-  qwerty.push([".","0","Del."]);
-
-
-
-  for(var i = 0 ; i < qwerty.length; i++){
-    var row = document.createElement("div");
-    row.setAttribute("class","keypad-table-row");
-
-    for(var j = 0 ; j < qwerty[i].length; j++){
-      var cell = document.createElement("div");
-      cell.setAttribute("class","keypad-table-cell");
-      var span = document.createElement("span");
-      span.setAttribute("class","keypad-buttons");
-      span.innerHTML = qwerty[i][j];
-      span.setAttribute("onmousedown","setEnteredKey(this);");
-      cell.appendChild(span);
-      row.appendChild(cell);
-    }
-    keypad.appendChild(row);
-  }
-
-
-}
-
-function setEnteredKey(key) {
-  var inputBox = document.getElementById("pills-brought");
-  var activeBTN = sessionStorage.activeBTN;
   try{
 
-    if(key.innerHTML.match(/Del/i)){
+    if(e.innerHTML.match(/Del/i)){
       inputBox.value = inputBox.value.substring(0, inputBox.value.length - 1);
+    }else if(e.innerHTML.match(/Clear/i)){
+      inputBox.value = null;
+      removeFromHash();
+    }else if(e.innerHTML.match(/Done/i)){
+      closePopUp(cell_id);
     }else{
-      inputBox.value += key.innerHTML;
-      
+      inputBox.value += e.innerHTML;
     }
-    localStorage.setItem(activeBTN, inputBox.value);
+
   }catch(x) { }
 
 }
 
-function selectMed(e) {
-  var list = document.getElementsByClassName("list");
-  document.getElementById("pills-brought").value = localStorage.getItem(e.innerHTML);
-
-  for(var i = 0 ; i < list.length ; i++){
-    list[i].setAttribute("class","list");
+var medicationPillCounts = {};
+ 
+function closePopUp(cell_id) {
+  var inputBox = document.getElementById('num-pills');
+  var cell  = document.getElementById(cell_id);
+  if(isNumeric(inputBox.value)) {
+    cell.innerHTML = inputBox.value;
+    medicationPillCounts[cell.id] = {
+      quantity: cell.getAttribute('quantity'),
+      drug_name: cell.getAttribute('drug_name'),
+      start_date: cell.getAttribute('start_date'),
+      equivalent_daily_dose: cell.getAttribute('equivalent_daily_dose'),
+      pill_count: inputBox.value, adherence: null
+    };
   }
-  sessionStorage.setItem("activeBTN", e.innerHTML);
-  e.setAttribute("class","list list-selected");
+
+  document.getElementById('confirmatory-test-cover').style = 'display: none;';                                               
+  document.getElementById('confirmatory-test-popup-div').style='display: none;';
 }
 
-function toNextEncounter() {
-  __$("nextButton").removeAttribute("onmousedown");
-  document.getElementById("nextButton").setAttribute("onmousedown", "submitAdherence()");
-
+function changeNextButton() {
+  var btn = document.getElementById('nextButton');
+  btn.setAttribute('onmousedown','validateInput();');
 }
-  function submitAdherence() {
-    var encounter = {
-      encounter_type_id: 68,
-      patient_id: sessionStorage.patientID,
-      encounter_datetime: moment().format("YYYY-MM-DD")
+
+function validateInput() {
+  var cells = document.getElementsByClassName('pill-counts');
+  var valid = true;
+   
+  for(var i = 0 ; i < cells.length ; i++){
+    if(!isNumeric(cells[i].innerHTML)){
+      valid = false;
+    }
+  }
+
+  if(!valid) {
+    showMessage('Please enter amount remaining by clicking "?"');
+  }else{
+    gotoNextPage();
+  }
+}
+
+function isNumeric(n) {
+  return !isNaN(parseFloat(n)) && isFinite(n);
+}
+
+
+
+function dateDiffInDays(date1, date2){
+  var timeDiff = Math.abs(date2.getTime() - date1.getTime());
+  var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24)); 
+  return diffDays;
+}
+
+function buildSummary() {
+  var frame = document.getElementById('inputFrame' + tstCurrentPage);
+  frame.style = 'width: 96%; height: 89%;';
+
+  var table = document.createElement('table');
+  table.setAttribute('id','summary-table');
+  frame.appendChild(table);
+
+  var tr = document.createElement('tr');
+  //tr.setAttribute('class','table-headers');
+  table.appendChild(tr);
+
+  var th = document.createElement('th');
+  th.innerHTML =  'Last visit:&nbsp;<span id="previous-visit-date"></span>';
+  th.innerHTML +=  '<span id="days-gone">Day(s) gone:&nbsp;<span id="days-gone-num"></span></span>';
+  th.style = 'text-align: left; padding-left: 5px;';
+  tr.appendChild(th);
+
+  for(order_id in medicationPillCounts){
+    var attr = medicationPillCounts[order_id];
+    var th = document.createElement('th');
+    th.innerHTML = attr.drug_name;
+    tr.appendChild(th);
+
+    var vdate = document.getElementById("previous-visit-date");
+    vdate.innerHTML = moment(new Date(attr.start_date)).format('DD/MMM/YYYY');
+
+    var date1 = new Date(sessionStorage.sessionDate);
+    var date2 = new Date(attr.start_date);
+    var daysGone = document.getElementById('days-gone-num');
+    daysGone.innerHTML = dateDiffInDays(date1, date2);
+  }
+
+
+  /* Prescription section ............................................. */
+  headersSection('Prescription', table);
+
+
+  /*Tabs given  ................................................................... */
+  for(order_id in medicationPillCounts){
+    var attr = medicationPillCounts[order_id];
+    dataSection('Tabs given', attr.quantity, table);
+  }
+  
+ 
+  /*Tabs per day ................................................................... */
+  for(order_id in medicationPillCounts){
+    var attr = medicationPillCounts[order_id];
+    dataSection('Tabs per day', attr.equivalent_daily_dose, table);
+  }
+ 
+  /*Tabs remaining ................................................................... */
+  headersSection('Table remaining', table);
+
+  /*Expected ................................................................... */
+  for(order_id in medicationPillCounts){
+    var attr = medicationPillCounts[order_id];
+    var given = attr.quantity;
+    var equivalent_daily_dose = attr.equivalent_daily_dose;
+    var start_date  = attr.start_date;
+
+    var expected = calculateExpected(given, equivalent_daily_dose, start_date);
+    expected = (expected < 0 ? 0 : expected);
+    dataSection('Expected', expected, table);
+  }
+ 
+  /*Actual (counted) ................................................................... */
+  for(order_id in medicationPillCounts){
+    var attr = medicationPillCounts[order_id];
+    dataSection('Actual (counted)', attr.pill_count, table);
+  }
+
+  /*Adherence ................................................................... */
+  headersSection('Adherence', table);
+
+  
+  /*Doses missed / unaccounted for ................................................................... */
+  for(order_id in medicationPillCounts){
+    var attr = medicationPillCounts[order_id];
+    var given = parseFloat(attr.quantity);
+    var daily_dose = parseFloat(attr.equivalent_daily_dose);
+    var start_date  = attr.start_date;
+    var expected = calculateExpected(given, daily_dose, start_date);
+
+    if(expected < 0) {
+      expected = (expected * -1);
     }
 
-    if (sessionStorage.adherencePercentage) {
-      submitParameters(encounter, "/encounters", "postConsultationObs");
+    dataSection('Doses missed/ unaccounted for', expected, table);
+  }
+ 
+  
+  /*Doses consumed ................................................................... */
+  for(order_id in medicationPillCounts){
+    var attr = medicationPillCounts[order_id];
+    var given = parseFloat(attr.quantity);
+    var daily_dose = parseFloat(attr.equivalent_daily_dose);
+    var start_date  = attr.start_date;
+    var expected = calculateExpected(given, daily_dose, start_date);
+    var adherence = calculateAdherence(given, attr.pill_count, expected);
+    if(isNumeric(adherence))
+      adherence += '%';
+
+    dataSection('Doses consumed', adherence, table);
+  }
+
+  /*ART adherence ................................................................... */
+  for(order_id in medicationPillCounts){
+    var attr = medicationPillCounts[order_id];
+    var given = parseFloat(attr.quantity);
+    var daily_dose = parseFloat(attr.equivalent_daily_dose);
+    var start_date  = attr.start_date;
+    var expected = calculateExpected(given, daily_dose, start_date);
+    var adherence = calculateAdherence(given, attr.pill_count, expected);
+    var comment = 'N/A';
+
+    if(isNumeric(adherence)) {
+      attr.adherence = adherence;
+      if(adherence >= 95 && adherence <= 105) {
+        comment = '<b style="color: green;">Good adherence</b>';
+      }else{
+        comment = '<b style="color: red;">Explore problems</b>';
+      }
     }
+
+    dataSection('ART adherence', comment, table);
+  }
+
 }
 
-function postConsultationObs(response) {
-     var encounter = {
-      encounter_id : response.encounter_id,
-      observations: [
-        {
-          concept_id: 1164,
-          order_id: sessionStorage.order_id,
-          value_numeric: sessionStorage.adherencePercentage,
-          value_modifier: "%",
-        }
-      ],
-    }
-    submitParameters(encounter, "/observations", "nextPage"); 
+function calculateAdherence(given, pill_count, expected) {
+  return Math.round(100*(given - pill_count) / (given - expected));
 }
-function nextPage(){
-  nextEncounter(sessionStorage.patientID, 1);
+
+function calculateExpected(given, equivalent_daily_dose, start_date){
+  var date1 = new Date(sessionStorage.sessionDate);
+  var date2 = new Date(start_date);
+  var days_gone = dateDiffInDays(date1, date2);
+
+  var expected = (given - (days_gone * parseFloat(equivalent_daily_dose)));
+
+  return expected;
+}
+
+function headersSection(header_text, table) {
+  var tr = document.createElement('tr');
+  tr.setAttribute('class','table-headers');
+  table.appendChild(tr);
+
+  var th = document.createElement('th');
+  th.innerHTML =  header_text
+  th.style = 'text-align: left; padding-left: 5px;';
+  tr.appendChild(th);
+
+  for(order_id in medicationPillCounts){
+    var th = document.createElement('th');
+    th.innerHTML = '&nbsp;';
+    tr.appendChild(th);
+  }
+}
+
+function dataSection(data_title, data, table) {
+  var tr = document.createElement('tr');
+  table.appendChild(tr);
+
+  var th = document.createElement('th');
+  th.innerHTML =  data_title;
+  th.style = 'text-align: left; padding-left: 25px;';
+  tr.appendChild(th);
+
+  for(order_id in medicationPillCounts){
+    var attr = medicationPillCounts[order_id];
+    var th = document.createElement('th');
+    th.innerHTML = data;
+    tr.appendChild(th);
+  }
 }
 
 </script>
@@ -669,7 +536,11 @@ function nextPage(){
       <form>
 
         <input type="text" name="summary"
-          tt_onLoad="__$('keyboard').style.display = 'none';buildEntryPage(); toNextEncounter();" 
+          tt_onLoad="__$('keyboard').style.display = 'none';changeNextButton(); buildPillCountScreen();" 
+          tt_pageStyleClass= "NoControls" helpText="ARVs given last time" optional = "true"/>
+
+        <input type="text" name="summary"
+          tt_onLoad="__$('keyboard').style.display = 'none';buildSummary();" 
           tt_pageStyleClass= "NoControls" helpText="ART adherence" optional = "true"/>
 
       </form>
@@ -679,3 +550,39 @@ function nextPage(){
 </body>
 
 
+<!-- ####################### -->
+<style>                                                                         
+                                                                                
+ #confirmatory-test-popup-div {                                                 
+    display: none;                                                              
+    background-color: #F4F4F4;                                                  
+    border: 2px solid #E0E0E0;                                                  
+    border-radius: 15px;                                                        
+    height: 390px;                                                              
+    padding: 5px;                                                               
+    position: absolute;                                                         
+    margin-top: 25px;                                                          
+    width: 280px;                                                               
+    /*margin-left: 430px;*/                                                     
+    left: 39%;                                                                  
+    z-index: 991;                                                               
+  }                                                                             
+                                                                                
+  #confirmatory-test-cover{                                                     
+    display: inline;                                                            
+    position: absolute;                                                         
+    background-color: black;                                                    
+    width: 100%;                                                                
+    height: 102%;                                                               
+    left: 0%;                                                                   
+    top: 0%;                                                                    
+    z-index: 990;                                                               
+    opacity: 0.65;                                                              
+  }                                                                             
+                                                                                
+</style>                                                                        
+                                                                                
+                                                                                
+                                                                                
+<div id="confirmatory-test-popup-div"></div>                                    
+<div id="confirmatory-test-cover"></div> 
