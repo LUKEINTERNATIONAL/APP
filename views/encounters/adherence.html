@@ -434,6 +434,9 @@ function buildSummary() {
 
     if(expected < 0) {
       expected = (expected * -1);
+      expected += ' missed.'
+    }else{
+      expected += ' unacc.'
     }
 
     dataSection('Doses missed/ unaccounted for', expected, table);
