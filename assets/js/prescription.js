@@ -94,7 +94,7 @@ function loadRegimens() {
         var td = document.createElement("td");
         td.setAttribute("class","regimen-names");
         td.setAttribute("id", regimen);
-        td.setAttribute("onmousedown","selectRegimen(this);");
+        td.setAttribute("onmousedown","selectRegimen(this);checkIfSwitchingRegimen(this);");
         td.innerHTML = regimen;
         tr.appendChild(td);
     }
@@ -1275,7 +1275,7 @@ function postRegimenOrders(encounter){
     var drug_orders_params = {encounter_id: encounter.encounter_id, drug_orders: []}
     var start_date = new Date();
 
-    var start_date = new Date();
+    var start_date = sessionDate;
     var start_date_formated = getFormattedDate(start_date);
     var duration = parseInt(setSelectedInterval);
     var auto_expire_date = start_date.setDate(start_date.getDate() + duration);
@@ -1331,10 +1331,23 @@ function postRegimenOrders(encounter){
         drug_orders_params.drug_orders.push(drug_order);
     }
 
-
-    submitParameters(drug_orders_params, "/drug_orders", "submitFastTrack");
+    if(selectedSwitchReason.length > 0) {
+      treatmentObs(drug_orders_params, "/drug_orders", "treatmentObs");
+    }else{
+      submitParameters(drug_orders_params, "/drug_orders", "postFastTrackAssesmentObs");
+    }
 }
 
+function treatmentObs(encounter) {
+  var obs = {                                                                   
+    encounter_id: encounter.encounter_id,                                    
+    observations: [                                                             
+      { concept_id: 1779, value_text:  selectedSwitchReason }
+    ]                                                                           
+  };                                                                            
+                                                                                
+  submitParameters(obs, "/observations", "submitFastTrack")  
+}
 
 function submitFastTrack(e){
     var encounter = {
@@ -1401,5 +1414,129 @@ function getCurrentRegimen() {
     xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
     xhttp.setRequestHeader('Content-type', "application/json");
     xhttp.send();
+}
+
+function checkIfSwitchingRegimen(e) {
+  var selectedRegimenIndex = parseInt(e.id.match(/\d+/)[0]);
+  var current_regimen = document.getElementById('current-regimen');
+  current_regimen = parseInt(current_regimen.innerHTML.match(/\d+/)[0]);
+
+  if(selectedRegimenIndex != current_regimen){
+    buildResonForSwitchinPopup();
+  }else{
+    selectedSwitchReason = null;
+  }
+}
+
+function buildResonForSwitchinPopup() {
+  var popBox = document.getElementById("confirmatory-test-popup-div");
+  var popBoxCover = document.getElementById("confirmatory-test-cover");
+
+  popBoxCover.style = "display: inline;";
+  popBox.style = "display: inline;";
+
+  popBox.innerHTML = null;
+  
+  var switchingTableTitle = document.createElement('div');
+  switchingTableTitle.setAttribute('id','switching-table-caption');
+  switchingTableTitle.innerHTML = "Reason for switching regimen"
+  popBox.appendChild(switchingTableTitle);
+
+
+  var switching_reasons = [
+    'Reduce the number of pills, doses or drugs that are taken daily',
+    'Improve side effects issues in the short- and long-term',
+    'Ease possible drug-drug interactions','Ease swallowing',
+    'Support the best use of meds during pregnancy',
+    'Regimen not available / Expensive','Other'
+  ];
+
+  var switchingTable = document.createElement('div');
+  switchingTable.setAttribute('class','switching-table');
+  popBox.appendChild(switchingTable);
+
+  for(var i = 0 ; i < switching_reasons.length ; i++){
+    var switchingTableRow = document.createElement('div');
+    switchingTableRow.setAttribute('class','switching-table-row');
+    switchingTable.appendChild(switchingTableRow);
+
+    var switchingTableCell = document.createElement('div');
+    switchingTableCell.setAttribute('class','switching-table-cell switching-reasons');
+    switchingTableCell.setAttribute('onclick','switchReason(this);');
+    switchingTableCell.innerHTML = switching_reasons[i];
+    switchingTableRow.appendChild(switchingTableCell);
+  }
+
+  var buttonContainer = document.createElement('div');
+  buttonContainer.setAttribute('class','buttonContainer');
+  popBox.appendChild(buttonContainer);
+
+  var buttonContainerRow = document.createElement('div');
+  buttonContainerRow.setAttribute('class','buttonContainerRow');
+  buttonContainer.appendChild(buttonContainerRow);
+
+  var cells = ['Cancel','Switch'];
+
+  for(var i = 0 ; i < cells.length ; i++){
+    var buttonContainerCell = document.createElement('div');
+    buttonContainerCell.setAttribute('class','buttonContainerCell');
+    buttonContainerCell.setAttribute('style','width: 100px;');
+    buttonContainerCell.innerHTML = cells[i];
+
+    if(i == 0) {
+      buttonContainerCell.setAttribute('id','buttonContainerCell-lightblue');
+      buttonContainerCell.setAttribute('onmousedown','cancelSwitch();');
+    }else if(i == 1) {
+      buttonContainerCell.setAttribute('id','buttonContainerCell-blue');
+      buttonContainerCell.setAttribute('onmousedown','switchMedication(this);');
+    }
+
+    buttonContainerRow.appendChild(buttonContainerCell);
+  }
+}
+
+var selectedSwitchReason;
+
+function cancelSwitch() {
+  var current_regimen = document.getElementById('current-regimen');
+  current_regimen = parseInt(current_regimen.innerHTML.match(/\d+/)[0]);
+
+  var available_regimens = document.getElementsByClassName('regimen-names');
+  var prev_regimen;
+
+  for(var i = 0 ; i < available_regimens.length ; i++){
+    var reg = parseInt(available_regimens[i].id.match(/\d+/)[0]);
+    if(reg == current_regimen){
+      prev_regimen = available_regimens[i];
+    }
+  }
+
+  selectedSwitchReason = null;
+  closePopUp();
+  selectRegimen(prev_regimen);
+}
+
+function switchReason(e) {
+  var reasons = document.getElementsByClassName('switching-reasons');
+  for(var i = 0 ; i < reasons.length ; i++){
+    reasons[i].style = "background-color: white;";
+  }
+    
+  e.style = "background-color: lightblue;";
+  selectedSwitchReason = e.innerHTML;
+}
+
+function switchMedication(e) {
+  var reasons = document.getElementsByClassName('switching-reasons');
+  var selection_made = false
+  for(var i = 0 ; i < reasons.length ; i++){
+    if(reasons[i].getAttribute('style'))
+      selection_made = true;
+
+  }
+
+  if(selection_made){
+    closePopUp();
+  }
 }
 

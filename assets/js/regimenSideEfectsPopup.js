@@ -64,6 +64,30 @@ popBoxCSS.innerHTML = "<style>\
   border-style: solid;\
   border-width: 1px 0px 0px 0px;\
 }\
+.switching-table {\
+  width: 99%;\
+  display: table;\
+  text-align: center;\
+  border-collapse: separate;\
+  border-spacing: 5px 10px;\
+  height: 75%;\
+}\
+.switching-table-row {\
+  display: table-row;\
+}\
+.switching-table-cell {\
+  display: table-cell;\
+  height: 3%;\
+  border-style: solid;\
+  border-width: 1px;\
+  box-shadow: 0 8px 6px -6px black;\
+  vertical-align: middle;\
+}\
+#switching-table-caption {\
+  text-align: center;\
+  font-size: 1.3em;\
+  font-weight: bold;\
+}\
 </style>";
 
 

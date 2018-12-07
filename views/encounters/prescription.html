@@ -45,6 +45,14 @@ function showWeight() {
   td.innerHTML = sessionStorage.patientAge + ' year(s)';
   tr.appendChild(td);
 
+  var th = document.createElement('th');
+  th.innerHTML = "Client's gender:";
+  tr.appendChild(th);
+
+  var td = document.createElement('td');
+  td.innerHTML = sessionStorage.patientGender;
+  tr.appendChild(td);
+
 
   var tr = document.createElement('tr');
   table.appendChild(tr);
@@ -71,6 +79,11 @@ function showWeight() {
 
   getCurrentRegimen();
   //document.getElementById('helpText2').setAttribute("helptext", "Current patient weight: "+ sessionStorage.currentWeight + "KG") ;
+}
+
+function resetFinishButton() {
+  var btn = document.getElementById('nextButton');
+  btn.setAttribute("onmousedown","gotoNextButton();");
 }
 
 </script>
@@ -105,6 +118,7 @@ function showWeight() {
                 <select name="follow_up_agreement" allowFreeText="false"
                         helpText="Assess for fast track visit (next appointment)"
                         tt_onLoad = "adjustFrameHeight();"
+                        tt_onUnLoad = "resetFinishButton();"
                         id="assess_for_ft" tt_pageStyleClass="NoKeyboard">
                     <option value=""></option>
                     <option value="YES">Yes</option>
