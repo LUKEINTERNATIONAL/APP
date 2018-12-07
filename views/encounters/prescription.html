@@ -64,10 +64,12 @@ function showWeight() {
   tr.appendChild(th);
 
   var td = document.createElement('td');
-  td.innerHTML = 'N/A';
+  td.innerHTML = '<span id="current-regimen"></span>';
   tr.appendChild(td);
 
 
+
+  getCurrentRegimen();
   //document.getElementById('helpText2').setAttribute("helptext", "Current patient weight: "+ sessionStorage.currentWeight + "KG") ;
 }
 
