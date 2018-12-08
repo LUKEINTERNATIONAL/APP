@@ -52,6 +52,7 @@
             var patientGender = sessionStorage.patientGender;
             var tt_cancel_destination = "/views/patient_dashboard.html?patient_id=" + patient_id;
             var lab_orders_required = false;
+            var oldtstCurrentPage = null;
 
 
             var labResultsTable = null;
@@ -198,7 +199,7 @@
                 margin-top: -5px;
             }
 
-            .cpt_button{
+            .cpt_button, .lab_order_button{
                 -moz-user-select: none;
                 background-image: none;
                 border: 1px solid transparent;
@@ -219,7 +220,7 @@
                 margin-top: -5px;
             }
 
-            #cpt-popup-div {
+            #cpt-popup-div, #lab-popup-div {
                 display: none;
                 background-color: #F4F4F4;
                 border: 2px solid #E0E0E0;
@@ -246,7 +247,7 @@
                 z-index: 991;
             }
 
-            #regimen-change-popup-header{
+            #regimen-change-popup-header, #lab-popup-header{
                 border-bottom: 2px solid #7D9EC0;
                 margin-left: -5px;
                 width: 101.5%;
@@ -282,7 +283,7 @@
                 opacity: 0.65;
             }
 
-            #cpt-cover{
+            #cpt-cover, #lab-order-cover{
                 display: none;
                 position: absolute;
                 background-color: black;
@@ -294,14 +295,14 @@
                 opacity: 0.65;
             }
 
-            #regimen-change-yes{
+            #regimen-change-yes, #lab-order-yes{
                 -webkit-box-sizing: border-box;
                 -moz-box-sizing: border-box;
                 box-sizing: border-box;
                 bottom: 0px;
             }
 
-            #regimen-change-no{
+            #regimen-change-no, #lab-order-no{
                 -webkit-box-sizing: border-box;
                 -moz-box-sizing: border-box;
                 box-sizing: border-box;
@@ -1897,6 +1898,19 @@
                         }
                     }
 
+                    function setNextButtonToGetInputValueForTbStatusInput(key){
+                        __$('nextButton').onmousedown = function(){
+                            value = __$('touchscreenInput' + tstCurrentPage).value;
+                            answers_hash[key] = value;
+                            if (value.match(/TB SUSPECT/i)){
+                                showLabConfirmationPopup();
+                            } else{
+                                gotoNextPage();
+                            }
+
+                        }
+                    }
+
                     function updateBreastFeedingPregnancyAnswers(){
                         preganncy_status = yesNo_Hash["Pregnant-Breastfeeding"]["Pregnant?"];
                         breast_feeding_status = yesNo_Hash["Pregnant-Breastfeeding"]["Breastfeeding?"];
@@ -2002,6 +2016,18 @@
                     // Get the modal
                     
 
+                    function changeNextButtonForLabOrders(){
+                        var nextButton =  document.getElementById('nextButton');
+                        nextButton.onmousedown = function(){
+                            if (oldtstCurrentPage){
+                                gotoPage(oldtstCurrentPage + 1);
+                                oldtstCurrentPage = null;
+                            } else {
+                                gotoNextPage()
+                            }
+                        }
+                    }
+
                 </script>
 
                 <form action="#" method='post'>
@@ -2025,7 +2051,7 @@
   
 
                     <input type="text" name="lab-summary"
-                           tt_onLoad="__$('keyboard').style.display = 'none';buildConsultationLabPage();"
+                           tt_onLoad="__$('keyboard').style.display = 'none';buildConsultationLabPage(); changeNextButtonForLabOrders();"
                            tt_pageStyleClass= "NoControls" helpText="Lab Results Summary" optional = "true"/>
 
                     <input type="text" name="iac" condition="iac == true"
@@ -2292,7 +2318,7 @@
 
                     <select allowFreeText="false" condition="true && __$('tb_treatment_question').value.toUpperCase() == 'NO'
                             && tbSymptomsHashSelects() == 'YES'" helpText="TB Status" id="tb_status" name="observations[][value_coded_or_text]" 
-                            tt_onLoad="setNextButtonToGetInputValue('tb_status'); showCategory2('Clinic consultation');checkTbHivStatus(); checkAndSelectTBSuspected(); checkAndSelectConfirmedTBOnTreatment();"
+                            tt_onLoad="setNextButtonToGetInputValueForTbStatusInput('tb_status'); showCategory2('Clinic consultation');checkTbHivStatus(); checkAndSelectTBSuspected(); checkAndSelectConfirmedTBOnTreatment();"
                             tt_pageStyleClass="NoKeyboard">
                         <option value=''></option>
                         <option value="TB NOT suspected">TB NOT suspected</option>
@@ -2306,6 +2332,7 @@
                            condition=""
                            id="routine_tb_screening"
                            helpText="Order Lab investigations?" optional = "true"/ -->
+
                     
                     <select allowFreeText="false" helpText="Allergic to Cotrimoxazole?" id="allergic_to_cotrimoxazole"  tt_onLoad="setNextButtonToGetInputValue('allergic_to_cpt');"
                             condition = "allergic_to_suphur == '' || allergic_to_suphur.match(/UNKNOWN/i)"
@@ -2934,6 +2961,33 @@
                 <div id="cpt-cover"></div>
 
 
+
+
+
+
+                <div id="lab-popup-div">
+                    <div id="lab-popup-header">
+                        <center id='weight_readings_header'> Lab order</center>
+                    </div><br />
+                    <div>
+                        <span style="font-size: 16pt;">
+                            <center>
+                                <br />
+                                    The patient is a TB suspect. Do you want to take lab orders?
+                                <br />
+                            </center>
+                        </span>
+                        <div style="padding-top: 65px;">
+                            <span id="lab-order-yes" onclick="gotoLabOrder();" class="lab_order_button">Order now</span>
+                            <span id="lab-order-no" onclick="hideLabOrderPopup();" class="lab_order_button" style="float: right; margin-right: 10px;">NOT now</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="lab-order-cover"></div>
+
+
+
                 <script type="text/javascript">
                     function showAllergicToCPTChange(){
                         jQuery("#cpt-cover").show();
@@ -2943,6 +2997,24 @@
                     function hideAllergicToCPTChange(){
                         jQuery("#cpt-cover").hide();
                         jQuery("#cpt-popup-div").hide()
+                    }
+
+                    function showLabConfirmationPopup(){
+                        jQuery("#lab-popup-div").show();
+                        jQuery("#lab-order-cover").show();
+                    }
+
+                    function gotoLabOrder(){
+                        oldtstCurrentPage = tstCurrentPage
+                        jQuery("#lab-popup-div").hide();
+                        jQuery("#lab-order-cover").hide();
+                        gotoPage(1);
+                    }
+
+                    function hideLabOrderPopup(){
+                        jQuery("#lab-popup-div").hide();
+                        jQuery("#lab-order-cover").hide();
+                        gotoNextPage();
                     }
 
                     function hideRegimenChangePopup(){
