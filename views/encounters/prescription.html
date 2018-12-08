@@ -112,10 +112,10 @@ function resetFinishButton() {
                        tt_pageStyleClass= "NoControls" helpText="Selected medication" optional = "true"/>
 
                 <input type="text" name="duration"
-                       tt_onLoad="__$('keyboard').style.display = 'none'; buildNextIntervalPage();preSelectInterval();"
+                       tt_onLoad="__$('keyboard').style.display = 'none';buildNextIntervalPage();preSelectInterval();"
                        tt_pageStyleClass= "NoControls" helpText="Interval to next visit" optional = "true"/>
 
-                <select name="follow_up_agreement" allowFreeText="false"
+                <!-- select name="follow_up_agreement" allowFreeText="false"
                         helpText="Assess for fast track visit (next appointment)"
                         tt_onLoad = "adjustFrameHeight();"
                         tt_onUnLoad = "resetFinishButton();"
@@ -123,7 +123,7 @@ function resetFinishButton() {
                     <option value=""></option>
                     <option value="YES">Yes</option>
                     <option value="NO">No</option>
-                </select>
+                </select-->
 
 
             </form>

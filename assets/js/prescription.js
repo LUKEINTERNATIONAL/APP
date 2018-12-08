@@ -483,10 +483,10 @@ function adjustFrameHeight() {
 }
 
 function validateEntries() {
-    var inputBox = document.getElementById('touchscreenInput4');
+    /*var inputBox = document.getElementById('touchscreenInput4');
     if(inputBox.value < 1){
         showMessage('Please select No/Yes from the list');
-    }
+    }*/
 
     submitRegimen();
 }
@@ -611,7 +611,6 @@ function getCPTDosage() {
     xhttp.onreadystatechange = function() {
         if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
             cpt_dosage = JSON.parse(this.responseText);
-            console.log(cpt_dosage)
         }
     };
     xhttp.open("GET", url + "?patient_id="+sessionStorage.patientID, true);
@@ -627,7 +626,6 @@ function getIPTDosage() {
     xhttp.onreadystatechange = function() {
         if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
             ipt_dosage = JSON.parse(this.responseText);
-            console.log(ipt_dosage)
         }
     };
     xhttp.open("GET", url + "?patient_id="+sessionStorage.patientID, true);
@@ -660,7 +658,7 @@ function validateIntervalSelection() {
         return;
     }
 
-    gotoNextPage();
+    prepareForSubmitting();
 }
 
 function getFullMonth(i) {
@@ -1268,11 +1266,33 @@ function submitRegimen(){
         encounter_datetime: null
     }
 
+  if(appointment_type.length < 1){
     submitParameters(encounter, "/encounters", "postRegimenOrders");
+  }else{
+    submitParameters(encounter, "/encounters", "createAppointmentType");
+  }
+}
+
+function createAppointmentType(encounter) {
+  var obs = {
+    encounter_id: encounter.encounter_id,
+    observations: [
+      { concept_id: 6784, value_text: appointment_type }
+    ]
+  }; 
+  
+  
+  submitParameters(obs, "/observations", "postRegimenOrders");
 }
 
 function postRegimenOrders(encounter){
-    var drug_orders_params = {encounter_id: encounter.encounter_id, drug_orders: []}
+    if(!encounter.encounter_id){
+      encounter_id = encounter[0].encounter_id;
+    }else{
+      encounter_id = encounter.encounter_id;
+    }
+
+    var drug_orders_params = {encounter_id: encounter_id, drug_orders: []}
     var start_date = new Date();
 
     var start_date = sessionDate;
@@ -1334,7 +1354,8 @@ function postRegimenOrders(encounter){
     if(selectedSwitchReason.length > 0) {
       treatmentObs(drug_orders_params, "/drug_orders", "treatmentObs");
     }else{
-      submitParameters(drug_orders_params, "/drug_orders", "submitFastTrack");
+      //submitParameters(drug_orders_params, "/drug_orders", "submitFastTrack");
+      submitParameters(drug_orders_params, "/drug_orders", "nextPage");
     }
 }
 
@@ -1545,3 +1566,128 @@ function switchMedication(e) {
   }
 }
 
+function prepareForSubmitting() {
+  var btn = document.getElementById("nextButton");
+  //btn.setAttribute("onmousedown","validateEntries();");
+
+  var selectedARVs = givenRegimens[selectedRegimens];
+
+
+  var order_date = new Date(sessionStorage.sessionDate);
+  var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1/";
+  url += '/observations?person_id=' + sessionStorage.patientID;
+  url += '&date=' + moment(order_date).format('YYYY-MM-DD') + '&page_size=1';
+  url += '&concept_id=6987';
+
+
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+      var data = JSON.parse(this.responseText);
+      var showSuggestion = false;
+
+      for(var i = 0 ; i < selectedARVs.length ; i++){
+        var selectedARV_id = selectedARVs[i].drug_id
+        
+        for(var x = 0 ; x < data.length ; x++){
+          var pillCountDrugID = data[x].order.drug_order.drug_inventory_id;
+          if(pillCountDrugID == selectedARV_id){
+            showSuggestion = true;
+            break;
+          }
+        }
+            
+        if(showSuggestion)
+          break;
+
+      }
+
+      if(showSuggestion){
+        buildSuggestion();
+      }else{
+        validateEntries();
+      }
+    }
+  };
+  xhttp.open("GET", url, true);
+  xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+  xhttp.setRequestHeader('Content-type', "application/json");
+  xhttp.send();
+}
+
+function buildSuggestion() {
+  document.getElementById('confirmatory-test-cover').style = 'display: inline;';
+  var popBox = document.getElementById('confirmatory-test-popup-div');
+  popBox.style = 'display: inline;';
+  popBox.innerHTML = null;
+
+
+  
+
+  var initiationBox = document.createElement('div');
+  initiationBox.setAttribute('class','initiationBox');
+  popBox.appendChild(initiationBox);
+
+  var initiationBoxRow = document.createElement('div');
+  initiationBoxRow.setAttribute('class','initiationBoxRow');
+  initiationBox.appendChild(initiationBoxRow);
+
+  var initiationBoxCell = document.createElement('div');
+  initiationBoxCell.setAttribute('class','initiationBoxCell');
+  var cssText ='text-align: center; color: rgb(255, 165, 0);';
+  cssText += 'font-size: 14pt;font-weight: bolder;';
+  cssText += 'border-width: 0px 0px 1px 0px;border-style: solid;';
+  initiationBoxCell.setAttribute('style', cssText);
+  initiationBoxCell.innerHTML = 'Hanging pills recommendation';
+  initiationBoxRow.appendChild(initiationBoxCell);
+
+  var initiationBoxRow = document.createElement('div');
+  initiationBoxRow.setAttribute('class','initiationBoxRow');
+  initiationBox.appendChild(initiationBoxRow);
+
+  var initiationBoxCell = document.createElement('div');
+  var text = '<b style="color: green;">Use hanging pills to calculate next appoint date?</b> ';
+  initiationBoxCell.setAttribute('class','initiationBoxCell');
+  initiationBoxCell.innerHTML = text;
+  
+  var cssText = 'text-align: center; margin-top: 5%;';
+  cssText += 'font-size: 25px;';
+  initiationBoxCell.setAttribute('style', cssText);
+  initiationBoxRow.appendChild(initiationBoxCell);
+
+
+
+  var buttonContainer = document.createElement('div');
+  buttonContainer.setAttribute('class','buttonContainer');
+  popBox.appendChild(buttonContainer);
+
+  var buttonContainerRow = document.createElement('div');
+  buttonContainerRow.setAttribute('class','buttonContainerRow');
+  buttonContainer.appendChild(buttonContainerRow);
+
+
+  var cells = ['NO','YES'];
+
+  for(var i = 0 ; i < cells.length ; i++){
+    var buttonContainerCell = document.createElement('div');
+    buttonContainerCell.setAttribute('class','buttonContainerCell');
+    buttonContainerCell.setAttribute('style','width: 100px;');
+    buttonContainerCell.innerHTML = cells[i];
+    buttonContainerCell.setAttribute('id','buttonContainerCell-blue');
+
+    if(i == 0) {
+      buttonContainerCell.setAttribute('onmousedown','useHangingPills("No");');
+    }else{
+      buttonContainerCell.setAttribute('onmousedown','useHangingPills("Yes");');
+    }
+    buttonContainerRow.appendChild(buttonContainerCell);
+  }
+
+}
+
+var appointment_type = '';
+function useHangingPills(ans) {
+  appointment_type = (ans == 'Yes' ? 'Optimize - including hanging pills' : 'Exact - excluding hanging pills');
+  closePopUp();
+  validateEntries();
+}
