@@ -288,6 +288,7 @@ var targetedDate;
 var sideEffectMatchFound = false;
 
 function checkForPossibleSideEffects(regimen) {
+
   regimen = regimen.split(' ')[0]
   var r = /\d+/;
   regimen = parseInt(regimen.match(r));
@@ -551,18 +552,18 @@ function buildRecommendationPopUP() {
 
 var contraindications = {};
 contraindications[0] = ['Jaundice','hepatitis','hypersensitivity'];
-contraindications[2] = ['Jaundice','Anaemia','hepatitis'];
-contraindications[4] = ['Anaemia','Psychosis'];
+contraindications[2] = ['Jaundice','Anemia','hepatitis'];
+contraindications[4] = ['Anemia','Psychosis'];
 contraindications[5] = ['Renal Failure','Kidney Failure','Psychosis'];
 contraindications[6] = ['Jaundice','Renal Failure','Kidney Failure','Hepatitis'];
 contraindications[7] = ['Jaundice','Renal Failure','Kidney Failure','Hepatitis'];
-contraindications[8] = ['Anaemia','Jaundice', 'Hepatitis'];
+contraindications[8] = ['Anemia','Jaundice', 'Hepatitis'];
 contraindications[9] = ['hypersensitivity'];
 contraindications[10] = ['Renal Failure', 'Kidney Failure','Uncontrolled BP'];
-contraindications[11] = ['Anaemia'];
+contraindications[11] = ['Anemia'];
 contraindications[12] = [];
 contraindications[13] = ['Renal Failure','Hepatitis','Uncontrolled BP'];
-contraindications[14] = ['Anaemia','Hepatitis'];
+contraindications[14] = ['Anemia','Hepatitis'];
 contraindications[15] = ['hypersensitivity','Hepatitis'];
 
 
