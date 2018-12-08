@@ -199,6 +199,7 @@ function showMedication(medication) {
     ordersTableCell.setAttribute('id', medication[i].order_id);
     ordersTableCell.setAttribute('quantity', medication[i].quantity);
     ordersTableCell.setAttribute('drug_name', medication[i].drug.name);
+    ordersTableCell.setAttribute('drug_id', medication[i].drug.drug_id);
     ordersTableCell.setAttribute('start_date', medication[i].order.start_date);
     ordersTableCell.setAttribute('equivalent_daily_dose', medication[i].equivalent_daily_dose);
     ordersTableCell.setAttribute('onmousedown','enterPillsRemaining(this);');
@@ -306,7 +307,8 @@ function closePopUp(cell_id) {
       drug_name: cell.getAttribute('drug_name'),
       start_date: cell.getAttribute('start_date'),
       equivalent_daily_dose: cell.getAttribute('equivalent_daily_dose'),
-      pill_count: inputBox.value, adherence: null
+      pill_count: inputBox.value, 
+      adherence: null, drug_id: cell.getAttribute('drug_id')
     };
   }
 
@@ -314,9 +316,13 @@ function closePopUp(cell_id) {
   document.getElementById('confirmatory-test-popup-div').style='display: none;';
 }
 
-function changeNextButton() {
+function changeNextButton(num) {
   var btn = document.getElementById('nextButton');
-  btn.setAttribute('onmousedown','validateInput();');
+  if(num == 1) {
+    btn.setAttribute('onmousedown','validateInput();');
+  }else{
+    btn.setAttribute('onmousedown','submitAdherence();');
+  }
 }
 
 function validateInput() {
@@ -529,6 +535,42 @@ function dataSection(data_title, data, table) {
   }
 }
 
+function submitAdherence() {
+  var encounter = {
+    encounter_type_id: 68,
+    patient_id: sessionStorage.patientID,
+    encounter_datetime: moment(new Date(sessionStorage.sessionDate)).format("YYYY-MM-DD")
+  }
+
+  submitParameters(encounter, "/encounters", "postConsultationObs");
+}
+
+function postConsultationObs(response) {
+  var observations = [];  
+  
+  for(var order_id in medicationPillCounts){
+    var attr = medicationPillCounts[order_id];
+    observations.push({
+      concept_id: 6987, 
+      value_drug: attr.drug_id,
+      order_id: order_id,
+      value_numeric: attr.adherence,
+      value_modifier: '%',
+      person_id: sessionStorage.patientID
+    });
+  }                                                           
+  
+  var encounter = {
+    encounter_id : response.encounter_id,
+    observations: observations
+    }
+  submitParameters(encounter, "/observations", "nextPage"); 
+}
+
+function nextPage(e){
+  nextEncounter(sessionStorage.patientID, 1);
+}
+
 </script>
 
 
@@ -539,11 +581,11 @@ function dataSection(data_title, data, table) {
       <form>
 
         <input type="text" name="summary"
-          tt_onLoad="__$('keyboard').style.display = 'none';changeNextButton(); buildPillCountScreen();" 
+          tt_onLoad="__$('keyboard').style.display = 'none';changeNextButton(1); buildPillCountScreen();" 
           tt_pageStyleClass= "NoControls" helpText="ARVs given last time" optional = "true"/>
 
         <input type="text" name="summary"
-          tt_onLoad="__$('keyboard').style.display = 'none';buildSummary();" 
+          tt_onLoad="__$('keyboard').style.display = 'none';changeNextButton(2);buildSummary();" 
           tt_pageStyleClass= "NoControls" helpText="ART adherence" optional = "true"/>
 
       </form>
