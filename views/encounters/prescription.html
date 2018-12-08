@@ -97,6 +97,7 @@ function resetFinishButton() {
 
                 <input type="text" name="regimens"
                        tt_onLoad="__$('keyboard').style.display = 'none';getRegimens();showWeight();"
+                       condition = "prescribe_arv == true;"
                        tt_onUnLoad = "removeCustomBtn();"
                        tt_pageStyleClass= "NoControls" helpText="ARV Regimen(s)" optional = "true"/>
 
