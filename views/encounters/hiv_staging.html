@@ -1317,7 +1317,7 @@
                 <form>
                         <input allowFreeText="false" id="breastfeeding" name="observations[][value_coded_or_text]" condition="patientGender == 'F'"type="hidden" />
 
-                        <input type="text" name="pregnant-breastfeeding-questions" condition="essionStorage.showPregnantQuestion === 'true';"
+                        <input type="text" name="pregnant-breastfeeding-questions" condition="patientGender == 'F' &&  sessionStorage.showPregnantQuestion === 'true';"
                         
                                validationCode="checkPregnancyAndAge() == 'false'"
                                validationMessage="Patient (Viral Load) is 25 years old. Is she pregnant / Breastfeeding?"
