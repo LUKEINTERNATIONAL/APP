@@ -7,6 +7,7 @@
 <link rel="stylesheet" href="/assets/css/yes_no_ctrls.css" type="text/css">
 <script type="text/javascript" src="/assets/js/post_parameters.js"></script>
 <script type="text/javascript" src="/assets/js/generic_ajaxrequest.js"></script>
+<script type="text/javascript" src="/apps/ART/assets/js/arv_number.js"></script>
 
 <script>
 var guardianAvailable = false;
@@ -70,6 +71,10 @@ function submitHIVreception() {
   }
 
   submitParameters(encounter, "/encounters", "postVitalsObs");
+
+  if (!patient_has_art_number){
+      postARVNumber()
+  }
 }
 
 function postVitalsObs(encounter) {
@@ -85,9 +90,26 @@ function postVitalsObs(encounter) {
   submitParameters(obs, "/observations", "nextPage")  
 }
 
+function postARVNumber(){
+
+    var identifier_type = 4
+    value = __$('touchscreenInput' + tstCurrentPage).value;
+    var arv_number = site_prefix + "-ARV-" + value;
+
+    var identifier_data = {identifier: arv_number,
+        identifier_type: identifier_type,
+        patient_id: patientID
+       }
+    var url = "/patients/" + patientID + "/patient_identifiers"
+    submitParameters(identifier_data, url, "afterIdentifierCreation")
+}
+
+function afterIdentifierCreation(){
+    //Do something here. For now I don't have. This is crazy
+}
+
 function nextPage(obs){
-  console.log(obs);
-  console.log(yesNo_Hash);
+
   if(guardianAvailable == true && yesNo_Hash["HIV Reception"]["Guardian present?"] === "Yes") {
     nextEncounter(sessionStorage.patientID, 1);
   }else if (guardianAvailable == false && yesNo_Hash["HIV Reception"]["Guardian present?"] === "Yes"){
@@ -100,9 +122,17 @@ function nextPage(obs){
   }
 }
 
-function changeSubmitFuction() {
-  var nextButton =  document.getElementById('nextButton');
-  nextButton.setAttribute("onmousedown","submitHIVreception();");
+function changeNextButton() {
+    var nextButton =  document.getElementById('nextButton');
+    nextButton.setAttribute("onmousedown","checkIfPatientHasARTNumber();")
+}
+
+function checkIfPatientHasARTNumber(){
+    if (patient_has_art_number){
+        submitHIVreception();
+    } else{
+        gotoNextPage();
+    }
 }
 
 function addYesNo() {
@@ -117,13 +147,14 @@ function addYesNo() {
   <div id="container">
     <div id="content">
 
-
       <form>
-
         <input type="text" name="summary"
-          tt_onLoad="__$('keyboard').style.display = 'none';changeSubmitFuction();addYesNo();" 
+          tt_onLoad="__$('keyboard').style.display = 'none';changeNextButton();addYesNo();"
           tt_pageStyleClass= "NoControls" helpText="HIV reception" optional = "true"/>
 
+          <input allowFreeText="true" field_type="alpha" helpText="ART number" id="art_number" name="arv_number"
+                 condition="patient_has_art_number == false" tt_onLoad="press('num'); getSuggestedARVNumber(); changeNextButtonToValidateARVNumber();"
+                 tt_pageStyleClass="Numeric NumbersOnly" type="text" />
       </form>
 
    </div>
