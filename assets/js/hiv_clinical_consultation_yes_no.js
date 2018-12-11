@@ -137,9 +137,9 @@ function otherSideEffectsYesNo() {
     other_side_effect_table_row.appendChild(other_side_effect_table_cell);
     
     if(i == 0) {   
-      buildYesNoUI('MALAWI ART SIDE EFFECTS', effectsLeft, other_side_effect_table_cell);
+      buildYesNoUI('OTHER MALAWI ART SIDE EFFECTS', effectsLeft, other_side_effect_table_cell);
     }else{
-      buildYesNoUI('MALAWI ART SIDE EFFECTS', effectsRight, other_side_effect_table_cell);
+      buildYesNoUI('OTHER MALAWI ART SIDE EFFECTS', effectsRight, other_side_effect_table_cell);
     }
 
   }
