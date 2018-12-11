@@ -219,6 +219,52 @@ function fetchSideEffectsIfANY(concept) {
   xhttp.send();
 }
 
+function fetchOtherSideEffectsIfANY(concept) {
+  var concept_id = concept[0][1];
+
+  var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1";
+  url += "/observations?concept_id=" + concept_id; 
+  url += "&person_id=" + sessionStorage.patientID;
+  url += "&start_date=1900-01-01&end_date="; 
+  url += moment(sessionDate).format('YYYY-MM-DD');
+
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+      var obj = JSON.parse(this.responseText);
+
+      for(var i = 0 ; i < obj.length ; i++) {
+        var value_coded = 0;
+        try {
+          value_coded = parseInt(obj[i].value_coded);
+        }catch(e){
+          value_coded = 0;
+        }
+             
+        if(value_coded == 1065){      
+          var dateTime = moment(new Date(obj[i]['obs_datetime'])).format('DD/MMM/YYYY')
+          if(otherSideEffectsHash[dateTime] == null)
+            otherSideEffectsHash[dateTime] = [];
+
+          otherSideEffectsHash[dateTime].push(concept[0][0]);
+        }
+      }
+
+      otherSideEffects.shift();
+      if(otherSideEffects.length > 0) {
+        fetchOtherSideEffectsIfANY(otherSideEffects);
+      }else{
+        document.getElementById('confirmatory-test-cover').style = "display: none;";
+      }
+
+    }
+  };
+  xhttp.open("GET", url, true);
+  xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+  xhttp.setRequestHeader('Content-type', "application/json");
+  xhttp.send();
+}
+
 
 function updateAlertTable() {
   if(isHashEmpty(sideEffectHash)){
@@ -576,8 +622,18 @@ var sideEffects = [
   ["Psychosis", 219],["Gynaecomastia", 9440],["Anemia", 3]
 ];
 
+var otherSideEffects = [
+  ["Fever", 5945],
+  ["Vomiting", 5980],["Dizziness", 877],["Headache", 620],
+  ["Nausea", 5978],["Treatment failure", 843],
+  ["Lactic acidosis", 1458],["Cough", 107]
+];
+
 var sideEffectHash = {}
 fetchSideEffectsIfANY(sideEffects);
+
+var otherSideEffectsHash = {}
+fetchOtherSideEffectsIfANY(otherSideEffects);
   
 var hmtlBody = document.getElementsByTagName("body")[0];
 hmtlBody.appendChild(popBoxCSS);
