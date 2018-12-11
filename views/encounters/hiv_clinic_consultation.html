@@ -564,6 +564,7 @@
                     var fastTrackAssesmentConcepts = JSON.parse('{"5":{"concept_name":"Adherence on last 2 visits was good","concept_id":9530},"6":{"concept_name":"Patient not suffering from major side effects, signs of TB or HIV associated disease","concept_id":9531},"1":{"concept_name":"Age \u003E 18 years and on ART \u003E 1 year","concept_id":9526},"7":{"concept_name":"Patient do not need hypertension or diabetes care on next visit","concept_id":9532},"2":{"concept_name":"Not On Second Line Treatment OR on IPT","concept_id":9527},"3":{"concept_name":"Last VL \u003C 1000, no VL Result pending, no VL taken at next visit","concept_id":9528},"4":{"concept_name":"Not Pregnant? - no EID needed at next visit","concept_id":9529}}');
                     // var patient_id = sessionStorage.patientID;
                     var sideEffectsHash = {};
+                    var otherSideEffectsHash = {};
                     var tbSymptomsHash = {};
                     var gender = sessionStorage.patientGender;
                     var current_patient_bmi = '22.4'
@@ -984,6 +985,23 @@
                     sideEffectsHash['Insomnia'] = {yes: '', no: ''}
 
 
+                    otherSideEffectsHash['Fever'] = {yes: '', no: ''}
+
+                    otherSideEffectsHash['Vomiting'] = {yes: '', no: ''}
+
+                    otherSideEffectsHash['Dizziness'] = {yes: '', no: ''}
+
+                    otherSideEffectsHash['Headache'] = {yes: '', no: ''}
+
+                    otherSideEffectsHash['Nausea'] = {yes: '', no: ''}
+
+                    otherSideEffectsHash['Treatment failure'] = {yes: '', no: ''}
+
+                    otherSideEffectsHash['Lactic acidosis'] = {yes: '', no: ''}
+
+                    otherSideEffectsHash['Cough'] = {yes: '', no: ''}
+
+
 
                     tbSymptomsHash['Cough of any duration'] = {yes: '', no: ''}
 
@@ -1224,6 +1242,19 @@
                         sideEffectsHash[key]["no"] = '';
                     }
 
+                    function updateOtherSideEffectNoValue(obj){
+                        key = obj.getAttribute('key');
+                        otherSideEffectsHash[key]["no"] = 'true';
+                        otherSideEffectsHash[key]["yes"] = '';
+                    }
+
+
+                    function updateOtherSideEffectYesValue(obj){
+                        key = obj.getAttribute('key');
+                        otherSideEffectsHash[key]["yes"] = 'true';
+                        otherSideEffectsHash[key]["no"] = '';
+                    }
+
                     function updateTBSymptomYesValue(obj){
                         key = obj.getAttribute('key');
                         tbSymptomsHash[key]["yes"] = 'true';
@@ -1240,6 +1271,39 @@
                         for (var key in sideEffectsHash){
                             yesValue = sideEffectsHash[key]["yes"];
                             noValue = sideEffectsHash[key]["no"];
+                            yes_no_buttons = jQuery("[key='" + key + "']");
+                            yes_button = yes_no_buttons[0]
+                            no_button = yes_no_buttons[1]
+
+                            divs = document.getElementsByClassName('switch');
+                            for(var i = 0; i < divs.length; i++){
+                                divKey = divs[i].getAttribute('key');
+                                if(key == divKey){
+                                    if(yesValue.length > 0) {
+                                        index = yes_button.id.replace("yes_btn_container_",'');
+                                        hidden_checkbox = document.getElementById('yes_checkbox_' + index);
+                                        on_label_checkbox = document.getElementById('yes_lable_' + index);
+                                        on_label_checkbox.setAttribute('style','color: white; background-color: lightgreen;');
+                                        hidden_checkbox.checked = true;
+                                        break;
+                                    }else if(noValue.length > 0){
+                                        index = no_button.id.replace("no_btn_container_",'');
+                                        hidden_checkbox = document.getElementById('no_checkbox_' + index);
+                                        on_label_checkbox = document.getElementById('no_lable_' + index);
+                                        on_label_checkbox.setAttribute('style','color: white; background-color: lightgreen;');
+                                        hidden_checkbox.checked = true;
+                                        break;
+                                    }
+                                }
+                            }
+ 
+                        }
+                    }
+
+                    function preselectOtherSelectedSideEffects(){
+                        for (var key in otherSideEffectsHash){
+                            yesValue = otherSideEffectsHash[key]["yes"];
+                            noValue = otherSideEffectsHash[key]["no"];
                             yes_no_buttons = jQuery("[key='" + key + "']");
                             yes_button = yes_no_buttons[0]
                             no_button = yes_no_buttons[1]
@@ -1315,6 +1379,23 @@
 
                         if (unselectedSideEffects.length > 0){
                             showMessage("The following Potential Side effects are not selected <br />" +  unselectedSideEffects.join('<br /> '));
+                        }else{
+                            gotoNextPage();
+                        }
+                    }
+
+                    function validateOtherSideEffectsInput(){
+                        unselectedOtherSideEffects = [];
+                        for (var key in otherSideEffectsHash){
+                            yesValue = otherSideEffectsHash[key]["yes"];
+                            noValue = otherSideEffectsHash[key]["no"];
+                            if (yesValue.length == 0 && noValue.length == 0){
+                                unselectedOtherSideEffects.push(key);
+                            }
+                        }
+
+                        if (unselectedOtherSideEffects.length > 0){
+                            showMessage("The following Potential Side effects are not selected <br />" +  unselectedOtherSideEffects.join('<br /> '));
                         }else{
                             gotoNextPage();
                         }
@@ -1636,6 +1717,16 @@
                         var skin_rash_concept_id = 512;
                         var insomnia_concept_id = 867;
 
+                        var other_side_effect_concept_id = 7951;
+                        var fever_concept_id = 5945;
+                        var vomiting_concept_id = 5980;
+                        var dizziness_concept_id = 877;
+                        var headache_concept_id = 620;
+                        var nausea_concept_id = 5978;
+                        var treatment_failure_concept_id = 843;
+                        var lactic_acidosis = 1458;
+                        var cough_concept_id = 107;
+
 
                         var cough_of_any_duration_concept_id = 8261;
                         var fever_concept_id = 5945;
@@ -1665,6 +1756,15 @@
                                 {concept_id: malawi_art_side_effects_concept_id, value_coded: anemia_concept_id, child: {concept_id: anemia_concept_id, value_coded: getSideEffectAnswer('Anemia')}},
                                 {concept_id: malawi_art_side_effects_concept_id, value_coded: skin_rash_concept_id, child: {concept_id: skin_rash_concept_id, value_coded: getSideEffectAnswer('Skin rash')}},
                                 {concept_id: malawi_art_side_effects_concept_id, value_coded: insomnia_concept_id, child: {concept_id: insomnia_concept_id, value_coded: getSideEffectAnswer('Insomnia')}},
+
+                                {concept_id: other_side_effect_concept_id, value_coded: fever_concept_id, child: {concept_id: fever_concept_id, value_coded: getOtherSideEffectAnswer('Fever')}},
+                                {concept_id: other_side_effect_concept_id, value_coded: vomiting_concept_id, child: {concept_id: vomiting_concept_id, value_coded: getOtherSideEffectAnswer('Vomiting')}},
+                                {concept_id: other_side_effect_concept_id, value_coded: dizziness_concept_id, child: {concept_id: dizziness_concept_id, value_coded: getOtherSideEffectAnswer('Dizziness')}},
+                                {concept_id: other_side_effect_concept_id, value_coded: headache_concept_id, child: {concept_id: headache_concept_id, value_coded: getOtherSideEffectAnswer('Headache')}},
+                                {concept_id: other_side_effect_concept_id, value_coded: nausea_concept_id, child: {concept_id: nausea_concept_id, value_coded: getOtherSideEffectAnswer('Nausea')}},
+                                {concept_id: other_side_effect_concept_id, value_coded: treatment_failure_concept_id, child: {concept_id: treatment_failure_concept_id, value_coded: getOtherSideEffectAnswer('Treatment failure')}},
+                                {concept_id: other_side_effect_concept_id, value_coded: lactic_acidosis, child: {concept_id: lactic_acidosis, value_coded: getOtherSideEffectAnswer('Lactic acidosis')}},
+                                {concept_id: other_side_effect_concept_id, value_coded: cough_concept_id, child: {concept_id: cough_concept_id, value_coded: getOtherSideEffectAnswer('Cough')}},
 
 
                                 {concept_id: routine_tb_screening_concept_id, value_coded: cough_of_any_duration_concept_id, child: {concept_id: cough_of_any_duration_concept_id, value_coded: getTBSymptomsAnswer('Cough of any duration')}},
@@ -1861,6 +1961,18 @@
                             return "1065";
                         }
                         if (side_effect_answer.toUpperCase() == "NO"){
+                            return "1066";
+                        }
+                        return "";
+                    }
+
+                    function getOtherSideEffectAnswer(key){                        
+                        other_side_effects_answers = yesNo_Hash["OTHER MALAWI ART SIDE EFFECTS"];
+                        other_side_effect_answer = other_side_effects_answers[key];
+                        if (other_side_effect_answer.toUpperCase() == "YES"){
+                            return "1065";
+                        }
+                        if (other_side_effect_answer.toUpperCase() == "NO"){
                             return "1066";
                         }
                         return "";
@@ -2139,6 +2251,38 @@
                     <input allowFreeText="false" id="Insomnia" name="observations[][value_coded_or_text]" type="hidden" value="Insomnia" />
 
                     <input allowFreeText="false" id="Insomnia_child_concept" name="observations[][value_coded_or_text]" parent_concept_name="MALAWI ART SIDE EFFECTS" type="hidden" value="" />
+
+                    <input allowFreeText="false" id="Fever" name="observations[][value_coded_or_text]" type="hidden" value="Fever" />
+
+                    <input allowFreeText="false" id="Fever_child_concept" name="observations[][value_coded_or_text]" parent_concept_name="OTHER SIDE EFFECT" type="hidden" value="" />
+
+                    <input allowFreeText="false" id="Vomiting" name="observations[][value_coded_or_text]" type="hidden" value="Vomiting" />
+
+                    <input allowFreeText="false" id="Vomiting_child_concept" name="observations[][value_coded_or_text]" parent_concept_name="OTHER SIDE EFFECT" type="hidden" value="" />
+
+                    <input allowFreeText="false" id="Dizziness" name="observations[][value_coded_or_text]" type="hidden" value="Dizziness" />
+
+                    <input allowFreeText="false" id="Dizziness_child_concept" name="observations[][value_coded_or_text]" parent_concept_name="OTHER SIDE EFFECT" type="hidden" value="" />
+
+                    <input allowFreeText="false" id="Headache" name="observations[][value_coded_or_text]" type="hidden" value="Headache" />
+
+                    <input allowFreeText="false" id="Headache_child_concept" name="observations[][value_coded_or_text]" parent_concept_name="OTHER SIDE EFFECT" type="hidden" value="" />
+
+                    <input allowFreeText="false" id="Nausea" name="observations[][value_coded_or_text]" type="hidden" value="Nausea" />
+
+                    <input allowFreeText="false" id="Nausea_child_concept" name="observations[][value_coded_or_text]" parent_concept_name="OTHER SIDE EFFECT" type="hidden" value="" />
+
+                    <input allowFreeText="false" id="Treatment failure" name="observations[][value_coded_or_text]" type="hidden" value="Treatment failure" />
+
+                    <input allowFreeText="false" id="Treatment failure_child_concept" name="observations[][value_coded_or_text]" parent_concept_name="OTHER SIDE EFFECT" type="hidden" value="" />
+
+                    <input allowFreeText="false" id="Lactic acidosis" name="observations[][value_coded_or_text]" type="hidden" value="Lactic acidosis" />
+
+                    <input allowFreeText="false" id="Lactic acidosis_child_concept" name="observations[][value_coded_or_text]" parent_concept_name="OTHER SIDE EFFECT" type="hidden" value="" />
+
+                    <input allowFreeText="false" id="Cough" name="observations[][value_coded_or_text]" type="hidden" value="Cough" />
+
+                    <input allowFreeText="false" id="Cough_child_concept" name="observations[][value_coded_or_text]" parent_concept_name="OTHER SIDE EFFECT" type="hidden" value="" />
 
                     <input allowFreeText="false" id="Cough of any duration" name="observations[][value_coded_or_text]" type="hidden" value="Cough of any duration" />
 
