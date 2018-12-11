@@ -24,6 +24,7 @@
         <script type="text/javascript" src="/apps/ART/assets/js/hiv_clinical_consultation_weight_trail.js"></script>
         <!-- script type="text/javascript" src="/apps/ART/assets/js/hiv_clinical_consultation_test_summary.js"></script-->
 
+        <script type="text/javascript" src="/apps/ART/assets/js/side_efect_reason.js"></script>
 
         <script type="text/javascript" src="/apps/ART/assets/js/hiv_clinical_consultation_yes_no.js"></script>
 
@@ -32,9 +33,9 @@
         <script type="text/javascript" src="/apps/ART/assets/js/cd4_kbd.js"></script>
         
 
-        <link rel="stylesheet" href="/apps/ART/assets/css/hiv_clinical_consultation_labs.css" type="text/css" />
-        <script type="text/javascript" src="/apps/ART/assets/js/hiv_clinical_consultation_labs.js"></script>
-
+        <!-- <link rel="stylesheet" href="/apps/ART/assets/css/hiv_clinical_consultation_labs.css" type="text/css" /> -->
+        <!-- <script type="text/javascript" src="/apps/ART/assets/js/hiv_clinical_consultation_labs.js"></script> -->
+        <script type="text/javascript" src="/assets/js/order_entry.js"></script>        
 
         <!--link rel="stylesheet" href="/assets/css/datatables/uikit.min.css" type="text/css">
         <link rel="stylesheet" href="/assets/css/datatables/dataTables.uikit.min.css" type="text/css"-->
@@ -978,6 +979,10 @@
 
                     sideEffectsHash['Anemia'] = {yes: '', no: ''}
 
+                    sideEffectsHash['Skin rash'] = {yes: '', no: ''}
+
+                    sideEffectsHash['Insomnia'] = {yes: '', no: ''}
+
 
 
                     tbSymptomsHash['Cough of any duration'] = {yes: '', no: ''}
@@ -991,7 +996,7 @@
 
                     function advancedSideEffects(){
 
-                        sideEffectsArray = JSON.parse('["Peripheral neuropathy","Jaundice","Lipodystrophy","Kidney Failure","Psychosis","Gynaecomastia","Anemia"]');
+                        sideEffectsArray = JSON.parse('["Peripheral neuropathy","Jaundice","Lipodystrophy","Kidney Failure","Psychosis","Gynaecomastia","Anemia","Skin rash","Insomnia"]');
                         jQuery("#inputFrame" + tstCurrentPage).remove()
                         jQuery("#helpText" + tstCurrentPage).css({
                             marginLeft: "0%",
@@ -1001,7 +1006,7 @@
 
                         html = "<div id='divcontent'>";
                         html += "<div id='divScroller'>";
-                        sideEffectsOptions = JSON.parse('["Peripheral neuropathy","Jaundice","Lipodystrophy","Kidney Failure","Psychosis","Gynaecomastia","Anemia"]');
+                        sideEffectsOptions = JSON.parse('["Peripheral neuropathy","Jaundice","Lipodystrophy","Kidney Failure","Psychosis","Gynaecomastia","Anemia","Skin rash","Insomnia"]');
                         html += "<table cellspacing='1' cellpadding='2' width='95%' id='yes_no_table'>";
                         html += "<tbody>";
 
@@ -1628,6 +1633,8 @@
                         var psychosis_concept_id = 219;
                         var gynaecomastia_concept_id = 9440;
                         var anemia_concept_id = 3;
+                        var skin_rash_concept_id = 512;
+                        var insomnia_concept_id = 867;
 
 
                         var cough_of_any_duration_concept_id = 8261;
@@ -1656,6 +1663,8 @@
                                 {concept_id: malawi_art_side_effects_concept_id, value_coded: psychosis_concept_id, child: {concept_id: psychosis_concept_id, value_coded: getSideEffectAnswer('Psychosis')}},
                                 {concept_id: malawi_art_side_effects_concept_id, value_coded: gynaecomastia_concept_id, child: {concept_id: gynaecomastia_concept_id, value_coded: getSideEffectAnswer('Gynaecomastia')}},
                                 {concept_id: malawi_art_side_effects_concept_id, value_coded: anemia_concept_id, child: {concept_id: anemia_concept_id, value_coded: getSideEffectAnswer('Anemia')}},
+                                {concept_id: malawi_art_side_effects_concept_id, value_coded: skin_rash_concept_id, child: {concept_id: skin_rash_concept_id, value_coded: getSideEffectAnswer('Skin rash')}},
+                                {concept_id: malawi_art_side_effects_concept_id, value_coded: insomnia_concept_id, child: {concept_id: insomnia_concept_id, value_coded: getSideEffectAnswer('Insomnia')}},
 
 
                                 {concept_id: routine_tb_screening_concept_id, value_coded: cough_of_any_duration_concept_id, child: {concept_id: cough_of_any_duration_concept_id, value_coded: getTBSymptomsAnswer('Cough of any duration')}},
@@ -1671,10 +1680,10 @@
                             ]
                         };
 
-                        other_side_effect = yesNo_Hash["MALAWI ART SIDE EFFECTS"]["Other"];
-                        if (other_side_effect.toUpperCase() == "YES"){
-                            obs.observations.push({concept_id: malawi_art_side_effects_concept_id, value_coded: other_concept_id, child: {concept_id: other_concept_id, value_text: othe_side_effect_value}})
-                        }
+                        //other_side_effect = yesNo_Hash["MALAWI ART SIDE EFFECTS"]["Other"];
+                        //if (other_side_effect.toUpperCase() == "YES"){
+                          //  obs.observations.push({concept_id: malawi_art_side_effects_concept_id, value_coded: other_concept_id, child: {concept_id: other_concept_id, value_text: othe_side_effect_value}})
+                       // }
 
 
                         if (patientGender == "F"){
@@ -2051,12 +2060,12 @@
   
 
                     <input type="text" name="lab-summary"
-                           tt_onLoad="__$('keyboard').style.display = 'none';buildConsultationLabPage(); changeNextButtonForLabOrders();"
+                           tt_onLoad="__$('keyboard').style.display = 'none'; buildOrderEntry();"
                            tt_pageStyleClass= "NoControls" helpText="Lab Results Summary" optional = "true"/>
 
-                    <input type="text" name="iac" condition="iac == true"
+                    <!-- input type="text" name="iac" condition="iac == true"
                     tt_onLoad="__$('keyboard').style.display = 'none';addIACYesNo();"
-                    tt_pageStyleClass= "NoControls" helpText="intensive adherence counselling" optional = "true"/> 
+                    tt_pageStyleClass= "NoControls" helpText="intensive adherence counselling" optional = "true"/--> 
 
 
                     <input type="text" name="pregnant-breastfeeding-questions" condition="sessionStorage.showPregnantQuestion === 'true'"
@@ -2122,6 +2131,14 @@
                     <input allowFreeText="false" id="Anemia" name="observations[][value_coded_or_text]" type="hidden" value="Anemia" />
 
                     <input allowFreeText="false" id="Anemia_child_concept" name="observations[][value_coded_or_text]" parent_concept_name="MALAWI ART SIDE EFFECTS" type="hidden" value="" />
+
+                    <input allowFreeText="false" id="Skin rash" name="observations[][value_coded_or_text]" type="hidden" value="Skin rash" />
+
+                    <input allowFreeText="false" id="Skin rash_child_concept" name="observations[][value_coded_or_text]" parent_concept_name="MALAWI ART SIDE EFFECTS" type="hidden" value="" />
+
+                    <input allowFreeText="false" id="Insomnia" name="observations[][value_coded_or_text]" type="hidden" value="Insomnia" />
+
+                    <input allowFreeText="false" id="Insomnia_child_concept" name="observations[][value_coded_or_text]" parent_concept_name="MALAWI ART SIDE EFFECTS" type="hidden" value="" />
 
                     <input allowFreeText="false" id="Cough of any duration" name="observations[][value_coded_or_text]" type="hidden" value="Cough of any duration" />
 
@@ -2287,14 +2304,30 @@
                            tt_pageStyleClass= "NoControls"
                            helpText="Potential Side effects (select all that apply)" optional = "true"/>
 
-                    <input id="other_side_effects" name="other_side_effects" style="width: 98%;"
+                    <!-- <input id="other_side_effects" name="other_side_effects" style="width: 98%;"
                             type="text"
                             helpText="Other side effects" optional = "false"
                             tt_onUnLoad ="updateOtherSideEffect();"
                             tt_onLoad="document.getElementById('inputFrame' + tstCurrentPage).style='width: 95.5%;'"
                             validationRule="^\w+((\s+|-)\w+)*$"
                             cols="56" rows="8" condition="OtherSideEffects == true">
+                    </input>  -->
+                    <input type="text" name="other_side_effects"
+                    id="other_side_effects"
+                    helpText="Other side effects" optional = "false"
+                    tt_onLoad="__$('keyboard').style.display = 'none';otherSideEffectsYesNo();"
+                    tt_pageStyleClass= "NoControls"
+                    condition="OtherSideEffects == true">
                     </input> 
+
+                    <input type="text" name="Medication induced?"
+                      id="medication_induced"
+                      helpText="Medication induced side effects?" optional = "false"
+                      tt_onLoad="__$('keyboard').style.display = 'none';medicationInduced();"
+                      tt_pageStyleClass= "NoControls"
+                      condition="sideEffectsAvailable() == true">
+                    </input> 
+
 
                     <select allowFreeText="false" helpText="On TB Treatment?" id="tb_treatment_question" name="observations[][value_coded_or_text]" 
                       tt_onLoad="showCategory2('Clinic consultation');" 

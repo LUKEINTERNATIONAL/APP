@@ -1,12 +1,27 @@
 var sideEffectsLeft = [
   ["Peripheral neuropathy", 821],
   ["Jaundice", 215],["Lipodystrophy", 2148],
-  ["Kidney Failure",  9242]
+  ["Kidney Failure",  9242],
+  ["Skin rash", 512]
 ];
 
 var sideEffectsRight = [
   ["Psychosis", 219],["Gynaecomastia", 9440],
-  ["Anemia", 3], ["Other", 6408, "activateOtherSideEffects"]
+  ["Anemia", 3],["Insomnia", 867], ["Other", 6408, "activateOtherSideEffects"]
+];
+
+var otherSideEffectsLeft = [
+  ["Fever", 5945],
+  ["Vomiting", 5980],
+  ["Dizziness", 877],
+  ["Headache", 620]
+];
+
+var otherSideEffectsRight = [
+  ["Nausea", 5978],
+  ["Treatment failure", 843],
+  ["Lactic acidosis", 1458],
+  ["Cough", 107]
 ];
 
 var iacLeft = [
@@ -94,6 +109,38 @@ function addSideEffectsYesNo() {
       buildYesNoUI('MALAWI ART SIDE EFFECTS', effectsLeft, side_effect_table_cell);
     }else{
       buildYesNoUI('MALAWI ART SIDE EFFECTS', effectsRight, side_effect_table_cell);
+    }
+
+  }
+
+}
+
+function otherSideEffectsYesNo() {
+  var frame   = document.getElementById("inputFrame" + tstCurrentPage);
+  var effectsLeft  = otherSideEffectsLeft.join(";").split(";").join("#");
+  var effectsRight = otherSideEffectsRight.join(";").split(";").join("#");
+
+  var other_side_effect_table = document.createElement("div");
+  other_side_effect_table.setAttribute("style","display: table;width: 100%;");
+  frame.appendChild(other_side_effect_table);
+  
+  var other_side_effect_table_row = document.createElement("div");
+  other_side_effect_table_row.setAttribute("style","display: table-row;");
+  other_side_effect_table.appendChild(other_side_effect_table_row);
+   
+  var cells = ["left","right"];
+  
+  for(var i = 0 ; i < cells.length ; i++){
+    var other_side_effect_table_cell = document.createElement("div");
+    var style = "display: table-cell; width: 44%; float:";
+    style += (i == 0 ? "left;" : "right;"); 
+    other_side_effect_table_cell.setAttribute("style",style);
+    other_side_effect_table_row.appendChild(other_side_effect_table_cell);
+    
+    if(i == 0) {   
+      buildYesNoUI('OTHER MALAWI ART SIDE EFFECTS', effectsLeft, other_side_effect_table_cell);
+    }else{
+      buildYesNoUI('OTHER MALAWI ART SIDE EFFECTS', effectsRight, other_side_effect_table_cell);
     }
 
   }

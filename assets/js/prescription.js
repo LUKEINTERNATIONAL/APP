@@ -1367,7 +1367,7 @@ function treatmentObs(encounter) {
     ]                                                                           
   };                                                                            
                                                                                 
-  submitParameters(obs, "/observations", "submitFastTrack")  
+  submitParameters(obs, "/observations", "nextPage")  
 }
 
 function submitFastTrack(e){

@@ -130,7 +130,7 @@ function weightSummaryTable() {
   var table = "<table id='weight-summary-table' >";
   table += "<tr><th>Previous Weight</th> <th id='initial-weight'>&nbsp;</th></tr>";
   table += "<tr><th>Latest Weight</th><th id='latest-weight'>&nbsp;</th></tr>";
-  table += "<tr><th>Weight change</th><th id='weight-percentage'>&nbsp;</th></tr>";
+  table += "<tr><th>Latest Weight change</th><th id='weight-percentage'>&nbsp;</th></tr>";
   table += "<tr><th>Patient's age</th><th id='patient-age'>&nbsp;</th></tr>";
   table += "<tr><th>Patient BMI</th><th id='patient-bmi'>&nbsp;</th></tr>";
   table += "<tr><td id='patient-bmiResult' style='height: 70px;color: white;text-align: center; ' colspan=2>&nbsp;</td></tr>";
@@ -205,7 +205,19 @@ function plotChart(data) {
       series: [{
         type: 'area',
         name: 'Weight',
-        data: data
+        data: data,
+        dataLabels: {
+          enabled: true,
+          formatter: function(){
+          var index = this.series.data.indexOf(this.point);
+          var secondYa = this.series.chart.series[0].yData[index - 1];
+          if (secondYa == 0 || secondYa == undefined) {
+            return "";
+          }
+          var firstY = this.y;
+          return (((secondYa/firstY)*100)-100).toFixed(2)+' %';
+          }
+      }
       }]
     });
 
