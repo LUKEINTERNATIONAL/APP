@@ -32,9 +32,9 @@
         <script type="text/javascript" src="/apps/ART/assets/js/cd4_kbd.js"></script>
         
 
-        <link rel="stylesheet" href="/apps/ART/assets/css/hiv_clinical_consultation_labs.css" type="text/css" />
-        <script type="text/javascript" src="/apps/ART/assets/js/hiv_clinical_consultation_labs.js"></script>
-
+        <!--link rel="stylesheet" href="/apps/ART/assets/css/hiv_clinical_consultation_labs.css" type="text/css" />
+        <script type="text/javascript" src="/apps/ART/assets/js/hiv_clinical_consultation_labs.js"></script-->
+        <script type="text/javascript" src="/assets/js/order_entry.js"></script>        
 
         <!--link rel="stylesheet" href="/assets/css/datatables/uikit.min.css" type="text/css">
         <link rel="stylesheet" href="/assets/css/datatables/dataTables.uikit.min.css" type="text/css"-->
@@ -2051,12 +2051,12 @@
   
 
                     <input type="text" name="lab-summary"
-                           tt_onLoad="__$('keyboard').style.display = 'none';buildConsultationLabPage(); changeNextButtonForLabOrders();"
+                           tt_onLoad="__$('keyboard').style.display = 'none'; buildOrderEntry();"
                            tt_pageStyleClass= "NoControls" helpText="Lab Results Summary" optional = "true"/>
 
-                    <input type="text" name="iac" condition="iac == true"
+                    <!-- input type="text" name="iac" condition="iac == true"
                     tt_onLoad="__$('keyboard').style.display = 'none';addIACYesNo();"
-                    tt_pageStyleClass= "NoControls" helpText="intensive adherence counselling" optional = "true"/> 
+                    tt_pageStyleClass= "NoControls" helpText="intensive adherence counselling" optional = "true"/--> 
 
 
                     <input type="text" name="pregnant-breastfeeding-questions" condition="sessionStorage.showPregnantQuestion === 'true'"
