@@ -576,7 +576,7 @@ function getMedicationOrders() {
     xhttp.send();
 }
 
-getMedicationOrders();
+//getMedicationOrders();
 
 function isARTPrescribed() {
     var todays_date = new Date(sessionStorage.sessionDate);
@@ -602,7 +602,7 @@ function isARTPrescribed() {
     xhttp.send();
 }
 
-isARTPrescribed();
+//isARTPrescribed();
 
 function getCPTDosage() {
     var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1/cpt_dosage/";
