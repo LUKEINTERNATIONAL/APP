@@ -619,7 +619,7 @@ contraindications[15] = ['hypersensitivity','Hepatitis'];
 var sideEffects = [                                                         
   ["Peripheral neuropathy", 821],                                               
   ["Jaundice", 215],["Lipodystrophy", 2148],["Kidney Failure",  9242], 
-  ["Psychosis", 219],["Gynaecomastia", 9440],["Anemia", 3]
+  ["Psychosis", 219],["Gynaecomastia", 9440],["Anemia", 3],["Skin rash", 512],["Insomnia", 867]
 ];
 
 var otherSideEffects = [

@@ -978,6 +978,10 @@
 
                     sideEffectsHash['Anemia'] = {yes: '', no: ''}
 
+                    sideEffectsHash['Skin rash'] = {yes: '', no: ''}
+
+                    sideEffectsHash['Insomnia'] = {yes: '', no: ''}
+
 
 
                     tbSymptomsHash['Cough of any duration'] = {yes: '', no: ''}
@@ -991,7 +995,7 @@
 
                     function advancedSideEffects(){
 
-                        sideEffectsArray = JSON.parse('["Peripheral neuropathy","Jaundice","Lipodystrophy","Kidney Failure","Psychosis","Gynaecomastia","Anemia"]');
+                        sideEffectsArray = JSON.parse('["Peripheral neuropathy","Jaundice","Lipodystrophy","Kidney Failure","Psychosis","Gynaecomastia","Anemia","Skin rash","Insomnia"]');
                         jQuery("#inputFrame" + tstCurrentPage).remove()
                         jQuery("#helpText" + tstCurrentPage).css({
                             marginLeft: "0%",
@@ -1001,7 +1005,7 @@
 
                         html = "<div id='divcontent'>";
                         html += "<div id='divScroller'>";
-                        sideEffectsOptions = JSON.parse('["Peripheral neuropathy","Jaundice","Lipodystrophy","Kidney Failure","Psychosis","Gynaecomastia","Anemia"]');
+                        sideEffectsOptions = JSON.parse('["Peripheral neuropathy","Jaundice","Lipodystrophy","Kidney Failure","Psychosis","Gynaecomastia","Anemia","Skin rash","Insomnia"]');
                         html += "<table cellspacing='1' cellpadding='2' width='95%' id='yes_no_table'>";
                         html += "<tbody>";
 
@@ -1628,6 +1632,8 @@
                         var psychosis_concept_id = 219;
                         var gynaecomastia_concept_id = 9440;
                         var anemia_concept_id = 3;
+                        var skin_rash_concept_id = 512;
+                        var insomnia_concept_id = 867;
 
 
                         var cough_of_any_duration_concept_id = 8261;
@@ -1656,6 +1662,8 @@
                                 {concept_id: malawi_art_side_effects_concept_id, value_coded: psychosis_concept_id, child: {concept_id: psychosis_concept_id, value_coded: getSideEffectAnswer('Psychosis')}},
                                 {concept_id: malawi_art_side_effects_concept_id, value_coded: gynaecomastia_concept_id, child: {concept_id: gynaecomastia_concept_id, value_coded: getSideEffectAnswer('Gynaecomastia')}},
                                 {concept_id: malawi_art_side_effects_concept_id, value_coded: anemia_concept_id, child: {concept_id: anemia_concept_id, value_coded: getSideEffectAnswer('Anemia')}},
+                                {concept_id: malawi_art_side_effects_concept_id, value_coded: skin_rash_concept_id, child: {concept_id: skin_rash_concept_id, value_coded: getSideEffectAnswer('Skin rash')}},
+                                {concept_id: malawi_art_side_effects_concept_id, value_coded: insomnia_concept_id, child: {concept_id: insomnia_concept_id, value_coded: getSideEffectAnswer('Insomnia')}},
 
 
                                 {concept_id: routine_tb_screening_concept_id, value_coded: cough_of_any_duration_concept_id, child: {concept_id: cough_of_any_duration_concept_id, value_coded: getTBSymptomsAnswer('Cough of any duration')}},
@@ -2122,6 +2130,14 @@
                     <input allowFreeText="false" id="Anemia" name="observations[][value_coded_or_text]" type="hidden" value="Anemia" />
 
                     <input allowFreeText="false" id="Anemia_child_concept" name="observations[][value_coded_or_text]" parent_concept_name="MALAWI ART SIDE EFFECTS" type="hidden" value="" />
+
+                    <input allowFreeText="false" id="Skin rash" name="observations[][value_coded_or_text]" type="hidden" value="Skin rash" />
+
+                    <input allowFreeText="false" id="Skin rash_child_concept" name="observations[][value_coded_or_text]" parent_concept_name="MALAWI ART SIDE EFFECTS" type="hidden" value="" />
+
+                    <input allowFreeText="false" id="Insomnia" name="observations[][value_coded_or_text]" type="hidden" value="Insomnia" />
+
+                    <input allowFreeText="false" id="Insomnia_child_concept" name="observations[][value_coded_or_text]" parent_concept_name="MALAWI ART SIDE EFFECTS" type="hidden" value="" />
 
                     <input allowFreeText="false" id="Cough of any duration" name="observations[][value_coded_or_text]" type="hidden" value="Cough of any duration" />
 
