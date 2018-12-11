@@ -1,12 +1,13 @@
 var sideEffectsLeft = [
   ["Peripheral neuropathy", 821],
   ["Jaundice", 215],["Lipodystrophy", 2148],
-  ["Kidney Failure",  9242]
+  ["Kidney Failure",  9242],
+  ["Skin rash", 512]
 ];
 
 var sideEffectsRight = [
   ["Psychosis", 219],["Gynaecomastia", 9440],
-  ["Anemia", 3], ["Other", 6408, "activateOtherSideEffects"]
+  ["Anemia", 3],["Insomnia", 867], ["Other", 6408, "activateOtherSideEffects"]
 ];
 
 var otherSideEffectsLeft = [
