@@ -24,6 +24,7 @@
         <script type="text/javascript" src="/apps/ART/assets/js/hiv_clinical_consultation_weight_trail.js"></script>
         <!-- script type="text/javascript" src="/apps/ART/assets/js/hiv_clinical_consultation_test_summary.js"></script-->
 
+        <script type="text/javascript" src="/apps/ART/assets/js/side_efect_reason.js"></script>
 
         <script type="text/javascript" src="/apps/ART/assets/js/hiv_clinical_consultation_yes_no.js"></script>
 
@@ -2301,6 +2302,14 @@
                     tt_onLoad="__$('keyboard').style.display = 'none';otherSideEffectsYesNo();"
                     tt_pageStyleClass= "NoControls"
                     condition="OtherSideEffects == true">
+                    </input> 
+
+                    <input type="text" name="Medication induced?"
+                      id="medication_induced"
+                      helpText="Medication induced side effects?" optional = "false"
+                      tt_onLoad="__$('keyboard').style.display = 'none';medicationInduced();"
+                      tt_pageStyleClass= "NoControls"
+                      condition="sideEffectsAvailable() == true">
                     </input> 
 
 
