@@ -1672,7 +1672,7 @@
                         Weight_loss: "", last_arv_drugs_taken: "", side_effects: "",
                         on_tb_treatment: "", tb_status: "", is_patient_pregnant: "",
                         is_patient_breastfeeding: "", current_fpm: "", todays_fpm: "",
-                        on_tb_treatment: "", on_fpm: "", cd4_count: "", crag: "", urine_lam: "",
+                        on_tb_treatment: "", on_fpm: "", 
                         arvs: "", cpt: "", inh: "", prescribe_drugs: "", allergic_to_cpt: ""
                     }
 
@@ -1806,11 +1806,6 @@
                             }
 
                         }
-
-                        obs.observations.push({concept_id: test_ordered_concept_id, value_coded: answers_hash["cd4_count"], value_text: "CD4 count"})
-                        obs.observations.push({concept_id: test_ordered_concept_id, value_coded: answers_hash["crag"], value_text: "Crag"})
-                        obs.observations.push({concept_id: test_ordered_concept_id, value_coded: answers_hash["urine_lam"], value_text: "Urine LAM"})
-
 
                         var medication_orders = ["ARV", "CPT", "IPT"];
                         if (__$('touchscreenInput' + tstCurrentPage)){
@@ -2053,30 +2048,25 @@
                     function changeSubmitFunction(){
                         var nextButton =  document.getElementById('nextButton');
                         nextButton.onmousedown = function(){
-                            //value = $('touchscreenInput'+tstCurrentPage).value.trim();
-                            //tb_status_value = tb_status_concepts_map[value]
-                            //answers_hash["tb_status"] = tb_status_value;
-                            if (__$("touchscreenInput" + tstCurrentPage).name.match(/lab-investigations-screen/i)){
-                                getLabParameters();
-                            }
+                            
                             submitHIVClinicConsultation();
                         }
                     }
 
                     function getLabParameters(){
-                        lab_answers = yesNo_Hash["Requested lab test set"];
-                        cd4_count = lab_answers["CD4 count"];
-                        crag = lab_answers["Crag"];
-                        urine_lam = lab_answers["Urine LAM"];
+                        // lab_answers = yesNo_Hash["Requested lab test set"];
+                        // cd4_count = lab_answers["CD4 count"];
+                        // crag = lab_answers["Crag"];
+                        // urine_lam = lab_answers["Urine LAM"];
 
-                        cd4_count_order = getLabInvestigationAnswer("CD4 count");
-                        crag_order = getLabInvestigationAnswer("Crag");
-                        urine_lam_order = getLabInvestigationAnswer("Crag");
-                        //on_fpm: "", cd4_count: "", crag: "", urine_lam: ""
+                        // cd4_count_order = getLabInvestigationAnswer("CD4 count");
+                        // crag_order = getLabInvestigationAnswer("Crag");
+                        // urine_lam_order = getLabInvestigationAnswer("Crag");
+                        // //on_fpm: "", cd4_count: "", crag: "", urine_lam: ""
 
-                        answers_hash["cd4_count"] = cd4_count_order;
-                        answers_hash["crag"] = crag_order;
-                        answers_hash["urine_lam"] = urine_lam_order;
+                        // answers_hash["cd4_count"] = cd4_count_order;
+                        // answers_hash["crag"] = crag_order;
+                        // answers_hash["urine_lam"] = urine_lam_order;
                         //Lab concept
                         //value_coded
                         //value_text
