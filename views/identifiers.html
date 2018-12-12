@@ -19,21 +19,19 @@
 
     <div class="demo-header-cell demo-left" style="">
       
-      <div id="name-title"><strong>ART - Start Date: </strong>&nbsp;<span id="art-start-date"></span> / <span id="art-duration"> </span> </div>
+      <div id="name-title"><strong>ART - Start Date: </strong>&nbsp;<span id="art-start-date"></span> <span id="art-duration"> </span> </div>
       <div class="birthdates">
         <span class="headers">
           <strong>ARV Number:</strong>
         </span> 
-        (<span id="arv-number"></span>) 
+        <span id="arv-number"></span> 
       </div>
       <div class="addresses"><span class="headers"><strong>File Number:</strong></span>&nbsp;<span id="filing-number"></span></div>
       <div class="addresses"><span class="headers"><strong>Current Outcome:</strong></span>&nbsp;<span id="current-outcome"></span></div>
-      <!-- <div class="addresses" style="visibility: hidden;"><span class="headers">Phone#:</span>&nbsp;<span id="addressl3"></span></div> -->
     
     </div>
 
       <script>
-      // moment([2014, 1, 1]).diff(moment([2013, 9, 31]), 'months', true)
       var apiURL = sessionStorage.getItem("apiURL");
       var apiPort = sessionStorage.getItem("apiPort");
       var apiProtocol = sessionStorage.getItem("apiProtocol");
@@ -47,11 +45,11 @@
           if (this.readyState == 4) {
             if (this.status == 200) {
               var results = JSON.parse(this.responseText);
-              document.getElementById("art-start-date").innerHTML = results.art_start_date;
-              document.getElementById("art-duration").innerHTML ="("+ Math.floor(results.art_duration) + " month(s))"
-              document.getElementById("filing-number").innerHTML = results.filing_number;
-              document.getElementById("arv-number").innerHTML = results.arv_number;
-              document.getElementById("current-outcome").innerHTML = results.current_outcome;
+              document.getElementById("art-start-date").innerHTML = ((results.art_start_date !== "N/A") ? results.art_start_date + "/" : "No Start Date Available");
+              document.getElementById("art-duration").innerHTML = ((results.art_duration !== "N/A") ? "("+ Math.floor(results.art_duration) + " month(s))" : "")  
+              document.getElementById("filing-number").innerHTML = ((results.filing_number !== "N/A") ? results.art_start_date : "No Filing Number Available");
+              document.getElementById("arv-number").innerHTML = ((results.arv_number !== "N/A") ? "("+results.arv_number+")" : "No ARV Number Available");
+              document.getElementById("current-outcome").innerHTML =  ((results.current_outcome !== "N/A") ? results.current_outcome : "No Outcome Available");
             }
           }
         };

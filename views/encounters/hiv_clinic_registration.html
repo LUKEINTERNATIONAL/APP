@@ -13,10 +13,12 @@
         <link rel="stylesheet" href="/assets/css/yes_no_ctrls.css" type="text/css"/>
         <script type="text/javascript" src="/assets/js/post_parameters.js"></script>
         <script type="text/javascript" src="/assets/js/generic_ajaxrequest.js"></script>
+        <script type="text/javascript" src="/assets/js/moment.js"></script>
 
         <script type="text/javascript">
             tstUsername = "admin";
-            tstCurrentDate = "2018-09-18";
+            var tstCurrentDate = moment(tstCurrentDate).format("YYYY-MM-DD");
+
         </script>
         <style type="text/css">
             #tab {
@@ -157,29 +159,53 @@
                 <script>
                     var patient_id = sessionStorage.patientID;
                     var tt_cancel_destination = "/views/patient_dashboard.html?patient_id=" + patient_id;
-                    var todayDate = createDates("2018", "9", "18");
+                    var todayDate = new Date(tstCurrentDate);
                     var originaltestDate = ""
 
-                    var alertDate = createDates("2018", "6", "20");
-                    //var testDate = null;
-                    var patient_age = null;
-                    var ageInMonths = '1637'
-                    var currentYear = '2018'
-                    var currentMonth = '9'
+                    var alert_date = new Date(todayDate);
+                    alert_date.setDate(alert_date.getDate()- 90);
+
+                    var alertDate = createDates(moment(alert_date).format("YYYY"), moment(alert_date).format("MM"), moment(alert_date).format("DD"));
+                    var patient_age = parseInt(sessionStorage.patientAge);
+                    var ageInMonths = patient_age * 12;
+
+                    var currentYear = moment(tstCurrentDate).format("YYYY");
+                    var currentMonth = moment(tstCurrentDate).format("MM");
                     var selected_stage_conditions = {};
                     var selected_stage_conditions_copy = {}
-                    var tstCurrentDate = '2018-09-18';
+
                     var firstPositiveHivTestType = "UNKNOWN";
-                    var age = 136;
+                    function getFirstPositiveHivTestTypeObservation() {
+                        var confirmatory_hiv_test_type_concept_id = 7880;
+                        var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1/observations?person_id=" + sessionStorage.patientID + "&concept_id=" + confirmatory_hiv_test_type_concept_id + "&page_size=1";
+                        var xhttp = new XMLHttpRequest();
+                        xhttp.onreadystatechange = function() {
+                            if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                                var latest_hiv_confirmatory_test_observation = JSON.parse(this.responseText)[0];
+                                if (latest_hiv_confirmatory_test_observation){
+                                    value_coded = parseInt(latest_hiv_confirmatory_test_observation.value_coded)
+                                    firstPositiveHivTestType = hivTestTypeConceptIDMap(value_coded)
+                                }
+                            }
+                        };
+
+                        xhttp.open("GET", url, true);
+                        xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                        xhttp.setRequestHeader('Content-type', "application/json");
+                        xhttp.send();
+                    }
+                    getFirstPositiveHivTestTypeObservation();
+
+                    var age = patient_age;
                     var regimen_formulations = {"5": "TDF/3TC/EFV", "11": "AZT/3TC + LPV/r", "0": "ABC/3TC + NVP", "6": "TDF/3TC + NVP", "12": "DRV + r + ETV + RAL", "7": "TDF/3TC + ATV/r", "2": "AZT/3TC/NVP", "8": "AZT/3TC + ATV/r", "9": "ABC/3TC + LPV/r", "4": "AZT/3TC + EFV", "10": "TDF/3TC + LPV/r"};
-                    var birthdate = new Date("04/21/1882")
-                    var dateCreated = new Date("Thu Dec 01 16:29:36 +0200 2016");
+                    var birthdate = new Date(sessionStorage.patientDOB)
+                    var dateCreated = new Date(sessionStorage.patientDOB); //Person day created
                     var patientBirthdateEstimated = "0";
                     var median_weight_height = [];
-                    var sessionDate = new Date('18/Sep/2018');
-                    var birthYear = parseInt('1882');
-                    var birthMonth = parseInt('4');
-                    var birthDay = parseInt('21');
+                    var sessionDate = new Date(tstCurrentDate);
+                    var birthYear = parseInt(moment(sessionStorage.patientDOB).format("YYYY"));
+                    var birthMonth = parseInt(moment(sessionStorage.patientDOB).format("MM"));
+                    var birthDay = parseInt(moment(sessionStorage.patientDOB).format("DD"));
 
                     function checkTestDate(td) {
                         var testDate = createDates($('year_art_last_taken').value, $('month_art_last_taken').value, td.value);
