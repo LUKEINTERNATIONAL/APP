@@ -881,9 +881,21 @@ function renderResults(medication) {
     ul.setAttribute("id", "results-ul");
 
     for(var i = 0 ; i < medication.length ; i++) {
+        var drug_name;
+        try {
+          if(medication[i].alternative_names.length > 0){
+            drug_name = medication[i].alternative_names[0].name
+          }else{
+            continue;
+            drug_name = medication[i].name;
+          }
+        }catch(x) {
+          drug_name = medication[i].name;
+        }
+    
         var li = document.createElement("li");
-        li.innerHTML = medication[i].name;
-        li.setAttribute("tstvalue", medication[i].name);
+        li.innerHTML = drug_name;
+        li.setAttribute("tstvalue", drug_name);
         li.setAttribute("class", "results-list");
         li.setAttribute("dose_strength", medication[i].dose_strength);
         li.setAttribute("units", medication[i].units);
