@@ -1757,16 +1757,6 @@
                                 {concept_id: malawi_art_side_effects_concept_id, value_coded: skin_rash_concept_id, child: {concept_id: skin_rash_concept_id, value_coded: getSideEffectAnswer('Skin rash')}},
                                 {concept_id: malawi_art_side_effects_concept_id, value_coded: insomnia_concept_id, child: {concept_id: insomnia_concept_id, value_coded: getSideEffectAnswer('Insomnia')}},
 
-                                {concept_id: other_side_effect_concept_id, value_coded: fever_concept_id, child: {concept_id: fever_concept_id, value_coded: getOtherSideEffectAnswer('Fever')}},
-                                {concept_id: other_side_effect_concept_id, value_coded: vomiting_concept_id, child: {concept_id: vomiting_concept_id, value_coded: getOtherSideEffectAnswer('Vomiting')}},
-                                {concept_id: other_side_effect_concept_id, value_coded: dizziness_concept_id, child: {concept_id: dizziness_concept_id, value_coded: getOtherSideEffectAnswer('Dizziness')}},
-                                {concept_id: other_side_effect_concept_id, value_coded: headache_concept_id, child: {concept_id: headache_concept_id, value_coded: getOtherSideEffectAnswer('Headache')}},
-                                {concept_id: other_side_effect_concept_id, value_coded: nausea_concept_id, child: {concept_id: nausea_concept_id, value_coded: getOtherSideEffectAnswer('Nausea')}},
-                                {concept_id: other_side_effect_concept_id, value_coded: treatment_failure_concept_id, child: {concept_id: treatment_failure_concept_id, value_coded: getOtherSideEffectAnswer('Treatment failure')}},
-                                {concept_id: other_side_effect_concept_id, value_coded: lactic_acidosis, child: {concept_id: lactic_acidosis, value_coded: getOtherSideEffectAnswer('Lactic acidosis')}},
-                                {concept_id: other_side_effect_concept_id, value_coded: cough_concept_id, child: {concept_id: cough_concept_id, value_coded: getOtherSideEffectAnswer('Cough')}},
-
-
                                 {concept_id: routine_tb_screening_concept_id, value_coded: cough_of_any_duration_concept_id, child: {concept_id: cough_of_any_duration_concept_id, value_coded: getTBSymptomsAnswer('Cough of any duration')}},
                                 {concept_id: routine_tb_screening_concept_id, value_coded: fever_concept_id, child: {concept_id: fever_concept_id, value_coded: getTBSymptomsAnswer('Fever')}},
                                 {concept_id: routine_tb_screening_concept_id, value_coded: night_sweats_concept_id, child: {concept_id: night_sweats_concept_id, value_coded: getTBSymptomsAnswer('Night sweats')}},
@@ -1784,8 +1774,22 @@
                         //if (other_side_effect.toUpperCase() == "YES"){
                           //  obs.observations.push({concept_id: malawi_art_side_effects_concept_id, value_coded: other_concept_id, child: {concept_id: other_concept_id, value_text: othe_side_effect_value}})
                        // }
-
-
+                       var f =  [
+                        {concept_id: other_side_effect_concept_id, value_coded: fever_concept_id, child: {concept_id: fever_concept_id, value_coded: getOtherSideEffectAnswer('Fever')}},
+                                {concept_id: other_side_effect_concept_id, value_coded: vomiting_concept_id, child: {concept_id: vomiting_concept_id, value_coded: getOtherSideEffectAnswer('Vomiting')}},
+                                {concept_id: other_side_effect_concept_id, value_coded: dizziness_concept_id, child: {concept_id: dizziness_concept_id, value_coded: getOtherSideEffectAnswer('Dizziness')}},
+                                {concept_id: other_side_effect_concept_id, value_coded: headache_concept_id, child: {concept_id: headache_concept_id, value_coded: getOtherSideEffectAnswer('Headache')}},
+                                {concept_id: other_side_effect_concept_id, value_coded: nausea_concept_id, child: {concept_id: nausea_concept_id, value_coded: getOtherSideEffectAnswer('Nausea')}},
+                                {concept_id: other_side_effect_concept_id, value_coded: treatment_failure_concept_id, child: {concept_id: treatment_failure_concept_id, value_coded: getOtherSideEffectAnswer('Treatment failure')}},
+                                {concept_id: other_side_effect_concept_id, value_coded: lactic_acidosis, child: {concept_id: lactic_acidosis, value_coded: getOtherSideEffectAnswer('Lactic acidosis')}},
+                                {concept_id: other_side_effect_concept_id, value_coded: cough_concept_id, child: {concept_id: cough_concept_id, value_coded: getOtherSideEffectAnswer('Cough')}}
+                        ];                               
+                        if(OtherSideEffects !== false) {
+                            for (let index = 0; index < f.length; index++) {
+                                 obs.observations.push(f[index]);    
+                            }
+                        }
+                            
                         if (patientGender == "F"){
                             obs.observations.push({ concept_id: 6131, value_coded: (answers_hash["is_patient_pregnant"].length > 0 ? (answers_hash["is_patient_pregnant"].trim().toUpperCase() == "YES" ? 1065: 1066): "" )})
                             obs.observations.push({ concept_id: 7965, value_coded: (answers_hash["is_patient_breastfeeding"].length > 0 ? (answers_hash["is_patient_breastfeeding"].trim().toUpperCase() == "YES" ? 1065: 1066): "") })
