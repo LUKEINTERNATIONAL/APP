@@ -1968,12 +1968,14 @@
 
                     function getOtherSideEffectAnswer(key){                        
                         other_side_effects_answers = yesNo_Hash["OTHER MALAWI ART SIDE EFFECTS"];
-                        other_side_effect_answer = other_side_effects_answers[key];
-                        if (other_side_effect_answer.toUpperCase() == "YES"){
-                            return "1065";
-                        }
-                        if (other_side_effect_answer.toUpperCase() == "NO"){
-                            return "1066";
+                        if(other_side_effects_answers != undefined) {
+                          other_side_effect_answer = other_side_effects_answers[key];
+                          if (other_side_effect_answer.toUpperCase() == "YES"){
+                              return "1065";
+                          }
+                          if (other_side_effect_answer.toUpperCase() == "NO"){
+                              return "1066";
+                          }
                         }
                         return "";
                     }
