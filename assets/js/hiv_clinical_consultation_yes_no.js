@@ -160,7 +160,7 @@ function addTBassociatedSymptomsYesNo() {
     ["Cough of any duration", 1],
     ["Fever", 2],
     ["Night sweats",3],
-    ["Weight loss / Failure to thrive / malnutrition", 4, "checkForWeightLoss(this)"]
+    ["Weight loss / Failure to thrive / malnutrition", 4, "checkForWeightLoss"]
   ];
 
   var frame   = document.getElementById("inputFrame" + tstCurrentPage);
