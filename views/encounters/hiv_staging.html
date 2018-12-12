@@ -290,7 +290,8 @@
                     var cd4_count_numeric, cd4_count_estimate, cd4_count_modifier;
                     var selected_stage_conditions = {};
                     var retrospective_entry = false
-                    var tstCurrentDate = moment().format("DD-MM-YYYY");
+                    //var tstCurrentDate = moment().format("DD-MM-YYYY");
+                    var tstCurrentDate = moment(tstCurrentDate).format("YYYY-MM-DD"); //DO NOT REMOVE THIS FORMAT PLEASE. We are using this format to compare with dates in the same format
                     var currentBMI = parseFloat(sessionStorage.bmi);
                     var currentWeight = parseFloat(sessionStorage.currentWeight)
                     var patientGender = sessionStorage.patientGender;
@@ -700,7 +701,6 @@
                     }
 
                     function updateReasonForArtEligibility() {
-
                         if (tstCurrentDate < '2011-07-01') {
                             oldReasonForEligibility();
                             return
