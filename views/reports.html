@@ -69,18 +69,31 @@
 function reportGrouping(group) {
   if(group == 'main'){
     return [
-      ['MoH','/assets/images/login-logos/Malawi-Coat_of_arms_of_arms.png','#'],
-      ["Clinic", "","#"],
-      ["PEPFAR","/assets/images/login-logos/PEPFAR.png","/report/missed_appointment_duration?type=disaggregated"]
+      ['MoH','/assets/images/login-logos/Malawi-Coat_of_arms_of_arms.png',"buildReportLinks('moh');", 'function'],
+      ["Clinic", "","buildReportLinks('clinic');",'function'],
+      ["PEPFAR","/assets/images/login-logos/PEPFAR.png","buildReportLinks('PEPFAR');",'function']
     ];
-  }else{
+  }else if(group == 'moh'){
+    return [
+      ["Cohort / Disaggregated","", "/apps/ART/views/cohort_tool/revised_cohort_menu.html",'link'],
+      ["Cohort analyzer","","/report/summarize_cohort_report?type=summary",'link'],
+      ["Cohort Survival Analysis","","/cohort_tool/revised_cohort_survival_analysis_menu",'link'],
+      ["Supervision","","/clinic/supervision_tab",'link'],
+    ];
+  }else if(group == 'PEPFAR'){
+    return [
+      ["Cohort / Disaggregated","", "/apps/ART/views/cohort_tool/revised_cohort_menu.html",'link'],
+      ["Defaulters","", "/apps/ART/views/cohort_tool/revised_cohort_menu.html",'link']
+    ]
   }  
 }	
 
 function buildReportLinks(group) {
+  console.log(group + " #############");
   var counter = 0;
   var row = null;
   var reportContainer = document.getElementById("reports-container");
+  reportContainer.innerHTML = null;
 
   var reports = reportGrouping(group);
 
@@ -109,7 +122,11 @@ function buildReportLinks(group) {
 
     var td = document.createElement("td");
     td.setAttribute("id", i.toString());
-    td.addEventListener("click", _testFunc);
+    if(reports[i][3] == 'link'){
+      td.addEventListener("onmousedown", setLink(cell, reports[i][2]));
+    }else{
+      td.addEventListener("onmousedown", setOnmousedown(cell, reports[i][2]));
+    }
     td.innerHTML = reports[i][0];
     tr.appendChild(td);
 
@@ -121,6 +138,15 @@ function buildReportLinks(group) {
       counter = 0;
 
   }
+}
+
+function setOnmousedown(e, link){
+  e.setAttribute("onmousedown", link);
+}
+
+function setLink(e, link){
+   var newURL = window.location.protocol + "//" + window.location.host + link; //reports[parseInt(this.id)][2];
+   e.setAttribute('onmousedown', 'javascript:window.top.location =' + "'" + link + "'");
 }
 
 function _testFunc(){
