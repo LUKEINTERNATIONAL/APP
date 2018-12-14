@@ -66,11 +66,23 @@
     ["DHA-Fast Track Reports", "","/cohort_tool/select_dha_fast_track_date"]
   ];
 
+function reportGrouping(group) {
+  if(group == 'main'){
+    return [
+      ['MoH','/assets/images/login-logos/Malawi-Coat_of_arms_of_arms.png','#'],
+      ["Clinic", "","#"],
+      ["PEPFAR","/assets/images/login-logos/PEPFAR.png","/report/missed_appointment_duration?type=disaggregated"]
+    ];
+  }else{
+  }  
+}	
 
-function buildReportLinks() {
+function buildReportLinks(group) {
   var counter = 0;
   var row = null;
   var reportContainer = document.getElementById("reports-container");
+
+  var reports = reportGrouping(group);
 
   for(var i = 0 ; i < reports.length ; i++){
     if(counter == 0) {
@@ -88,7 +100,9 @@ function buildReportLinks() {
     var td = document.createElement("td");
     
     var img = document.createElement("img");
-    img.setAttribute("src","/apps/ART/assets/images/reports.png");
+    var imgSRC = reports[i][1];
+    imgSRC = imgSRC.length < 1 ? "/apps/ART/assets/images/reports.png" : imgSRC;
+    img.setAttribute("src", imgSRC);
     img.setAttribute("class","report-icons");
     td.appendChild(img);
     tr.appendChild(td);
@@ -119,4 +133,4 @@ function _testFunc(){
 
 <div id="reports-container"></div>
 
-<script>buildReportLinks();</script>
+<script>buildReportLinks('main');</script>
