@@ -16,89 +16,53 @@ var medication_orders = {};
 
 var starterPackSelected = false;
 
-var regimenLines = {"0A": "1", "2A": "1", "4A": "1", "5A": "1", "6A": "1", "13A": "1", "14A": "1", "15A": "1", "7A": "2", "8A": "2", "9A": "2", "10A": "2", "11A": "2", "12A": "3"};
+
 function buildRegimenPage() {
     var frame = document.getElementById("inputFrame" + tstCurrentPage);
     frame.style = "height: 89%; width: 96%;";
     document.getElementById("clearButton").style = "display: none;";
 
-    starterPackSelected = false;
+        starterPackSelected = false;
 
     var regimenContainer = document.createElement("div");
     regimenContainer.setAttribute("class","regimen-container");
     frame.appendChild(regimenContainer);
-
+  
     var regimenContainerRow = document.createElement("div");
     regimenContainerRow.setAttribute("class","regimen-container-row");
     regimenContainer.appendChild(regimenContainerRow);
-
-
-    var cells = ["left","centre", "right"];
-
+  
+  
+    var cells = ["left","right"];
+    
     for(var i = 0 ; i < cells.length ; i++){
-        var regimenContainerCell = document.createElement("div");
-        regimenContainerCell.setAttribute("class","regimen-container-cell");
-        regimenContainerCell.style.border = "1px solid black";
-        regimenContainerCell.setAttribute("id","regimen-container-" + cells[i]);
-        if (cells[i] ==  "left") {
-            regimenContainerCell.innerHTML = "<div class='headers'> First Line </div>";
-        }else if(cells[i] ==  "centre") {
-            regimenContainerCell.innerHTML = "<div class='headers'> Second Line Line </div>";
-        }else if (cells[i] ==  "right") {
-            regimenContainerCell.innerHTML = "<div class='headers'> Third Line </div>";
-        }
-
-        regimenContainerRow.appendChild(regimenContainerCell);
-        createContainers(cells[i]);
+      var regimenContainerCell = document.createElement("div");
+      regimenContainerCell.setAttribute("class","regimen-container-cell");
+      regimenContainerCell.setAttribute("id","regimen-container-" + cells[i]);
+      regimenContainerRow.appendChild(regimenContainerCell);
+      createContainers(cells[i]);
     }
-
+  
     loadRegimens();
-}
-
+  }
+  
 function loadRegimens() {
     var side = "right";
     for(var regimen in givenRegimens){
-/*
-        for (lines in regimenLines) {
-            var linear = (regimen.indexOf(lines, 0) );
-            if(linear == 0) {
-                if (regimenLines[lines] == 1) {
-                    side = "left";
-                }else if (regimenLines[lines] == 2) {
-                    side = "centre";
-                }else if (regimenLines[lines] == 3) {
-                    side = "right";
-                }
-
-            }
-
-        }
-*/
-        var regimenNum = parseInt(regimen.match(/\d+/)[0]);
-        
-        if(regimenNum <= 6){
-          side = 'left';
-        }else if(regimenNum > 6 && regimenNum <= 11){
-          side = 'centre';
-        }else if(regimenNum == 12){
-          side = 'right';
-        }else{
-          side = 'left';
-        }
-
-        var table = document.getElementById("regimen-table-" + side);
-
-        var tr = document.createElement("tr");
-        table.appendChild(tr);
-
-        var td = document.createElement("td");
-        td.setAttribute("class","regimen-names");
-        td.setAttribute("id", regimen);
-        td.setAttribute("onmousedown","selectRegimen(this);checkIfSwitchingRegimen(this);");
-        td.innerHTML = regimen;
-        tr.appendChild(td);
+      side = (side == "right" ? "left" : "right");
+      var table = document.getElementById("regimen-table-" + side);
+  
+      var tr = document.createElement("tr");
+      table.appendChild(tr);
+  
+      var td = document.createElement("td");
+      td.setAttribute("class","regimen-names");
+      td.setAttribute("id", regimen);
+      td.setAttribute("onmousedown","selectRegimen(this);checkIfSwitchingRegimen(this);");
+      td.innerHTML = regimen;
+      tr.appendChild(td);
     }
-
+    
 }
 
 function selectRegimen(e) {
