@@ -1236,10 +1236,14 @@ function resetCustomRegimens() {
 var patient_id = sessionStorage.patientID;
 
 function submitRegimen(){
+    var currentTime = moment().format(' HH:mm:ss');
+    var encounter_datetime = moment(sessionStorage.sessionDate).format('YYYY-MM-DD');
+    encounter_datetime += currentTime;
+
     var encounter = {
         encounter_type_id:  25,
         patient_id: patient_id,
-        encounter_datetime: null
+        encounter_datetime: encounter_datetime
     }
 
   if(appointment_type.length < 1){
