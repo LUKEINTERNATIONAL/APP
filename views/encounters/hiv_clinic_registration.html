@@ -196,6 +196,18 @@
                     }
                     getFirstPositiveHivTestTypeObservation();
 
+                    function hivTestTypeConceptIDMap(conceptID){
+                        conceptMap = {
+                            "": "",
+                            "1040": "HIV rapid test",
+                            "844": "HIV DNA polymerase chain reaction",
+                            "1118": "Not done",
+                            "1067": "Unknown"
+                        }
+
+                        return conceptMap[conceptID]
+                    }
+
                     var age = patient_age;
                     var regimen_formulations = {"5": "TDF/3TC/EFV", "11": "AZT/3TC + LPV/r", "0": "ABC/3TC + NVP", "6": "TDF/3TC + NVP", "12": "DRV + r + ETV + RAL", "7": "TDF/3TC + ATV/r", "2": "AZT/3TC/NVP", "8": "AZT/3TC + ATV/r", "9": "ABC/3TC + LPV/r", "4": "AZT/3TC + EFV", "10": "TDF/3TC + LPV/r"};
                     var birthdate = new Date(sessionStorage.patientDOB)
@@ -1411,12 +1423,12 @@
                         var obs = {
                             encounter_id: encounter.encounter_id,
                             observations: [
-                                { concept_id: 2552, value_coded: answers_hash["followup_agreement"].trim().toUpperCase() == "YES" ? 1065: 1066 },
+                                //{ concept_id: 2552, value_coded: answers_hash["followup_agreement"].trim().toUpperCase() == "YES" ? 1065: 1066 },
                                 { concept_id: 7937, value_coded: answers_hash["ever_registered"].trim().toUpperCase() == "YES" ? 1065: 1066 },
                                 { concept_id: 6393, value_coded: answers_hash["has_transfer_letter"].trim().toUpperCase() == "YES" ? 1065: 1066 },
                                 { concept_id: 7881, value_text: answers_hash["confirmatory_hiv_test_location"] },
                                 { concept_id: 7880, value_text: answers_hash["confirmatory_hiv_test_type"] },
-                                { concept_id: 8011, value_coded: answers_hash["send_sms"].trim().toUpperCase() == "YES" ? 1065: 1066 },
+                                //{ concept_id: 8011, value_coded: answers_hash["send_sms"].trim().toUpperCase() == "YES" ? 1065: 1066 },
                                 { concept_id: 7751, value_datetime: answers_hash["date_art_last_taken"], value_text: date_art_last_taken_value_text },
                                 { concept_id: 7752, value_coded: answers_hash["taken_art_in_the_last_two_months"].trim().toUpperCase() == "YES" ? 1065: 1066 },
                                 { concept_id: 6394, value_coded: answers_hash["taken_art_in_the_last_two_weeks"].trim().toUpperCase() == "YES" ? 1065: 1066 },
@@ -1428,7 +1440,48 @@
                             ]
                         };
 
+                        var agrees_to_followup_agreement_concept_id = 2552;
+                        var phone_only_concept_id = 9685;
+                        var visit_only_concept_id = 9686;
+                        var visit_and_phone_concept_id = 9687;
+
+
+
+                        var phone_only_answer_yes_no = yesNo_Hash["AGREES TO FOLLOW UP"]["Phone only?"];
+                        var phone_only_answer_value_coded = getAgreesToFollowUpConceptID(phone_only_answer_yes_no);
+
+                        var visit_only_answer_yes_no = yesNo_Hash["AGREES TO FOLLOW UP"]["Visit only?"];
+                        var visit_only_answer_value_coded = getAgreesToFollowUpConceptID(visit_only_answer_yes_no);
+
+                        var visit_and_phone_answer_yes_no = yesNo_Hash["AGREES TO FOLLOW UP"]["Visit and phone"];
+                        var visit_and_phone_answer_value_coded = getAgreesToFollowUpConceptID(visit_and_phone_answer_yes_no);
+
+
+                        obs.observations.push(
+                            {concept_id: agrees_to_followup_agreement_concept_id, value_coded: phone_only_concept_id, child: {concept_id: phone_only_concept_id, value_coded: phone_only_answer_value_coded}}
+                        )
+
+                        obs.observations.push(
+                            {concept_id: agrees_to_followup_agreement_concept_id, value_coded: visit_only_concept_id, child: {concept_id: visit_only_concept_id, value_coded: visit_only_answer_value_coded}}
+                        )
+
+                        obs.observations.push(
+                            {concept_id: agrees_to_followup_agreement_concept_id, value_coded: visit_and_phone_concept_id, child: {concept_id: visit_and_phone_concept_id, value_coded: visit_and_phone_answer_value_coded}}
+                        )
+
                         submitParameters(obs,"/observations/", "submitVitalsRegistration()");
+                    }
+
+                    function getAgreesToFollowUpConceptID(answer){
+                        if (answer.match(/YES/i)){
+                            return 1065;
+                        }
+
+                        if (answer.match(/NO/i)){
+                            return 1066;
+                        }
+
+                        return ""
                     }
 
                     function postVitalsObs(encounter){
@@ -1809,15 +1862,37 @@
 
 
                     setTimeout(function () {showCategory2('')}, 500);
+
+                    function addAgreesToFollowupYesNo() {
+                        var concept_name = "AGREES TO FOLLOW UP";
+                        var agreesToFollowupConcepts = [
+                            ["Phone only?", 9685],
+                            ["Visit only?", 9686],
+                            ["Visit and phone", 9687]
+                        ];
+
+                        var frame   = document.getElementById("inputFrame" + tstCurrentPage);
+                        var questions  = agreesToFollowupConcepts.join(";").split(";").join("#");
+
+                        buildYesNoUI(concept_name, questions, frame);
+                    }
+
                 </script>
 
                 <form  onsubmit="submitParameters();">
 
-                    <select tt_onLoad="setNextButtonToGetInputValue('followup_agreement')" name="follow_up_agreement" allowFreeText="false" helpText="Agrees to be contacted by phone/visited at home?" id="agrees_to_followup" tt_pageStyleClass="NoKeyboard">
+                    <input type="text" name="side-effects"
+                           tt_onLoad="__$('keyboard').style.display = 'none'; addAgreesToFollowupYesNo();"
+                           optional="true"
+                           tt_pageStyleClass= "NoControls"
+                           helpText="How can we contact you?" />
+
+
+                    <!--<select tt_onLoad="setNextButtonToGetInputValue('followup_agreement')" name="follow_up_agreement" allowFreeText="false" helpText="Agrees to be contacted by phone/visited at home?" id="agrees_to_followup" tt_pageStyleClass="NoKeyboard">
                         <option value=""></option>
                         <option value="YES">Yes</option>
                         <option value="NO">No</option>
-                    </select>
+                    </select>-->
 
                     <select tt_onLoad="setNextButtonToGetInputValue('ever_received_art')" allowFreeText="false" id="ever_received_art" name="ever_received_art" helpText="Ever received ARVs for treatment or prophylaxis?" name="observations[][value_coded_or_text]" tt_pageStyleClass="NoKeyboard">
                         <option value=''></option>
@@ -2123,13 +2198,13 @@
                         <option value="NOT DONE">Not done</option>
                     </select>
 
-                    <select allowFreeText="false" tt_onLoad="setNextButtonToGetInputValue('send_sms');" helpText="Can we contact you for HIV care follow-up?" id="send_sms" name="observations[][value_coded_or_text]" tt_pageStyleClass="NoKeyboard">
+                    <!--<select allowFreeText="false" tt_onLoad="setNextButtonToGetInputValue('send_sms');" helpText="Can we contact you for HIV care follow-up?" id="send_sms" name="observations[][value_coded_or_text]" tt_pageStyleClass="NoKeyboard">
                         <option value=''></option>
                         <option value=""></option>
                         <option value="YES">Yes</option>
                         <option value="NO">No</option>
                         <option value="UNKNOWN">Unknown</option>
-                    </select>
+                    </select>-->
 
                     <select objectType="location" tt_onLoad="setNextButtonToGetInputValue('confirmatory_hiv_test_location');" ajaxURL="/locations?name=" allowFreeText="true" condition="$('type_of_confirmatory_hiv_test').value != 'NOT DONE'" field_type="alpha" helpText="Location of confirmatory HIV test" id="confirmatory_hiv_test_location" name="observations[][value_coded_or_text]"></select>
 
