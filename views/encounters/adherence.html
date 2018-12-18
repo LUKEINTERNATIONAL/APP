@@ -161,6 +161,57 @@ function buildPillCountScreen() {
   
 }
 
+function buildPillCountScreenForDrugOrders() {
+    /*
+    * Pull all orders <= session_date - 1.day
+    * Orders are sorted in desc order. Latest on top
+    * Get start date of the first element.
+    * Compare this date with all the given orders.
+    * Get all orders with the similar date
+    * mangochiman 2018-Dec-18 @17:21 hours
+    *
+    *Any change at the back end is a disaster
+    * */
+    var date = new Date(sessionStorage.sessionDate);
+    date.setDate(date.getDate() - 1); //1 day
+    var session_date = moment(date).format('YYYY-MM-DD');
+    var url = 'http://' + apiURL + ':' + apiPort + '/api/v1/patients/' + sessionStorage.patientID + '/drugs_received?date=' + session_date;
+
+    var req = new XMLHttpRequest();
+    req.onreadystatechange = function () {
+        if (this.readyState == 4) {
+            if (this.status == 200) {
+                var medications = JSON.parse(this.responseText);
+                var latest_medication_date = medications[0].order.start_date;
+                var formatted_latest_medication_date = moment(latest_medication_date).format("YYYY-MM-DD");
+
+                var medication_dates = [];
+                var orders = [];
+                for (var i=0; i<= medications.length - 1; i++){
+                    formatted_medication_date = moment(medications[i].order.start_date).format("YYYY-MM-DD")
+                    medication_dates.push(medications[i].order.start_date)
+                    if (formatted_latest_medication_date == formatted_medication_date){
+                        orders.push(medications[i])
+                    }
+                }
+
+                showMedication(orders);;
+
+
+                //console.log(medication_dates);
+                //showMedication(medication);
+            }
+        }
+    };
+    try {
+        req.open('GET', url, true);
+        req.setRequestHeader('Authorization', sessionStorage.getItem('authorization'));
+        req.send(null);
+    } catch (e) {
+    }
+
+}
+
 function showMedication(medication) {
   var frame = document.getElementById('inputFrame' + tstCurrentPage);
   frame.style = 'width: 96%; height: 89%;';
@@ -628,18 +679,27 @@ function submitAdherence() {
 }
 
 function postConsultationObs(response) {
-  var observations = [];  
+  var observations = [];
+  var drug_order_adherence_concept_id = 6987;
+  var amount_of_drug_brought_to_clinic_concept_id = 2540;
   
   for(var order_id in medicationPillCounts){
     var attr = medicationPillCounts[order_id];
     observations.push({
-      concept_id: 6987, 
+      concept_id: drug_order_adherence_concept_id,
       value_drug: attr.drug_id,
       order_id: order_id,
       value_numeric: attr.adherence,
       value_modifier: '%',
       person_id: sessionStorage.patientID
     });
+
+    observations.push({
+          concept_id: amount_of_drug_brought_to_clinic_concept_id,
+          order_id: order_id,
+          value_numeric: attr.pill_count,
+          person_id: sessionStorage.patientID
+      });
   }                                                           
   
   var encounter = {
@@ -663,7 +723,7 @@ function nextPage(e){
       <form>
 
         <input type="text" name="summary"
-          tt_onLoad="__$('keyboard').style.display = 'none';changeNextButton(1); buildPillCountScreen();" 
+          tt_onLoad="__$('keyboard').style.display = 'none';changeNextButton(1); buildPillCountScreenForDrugOrders();"
           tt_pageStyleClass= "NoControls" helpText="ARVs given last time" optional = "true"/>
 
         <input type="text" name="summary"
