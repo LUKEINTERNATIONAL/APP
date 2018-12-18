@@ -8,6 +8,7 @@
 <script type="text/javascript" src="/assets/js/post_parameters.js"></script>
 <script type="text/javascript" src="/assets/js/generic_ajaxrequest.js"></script>
 <script type="text/javascript" src="/apps/ART/assets/js/arv_number.js"></script>
+<script type="text/javascript" src="/assets/js/moment.js"></script>
 
 <script>
 var guardianAvailable = false;
@@ -62,12 +63,15 @@ function autoSelectPatient(clickedBtn) {
 }
 
 function submitHIVreception() {
-  	
+  var currentTime = moment().format(' HH:mm:ss');
+  var encounter_datetime = moment(sessionStorage.sessionDate).format('YYYY-MM-DD'); 
+  encounter_datetime += currentTime;
+                        	
   var encounter = {
     encounter_type_name: 'HIV RECEPTION',
     encounter_type_id:  51,
     patient_id: patientID,
-    encounter_datetime: null
+    encounter_datetime: encounter_datetime
   }
 
   submitParameters(encounter, "/encounters", "postVitalsObs");
