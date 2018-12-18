@@ -461,6 +461,8 @@ function buildSummary() {
    document.getElementById('days-elapsed').innerHTML = dateDiffInDays(date1, date2);
 }
 
+var adherencePoor;
+
 function addAdherenceInfo(table, medicationPillCountsArray) {
   var tr = document.createElement('tr');
   table.appendChild(tr);
@@ -490,9 +492,12 @@ function addAdherenceInfo(table, medicationPillCountsArray) {
     var given = medicationPillCountsArray[i].quantity;
     var dose = medicationPillCountsArray[i].equivalent_daily_dose;
     var start_date = medicationPillCountsArray[i].start_date;
+    var pill_count = medicationPillCountsArray[i].pill_count;
     var expected = calculateExpected(given, dose, start_date);
-    expected = (expected < 0 ? ((expected * -1) + ' missed') : (expected + ' unacc'));
-    td.innerHTML = expected;
+
+    var exp = (parseFloat(expected) - parseFloat(pill_count)); 
+    expected_str = (exp < 0 ? ((exp * -1) + ' missed') : (exp + ' unacc'));
+    td.innerHTML = expected_str;
     td.setAttribute('class','data-row');
     tr.appendChild(td);
   }
@@ -506,6 +511,8 @@ function addAdherenceInfo(table, medicationPillCountsArray) {
   td.setAttribute('class','data-row');
   tr.appendChild(td);
 
+  adherencePoor = false;
+  
   for(var i = 0 ; i < medicationPillCountsArray.length ; i++){
     var td = document.createElement('td');
 
@@ -517,6 +524,10 @@ function addAdherenceInfo(table, medicationPillCountsArray) {
     medicationPillCounts[medicationPillCountsArray[i].order_id].adherence = adherence; 
     td.setAttribute('class','data-row');
     tr.appendChild(td);
+
+    if(adherence < 95 || adherence > 105)
+      adherencePoor = true;
+
   }
 
   var tr = document.createElement('tr');
@@ -543,6 +554,14 @@ function addAdherenceInfo(table, medicationPillCountsArray) {
     tr.appendChild(td);
   }
 
+  var nextButton = document.getElementById('nextButton');
+  if(adherencePoor){
+    nextButton.setAttribute('onmousedown','gotoNextPage();');
+    nextButton.innerHTML = '<span>Next</span>';
+  }else{
+    nextButton.setAttribute('onmousedown','submitAdherence();');
+    nextButton.innerHTML = '<span>Finish</span>';
+  }
 }
 
 function addTabsRemainingInfo(table, medicationPillCountsArray) {
@@ -678,8 +697,9 @@ function submitAdherence() {
   submitParameters(encounter, "/encounters", "postConsultationObs");
 }
 
+var observations = [];
+
 function postConsultationObs(response) {
-  var observations = [];
   var drug_order_adherence_concept_id = 6987;
   var amount_of_drug_brought_to_clinic_concept_id = 2540;
   
@@ -713,6 +733,28 @@ function nextPage(e){
   nextEncounter(sessionStorage.patientID, 1);
 }
 
+
+function renderReasonForPoorAdherence() {  
+  var nextButton = document.getElementById('nextButton');
+  nextButton.setAttribute('onmousedown','validateReason();');
+  nextButton.innerHTML = '<span>Finish</span>';
+}
+
+function validateReason() {
+  var r = document.getElementById('touchscreenInput' + tstCurrentPage);
+  if(r.value.length < 1){
+    showMessage('Please select a reason');
+    return;
+  }
+
+  observations.push({
+    concept_id: 3140,
+    value_text: r.value,
+    person_id: sessionStorage.patientID
+  });
+  submitAdherence();
+}
+
 </script>
 
 
@@ -729,6 +771,19 @@ function nextPage(e){
         <input type="text" name="summary"
           tt_onLoad="__$('keyboard').style.display = 'none';changeNextButton(2);buildSummary();" 
           tt_pageStyleClass= "NoControls" helpText="ART adherence" optional = "true"/>
+
+         <select helpText="Reason for poor adherence" 
+          id="reason-for-poor-adherence" name="observations[][value_coded_or_text]" 
+          tt_pageStyleClass="NoKeyboard" tt_onLoad="renderReasonForPoorAdherence();">
+           
+          <option value=''></option>
+          <option value='Left medication at home'>Left medication at home</option>
+          <option value='Shared with partner / friend'>Shared with partner / friend</option>
+          <option value='Accumulated medication from another clinic'>Accumulated medication from another clinic</option>
+          <option value='Medication lost / expired'>Medication lost / expired</option>
+          <option value='System error'>System error</option>
+          <option value="UNKNOWN">Unknown</option>
+        </select>
 
       </form>
       
