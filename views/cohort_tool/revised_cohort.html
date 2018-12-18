@@ -1883,22 +1883,53 @@ function showDisaggregatedReport(){
       <td class="border-null text-bold" colspan="6">
           Secondary outcomes of those alive on ART
       </td>
+      <td class="border-null text-center text-italic text-smaller">
+          <b>A</b>dult formul.
+      </td>
+  </tr>
+  <tr>
+      <td class="index">
+          60.
+      </td>
+      <td class="border-top-dotted border-left-dotted border--bottom_dotted border-null-right">
+          ART Regimens
+      </td>
+      <td colspan="2" class="border-top-dotted border-null-bottom border-null-left border-null-right">
+          &nbsp;
+      </td>
+      <td colspan="2" class="border-bottom-dotted border-null-left border-top-dotted">
+          Regimen <b>0</b>
+      </td>
+      <td class="number regimen_class">
+          <a href="javascript:drillDown('zero_p');" class="regimen" id="zero_p">
+              0
+          </a>
+      </td>
+      <td class="number regimen_class">
+          <a href="javascript:drillDown('zero_p');" class="regimen" id="zero_a">
+              0
+          </a>
+      </td>
   </tr>
   <tr>
       <td class="index">
           61.
       </td>
-      <td class="border-top-dotted border-left-dotted border-null-bottom border-null-right">
-          ART Regimens
+      <td rowspan="4" colspan="3" class="text-italic text-center  border-left-dotted border-null-right
+      border-null-bottom border-top-dotted">
+          Count regimen for <u>all patients registered</u> at this site,
+          including those who currently get supplies from another site
       </td>
-      <td colspan="2" class="border-top-dotted border-null-bottom border-null-left border-null-right">
-          Paediatric formulations (blue card)
+      <td colspan="2" class="border-null-bottom border-null-top border-null-left">
+          Regimen <b>2</b>
       </td>
-      <td colspan="2" class="border-null-bottom border-null-left border-top-dotted">
-          Regimen <b>0P</b>
+      <td class="number regimen_class">
+          <a href="javascript:drillDown('two_p');" class="regimen" id="two_p">
+              0
+          </a>
       </td>
-      <td colspan="2" class="number regimen_class">
-          <a href="javascript:drillDown('zero_p');" class="regimen" id="zero_p">
+      <td class="number regimen_class">
+          <a href="javascript:drillDown('two_p');" class="regimen" id="two_a">
               0
           </a>
       </td>
@@ -1907,16 +1938,16 @@ function showDisaggregatedReport(){
       <td class="index">
           62.
       </td>
-      <td rowspan="4" colspan="3" class="text-italic text-center  border-left-dotted border-null-right
-      border-null-bottom border-null-top">
-          Count regimen for <u>all patients registered</u> at this site,
-          including those who currently get supplies from another site
-      </td>
       <td colspan="2" class="border-null-bottom border-null-top border-null-left">
-          Regimen <b>2P</b>
+          Regimen <b>4</b>
       </td>
-      <td colspan="2" class="number regimen_class">
-          <a href="javascript:drillDown('two_p');" class="regimen" id="two_p">
+      <td class="number regimen_class">
+          <a href="javascript:drillDown('four_p');" class="regimen" id="four_p">
+              0
+          </a>
+      </td>
+      <td class="number regimen_class">
+          <a href="javascript:drillDown('four_p');" class="regimen" id="four_a">
               0
           </a>
       </td>
@@ -1926,10 +1957,13 @@ function showDisaggregatedReport(){
           63.
       </td>
       <td colspan="2" class="border-null-bottom border-null-top border-null-left">
-          Regimen <b>4P</b>
+          Regimen <b>5</b>
       </td>
-      <td colspan="2" class="number regimen_class">
-          <a href="javascript:drillDown('four_p');" class="regimen" id="four_p">
+      <td bgcolor="#A9A9A9" class="number regimen_class">
+        &nbsp;
+      </td>
+      <td class="number regimen_class">
+          <a href="javascript:drillDown('nine_p');" class="regimen" id="five_a">
               0
           </a>
       </td>
@@ -1938,16 +1972,19 @@ function showDisaggregatedReport(){
       <td class="index">
           64.
       </td>
-      <td colspan="2" class="border-null-bottom border-null-top border-null-left">
-          Regimen <b>9P</b>
+      <td colspan="2" class="border-bottom-dotted border-null-top border-null-left">
+          Regimen <b>6</b>
       </td>
-      <td colspan="2" class="number regimen_class">
-          <a href="javascript:drillDown('nine_p');" class="regimen" id="nine_p">
+      <td bgcolor="#A9A9A9" class="number regimen_class">
+        &nbsp;
+      </td>
+      <td class="number regimen_class">
+          <a href="javascript:drillDown('nine_p');" class="regimen" id="six_a">
               0
           </a>
       </td>
   </tr>
-  <tr>
+<!--   <tr>
       <td class="index">
           65.
       </td>
@@ -1959,7 +1996,7 @@ function showDisaggregatedReport(){
               0
           </a>
       </td>
-  </tr>
+  </tr> -->
 <!--
   <tr>
       <td class="index">
@@ -1993,19 +2030,41 @@ function showDisaggregatedReport(){
 !-->
   <tr>
       <td class="index">
-          66.
+          65.
       </td>
       <td class="border-left-dotted border-null-top border-null-bottom border-null-right">
           &nbsp;
       </td>
       <td colspan="2" class="border-top-dotted border-null-left border-null-bottom border-null-right">
-          Adult formulations (yellow card)
+          &nbsp;
       </td>
       <td colspan="2" class="border-top-dotted border-null-bottom border-null-left">
-          Regimen <b>0A</b>
+          Regimen <b>7</b>
       </td>
-      <td colspan="2" class="number regimen_class">
+      <td bgcolor="#A9A9A9" class="number regimen_class">
+        &nbsp;
+      </td>
+      <td class="number regimen_class">
           <a href="javascript:drillDown('zero_a');" class="regimen" id="zero_a">
+              0
+          </a>
+      </td>
+  </tr>
+  <tr>
+      <td class="index">
+          66.
+      </td>
+      <td colspan="3" class="border-left-dotted border-null-top border-null-bottom border-null-right">
+          &nbsp;
+      </td>
+      <td colspan="2" class="border-null-bottom border-null-top border-null-left">
+          Regimen <b>8</b>
+      </td>
+      <td bgcolor="#A9A9A9" class="number regimen_class">
+        &nbsp;
+      </td>
+      <td class="number regimen_class">
+          <a href="javascript:drillDown('two_a');" class="regimen" id="two_a">
               0
           </a>
       </td>
@@ -2018,10 +2077,15 @@ function showDisaggregatedReport(){
           &nbsp;
       </td>
       <td colspan="2" class="border-null-bottom border-null-top border-null-left">
-          Regimen <b>2A</b>
+          Regimen <b>9</b>
       </td>
-      <td colspan="2" class="number regimen_class">
-          <a href="javascript:drillDown('two_a');" class="regimen" id="two_a">
+      <td class="number regimen_class">
+          <a href="javascript:drillDown('four_a');" class="regimen" id="four_a">
+              0
+          </a>
+      </td>
+      <td class="number regimen_class">
+          <a href="javascript:drillDown('four_a');" class="regimen" id="four_a">
               0
           </a>
       </td>
@@ -2030,14 +2094,17 @@ function showDisaggregatedReport(){
       <td class="index">
           68.
       </td>
-      <td colspan="3" class="border-left-dotted border-null-top border-null-bottom border-null-right">
+      <td colspan="3" class="border-left-dotted border-null-top border-bottom-dotted border-null-right">
           &nbsp;
       </td>
-      <td colspan="2" class="border-null-bottom border-null-top border-null-left">
-          Regimen <b>4A</b>
+      <td colspan="2" class="border-bottom-dotted border-null-top border-null-left">
+          Regimen <b>10</b>
       </td>
-      <td colspan="2" class="number regimen_class">
-          <a href="javascript:drillDown('four_a');" class="regimen" id="four_a">
+      <td bgcolor="#A9A9A9" class="number regimen_class">
+        &nbsp;
+      </td>
+      <td class="number regimen_class">
+          <a href="javascript:drillDown('five_a');" class="regimen" id="five_a">
               0
           </a>
       </td>
@@ -2047,13 +2114,18 @@ function showDisaggregatedReport(){
           69.
       </td>
       <td colspan="3" class="border-left-dotted border-null-top border-null-bottom border-null-right">
-          &nbsp;
+      &nbsp;&nbsp;Specify 'Other' Regimens and number of patients on each
       </td>
       <td colspan="2" class="border-null-bottom border-null-top border-null-left">
-          Regimen <b>5A</b>
+          Regimen <b>11</b>
       </td>
-      <td colspan="2" class="number regimen_class">
-          <a href="javascript:drillDown('five_a');" class="regimen" id="five_a">
+      <td class="number regimen_class">
+          <a href="javascript:drillDown('six_a');" class="regimen" id="eleven_a">
+              0
+          </a>
+      </td>
+      <td class="number regimen_class">
+          <a href="javascript:drillDown('six_a');" class="regimen" id="eleven_a">
               0
           </a>
       </td>
@@ -2066,10 +2138,13 @@ function showDisaggregatedReport(){
           &nbsp;
       </td>
       <td colspan="2" class="border-null-bottom border-null-top border-null-left">
-          Regimen <b>6A</b>
+          Regimen <b>12</b>
       </td>
-      <td colspan="2" class="number regimen_class">
-          <a href="javascript:drillDown('six_a');" class="regimen" id="six_a">
+      <td bgcolor="#A9A9A9" class="number regimen_class">
+        &nbsp;
+      </td>
+      <td class="number regimen_class">
+          <a href="javascript:drillDown('seven_a');" class="regimen" id="twelve_a">
               0
           </a>
       </td>
@@ -2082,10 +2157,13 @@ function showDisaggregatedReport(){
           &nbsp;
       </td>
       <td colspan="2" class="border-null-bottom border-null-top border-null-left">
-          Regimen <b>7A</b>
+          Regimen <b>13</b>
       </td>
-      <td colspan="2" class="number regimen_class">
-          <a href="javascript:drillDown('seven_a');" class="regimen" id="seven_a">
+      <td bgcolor="#A9A9A9" class="number regimen_class">
+        &nbsp;
+      </td>
+      <td class="number regimen_class">
+          <a href="javascript:drillDown('eight_a');" class="regimen" id="thirteen_a">
               0
           </a>
       </td>
@@ -2098,10 +2176,13 @@ function showDisaggregatedReport(){
           &nbsp;
       </td>
       <td colspan="2" class="border-null-bottom border-null-top border-null-left">
-          Regimen <b>8A</b>
+          Regimen <b>14</b>
       </td>
-      <td colspan="2" class="number regimen_class">
-          <a href="javascript:drillDown('eight_a');" class="regimen" id="eight_a">
+      <td bgcolor="#A9A9A9" class="number regimen_class">
+        &nbsp;
+      </td>
+      <td class="number regimen_class">
+          <a href="javascript:drillDown('nine_a');" class="regimen" id="fourteen_a">
               0
           </a>
       </td>
@@ -2114,31 +2195,18 @@ function showDisaggregatedReport(){
           &nbsp;
       </td>
       <td colspan="2" class="border-null-bottom border-null-top border-null-left">
-          Regimen <b>9A</b>
+          Regimen <b>15</b>
       </td>
-      <td colspan="2" class="number regimen_class">
-          <a href="javascript:drillDown('nine_a');" class="regimen" id="nine_a">
+      <td bgcolor="#A9A9A9" class="number regimen_class">
+        &nbsp;
+      </td>
+      <td class="number regimen_class">
+          <a href="javascript:drillDown('ten_a');" class="regimen" id="fifteen_a">
               0
           </a>
       </td>
   </tr>
-  <tr>
-      <td class="index">
-          74.
-      </td>
-      <td colspan="3" class="border-left-dotted border-null-top border-null-bottom border-null-right">
-          &nbsp;
-      </td>
-      <td colspan="2" class="border-null-bottom border-null-top border-null-left">
-          Regimen <b>10A</b>
-      </td>
-      <td colspan="2" class="number regimen_class">
-          <a href="javascript:drillDown('ten_a');" class="regimen" id="ten_a">
-              0
-          </a>
-      </td>
-  </tr>
-  <tr>
+<!--   <tr>
       <td class="index">
           75.
       </td>
@@ -2217,18 +2285,23 @@ function showDisaggregatedReport(){
               0
           </a>
       </td>
-  </tr>
+  </tr> -->
   <tr>
       <td class="index">
-
+        74.
       </td>
       <td colspan="3" class="text-center border-left-dotted border-bottom-dotted border-null-top border-null-right">
-          Specify above regimens counted as 'Other'
+          &nbsp;
       </td>
       <td colspan="2" class="border-bottom-dotted border-null-top border-null-left">
           Other (paed. / adult)
       </td>
-      <td colspan="2" class="number regimen_class">
+      <td class="number regimen_class">
+          <a href="javascript:drillDown('unknown_regimen');" class="regimen" id="unknown_regimen">
+              0
+          </a>
+      </td>
+      <td class="number regimen_class">
           <a href="javascript:drillDown('unknown_regimen');" class="regimen" id="unknown_regimen">
               0
           </a>
@@ -2241,7 +2314,7 @@ function showDisaggregatedReport(){
   </tr>
   <tr>
       <td class="index">
-          80.
+          75.
       </td>
       <td class="text-bold border-top-dotted border-left-dotted border-null-bottom border-null-right">
           Pregnant / Breastfeeding
@@ -2260,7 +2333,7 @@ function showDisaggregatedReport(){
   </tr>
   <tr>
       <td class="index">
-          81.
+          76.
       </td>
       <td class="border-left-dotted border-null-bottom border-null-top border-null-right">
           &nbsp;
@@ -2279,7 +2352,7 @@ function showDisaggregatedReport(){
   </tr>
   <tr>
       <td class="index">
-          82.
+          77.
       </td>
       <td class="border-left-dotted border-bottom-dotted border-null-top border-null-right">
           &nbsp;
@@ -2303,7 +2376,7 @@ function showDisaggregatedReport(){
   </tr>
   <tr>
       <td class="index">
-          83.
+          78.
       </td>
       <td class="border-top-dotted border-left-dotted border-null-bottom border-null-right">
           <b>Current TB status</b> any form of TB
@@ -2322,7 +2395,7 @@ function showDisaggregatedReport(){
   </tr>
   <tr>
       <td class="index">
-          84.
+          79.
       </td>
       <td class="border-left-dotted border-null-bottom border-null-top border-null-right">
           &nbsp;
@@ -2341,7 +2414,7 @@ function showDisaggregatedReport(){
   </tr>
   <tr>
       <td class="index">
-          85.
+          80.
       </td>
       <td colspan="3" class="border-left-dotted border-null-bottom border-null-top border-null-right">
           &nbsp;
@@ -2357,7 +2430,7 @@ function showDisaggregatedReport(){
   </tr>
   <tr>
       <td class="index">
-          86.
+          81.
       </td>
       <td colspan="3" class="border-left-dotted border-null-right border-null-bottom border-null-top">
           &nbsp;
@@ -2373,7 +2446,7 @@ function showDisaggregatedReport(){
   </tr>
   <tr>
       <td class="index">
-          87.
+          82.
       </td>
       <td colspan="3" class="border-left-dotted border-bottom-dotted border-null-top border-null-right">
           &nbsp;
@@ -2393,7 +2466,7 @@ function showDisaggregatedReport(){
   </tr>
   <tr>
       <td class="index">
-          88.
+          83.
       </td>
       <td class="text-bold border-top-dotted border-left-dotted border-null-bottom border-null-right">
           Side effects
@@ -2412,7 +2485,7 @@ function showDisaggregatedReport(){
   </tr>
   <tr>
       <td class="index">
-          89.
+          84.
       </td>
       <td class="border-left-dotted border-null-bottom border-null-top border-null-right">
           &nbsp;
@@ -2431,7 +2504,7 @@ function showDisaggregatedReport(){
   </tr>
   <tr>
       <td class="index">
-          90.
+          85.
       </td>
       <td class="border-left-dotted border-bottom-dotted border-null-top border-null-right">
           &nbsp;
@@ -2455,7 +2528,7 @@ function showDisaggregatedReport(){
   </tr>
   <tr>
       <td class="index">
-          91.
+          86.
       </td>
       <td class="text-bold border-left-dotted border-top-dotted border-null-bottom border-null-right">
           Adherence
@@ -2474,7 +2547,7 @@ function showDisaggregatedReport(){
   </tr>
   <tr>
       <td class="index">
-          92.
+          87.
       </td>
       <td class="border-left-dotted border-null-top border-null-bottom border-null-right">
           &nbsp;
@@ -2493,7 +2566,7 @@ function showDisaggregatedReport(){
   </tr>
   <tr>
       <td class="index">
-          93.
+          88.
       </td>
       <td class="border-left-dotted border-bottom-dotted border-null-top border-null-right">
           &nbsp;
@@ -2516,7 +2589,7 @@ function showDisaggregatedReport(){
   </tr>
   <tr>
       <td class="index">
-          94.
+          89.
       </td>
       <td class="border-top-dotted border-left-dotted border-bottom-dotted border-null-right">
           <b>CPT</b>
@@ -2536,7 +2609,7 @@ function showDisaggregatedReport(){
   </tr>
   <tr>
         <td class="index">
-            95.
+            90.
         </td>
         <td class="text-bold border-top-dotted border-left-dotted border-null-bottom border-null-right">
             IPT
@@ -2571,7 +2644,7 @@ function showDisaggregatedReport(){
   </tr>
   <tr>
       <td class="index">
-          96.
+          91.
       </td>
       <td class="border-top-dotted border-left-dotted border-bottom-dotted border-null-right">
           <b>PIFP</b>
@@ -2591,7 +2664,7 @@ function showDisaggregatedReport(){
   </tr>
   <tr>
       <td class="index">
-          97.
+          92.
       </td>
       <td class="border-top-dotted border-left-dotted border-bottom-dotted border-null-right">
           <b>BP screen</b>
@@ -2607,6 +2680,69 @@ function showDisaggregatedReport(){
   </tr>
   <tr>
       <td colspan="7" class="border-null">
+      </td>
+  </tr>
+  <tr>
+      <td class="index">
+          93.
+      </td>
+      <td class="border-top-dotted border-left-dotted border-bottom-dotted border-null-right">
+          <b>PEP</b>
+      </td>
+      <td colspan="2" class="border-top-dotted border-dotted-bottom border-null-left border-null-right">
+          Total persons given PEP in last quarter
+      </td>
+      <td colspan="2" class="border-top-dotted border-null-left border-dotted-bottom">
+      </td>
+      <td colspan="2" class="number">
+        <span id="total_patients_given_pep">0</span>&nbsp;%
+      </td>
+  </tr>
+  <tr>
+  <td colspan="7" class="border-null">
+      </td>
+  </tr>
+    <tr>
+      <td class="index">
+          94.
+      </td>
+      <td class="border-top-dotted border-left-dotted border-bottom-dotted border-null-right">
+          <b>CD4 counts</b>
+      </td>
+      <td colspan="2" class="border-top-dotted border-dotted-bottom border-null-left border-null-right">
+          CD4 count machine installed <u>at this facility</u>
+      </td>
+      <td colspan="2" class="border-top-dotted border-null-left border-dotted-bottom">
+      </td>
+      <td class="number">
+       <b>N</b>
+      </td>
+      <td class="number">
+        <b>Y</b>
+      </td>
+  </tr>
+  <tr>
+      <td colspan="7" class="border-null">
+      </td>
+  </tr>
+  <tr>
+      <td class="index">
+          95.
+      </td>
+      <td class="border-top-dotted border-left-dotted border-bottom-dotted border-null-right">
+          &nbsp;
+      </td>
+      <td colspan="2" class="border-top-dotted border-dotted-bottom border-null-left border-null-right">
+          Total CD4 counts done at this facility in last quarter
+      </td>
+      <td colspan="2" class="border-top-dotted border-null-left border-dotted-bottom">
+      </td>
+      <td colspan="2" class="number">
+        &nbsp;
+      </td>
+  </tr>
+  <tr>
+  <td colspan="7" class="border-null">
       </td>
   </tr>
 </table>
