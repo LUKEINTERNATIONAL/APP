@@ -1727,7 +1727,7 @@
                         var dizziness_concept_id = 877;
                         var headache_concept_id = 620;
                         var nausea_concept_id = 5978;
-                        var treatment_failure_concept_id = 843;
+                        var weight_loss_concept_id = 8260;
                         var lactic_acidosis = 1458;
                         var cough_concept_id = 107;
 
@@ -1735,7 +1735,6 @@
                         var cough_of_any_duration_concept_id = 8261;
                         var fever_concept_id = 5945;
                         var night_sweats_concept_id = 6029;
-                        var weight_loss_concept_id = 8260;
                         var other_concept_id = 6408;
                         var test_ordered_concept_id = 1271;
                         var yes_concept_id = 1065;
@@ -1784,7 +1783,7 @@
                                 {concept_id: other_side_effect_concept_id, value_coded: dizziness_concept_id, child: {concept_id: dizziness_concept_id, value_coded: getOtherSideEffectAnswer('Dizziness')}},
                                 {concept_id: other_side_effect_concept_id, value_coded: headache_concept_id, child: {concept_id: headache_concept_id, value_coded: getOtherSideEffectAnswer('Headache')}},
                                 {concept_id: other_side_effect_concept_id, value_coded: nausea_concept_id, child: {concept_id: nausea_concept_id, value_coded: getOtherSideEffectAnswer('Nausea')}},
-                                {concept_id: other_side_effect_concept_id, value_coded: treatment_failure_concept_id, child: {concept_id: treatment_failure_concept_id, value_coded: getOtherSideEffectAnswer('Treatment failure')}},
+                                {concept_id: other_side_effect_concept_id, value_coded: weight_loss_concept_id, child: {concept_id: weight_loss_concept_id, value_coded: getOtherSideEffectAnswer('Weight loss / Failure to thrive / malnutrition')}},
                                 {concept_id: other_side_effect_concept_id, value_coded: lactic_acidosis, child: {concept_id: lactic_acidosis, value_coded: getOtherSideEffectAnswer('Lactic acidosis')}},
                                 {concept_id: other_side_effect_concept_id, value_coded: cough_concept_id, child: {concept_id: cough_concept_id, value_coded: getOtherSideEffectAnswer('Cough')}}
                         ];                               
@@ -1995,6 +1994,7 @@
                     function getOtherSideEffectAnswer(key){                        
                         other_side_effects_answers = yesNo_Hash["OTHER MALAWI ART SIDE EFFECTS"];
                         if(other_side_effects_answers != undefined) {
+                          console.log(key + " XXXXXXXXXX");
                           other_side_effect_answer = other_side_effects_answers[key];
                           if (other_side_effect_answer.toUpperCase() == "YES"){
                               return "1065";
@@ -2493,7 +2493,7 @@
                     <input type="text" name="tb-associated-symptoms"
                            tt_onLoad="__$('keyboard').style.display = 'none'; addTBassociatedSymptomsYesNo();"
                            tt_pageStyleClass= "NoControls"
-                           condition="__$('tb_treatment_question').value == 'No'"
+                           condition="__$('tb_treatment_question').value == 'No' && checkIfTBsymptomsAlreadyDone() == false"
                            id="routine_tb_screening"
                            helpText="TB associated symptoms" optional = "true"/>
 

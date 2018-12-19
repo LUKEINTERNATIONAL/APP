@@ -11,6 +11,11 @@ function resetReasonForSideEffects() {
 }
 
 function checkForPossibleConnection() {
+  if(earliest_start_dates.earliest_start_date == null){
+    gotoNextPage();
+    return;
+  }
+  
   var f = document.getElementById('inputFrame' + tstCurrentPage);
   var clicked = f.getElementsByClassName('clicked');
 

@@ -14,12 +14,13 @@ var otherSideEffectsLeft = [
   ["Fever", 5945],
   ["Vomiting", 5980],
   ["Dizziness", 877],
-  ["Headache", 620]
+  ["Headache", 620],
+  ["Night sweats", 6029]
 ];
 
 var otherSideEffectsRight = [
   ["Nausea", 5978],
-  ["Treatment failure", 843],
+  ["Weight loss / Failure to thrive / malnutrition", 8260, 'checkForWeightLoss'],
   ["Lactic acidosis", 1458],
   ["Cough", 107]
 ];
@@ -152,6 +153,33 @@ function checkForWeightLoss(element) {
     var val = element.getAttribute("value");
     newPopup(val);
   }
+}
+
+function checkIfTBsymptomsAlreadyDone() {
+  var mwSideEffects = yesNo_Hash['MALAWI ART SIDE EFFECTS'];
+  var otherSelected = mwSideEffects['Other'] == 'Yes' ? true : false;
+
+  if(!otherSelected){
+    yesNo_Hash['OTHER MALAWI ART SIDE EFFECTS'] = null;
+    return false;
+  }
+
+  var mwOtherSideEffects = yesNo_Hash['OTHER MALAWI ART SIDE EFFECTS'];
+  yesNo_Hash['ROUTINE TUBERCULOSIS SCREENING'] = {};
+
+  for(var concept in mwOtherSideEffects){
+    if(concept.toUpperCase() == 'Night sweats'.toUpperCase()){
+      yesNo_Hash['ROUTINE TUBERCULOSIS SCREENING']['Night sweats'] =  mwOtherSideEffects[concept];
+    }else if(concept.toUpperCase() == 'Weight loss / Failure to thrive / malnutrition'.toUpperCase()){
+      yesNo_Hash['ROUTINE TUBERCULOSIS SCREENING']['Weight loss / Failure to thrive / malnutrition'] =  mwOtherSideEffects[concept];
+    }else if(concept.toUpperCase() == 'Cough'.toUpperCase()){
+      yesNo_Hash['ROUTINE TUBERCULOSIS SCREENING']['Cough of any duration'] =  mwOtherSideEffects[concept];
+    }else if(concept.toUpperCase() == 'Fever'.toUpperCase()){
+      yesNo_Hash['ROUTINE TUBERCULOSIS SCREENING']['Fever'] = mwOtherSideEffects[concept];
+    }
+  }
+
+  return true;
 }
 
 function addTBassociatedSymptomsYesNo() {
