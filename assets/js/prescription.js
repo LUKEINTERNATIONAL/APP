@@ -486,16 +486,20 @@ function getRegimens() {
                     if(!isNaN(parseInt(obj[key][i].parseInt)))
                         pack_size = parseInt(obj[key][i].pack_size);
 
+                    var drug_name = obj[key][i].drug_name
+                    var alternative_drug_name = obj[key][i].alternative_drug_name
+                    drug_name = alternative_drug_name == null ?  drug_name : alternative_drug_name;
 
                     var drug = {
-                        drug_name: obj[key][i].drug_name,
+                        drug_name: drug_name,
                         concept_name: obj[key][i].concept_name,
                         drug_id: obj[key][i].drug_id,
                         units: obj[key][i].units,
                         pack_size: pack_size,
                         am: obj[key][i].am,
                         noon: 'N/A',
-                        pm: obj[key][i].pm
+                        pm: obj[key][i].pm,
+                        alternative_drug_name: obj[key][i].alternative_drug_name
                     }
                     passedRegimens[key].push(drug);
                 }
@@ -505,9 +509,12 @@ function getRegimens() {
                 var regimen_name = key;
                 var concept_names = [];
                 for(var i = 0 ; i < passedRegimens[key].length ; i++){
-                    concept_names.push(passedRegimens[key][i].concept_name)
+                  var alternative_name = passedRegimens[key][i].alternative_drug_name;
+                  var concept_name = passedRegimens[key][i].concept_name;
+                  alternative_name = alternative_name == null ?  concept_name : alternative_name;
+                  concept_names.push(alternative_name);
                 }
-                regimen_name += " (" + concept_names.join(" ") + ")";
+                regimen_name += " (" + concept_names.join(" + ") + ")";
                 givenRegimens[regimen_name] = passedRegimens[key];
             }
 
