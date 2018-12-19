@@ -612,8 +612,115 @@ function validateRegimenSelection() {
         return;
     }
 
+    child_bearing_client = false;
+
+    child_bearing_client = checkIfChildBearing();
+
+    if(child_bearing_client){
+      showDTGwarning();
+    }else{
+      continueValidateRegimenSelection();
+    }
+}
+
+function showDTGwarning() {
+  var box = document.getElementById("confirmatory-test-popup-div");
+  var cover = document.getElementById("confirmatory-test-cover");
+
+  cover.style = "display: inline;";
+  box.style = "display: inline;";
+
+  box.innerHTML = null;
+  
+  var initiationBox = document.createElement('div');
+  initiationBox.setAttribute('class','initiationBox');
+  box.appendChild(initiationBox);
+
+  var initiationBoxRow = document.createElement('div');
+  initiationBoxRow.setAttribute('class','initiationBoxRow');
+  initiationBox.appendChild(initiationBoxRow);
+
+  var initiationBoxCell = document.createElement('div');
+  initiationBoxCell.setAttribute('class','initiationBoxCell');
+  var cssText ='text-align: center; color: brown;';
+  cssText += 'font-size: 14pt;font-weight: bolder;';
+  cssText += 'border-width: 0px 0px 1px 0px;border-style: solid;border-color: black;';
+  initiationBoxCell.setAttribute('style', cssText);
+  initiationBoxCell.innerHTML = 'Use of DTG or EFV in women of reproductive age';
+  initiationBoxRow.appendChild(initiationBoxCell);
+
+  var initiationBoxRow = document.createElement('div');
+  initiationBoxRow.setAttribute('class','initiationBoxRow');
+  initiationBox.appendChild(initiationBoxRow);
+
+  var initiationBoxCell = document.createElement('div');
+  var text = '<span style="color: black;">There is currently <u>no confirmation</u>';
+  text += '</span> that <b>DTG</b> is safe in <u>very early preganancy</u><br />';
+  text += 'DTG-based regimens are therefore not used as standard 1st line regimens for ';
+  text += '<u>girls and women</u> who may get preganant'
+  initiationBoxCell.setAttribute('class','initiationBoxCell');
+  initiationBoxCell.innerHTML = text;
+  
+  var cssText = 'text-align: center; margin-top: 5%;';
+  cssText += 'font-size: 25px;';
+  initiationBoxCell.setAttribute('style', cssText);
+  initiationBoxRow.appendChild(initiationBoxCell);
+
+
+
+  var buttonContainer = document.createElement('div');
+  buttonContainer.setAttribute('class','buttonContainer');
+  box.appendChild(buttonContainer);
+
+  var buttonContainerRow = document.createElement('div');
+  buttonContainerRow.setAttribute('class','buttonContainerRow');
+  buttonContainer.appendChild(buttonContainerRow);
+
+
+  var cells = ['Select another regimen','Continue with regimen'];
+
+  for(var i = 0 ; i < cells.length ; i++){
+    var buttonContainerCell = document.createElement('div');
+    buttonContainerCell.setAttribute('class','buttonContainerCell');
+    buttonContainerCell.innerHTML = cells[i];
+    buttonContainerCell.setAttribute('id','buttonContainerCell-blue');
+
+    if(i == 0) {
+      buttonContainerCell.setAttribute('onmousedown','cancelDTG();');
+      buttonContainerCell.setAttribute('style','width: 100px;');
+    }else{
+      buttonContainerCell.setAttribute('onmousedown','cancelDTG();continueValidateRegimenSelection();');
+      buttonContainerCell.setAttribute('style','background-color: tomato;width: 100px;');
+    }
+    buttonContainerRow.appendChild(buttonContainerCell);
+  }
+}
+
+function cancelDTG() {
+  var box = document.getElementById("confirmatory-test-popup-div");
+  var cover = document.getElementById("confirmatory-test-cover");
+  box.innerHTML = null;
+
+  box.style = "display: none;";
+  cover.style = "display: none;";
+}
+
+function continueValidateRegimenSelection() {
     checkForPossibleSideEffects(selectedRegimens)
     checkIFStartPackApplies();
+}
+
+function checkIfChildBearing() {
+  if(sessionStorage.patientGender == 'M')
+    return false;
+
+  var regimen = parseInt(selectedRegimens, 10);
+  var client_age = parseInt(sessionStorage.patientAge);
+
+  if(regimen >= 12 && (client_age >= 14 && client_age <= 45))
+    return true
+
+  return false
 }
 
 function validateIntervalSelection() {
