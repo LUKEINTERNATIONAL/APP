@@ -157,6 +157,33 @@ function createContainers(side) {
 /* ########################################################################################### */
 
 function showSelectedMeds() {
+
+  if(!pelletsActivated){
+    continueShowSelectedMeds();
+    return;
+  } 
+
+  var regimen = parseInt(selectedRegimens, 10);
+  var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1";
+  url += "/programs/1/pellets_regimen?regimen=" + regimen;
+  url += "&patient_id=" + sessionStorage.patientID;
+  url += "&use_pellets=true";
+
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+      var obj = JSON.parse(this.responseText);
+      givenRegimens[selectedRegimens] = obj;
+      continueShowSelectedMeds();
+    }
+  };
+  xhttp.open("GET", url, true);
+  xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+  xhttp.setRequestHeader('Content-type', "application/json");
+  xhttp.send();
+}
+
+function continueShowSelectedMeds() {
     var frame = document.getElementById("inputFrame" + tstCurrentPage);
     frame.style = "height: 89%; width: 96%;";
     document.getElementById("clearButton").style = "display: none;";
@@ -188,7 +215,6 @@ function showSelectedMeds() {
 
     if(givenRegimens[selectedRegimens]) {
         var rows = givenRegimens[selectedRegimens];
-
         for(var i = 0 ; i < rows.length ; i++) {
             var tr = document.createElement("tr");
             tbody.appendChild(tr);
@@ -198,7 +224,6 @@ function showSelectedMeds() {
             }else if(selectedRegimens.split(" ")[0].match(/P/i)){
                 tr.setAttribute("class","peads-category");
             }
-
 
             var td = document.createElement("td");
             td.innerHTML = rows[i].drug_name;
@@ -715,6 +740,104 @@ function cancelDTG() {
 function continueValidateRegimenSelection() {
     checkForPossibleSideEffects(selectedRegimens)
     checkIFStartPackApplies();
+}
+
+var pelletsActivated;
+
+function checkIFRegimenHasLPv() {
+  pelletsActivated = false;
+  
+  var regimen = parseInt(selectedRegimens, 10);
+  var w = parseFloat(sessionStorage.currentWeight); 
+  if (regimen == 11 || regimen == 9 && (w >= 3 && w <= 25) ) {
+    buildPalletBox();
+  }else{
+    gotoNextPage();
+  }
+}
+
+function buildPalletBox() {
+  var box = document.getElementById("confirmatory-test-popup-div");
+  var cover = document.getElementById("confirmatory-test-cover");
+
+  box.style = "display: inline;";
+  cover.style = "display: inline;";
+  box.innerHTML = null;
+
+  /* ################################### */
+  document.getElementById('confirmatory-test-cover').style = 'display: inline;';
+
+  var initiationBox = document.createElement('div');
+  initiationBox.setAttribute('class','initiationBox');
+  box.appendChild(initiationBox);
+
+  var initiationBoxRow = document.createElement('div');
+  initiationBoxRow.setAttribute('class','initiationBoxRow');
+  initiationBox.appendChild(initiationBoxRow);
+
+  var initiationBoxCell = document.createElement('div');
+  initiationBoxCell.setAttribute('class','initiationBoxCell');
+  var cssText ='text-align: center; color: brown;';
+  cssText += 'font-size: 14pt;font-weight: bolder; border-color: black;';
+  cssText += 'border-width: 0px 0px 1px 0px;border-style: solid;';
+  initiationBoxCell.setAttribute('style', cssText);
+  initiationBoxCell.innerHTML = 'Pellets (cups) / Tabs';
+  initiationBoxRow.appendChild(initiationBoxCell);
+
+  var initiationBoxRow = document.createElement('div');
+  initiationBoxRow.setAttribute('class','initiationBoxRow');
+  initiationBox.appendChild(initiationBoxRow);
+
+  var initiationBoxCell = document.createElement('div');
+  var text = '<span style="color: black;">Prescribe LPV/r in <b>Pellets (cups)</b> or <b>Tablets</b>?</span> ';
+  initiationBoxCell.setAttribute('class','initiationBoxCell');
+  initiationBoxCell.innerHTML = text;
+  
+  var cssText = 'text-align: center; margin-top: 5%;';
+  cssText += 'font-size: 25px;';
+  initiationBoxCell.setAttribute('style', cssText);
+  initiationBoxRow.appendChild(initiationBoxCell);
+
+
+
+  var buttonContainer = document.createElement('div');
+  buttonContainer.setAttribute('class','buttonContainer');
+  box.appendChild(buttonContainer);
+
+  var buttonContainerRow = document.createElement('div');
+  buttonContainerRow.setAttribute('class','buttonContainerRow');
+  buttonContainer.appendChild(buttonContainerRow);
+
+
+  var cells = ['Pellets','Tabs'];
+
+  for(var i = 0 ; i < cells.length ; i++){
+    var buttonContainerCell = document.createElement('div');
+    buttonContainerCell.setAttribute('class','buttonContainerCell');
+    buttonContainerCell.setAttribute('style','width: 100px;');
+    buttonContainerCell.innerHTML = cells[i];
+    buttonContainerCell.setAttribute('id','buttonContainerCell-blue');
+
+    buttonContainerRow.appendChild(buttonContainerCell);
+    if(i == 0) {
+      buttonContainerCell.setAttribute('onmousedown','prescribePelletsTabs("pellets");');
+    }else{
+      buttonContainerCell.setAttribute('onmousedown','prescribePelletsTabs("tabs");');
+    }
+    buttonContainerRow.appendChild(buttonContainerCell);
+  }
+  /* ################################## */
+}
+
+function prescribePelletsTabs(ans) {
+  var box = document.getElementById("confirmatory-test-popup-div");
+  var cover = document.getElementById("confirmatory-test-cover");
+  box.innerHTML = null;
+  box.style = "display: none;";
+  cover.style = "display: none;";
+
+  pelletsActivated = (ans == 'pellets' ? true : false); 
+  gotoNextPage();
 }
 
 function checkIfChildBearing() {

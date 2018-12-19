@@ -383,7 +383,7 @@ function checkIFStartPackApplies() {
   if(patientInitiationStatus.toUpperCase() != 'CONTINUING' && !sideEffectMatchFound) {
     var medication = givenRegimens[selectedRegimens];
     for(var i = 0 ; i < medication.length ; i++){
-      if(medication[i].drug_name.match(/nvp/i) || medication[i].drug_name.match(/nevirapine/)) {
+      if(medication[i].drug_name.match(/NVP/i) || medication[i].drug_name.match(/nevirapine/i)) {
         starterPackNeed = true;
         showStartPackMessage(medication);
       }
@@ -404,7 +404,7 @@ function checkIFStartPackApplies() {
   }
   
   if(!starterPackNeed && !sideEffectMatchFound)
-    gotoNextPage();
+    checkIFRegimenHasLPv();
 
 }
 
@@ -671,7 +671,8 @@ function getStaterPackBreakDown() {
        }
        starterPackSelected = true;
        closePopUp();
-       gotoNextPage();
+       //gotoNextPage();
+       checkIFRegimenHasLPv();
     }
   };
   xhttp.open("GET", url, true);
