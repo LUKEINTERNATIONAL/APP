@@ -69,9 +69,15 @@
 function reportGrouping(group) {
   if(group == 'main'){
     return [
-      ['MoH','/assets/images/login-logos/Malawi-Coat_of_arms_of_arms.png','#'],
-      ["Clinic", "","#"],
-      ["PEPFAR","/assets/images/login-logos/PEPFAR.png","/report/missed_appointment_duration?type=disaggregated"]
+      ['MoH','/assets/images/login-logos/Malawi-Coat_of_arms_of_arms.png','MoH', 'function'],
+      ["Clinic", "","#",'link'],
+      ["PEPFAR","/assets/images/login-logos/PEPFAR.png","#",'link']
+    ];
+  }else if(group == 'MoH'){
+    return [
+      ['Cohort / disaggregated','','/apps/ART/views/cohort_tool/revised_cohort_menu.html', 'link'],
+      ["Viral load", "","#",'link'],
+      ["IPT","","#",'link']
     ];
   }else{
   }  
@@ -81,6 +87,7 @@ function buildReportLinks(group) {
   var counter = 0;
   var row = null;
   var reportContainer = document.getElementById("reports-container");
+  reportContainer.innerHTML = null;
 
   var reports = reportGrouping(group);
 
@@ -109,7 +116,13 @@ function buildReportLinks(group) {
 
     var td = document.createElement("td");
     td.setAttribute("id", i.toString());
-    td.addEventListener("click", _testFunc);
+    if(reports[i][3] == 'link'){
+      if(reports[i][2] != '#')
+        cell.setAttribute("onmousedown", "window.top.location='" + reports[i][2] + "'");
+    
+    }else{
+      cell.setAttribute("onmousedown", "buildReportLinks('" + reports[i][2] + "');");
+    }
     td.innerHTML = reports[i][0];
     tr.appendChild(td);
 
