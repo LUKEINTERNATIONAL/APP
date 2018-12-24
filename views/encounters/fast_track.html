@@ -145,7 +145,27 @@ function nextPage(obs) {
   nextEncounter(sessionStorage.patientID, 1);
 }
 
-var tt_cancel_destination = "/views/patient_dashboard.html?patient_id=" + patientID;
+var tt_cancel_destination = "/views/patient_dashboard.html?patient_id=" + sessionStorage.patientID;
+
+function addWatchers() {
+  var list = document.getElementsByTagName('li');
+  for(var i = 0 ; i < list.length ; i++){
+    list[i].setAttribute('onmousedown','updateTouchscreenInputForSelect(this);changeNextButton();');
+  }
+}
+
+function changeNextButton() {
+  var assessmentFT = document.getElementById('assess-for-ft').value;
+  var nextButton = document.getElementById('nextButton');
+  if(assessmentFT == 'Yes') {
+    nextButton.setAttribute('onmousedown','gotoNextPage();');
+    nextButton.innerHTML = '<span>Next</span>';
+  }else{
+    nextButton.setAttribute('onmousedown','submitFT();');
+    nextButton.innerHTML = '<span>Finish</span>';
+  }
+}
+
 </script>
 
 
@@ -155,7 +175,8 @@ var tt_cancel_destination = "/views/patient_dashboard.html?patient_id=" + patien
 
       <form>
         <select allowFreeText="false" helpText="Assess client for FT" 
-         id="assess-for-ft" name="fast-assessment"> 
+         id="assess-for-ft" name="fast-assessment"
+         tt_onLoad ="addWatchers();"> 
           <option value=""></option>
           <option value="Yes">Yes</option>
           <option value="No">No</option>
