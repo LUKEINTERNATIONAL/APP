@@ -47,21 +47,20 @@
 <script>
 
   var reports = [
-    ["Set Clinic Days","/properties/clinic_days"],                          
-    ["View Clinic Holidays","/properties/clinic_holidays"],                 
-    ["Ask Pills remaining at home","/properties/creation?value=ask_pills_remaining_at_home"],
+    ["Set Clinic Days","/views/clinic_days.html"],                          
+    ["View Clinic Holidays","../../views/clinic_holidays.html"],                 
+    ["Ask Pills remaining at home","/views/global_property_yes_no.html?value=ask_pills_remaining_at_home"],
     ["Set Site Code", "/properties/site_code"],                             
-    ["Use Filing Numbers", "/properties/creation?value=use_filing_numbers"],
+    ["Use Filing Numbers", "/views/global_property_yes_no.html?value=use_filing_numbers"],
     ["Set Appointment Limit", "/properties/set_appointment_limit"],         
-    ["Extended Family Planning","/properties/creation?value=extended_family_planning"],
-    ["Activate VL routine check", "/properties/creation?value=activate_viral_load_routine_check"],
-    ["Activate Drug Management","/properties/creation?value=activate_drug_management"],
+    ["Extended Family Planning","/views/global_property_yes_no.html?value=extended_family_planning"],
+    ["Activate VL routine check", "/views/global_property_yes_no.html?value=activate_viral_load_routine_check"],
+    ["Activate Drug Management","/views/global_property_yes_no.html?value=activate_drug_management"],
     ["Activate Hypertension Screening","/properties/creation?value=activate_hypertension_enhancement"],
-    ["Cervical Cancel Module Properties", "/properties/cervical_cancer_module_properties"],
-    ["Activate Fast track", "/properties/creation?value=enable_fast_track"],
-    ["DDE Properties", "/dde/dde_login"],                                   
-    ["Activate user feedback summary reports", "/properties/creation?value=show_user_feedback"],
-    ["Is this a military site?", "/properties/creation?value=military_site"]
+    ["Cervical Cancel Module Properties", "/views/global_property_yes_no.html?value=activate_cervical_cancel_screening"],
+    ["Activate Fast track", "/views/global_property_yes_no.html?value=enable_fast_track"],
+    ["DDE Properties", "/views/global_property_yes_no.html?value=DDE"],                                   
+    ["Is this a military site?", "/views/global_property_yes_no.html?value=military_site"]
   ];
 
 
@@ -93,7 +92,7 @@ function buildReportLinks() {
 
     var td = document.createElement("td");
     td.setAttribute("id", i.toString());
-    td.addEventListener("click", _testFunc);
+    cell.setAttribute("onmousedown", "javascript:window.top.location='/apps/ART/" +  reports[i][1] + "'");
     td.innerHTML = reports[i][0];
     tr.appendChild(td);
 

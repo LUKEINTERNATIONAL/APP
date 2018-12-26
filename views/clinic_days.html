@@ -1,0 +1,60 @@
+
+<script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js" defer="true"></script>
+<!-- <script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/standard.js" defer="true"></script> -->
+<script type="text/javascript" src="/assets/js/jquery.min.js"></script>
+
+<script type="text/javascript" src="/assets/js/yes_no_ctrls.js"></script>
+<link rel="stylesheet" href="/assets/css/yes_no_ctrls.css" type="text/css">
+<script type="text/javascript" src="/assets/js/post_parameters.js"></script>
+<script type="text/javascript" src="/assets/js/generic_ajaxrequest.js"></script>
+
+<script>
+var tt_cancel_destination = "/";
+
+function editOver() {
+  var f = document.getElementById('inputFrame' + tstCurrentPage);
+  f.style = 'width: 95%; height: 87%;';
+  
+  var f = document.getElementById('viewport');
+  f.style = 'height: 87%;';
+}  
+
+</script>
+
+
+<body id="mateme">
+  <div id="container">
+    <div id="content">
+
+      <form>
+
+        <select allowFreeText="false" helpText="Clinic days (adults: 18 yrs and over)" id="adults" 
+          name="adults" multiple="multiple" tt_onLoad="editOver();"> 
+          <option value=""></option>
+          <option value="Sunday">Sunday</option>
+          <option value="Monday">Monday</option>
+          <option value="Tuesday">Tuesday</option>
+          <option value="Wednesday">Wednesday</option>
+          <option value="Thursday">Thursday</option>
+          <option value="Friday">Friday</option>
+          <option value="Saturday">Saturday</option>
+        </select>
+
+        <select allowFreeText="false" helpText="Clinic days (children: under 18 yrs)" id="children" 
+          name="children" multiple="multiple" tt_onLoad="editOver();"> 
+          <option value=""></option>
+          <option value="Sunday">Sunday</option>
+          <option value="Monday">Monday</option>
+          <option value="Tuesday">Tuesday</option>
+          <option value="Wednesday">Wednesday</option>
+          <option value="Thursday">Thursday</option>
+          <option value="Friday">Friday</option>
+          <option value="Saturday">Saturday</option>
+        </select>
+
+     </form>
+
+   </div>
+ </div>
+</body>
+

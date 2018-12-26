@@ -1,0 +1,71 @@
+
+<script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js" defer="true"></script>
+<!-- <script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/standard.js" defer="true"></script> -->
+<script type="text/javascript" src="/assets/js/jquery.min.js"></script>
+
+<script type="text/javascript" src="/assets/js/yes_no_ctrls.js"></script>
+<link rel="stylesheet" href="/assets/css/yes_no_ctrls.css" type="text/css">
+<script type="text/javascript" src="/assets/js/post_parameters.js"></script>
+<script type="text/javascript" src="/assets/js/generic_ajaxrequest.js"></script>
+
+<script>
+var tt_cancel_destination = "/";
+
+function addYesNo() {
+  var query = window.location.search.substring(1);
+  var searchParams = new URLSearchParams(query);
+  var property = searchParams.get('value');
+  
+  var title = property.split('_').join(' ').toUpperCase();
+  var attr = property.split('_').join('.');
+  
+  var tar = document.getElementById("inputFrame" + tstCurrentPage);
+  buildYesNoUI(attr,title, tar);
+}
+
+function changeNextButton() {
+  var n = document.getElementById('nextButton');
+  n.setAttribute('onmousedown','submitGP();');
+}
+
+function submitGP() {
+  var url = "/global_properties";
+  var property = null;
+  var property_value = null;
+
+  for(var p in yesNo_Hash){
+    property = p
+    var properties = yesNo_Hash[p];
+    for(var pr in properties){
+      property_value = properties[pr];
+    }
+  }
+
+  var global_property = {
+    property: property, 
+    property_value: property_value
+  };
+  
+  console.log(global_property)
+  submitParameters(global_property, url, "gpSet");
+}  
+
+function gpSet(e){ document.location = '/' }
+</script>
+
+
+<body id="mateme">
+  <div id="container">
+    <div id="content">
+
+      <form>
+        <input type="text" name="summary"
+          tt_onLoad="__$('keyboard').style.display = 'none';changeNextButton();addYesNo();"
+          tt_pageStyleClass= "NoControls" helpText="Global property" optional = "true"/>
+
+      </form>
+
+   </div>
+ </div>
+</body>
+
