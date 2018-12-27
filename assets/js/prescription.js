@@ -114,8 +114,19 @@ function calculateEstimatedNextApp() {
             pm = parseInt(selectedMeds[i].pm);
 
         pills_per_day += (am + noon + pm);
+        
+        var set_pack_size;
+        if(selectedMeds[i].pack_size == null){
+          try{
+            set_pack_size = selectedMeds[i].barcodes[0].tabs;
+          }catch(z){
+            set_pack_size = 30;
+          }
+        }else{
+          set_pack_size = selectedMeds[i].pack_size;
+        }
 
-        var packs = ((pills_per_day * setSelectedInterval) / parseInt(selectedMeds[i].pack_size));
+        var packs = ((pills_per_day * setSelectedInterval) / parseInt(set_pack_size));
         var pack_size_str = ("'" + packs + "'");
         var packs_rounded = packs;
 
