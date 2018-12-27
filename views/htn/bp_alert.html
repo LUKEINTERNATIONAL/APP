@@ -1,0 +1,104 @@
+
+<script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js" defer="true"></script>
+<script type="text/javascript" src="/assets/js/jquery.min.js"></script>
+
+<script type="text/javascript" src="/assets/js/yes_no_ctrls.js"></script>
+<link rel="stylesheet" href="/assets/css/yes_no_ctrls.css" type="text/css">
+<script type="text/javascript" src="/assets/js/post_parameters.js"></script>
+<script type="text/javascript" src="/assets/js/generic_ajaxrequest.js"></script>
+<script type="text/javascript" src="/apps/ART/assets/js/arv_number.js"></script>
+<script type="text/javascript" src="/assets/js/moment.js"></script>
+
+<script>
+    var apiProtocol = sessionStorage.apiProtocol;
+    var apiURL = sessionStorage.apiURL;
+    var apiPort = sessionStorage.apiPort;
+    var patientID = sessionStorage.patientID;
+
+    var tt_cancel_destination = "/views/patient_dashboard.html?patient_id=" + patientID;
+
+    var systollicBloodPressure = 180;
+    var diastollicBloodPressure = 90;
+    var patientOnBpDrugs = false;
+    var patientPregnant = false;
+    var patientName = "Test Patient";
+
+    function buildHighBpPage(){
+        var html = '';
+        if ((systollicBloodPressure <= 160) &&  (diastollicBloodPressure <= 100) && !patientPregnant) {
+            if (patientOnBpDrugs) {
+                html += '<h2 style="font-weight:bold;">(Patient already on BP drugs)</h2>';
+
+            }
+
+            html += '<h2><span class="name">' + patientName + '</span> has a high blood pressure of ';
+            html += '<span class="bp">' + systollicBloodPressure + '/' + diastollicBloodPressure + '</span>';
+            html += '<br /> Retesting BP is <span style="font-weight: bold; color: #000000;text-decoration: underline;">optional</span>. <br>Do you want to test BP? </h2>';
+            html += '<div class="buttonsDiv footer">\n' +
+                '        <button id ="nextButton" class="navButton button green" onclick="window.location = tt_next_destination">\n' +
+                '          <span>Yes</span>\n' +
+                '        </button>\n' +
+                '        <button id="referButton" class="button red navButton" style="float: left"\n' +
+                '                onmousedown="nextTask();"><span>No</span>\n' +
+                '        </button>\n' +
+                '      </div>';
+            jQuery(".body").html(html);
+        } else{
+            if (patientOnBpDrugs) {
+                html += '<h2 style="font-weight:bold;">(Patient already on BP drugs)</h2>';
+            }
+            html += '<h2><span class="name">' + patientName + '</span> has a high blood pressure of ';
+            html += '<span class="bp">' + systollicBloodPressure + '/' + diastollicBloodPressure + '</span>';
+            html += '<br /> Recapture BP! </h2>';
+            html += '<div class="buttonsDiv footer">\n' +
+                '        <button id ="nextButton" class="navButton button green" onclick="nextTask();">\n' +
+                '          <span>Continue</span></button>\n' +
+                '      </div>';
+            jQuery(".body").html(html);
+
+        }
+    }
+
+</script>
+
+<style>
+    .body{
+        margin-top: 10%;
+        color: gray;
+        text-align: center;
+        width: 99%;
+        text-decoration: none;
+    }
+    .header{
+        width: 99%;
+        text-align: center;
+        margin-top: 3%;
+    }
+    .bp{
+        color: red;
+        font-style: italic;
+    }
+    .name{
+        color: blue;
+        font-style: italic;
+    }
+    .green{
+        width: 170px;
+    }
+</style>
+
+<body id="mateme">
+    <div id="container">
+        <div id="content">
+
+        <div class="header">
+            <h1> High BP! </h1>
+            <div class="body">
+
+            </div>
+        </div>
+
+        </div>
+    </div>
+</body>
+
