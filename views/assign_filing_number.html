@@ -1,0 +1,51 @@
+
+<script>
+
+function filingNumber() {
+  if(use_filing_number && parseInt(sessionStorage.programID) == 1){
+    /* .............................. */
+    var url = new URL(location.href);
+    var person_id = parseInt(url.searchParams.get("person_id"));
+    document.location = "/apps/ART/views/assign_filing_number.html?patient_id=" + person_id;
+    /* .............................. */
+  }else{
+    nextEncounter(sessionStorage.patientID, 1, true);
+  }
+}
+
+var use_filing_number = false;
+
+function getFilingNumber() {
+  var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1";
+  url += "/filing_number/type=activate";
+
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+      var ans = JSON.parse(this.responseText);
+      if(ans['use.filing.number'] == 'true'){
+        use_filing_number = true;
+      }
+    }
+  };
+  xhttp.open("GET", url, true);
+  xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+  xhttp.setRequestHeader('Content-type', "application/json");
+  xhttp.send();
+}
+
+</script>
+
+
+<div id="container" style="display: table; width: 100%; text-align: center;">
+  <div style="display: table-row;">
+    <div style="display: table-cell; width: 20%;">
+      <img src="/assets/images/file-manager.png" style="height: 220px; width:210px;position: absolute;top: 30%; padding-left: 30px;"/>
+    </div>
+    <div style="display: table-cell; font-size: 30px; text-align: center; padding-left: 50px;">
+      <p style="position: absolute;top: 35%; padding-left: 110px;">Creating filing number, please wait ...</p>
+    </div>
+  </div>
+</div>
+
+
