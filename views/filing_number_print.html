@@ -1,0 +1,112 @@
+<script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js" defer="true"></script>
+<!-- <script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/standard.js" defer="true"></script> -->
+<script type="text/javascript" src="/assets/js/jquery.min.js"></script>
+
+
+<style>
+  #clearButton { display: none; }
+#cancelButton { display: none; }
+
+      #fileNumbers {
+        width: 90%;
+        padding: 2%;
+        margin: 0 auto;
+      }
+
+      .fileNumber {
+        background-color: orange;
+        width: 27%;
+        margin: 3%;
+        padding: 2%;
+        border-radius: 2px;
+        box-shadow: 0 1px 1px black;
+      }
+
+      .fileNumber:hover {
+        cursor: pointer;
+        box-shadow: 0 6px 6px brown;
+      }
+
+      .fileNumber h3 {
+        font-family: Ubuntu;
+        color: crimson;
+      }
+
+      .fileNumber p {
+        font-family: Ubuntu;
+        font-weight: 100;
+        text-align: justify;
+        word-spacing: .2em;
+      }
+
+      h3 {
+        font-size: 1.2em;
+      }
+</style>
+
+<script>
+  function loadNumbers() {
+  var f = document.getElementById('inputFrame' + tstCurrentPage);
+  f.style = 'width: 96%; height: 90%; overflow: scroll';
+
+  var b = document.getElementById('nextButton');
+  b.innerHTML = '<span>Refresh</span>';
+  b.setAttribute('onmousedown','refreshList();');
+
+  const fileNumbers = document.createElement('div')
+  fileNumbers.setAttribute('id', 'fileNumbers')
+  f.appendChild(fileNumbers)
+
+  populatePageWithFileNumbers(fetchFileNumbersToPrint())
+}
+
+function refreshList() {
+}
+</script>
+
+
+
+
+<body id="mateme">
+  <div id="container">
+    <div id="content">
+      <form>
+        <input type="text" name="filing-numbers" tt_onLoad="__$('keyboard').style.display = 'none'; loadNumbers();"
+          tt_pageStyleClass="NoControls" helpText="Filing Numbers" optional="true" />
+
+      </form>
+    </div>
+  </div>
+
+  <script>
+    function populatePageWithFileNumbers (fileNumbers) {
+      document.getElementById('fileNumbers').innerHTML += createFileNumberElement(fileNumbers.new)
+      if (fileNumbers.old) {
+        document.getElementById('fileNumbers').innerHTML += createFileNumberElement(fileNumbers.old)
+      }
+    }
+
+    function createFileNumberElement (fileData) {
+      return `<div class='fileNumber'>
+        <h3>${fileData.name}</h3>
+        <hr width='100%'/>
+        <p>
+          File Number:&nbsp;&nbsp;${fileData.fileNumber}
+        </p>
+      </div>`;
+    }
+
+    function fetchFileNumbersToPrint () {
+      return {
+        new: {
+          name: 'Daniel Mwakanema',
+          fileNumber: '1763773AGHGDAxx'
+        },
+        old: {
+          name: 'Lard Nar',
+          fileNumber: 'old1728278HHaa'
+        }
+      }
+    }
+  </script>
+</body>
