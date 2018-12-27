@@ -48,6 +48,117 @@
         }
     }
 
+
+
+    function initializeVariables(){
+        //jQuery(".loader").show();
+
+        var patient_has_hypertension_concept_id = 6414;
+
+
+        var diastollic_blood_pressure_concept_id  = 5086;
+        var treatment_status_concept_id = 1484;
+        var is_patient_pregnant_concept_id = 6131;
+        var yes_concept_id = 1065;
+
+
+        var patient_has_hypertension_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+        patient_has_hypertension_url +=  "/api/v1/observations?person_id=" + sessionStorage.patientID;
+        patient_has_hypertension_url +=  "&concept_id=" + patient_has_hypertension_concept_id;
+        patient_has_hypertension_url +=  "&obs_datetime=" + sessionStorage.sessionDate;
+
+        var diastollic_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+        diastollic_url +=  "/api/v1/observations?person_id=" + sessionStorage.patientID;
+        diastollic_url +=  "&concept_id=" + diastollic_blood_pressure_concept_id;
+        diastollic_url +=  "&obs_datetime=" + sessionStorage.sessionDate;
+
+        var treatment_status_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+        treatment_status_url +=  "/api/v1/observations?person_id=" + sessionStorage.patientID;
+        treatment_status_url +=  "&concept_id=" + treatment_status_concept_id;
+        treatment_status_url +=  "&value_coded=" + yes_concept_id;
+        treatment_status_url +=  "&obs_datetime=" + sessionStorage.sessionDate;
+
+        var is_patient_pregnant_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+        is_patient_pregnant_url +=  "/api/v1/observations?person_id=" + sessionStorage.patientID;
+        is_patient_pregnant_url +=  "&concept_id=" + is_patient_pregnant_concept_id;
+        is_patient_pregnant_url +=  "&value_coded=" + yes_concept_id;
+        is_patient_pregnant_url +=  "&obs_datetime=" + sessionStorage.sessionDate;
+
+
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                var patient_has_hypertension_obs = JSON.parse(this.responseText);
+                if (patient_has_hypertension_obs.length > 0){
+                    hypertension_obs = patient_has_hypertension_obs;
+                }
+
+                var xhttp2 = new XMLHttpRequest();
+                xhttp2.onreadystatechange = function() {
+                    if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                        var diastollic_obs = JSON.parse(this.responseText);
+                        if (diastollic_obs.length > 0){
+                            diastollicBloodPressure = diastollic_obs[0].value_numeric;
+                        }
+
+                        var xhttp3 = new XMLHttpRequest();
+                        xhttp3.onreadystatechange = function() {
+                            if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                                var treatment_status_obs = JSON.parse(this.responseText);
+                                if (treatment_status_obs.length > 0){
+                                    patientOnBpDrugs = true;
+                                }
+
+                                var xhttp4 = new XMLHttpRequest();
+                                xhttp4.onreadystatechange = function() {
+                                    if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                                        var is_patient_pregnant_obs = JSON.parse(this.responseText);
+                                        if (is_patient_pregnant_obs.length > 0){
+                                            patientPregnant = true;
+                                        }
+
+                                        buildHighBpPage();
+
+                                    }
+                                };
+
+                                xhttp4.open("GET", is_patient_pregnant_url, true);
+                                xhttp4.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                                xhttp4.setRequestHeader('Content-type', "application/json");
+                                xhttp4.send();
+
+                            }
+                        };
+
+                        xhttp3.open("GET", treatment_status_url, true);
+                        xhttp3.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                        xhttp3.setRequestHeader('Content-type', "application/json");
+                        xhttp3.send();
+
+                    }
+                };
+
+                xhttp2.open("GET", diastollic_url, true);
+                xhttp2.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                xhttp2.setRequestHeader('Content-type', "application/json");
+                xhttp2.send();
+                /*******/
+
+            }
+        };
+
+        xhttp.open("GET", patient_has_hypertension_url, true);
+        xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+        xhttp.setRequestHeader('Content-type', "application/json");
+        xhttp.send();
+    }
+
+
+
+
+
+
+
     function buildHighBpPage(){
         var html = '<div style="display:table; width:100%">\n' +
             '  <div style="display:table-row">\n' +
