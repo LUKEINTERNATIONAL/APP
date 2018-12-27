@@ -14,12 +14,16 @@
       }
 
       .fileNumber {
-        background-color: orange;
-        width: 27%;
+        background-color: white;
+        width: 90%;
         margin: 3%;
         padding: 2%;
         border-radius: 2px;
         box-shadow: 0 1px 1px black;
+      }
+
+      img {
+        margin-left: 5%;
       }
 
       .fileNumber:hover {
@@ -47,7 +51,7 @@
 <script>
   function loadNumbers() {
   var f = document.getElementById('inputFrame' + tstCurrentPage);
-  f.style = 'width: 96%; height: 90%; overflow: scroll';
+  f.style = 'width: 96%; height: 90%;';
 
   var b = document.getElementById('nextButton');
   b.innerHTML = '<span>Refresh</span>';
@@ -80,18 +84,20 @@ function refreshList() {
 
   <script>
     function populatePageWithFileNumbers (fileNumbers) {
-      document.getElementById('fileNumbers').innerHTML += createFileNumberElement(fileNumbers.new)
+      document.getElementById('fileNumbers').innerHTML += createFileNumberElement(fileNumbers.new, 'Assigned Active File Number')
       if (fileNumbers.old) {
-        document.getElementById('fileNumbers').innerHTML += createFileNumberElement(fileNumbers.old)
+        document.getElementById('fileNumbers').innerHTML += `<img src='/assets/images/upload.png' style='width: 5%'/>`
+        document.getElementById('fileNumbers').innerHTML += `<img src='/assets/images/download.png' style='width: 5%'/>`
+        document.getElementById('fileNumbers').innerHTML += createFileNumberElement(fileNumbers.old, 'Assigned Archived File Number')
       }
     }
 
-    function createFileNumberElement (fileData) {
+    function createFileNumberElement (fileData, status) {
       return `<div class='fileNumber'>
-        <h3>${fileData.name}</h3>
+        <h3>${fileData.name} (${status})</h3>
         <hr width='100%'/>
         <p>
-          File Number:&nbsp;&nbsp;${fileData.fileNumber}
+          File #:&nbsp;&nbsp;${fileData.fileNumber}
         </p>
       </div>`;
     }
