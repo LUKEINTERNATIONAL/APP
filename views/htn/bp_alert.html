@@ -27,6 +27,11 @@
         window.location = "/apps/ART/views/htn/vitals_confirmation.html";
     }
 
+    function nextTask(){
+        //There is a need to pull next task from the back end. For now the value will be hard coded
+        window.location = "/apps/ART/views/htn/medical_history.html"
+    }
+
     function buildHighBpPage(){
         var html = '';
         if ((systollicBloodPressure <= 160) &&  (diastollicBloodPressure <= 100) && !patientPregnant) {
@@ -39,7 +44,7 @@
             html += '<span class="bp">' + systollicBloodPressure + '/' + diastollicBloodPressure + '</span>';
             html += '<br /> Retesting BP is <span style="font-weight: bold; color: #000000;text-decoration: underline;">optional</span>. <br>Do you want to test BP? </h2>';
             html += '<div class="buttonsDiv footer">\n' +
-                '        <button id ="nextButton" class="navButton button green" onclick="window.location = tt_next_destination">\n' +
+                '        <button id ="nextButton" class="navButton button green" onclick="recaptureBP();">\n' +
                 '          <span>Yes</span>\n' +
                 '        </button>\n' +
                 '        <button id="referButton" class="button red navButton" style="float: left"\n' +
@@ -119,7 +124,6 @@
                         xhttp3.onreadystatechange = function() {
                             if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
                                 var treatment_status_obs = JSON.parse(this.responseText);
-                                console.log(treatment_status_obs);
                                 if (treatment_status_obs.length > 0){
                                     patientOnBpDrugs = true;
                                 }
