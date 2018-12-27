@@ -23,6 +23,10 @@
     var patientPregnant = false;
     var patientName = sessionStorage.given_name + " " + sessionStorage.family_name;
 
+    function recaptureBP(){
+        window.location = "/apps/ART/views/htn/vitals_confirmation.html";
+    }
+
     function buildHighBpPage(){
         var html = '';
         if ((systollicBloodPressure <= 160) &&  (diastollicBloodPressure <= 100) && !patientPregnant) {
@@ -51,7 +55,7 @@
             html += '<span class="bp">' + systollicBloodPressure + '/' + diastollicBloodPressure + '</span>';
             html += '<br /> Recapture BP! </h2>';
             html += '<div class="buttonsDiv footer">\n' +
-                '        <button id ="nextButton" class="navButton button green" onclick="nextTask();">\n' +
+                '        <button id ="nextButton" class="navButton button green" onclick="recaptureBP();">\n' +
                 '          <span>Continue</span></button>\n' +
                 '      </div>';
             jQuery(".body").html(html);
