@@ -1,0 +1,601 @@
+
+<script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js" defer="true"></script>
+<script type="text/javascript" src="/assets/js/jquery.min.js"></script>
+
+<script type="text/javascript" src="/assets/js/yes_no_ctrls.js"></script>
+<link rel="stylesheet" href="/assets/css/yes_no_ctrls.css" type="text/css">
+<script type="text/javascript" src="/assets/js/post_parameters.js"></script>
+<script type="text/javascript" src="/assets/js/generic_ajaxrequest.js"></script>
+<script type="text/javascript" src="/apps/ART/assets/js/arv_number.js"></script>
+<script type="text/javascript" src="/assets/js/moment.js"></script>
+
+<script>
+    var apiProtocol = sessionStorage.apiProtocol;
+    var apiURL = sessionStorage.apiURL;
+    var apiPort = sessionStorage.apiPort;
+    var patientID = sessionStorage.patientID;
+
+    var tt_cancel_destination = "/views/patient_dashboard.html?patient_id=" + patientID;
+    var patient_on_bp_drugs = false;
+    var first_visit = false;
+
+    var bp_trail = [{date: "27/Dec/2018", systolic: 160,diastolic: 92, plan: 'Life style advice given' }];
+    var todays_date = moment(sessionStorage.sessionDate).format('YYYY-MM-DD');
+    var note = null;
+    var risks_count = 0;
+    var patient_current_bp_drugs = [];
+    var normatensive = false;
+    var hypertension_obs = []
+
+    function bp_grade(sbp, dbp) {
+        sbp = parseInt(sbp);
+        dbp = parseInt(dbp);
+
+        if ((sbp < 140) && (dbp < 90)){
+            return "normal"
+        }
+
+        else if((sbp >= 140 && sbp.to_i < 160) || (dbp >= 100 && dbp < 110)){
+            return "grade 1"
+        }
+
+        else if((sbp >= 180 && dbp > 110) || sbp >= 180){
+            return "grade 3"
+        }
+
+        else if((sbp >= 160 && sbp < 180) || (dbp >= 110)){
+            return "grade 2"
+        }
+    }
+
+
+
+    function initializeVariables(){
+        //jQuery(".loader").show();
+
+        var patient_has_hypertension_concept_id = 6414;
+
+
+        var diastollic_blood_pressure_concept_id  = 5086;
+        var treatment_status_concept_id = 1484;
+        var is_patient_pregnant_concept_id = 6131;
+        var yes_concept_id = 1065;
+
+
+        var patient_has_hypertension_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+        patient_has_hypertension_url +=  "/api/v1/observations?person_id=" + sessionStorage.patientID;
+        patient_has_hypertension_url +=  "&concept_id=" + patient_has_hypertension_concept_id;
+        patient_has_hypertension_url +=  "&obs_datetime=" + sessionStorage.sessionDate;
+
+        var diastollic_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+        diastollic_url +=  "/api/v1/observations?person_id=" + sessionStorage.patientID;
+        diastollic_url +=  "&concept_id=" + diastollic_blood_pressure_concept_id;
+        diastollic_url +=  "&obs_datetime=" + sessionStorage.sessionDate;
+
+        var treatment_status_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+        treatment_status_url +=  "/api/v1/observations?person_id=" + sessionStorage.patientID;
+        treatment_status_url +=  "&concept_id=" + treatment_status_concept_id;
+        treatment_status_url +=  "&value_coded=" + yes_concept_id;
+        treatment_status_url +=  "&obs_datetime=" + sessionStorage.sessionDate;
+
+        var is_patient_pregnant_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+        is_patient_pregnant_url +=  "/api/v1/observations?person_id=" + sessionStorage.patientID;
+        is_patient_pregnant_url +=  "&concept_id=" + is_patient_pregnant_concept_id;
+        is_patient_pregnant_url +=  "&value_coded=" + yes_concept_id;
+        is_patient_pregnant_url +=  "&obs_datetime=" + sessionStorage.sessionDate;
+
+
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                var patient_has_hypertension_obs = JSON.parse(this.responseText);
+                if (patient_has_hypertension_obs.length > 0){
+                    hypertension_obs = patient_has_hypertension_obs;
+                }
+
+                var xhttp2 = new XMLHttpRequest();
+                xhttp2.onreadystatechange = function() {
+                    if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                        var diastollic_obs = JSON.parse(this.responseText);
+                        if (diastollic_obs.length > 0){
+                            diastollicBloodPressure = diastollic_obs[0].value_numeric;
+                        }
+
+                        var xhttp3 = new XMLHttpRequest();
+                        xhttp3.onreadystatechange = function() {
+                            if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                                var treatment_status_obs = JSON.parse(this.responseText);
+                                if (treatment_status_obs.length > 0){
+                                    patientOnBpDrugs = true;
+                                }
+
+                                var xhttp4 = new XMLHttpRequest();
+                                xhttp4.onreadystatechange = function() {
+                                    if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                                        var is_patient_pregnant_obs = JSON.parse(this.responseText);
+                                        if (is_patient_pregnant_obs.length > 0){
+                                            patientPregnant = true;
+                                        }
+
+                                        buildHighBpPage();
+
+                                    }
+                                };
+
+                                xhttp4.open("GET", is_patient_pregnant_url, true);
+                                xhttp4.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                                xhttp4.setRequestHeader('Content-type', "application/json");
+                                xhttp4.send();
+
+                            }
+                        };
+
+                        xhttp3.open("GET", treatment_status_url, true);
+                        xhttp3.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                        xhttp3.setRequestHeader('Content-type', "application/json");
+                        xhttp3.send();
+
+                    }
+                };
+
+                xhttp2.open("GET", diastollic_url, true);
+                xhttp2.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                xhttp2.setRequestHeader('Content-type', "application/json");
+                xhttp2.send();
+                /*******/
+
+            }
+        };
+
+        xhttp.open("GET", patient_has_hypertension_url, true);
+        xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+        xhttp.setRequestHeader('Content-type', "application/json");
+        xhttp.send();
+    }
+
+
+
+
+
+
+
+    function buildHighBpPage(){
+        var html = '<div style="display:table; width:100%">\n' +
+            '  <div style="display:table-row">\n' +
+            '    <div style="display:table-cell">\n' +
+            '      <div style="margin-bottom: 5px; padding: 10px;font-size: 110%; font-weight: bold;">';
+        html += ' BP Management Screen ' + todays_date;
+        html += '<span style="float: right;">';
+        if (note){
+            html += '<span style="color: red;">' + note + '</span>';
+        }
+
+        if (risks_count == 0){
+            html += '<span onclick="addMedicalHistory();" id="risk_factor">Add Risk Factors</span>';
+        } else {
+            html += '<span onclick="editMedicalHistory();" id="risk_factor"><span style="color: red">View/Edit Risk Factors (' + risks_count + ')</span></span>'
+        }
+        html += '</span>';
+        if (patient_on_bp_drugs){
+            html += '<div style="color:green;">\n' +
+                '            (<i>Patient already on BP drugs</i>)\n' +
+                '          </div>';
+        }
+        html += '</div>\n' +
+            '    </div>\n' +
+            '  </div>';
+
+        html += '<div style="display:table-row">\n' +
+            '    <div style="display:table-cell;border: 1px solid black;">\n' +
+            '      <div><span style="font-weight: bold; font-size: 100%;">BP Trail</span></div>\n' +
+            '      <div style="height: 350px;overflow: auto;">\n' +
+            '        <table style="width: 100%; margin-left: auto;margin-right: auto;">\n' +
+            '          <thead>\n' +
+            '            <tr>\n' +
+            '              <th width="10%">Date</th>\n' +
+            '              <th width="10%">Systolic</th>\n' +
+            '              <th width="10%">Diastolic</th>\n' +
+            '              <th>BP Drugs</th>\n' +
+            '              <th width="20%">Action / Note</th>\n' +
+            '            </tr>\n' +
+            '          </thead>\n' +
+            '          <tbody>';
+
+        for (var key in bp_trail){
+            date = bp_trail[key]["date"];
+            systolic = bp_trail[key]["systolic"];
+            diastolic = bp_trail[key]["diastolic"];
+            current_bp_drugs = "";
+            plan = bp_trail[key]["plan"];
+            past_drug_use = [];
+
+            class_name = bp_grade(systolic, diastolic);
+            try{
+                class_name = class_name.replace(" ", '');
+            } catch (e) {
+                class_name = "normal"
+            }
+
+            html += '<tr class="' + class_name + '">';
+            html += '<td style="text-align: center">' + date + '</td>';
+            html += '<td style="text-align: center">' + systolic + '</td>';
+            html += '<td style="text-align: center">' + diastolic + '</td>';
+            html += '<td style="text-align: center">' + current_bp_drugs + '</td>';
+            if (past_drug_use.length == 0){
+                html += '<td style="padding-left: 10px;">' + plan + '</td>'
+            } else {
+                if (plan.length > 0){
+                    html += '<td style="padding-left: 10px;">' + plan + '<br />';
+                    html += 'Past BP Drugs: <i><b>' + past_drug_use + '</b></i></td>'
+                } else {
+                    html += '<td style="padding-left: 10px;">Past BP Drugs : <i><b>' + past_drug_use + '</b></i></td>'
+                }
+            }
+            html += '</tr>';
+        }
+        html += '</tbody>\n' +
+            '        </table>\n' +
+            '      </div>\n' +
+            '    </div>\n' +
+            '  </div>\n' +
+            '</div>\n' +
+            '<br />';
+
+        if (patient_on_bp_drugs == true && first_visit == true){
+            html += '<div style="display:table-row;border: 1px solid black;width:100%;position:absolute;">\n' +
+                '    <div style="display:table-cell;height: 200px;width:97.8%;position:absolute;">\n' +
+                '      <div style="width:100%" class="heading">Does the patient want to transfer in for HTN management?</div>\n' +
+                '\n' +
+                '      <div class="row">\n' +
+                '        <div class="cell">\n' +
+                '          <div class="option" value="YES" onmousedown="selected(this);" >\n' +
+                '            <div style="display: table-cell; vertical-align: middle; "><img src="/public/touchscreentoolkit/lib/images/unchecked.png"/></div>\n' +
+                '            <div style="display: table-cell; vertical-align: middle;padding-left: 5px;font-size:110% !important; ">Yes</div>\n' +
+                '          </div>\n' +
+                '        </div>\n' +
+                '        <div class="cell"  style="padding-left:40px;">\n' +
+                '          <div class="option" value="NO" onmousedown="selected(this);">\n' +
+                '            <div style="display: table-cell; vertical-align: middle;"><img src="/public/touchscreentoolkit/lib/images/unchecked.png"/></div>\n' +
+                '            <div style="display: table-cell; vertical-align: middle;padding-left: 5px; ">No</div>\n' +
+                '          </div>\n' +
+                '        </div>\n' +
+                '      </div>\n' +
+                '\n' +
+                '    </div>\n' +
+                '  </div>';
+        } else {
+            html += '<div style="display:table-row;border: 1px solid black;width:100%;position:absolute;">\n' +
+                '    <div style="display:table-cell;height: 200px;width:97.8%;position:absolute;">\n' +
+                '      <div style="width:100%" class="heading">Select Action</div>;'
+            if (patient_current_bp_drugs.length > 0){
+                html += '<div class="row">\n' +
+                    '          <div class="cell"><div id = "1" class="option" selected=false onclick="selected(this)">\n' +
+                    '              <div style="display: table-cell; vertical-align: middle; "><img src="/public/touchscreentoolkit/lib/images/unchecked.png"></div>\n' +
+                    '              <div style="display: table-cell; vertical-align: middle;padding-left: 5px;font-size:110% !important; " state="On Treatment">Did not take prescribed BP drugs today</div>\n' +
+                    '            </div>\n' +
+                    '          </div>\n' +
+                    '          <div class="cell"><div class="option" selected=false onclick="selected(this)">\n' +
+                    '              <div style="display: table-cell; vertical-align: middle;"><img src="/public/touchscreentoolkit/lib/images/unchecked.png"></div>\n' +
+                    '              <div style="display: table-cell; vertical-align: middle;padding-left: 5px; " state="On Treatment">Continue Drugs</div>\n' +
+                    '            </div>\n' +
+                    '          </div>\n' +
+                    '          <div class="cell"><div class="option" selected=false onclick="selected(this)">\n' +
+                    '              <div style="display: table-cell; vertical-align: middle;"><img src="/public/touchscreentoolkit/lib/images/unchecked.png"></div>\n' +
+                    '              <div style="display: table-cell; vertical-align: middle;padding-left: 5px;" state="On Treatment">Review Drugs</div>\n' +
+                    '            </div>\n' +
+                    '          </div>\n' +
+                    '        </div>';
+            } else {
+                html += '<div class="row">\n' +
+                    '          <div class="cell"><div id = "1" class="option" selected=false onclick="selected(this)">\n' +
+                    '              <div style="display: table-cell; vertical-align: middle; "><img src="/public/touchscreentoolkit/lib/images/unchecked.png"></div>\n' +
+                    '              <div style="display: table-cell; vertical-align: middle;padding-left: 5px;font-size:70% !important; " state="Lifestyle changes only">Lifestyle Advice given</div>\n' +
+                    '            </div>\n' +
+                    '          </div>\n' +
+                    '          <div class="cell"><div class="option" selected=false onclick="selected(this)">\n' +
+                    '              <div style="display: table-cell; vertical-align: middle;"><img src="/public/touchscreentoolkit/lib/images/unchecked.png"></div>\n' +
+                    '              <div style="display: table-cell; vertical-align: middle;padding-left: 5px;font-size:70% !important;" state="Symptomatic but NOT in treatment">Not yet stable on ART</div>\n' +
+                    '            </div>\n' +
+                    '          </div>\n' +
+                    '          <div class="cell"><div class="option" selected=false onclick="selected(this)">\n' +
+                    '              <div style="display: table-cell; vertical-align: middle;"><img src="/public/touchscreentoolkit/lib/images/unchecked.png"></div>\n' +
+                    '              <div style="display: table-cell; vertical-align: middle;padding-left: 5px;font-size:70% !important;" state="Symptomatic but NOT in treatment">Patient Declining BP drugs</div>\n' +
+                    '            </div>\n' +
+                    '          </div>\n' +
+                    '        </div>';
+                html += '<div class="row">';
+                if (normatensive){
+                    html += '<div class="cell"><div class="option" selected=false onclick="selected(this)">\n' +
+                        '                <div style="display: table-cell; vertical-align: middle; "><img src="/public/touchscreentoolkit/lib/images/unchecked.png"></div>\n' +
+                        '                <div style="display: table-cell; vertical-align: middle;padding-left: 5px;font-size:70% !important;" state="Alive">Return to annual screening</div>\n' +
+                        '              </div>\n' +
+                        '            </div>';
+                }
+                html += '<div class="cell"><div class="option" selected=false onclick="selected(this)">\n' +
+                    '              <div style="display: table-cell; vertical-align: middle; "><img src="/public/touchscreentoolkit/lib/images/unchecked.png"></div>\n' +
+                    '              <div style="display: table-cell; vertical-align: middle;padding-left: 5px;font-size:70% !important;" state="On Treatment">Start anti-hypertensives</div>\n' +
+                    '            </div>\n' +
+                    '          </div>\n' +
+                    '        </div>';
+            }
+
+            html += '</div>\n' +
+                '  </div>';
+
+        }
+
+        html += '<div id="buttons" class="buttonsDiv">';
+        if (patient_on_bp_drugs == true && first_visit == true){
+            html += '<button id="nextButton" class="button green navButton" onmousedown="createVitalsTransferObs();"><span>Finish</span></button>\n' +
+                '    <button onmousedown="confirmCancelEntry();" id="cancelButton" class="button navButton red"><span>Cancel</span></button>;'
+        } else {
+            html += '<button id="nextButton" class="button green navButton" onmousedown="nextPage()"><span>Finish</span></button>';
+        }
+
+        jQuery("#data").html(html);
+
+    }
+
+
+</script>
+
+<style>
+    div.option {
+        font-size: 1.9em;
+        padding-left: 10px;
+        padding-top: 5px;
+    }
+    th{
+        background-color: silver;
+        height: 20px;
+        font-size: 1.1em;
+        padding: 5px;
+    }
+    td {
+        border-bottom:1pt solid black;
+    }
+    tr.normal{
+        background-color: #ffffff;
+    }
+    tr.grade1{
+        background-color: #FFC3CE;
+    }
+    tr.grade2{
+        background-color: #F20056;
+        color: white;
+    }
+    tr.grade3{
+        background-color: #FF3333;
+    }
+    div.heading{
+        background-color: lightgrey;
+        font-size: 1.5em;
+        padding: 10px;
+
+    }
+    #popup_box {
+        display:none;
+        z-index:1001;
+        left:300px;
+        top:100px;
+        text-align:center;
+        font-size:28;
+        color: black;
+        border: 2px solid #9999FF;
+        border-radius: 15px 15px 15px 15px;
+        border-style: outset;
+        height: 160px;
+        padding: 5px;
+        position: absolute;
+        top: 199px;
+        width: 450px;
+        -moz-user-select:none;
+    }
+
+    #popup_box span{
+        font-size:35px;
+    }
+
+    #popup_box a{
+        background-color: silver;
+        border-bottom: 1px outset black;
+        border-style: outset;
+        padding: 10px 25px 10px 25px;
+        border-radius:5px;
+        font-size:29;
+        cursor: pointer;
+
+    }
+
+    #cover{
+        display: none;
+        position: absolute;
+        background-color: black;
+        width: 100%;
+        height: 102%;
+        left: 0%;
+        top: 0%;
+        z-index: 1000;
+        opacity: 0.5;
+    }
+    #risk_factor{
+        background: lightblue;
+        border-radius: 5px;
+        padding: 5px;
+        color: black;
+        background-color: lightgray;
+        margin: 15px;
+        border: 3px outset gray;
+        -moz-user-select:none;
+        text-align: center;
+    }
+    div.message{
+        display: none;
+        font-size: 2em;
+        font-family: 'Nimbus Sans L','Arial Narrow',sans-serif;
+        position: absolute;
+        top:100px;
+        height: 200px;
+        width: 40%;
+        left:250px;
+        text-align:center;
+        padding:30px;
+        background: tomato;
+        border-radius: 15px;
+        border:5px outset tomato;
+    }
+
+    .confirm_div{
+        display: none;
+        font-size: 2em;
+        font-family: 'Nimbus Sans L','Arial Narrow',sans-serif;
+        position: absolute;
+        top:100px;
+        height: 130px;
+        width: 40%;
+        left:250px;
+        text-align:center;
+        padding:30px;
+        background: tomato;
+        border-radius: 15px;
+        border:5px outset tomato;
+    }
+
+    .update_drug_button{
+        background-color: #006dcc;
+        background-image: linear-gradient(to bottom, #08c, #04c);
+        background-repeat: repeat-x;
+        border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+        color: #fff;
+        text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+        border-radius: 6px;
+        font-size: 17.5px;
+        padding: 11px 30px;
+        -moz-border-bottom-colors: none;
+        -moz-border-left-colors: none;
+        -moz-border-right-colors: none;
+        -moz-border-top-colors: none;
+        border-image: none;
+        border-style: solid;
+        border-width: 1px;
+        box-shadow: 0 1px 0 rgba(255, 255, 255, 0.2) inset, 0 1px 2px rgba(0, 0, 0, 0.05);
+        cursor: pointer;
+        display: inline-block;
+        line-height: 20px;
+        margin-bottom: 0;
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    .update_drug_button:hover{
+        background-color: #e6e6e6;
+        text-decoration: none;
+        background-position: 0 -0.2px;
+        transition: background-position 0.1s linear 0s;
+    }
+</style>
+
+<body id="mateme">
+<div id="container">
+    <div id="content">
+        <div id="data"></div>
+
+    </div>
+</div>
+<div class="loader"></div>
+</body>
+
+
+
+<script type="text/javascript">
+    function selected(option)
+    {
+        options = document.getElementsByClassName("option")
+
+        for(i = 0; i < options.length; i ++)
+        {
+            options[i].style.backgroundColor = "white";
+            options[i].setAttribute("selected", false)
+            options[i].children[0].firstChild.setAttribute("src", "/public/touchscreentoolkit/lib/images/unchecked.png")
+        }
+
+        var state = option.getAttribute('selected');
+        option.setAttribute("selected",(state == "true" ? false : true));
+        option.children[0].firstChild.setAttribute("src", (state == "true" ? "/public/touchscreentoolkit/lib/images/unchecked.png" : "/public/touchscreentoolkit/lib/images/checked.png"))
+    }
+
+    function nextPage()
+    {
+        options = document.getElementsByClassName("option")
+        var checked = false;
+        for(i = 0; i < options.length; i ++)
+        {
+            if (options[i].getAttribute("selected") == "true")
+            {
+                checked = true;
+                switch (options[i].children[1].innerHTML){
+                    case 'Start anti-hypertensives' :
+                        path = "/htn_encounter/change_drugs?patient_id=<%= @patient.patient_id %>"
+                        break;
+                    case 'Review Drugs':
+                        path = "/htn_encounter/bp_drug_management?patient_id=<%= @patient.patient_id %>&review=true"
+                        break;
+                    case 'Continue Drugs':
+                        path = "/htn_encounter/bp_drug_management?patient_id=<%= @patient.patient_id %>"
+                        break;
+                    case 'Did not take prescribed BP drugs today':
+                        path = "/htn_encounter/bp_drug_management?patient_id=<%= @patient.patient_id %>"
+                        break;
+                    default :
+                        path = "/htn_encounter/redirect_to_next_task?patient_id=<%= @patient.patient_id %>"
+                        break;
+                }
+                document.getElementById("nextButton").setAttribute("onmousedown", "")
+                document.getElementById("message").style.display = "block";
+
+                return createEncounter(options[i].children[1].innerHTML, path, options[i].children[1].getAttribute("state"));
+
+                break;
+            }
+
+        }
+        if (checked == false)
+            showMessage("Please select one action to proceed");
+    }
+
+    function createEncounter(chosenPlan, path, state)
+    {
+
+        if (state == "On Treatment")
+        {
+            state = null;
+        }
+
+    }
+
+    function referPatient()
+    {
+        window.location = "/htn_encounter/refer_to_clinician"
+    }
+
+    buildHighBpPage();
+
+    if (hypertension_obs.length == 0){
+        window.onload = function () {
+            var button = document.createElement("button");
+            button.id = "hypeternsion-diagnosis";
+            button.className = 'blue'
+            button.innerHTML = "<span>Hypertension Diagnosis</span>";
+            button.style.cssFloat = "left";
+
+            button.onclick = function(){
+                window.location = "/apps/ART/views/htn/hypertension_diagnosis.html";
+            }
+
+            if(__$("buttons")){
+                __$("buttons").appendChild(button);
+                __$("nextButton").style.display = 'none'; //Hiding the finish button
+            }
+        }
+    }
+</script>
