@@ -43,10 +43,9 @@ function submitGP() {
 
   var global_property = {
     property: property, 
-    property_value: property_value
+    property_value: (property_value.toUpperCase() == 'NO' ? 'false' : 'true')
   };
   
-  console.log(global_property)
   submitParameters(global_property, url, "gpSet");
 }  
 
