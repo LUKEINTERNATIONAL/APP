@@ -1,0 +1,145 @@
+
+<script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js" defer="true"></script>
+<!-- <script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/standard.js" defer="true"></script> -->
+<script type="text/javascript" src="/assets/js/jquery.min.js"></script>
+
+<script type="text/javascript" src="/assets/js/yes_no_ctrls.js"></script>
+<link rel="stylesheet" href="/assets/css/yes_no_ctrls.css" type="text/css">
+<script type="text/javascript" src="/assets/js/post_parameters.js"></script>
+<script type="text/javascript" src="/assets/js/generic_ajaxrequest.js"></script>
+
+<script>
+var tt_cancel_destination = "/";
+
+function editOver() {
+  var f = document.getElementById('inputFrame' + tstCurrentPage);
+  f.style = 'width: 95%; height: 87%;';
+  
+  var f = document.getElementById('viewport');
+  f.style = 'height: 87%;';
+}  
+
+function changeNext() {
+  var b = document.getElementById('nextButton');
+  b.setAttribute('onmousedown','validateGPentry();');
+}
+
+var adults;
+var children;
+
+function loadDays() {
+  adults = document.getElementById('touchscreenInput' + tstCurrentPage).value;
+}
+
+function validateGPentry() {
+  children = document.getElementById('touchscreenInput' + tstCurrentPage).value;
+  if(children.length < 1){
+    showMessage('Please select a day/s');
+    return;
+  }
+
+  var gp = {
+    property: 'clinic.days', 
+    property_value: adults.split(';').join(',')
+  };
+ 
+  var funName = (children.length > 0 ? 'updateChildrenDays' : 'gpSet') 
+  submitParameters(gp, '/global_properties', funName);
+}
+
+function updateChildrenDays(e) {
+  var gp = {
+    property: 'peads.clinic.days', 
+    property_value: children.split(';').join(',')
+  };
+  
+  submitParameters(gp, '/global_properties', 'gpSet');
+}
+
+function gpSet(e){ document.location = '/' }
+
+</script>
+
+
+<body id="mateme">
+  <div id="container">
+    <div id="content">
+
+      <form>
+
+        <select allowFreeText="false" helpText="Clinic days (adults: 18 yrs and over)" id="adults" 
+          name="adults" multiple="multiple" tt_onLoad="editOver();loadGP('clinic.days');" tt_onUnLoad="loadDays();"> 
+          <option value=""></option>
+          <option value="Sunday">Sunday</option>
+          <option value="Monday">Monday</option>
+          <option value="Tuesday">Tuesday</option>
+          <option value="Wednesday">Wednesday</option>
+          <option value="Thursday">Thursday</option>
+          <option value="Friday">Friday</option>
+          <option value="Saturday">Saturday</option>
+        </select>
+
+        <select allowFreeText="false" helpText="Clinic days (children: under 18 yrs)" id="children" 
+          name="children" multiple="multiple" tt_onLoad="editOver();changeNext();loadGP('peads.clinic.days');"> 
+          <option value=""></option>
+          <option value="Sunday">Sunday</option>
+          <option value="Monday">Monday</option>
+          <option value="Tuesday">Tuesday</option>
+          <option value="Wednesday">Wednesday</option>
+          <option value="Thursday">Thursday</option>
+          <option value="Friday">Friday</option>
+          <option value="Saturday">Saturday</option>
+        </select>
+
+     </form>
+
+   </div>
+ </div>
+</body>
+
+
+<script>
+
+function loadGP(passedGP) {
+  if(existingGP[passedGP] != undefined){
+    return;
+  }
+
+  var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1";
+  url += '/global_properties?property=' + passedGP;
+  
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+      var obj = JSON.parse(this.responseText);
+      existingGP[passedGP] = obj[passedGP];
+      highlightRows(passedGP);
+    }
+  };
+  xhttp.open("GET", url, true);
+  xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+  xhttp.setRequestHeader('Content-type', "application/json");
+  xhttp.send();
+}
+
+var existingGP = {};
+
+function highlightRows(passedGP) {
+  var ul = document.getElementById('tt_currentUnorderedListOptions');
+  var list = ul.getElementsByTagName('li');
+  var days = existingGP[passedGP].split(',');
+
+  for(var i = 0 ; i < days.length ; i++){
+    var string1 = days[i];
+    for(var x = 0 ; x < list.length ; x++){
+      var string2 = list[x].innerHTML;
+      var regex = new RegExp(string1, 'g');
+      if(string2.match(regex)){
+        updateTouchscreenInputForSelect(__$('optionValue' + list[x].id), this);
+      }
+    }
+  }
+}
+
+</script>
+

@@ -1,0 +1,58 @@
+
+<script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js" defer="true"></script>
+<script type="text/javascript" src="/assets/js/jquery.min.js"></script>
+<script type="text/javascript" src="/assets/js/post_parameters.js"></script>
+<script type="text/javascript" src="/assets/js/generic_ajaxrequest.js"></script>
+
+<script>
+
+var global_property;
+
+function changeNext() {
+  var b = document.getElementById('nextButton');
+  b.setAttribute('onmousedown','validateGPentry();');
+
+  var query = window.location.search.substring(1);
+  var searchParams = new URLSearchParams(query);
+  global_property = searchParams.get('value');
+  
+  var helpText = global_property.split('.').join(' ').toUpperCase();  
+  document.getElementById('helpText' + tstCurrentPage).innerHTML = helpText;  
+}
+
+function validateGPentry() {
+  var value = document.getElementById('touchscreenInput' + tstCurrentPage).value;
+  value = parseInt(value);
+  if(value < 1 || isNaN(value)){
+    showMessage('Please enter a valid number that is greater than 0');
+    return;
+  }
+
+  var gp = {
+    property: global_property, 
+    property_value: value
+  };
+  
+  submitParameters(gp, '/global_properties', "gpSet");
+}
+
+function gpSet(e){ document.location = '/' }
+</script>
+
+<body id="mateme">
+  <div id="container">
+    <div id="content">
+
+      <form>
+
+        <input allowFreeText="false" field_type="number" 
+          helpText="<span id='global_property'>&nbsp;</span>" 
+          id="appointment_limit" name="appointment_limit"
+          tt_onLoad = "changeNext();"
+         tt_pageStyleClass="Numeric NumbersOnly" type="text" />
+      </form>
+
+   </div>
+ </div>
+</body>
+
