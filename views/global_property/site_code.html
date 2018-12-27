@@ -1,0 +1,48 @@
+
+<script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js" defer="true"></script>
+<script type="text/javascript" src="/assets/js/jquery.min.js"></script>
+<script type="text/javascript" src="/assets/js/post_parameters.js"></script>
+<script type="text/javascript" src="/assets/js/generic_ajaxrequest.js"></script>
+
+<script>
+
+function changeNext() {
+  var b = document.getElementById('nextButton');
+  b.setAttribute('onmousedown','validateGPentry();');
+}
+
+function validateGPentry() {
+  var value = document.getElementById('touchscreenInput' + tstCurrentPage).value;
+  if(value.length < 1){
+    showMessage('Input box is empty');
+    return;
+  }
+
+  var gp = {
+    property: 'site_prefix', 
+    property_value: value.toUpperCase()
+  };
+  
+  submitParameters(gp, '/global_properties', "gpSet");
+}
+
+function gpSet(e){ document.location = '/' }
+</script>
+
+<body id="mateme">
+  <div id="container">
+    <div id="content">
+
+      <form>
+
+        <input allowFreeText="false" field_type="text" 
+          helpText="MoH-ART code" 
+          id="appointment_limit" name="appointment_limit"
+          tt_onLoad = "changeNext();"
+         tt_pageStyleClass="text" type="text" />
+      </form>
+
+   </div>
+ </div>
+</body>
+
