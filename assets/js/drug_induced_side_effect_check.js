@@ -11,7 +11,12 @@ function resetReasonForSideEffects() {
 }
 
 function checkForPossibleConnection() {
-  if(earliest_start_dates.earliest_start_date == null){
+  try {
+    if(earliest_start_dates.earliest_start_date == null){
+      gotoNextPage();
+      return;
+    }
+  }catch(w) {
     gotoNextPage();
     return;
   }
