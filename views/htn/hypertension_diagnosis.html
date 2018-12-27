@@ -1,0 +1,108 @@
+
+<script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js" defer="true"></script>
+<!-- <script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/standard.js" defer="true"></script> -->
+<script type="text/javascript" src="/assets/js/jquery.min.js"></script>
+
+<script type="text/javascript" src="/assets/js/yes_no_ctrls.js"></script>
+<link rel="stylesheet" href="/assets/css/yes_no_ctrls.css" type="text/css">
+<script type="text/javascript" src="/assets/js/post_parameters.js"></script>
+<script type="text/javascript" src="/assets/js/generic_ajaxrequest.js"></script>
+<script type="text/javascript" src="/apps/ART/assets/js/arv_number.js"></script>
+<script type="text/javascript" src="/assets/js/moment.js"></script>
+
+<script>
+    var apiProtocol = sessionStorage.apiProtocol;
+    var apiURL = sessionStorage.apiURL;
+    var apiPort = sessionStorage.apiPort;
+    var patientID = sessionStorage.patientID;
+    var tstCurrentDate = moment(tstCurrentDate).format("YYYY-MM-DD");
+
+    var programID = sessionStorage.getItem("programID");
+    var tt_cancel_destination = "/views/patient_dashboard.html?patient_id=" + patientID;
+    var yes_concept_id = 1065;
+    var no_concept_id = 1066;
+    var patient_has_hypertension_concept_id = 6414;
+    var hypertension_diagnosis_date_concept_id = 6415;
+
+
+    function submitHIVClinicalConsultationEncounter() {
+        var currentTime = moment().format(' HH:mm:ss');
+        var encounter_datetime = moment(sessionStorage.sessionDate).format('YYYY-MM-DD');
+        encounter_datetime += currentTime;
+
+        var encounter = {
+            encounter_type_name: 'HIV CLINIC CONSULTATION',
+            encounter_type_id:  53,
+            patient_id: patientID,
+            encounter_datetime: encounter_datetime
+        }
+
+        submitParameters(encounter, "/encounters", "postHIVClinicConsultationObs");
+
+    }
+
+    function postHIVClinicConsultationObs(encounter) {
+        var obs = {
+            encounter_id: encounter["encounter_id"],
+            observations: [
+                { concept_id: patient_has_hypertension_concept_id, value_coded: answers_hash["hypertension"]},
+                { concept_id: hypertension_diagnosis_date_concept_id, value_datetime: answers_hash["date_of_hypertension"]}
+            ]
+        };
+
+        submitParameters(obs, "/observations", "nextPage")
+    }
+
+    var answers_hash = {
+        hypertension: "",
+        date_of_hypertension: ""
+    }
+
+    function submitWhenNoIsSelected(){
+        __$('nextButton').onmousedown = function(){
+            value = __$('touchscreenInput' + tstCurrentPage).value;
+            if (value.match(/NO/i)){
+                answers_hash["hypertension"] = no_concept_id;
+                submitHIVClinicalConsultationEncounter();
+            } else{
+                answers_hash["hypertension"] = yes_concept_id;
+                gotoNextPage();
+            }
+
+        }
+    }
+
+    function changeSubmitButton(){
+        __$('nextButton').onmousedown = function(){
+            value = __$('touchscreenInput' + tstCurrentPage).value;
+            answers_hash["date_of_hypertension"] = value;
+            submitHIVClinicalConsultationEncounter();
+        }
+    }
+
+    function nextPage(){
+        nextEncounter(sessionStorage.patientID, 1);
+    }
+
+</script>
+
+<body id="mateme">
+    <div id="container">
+        <div id="content">
+            <form>
+                <select name="diagnosis_status" id="diagnosis_status" field_type="text" helpText="Does the patient have hypertension?"
+                        tt_onLoad="submitWhenNoIsSelected()" optional="true">
+                    <option value=""></option>
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
+                </select>
+
+                <input type="text" name="diagnosis_date" id="diagnosis_date" condition="$('diagnosis_status').value.toUpperCase() == 'YES'"
+                       tt_onLoad="changeSubmitButton();" field_type="date" helpText="Date the patient was diagnosed with hypertension" />
+
+            </form>
+
+        </div>
+    </div>
+</body>
+

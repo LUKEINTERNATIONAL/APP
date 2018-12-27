@@ -25,6 +25,7 @@
     var risks_count = 0;
     var patient_current_bp_drugs = [];
     var normatensive = false;
+    var hypertension_obs = []
 
     function bp_grade(sbp, dbp) {
         sbp = parseInt(sbp);
@@ -467,4 +468,23 @@
     }
 
     buildHighBpPage();
+
+    if (hypertension_obs.length == 0){
+        window.onload = function () {
+            var button = document.createElement("button");
+            button.id = "hypeternsion-diagnosis";
+            button.className = 'blue'
+            button.innerHTML = "<span>Hypertension Diagnosis</span>";
+            button.style.cssFloat = "left";
+
+            button.onclick = function(){
+                window.location = "/apps/ART/views/htn/hypertension_diagnosis.html";
+            }
+
+            if(__$("buttons")){
+                __$("buttons").appendChild(button);
+                __$("nextButton").style.display = 'none'; //Hiding the finish button
+            }
+        }
+    }
 </script>
