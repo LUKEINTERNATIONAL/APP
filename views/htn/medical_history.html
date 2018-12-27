@@ -1,0 +1,118 @@
+
+<script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js" defer="true"></script>
+<script type="text/javascript" src="/assets/js/jquery.min.js"></script>
+
+<script type="text/javascript" src="/assets/js/yes_no_ctrls.js"></script>
+<link rel="stylesheet" href="/assets/css/yes_no_ctrls.css" type="text/css">
+<script type="text/javascript" src="/assets/js/post_parameters.js"></script>
+<script type="text/javascript" src="/assets/js/generic_ajaxrequest.js"></script>
+<script type="text/javascript" src="/assets/js/moment.js"></script>
+
+
+<script>
+    var apiProtocol = sessionStorage.apiProtocol;
+    var apiURL = sessionStorage.apiURL;
+    var apiPort = sessionStorage.apiPort;
+    var patientID = sessionStorage.patientID;
+
+    function submitMedicalHistoryEncounter() {
+        var currentTime = moment().format(' HH:mm:ss');
+        var encounter_datetime = moment(sessionStorage.sessionDate).format('YYYY-MM-DD');
+        encounter_datetime += currentTime;
+
+        var encounter = {
+            encounter_type_name: 'MEDICAL HISTORY',
+            encounter_type_id:  30,
+            patient_id: patientID,
+            encounter_datetime: encounter_datetime
+        }
+
+        submitParameters(encounter, "/encounters", "postMedicalHistoryObs");
+
+    }
+
+    var diabetes_concept_id = 3720;
+    var chronic_kidney_disease_concept_id = 7623;
+    var past_history_of_ihd_or_cvd_concept_id = 9499;
+    var first_degree_relative_with_ihd_or_cvd_concept_id = 9501;
+    var patiently_currently_smokes_concept_id = 3339;
+
+    var yes_concept_id = 1065;
+    var no_concept_id = 1066;
+
+    function postMedicalHistoryObs(encounter) {
+        var obs = {
+            encounter_id: encounter["encounter_id"],
+            observations: [
+                { concept_id: diabetes_concept_id, value_coded: answers_hash["diabetes"]},
+                { concept_id: chronic_kidney_disease_concept_id, value_coded: answers_hash["chronic_kidney_disease"]},
+                { concept_id: past_history_of_ihd_or_cvd_concept_id, value_coded: answers_hash["past_history_of_ihd_or_cvd"]},
+                { concept_id: first_degree_relative_with_ihd_or_cvd_concept_id, value_coded: answers_hash["first_degree_relative_with_ihd_or_cvd"]},
+                { concept_id: patiently_currently_smokes_concept_id, value_coded: answers_hash["patiently_currently_smokes"]}
+            ]
+        };
+
+        submitParameters(obs, "/observations", "nextPage")
+    }
+
+    var answers_hash = {
+        diabetes: no_concept_id,
+        chronic_kidney_disease: no_concept_id,
+        past_history_of_ihd_or_cvd: no_concept_id,
+        first_degree_relative_with_ihd_or_cvd: no_concept_id,
+        patiently_currently_smokes: no_concept_id
+    }
+
+    function changeSubmitButton() {
+        __$('nextButton').onmousedown = function(){
+            var splitted_values = __$('touchscreenInput' + tstCurrentPage).value.split(";");
+            for (var i=0; i<=splitted_values.length - 1; i++){
+                if (splitted_values[i].match(/DIABETES/i)){
+                    answers_hash["diabetes"] = yes_concept_id;
+                }
+
+                if (splitted_values[i].match(/Chronic kidney disease/i)){
+                    answers_hash["chronic_kidney_disease"] = yes_concept_id;
+                }
+
+                if (splitted_values[i].match(/Past history of IHD or CVD/i)){
+                    answers_hash["past_history_of_ihd_or_cvd"] = yes_concept_id;
+                }
+
+                if (splitted_values[i].match(/First degree relative with IHD or CVD <65/i)){
+                    answers_hash["first_degree_relative_with_ihd_or_cvd"] = yes_concept_id;
+                }
+
+                if (splitted_values[i].match(/Patient currently smokes/i)){
+                    answers_hash["patiently_currently_smokes"] = yes_concept_id;
+                }
+            }
+
+            submitMedicalHistoryEncounter()
+        }
+    }
+
+    function nextPage(){
+        nextEncounter(sessionStorage.patientID, 1);
+    }
+
+
+</script>
+
+<body id="mateme">
+<div id="container">
+    <div id="content">
+        <form>
+            <select name="riskFactor[]" id="riskFactors" field_type="text" helpText="Does patient have any of these conditions?" multiple="multiple"
+                    tt_onLoad="changeSubmitButton();" tt_pageStyleClass="MultiSelectList" optional="true">
+                <option value="Diabetes">Diabetes</option>
+                <option value="Chronic kidney disease">Chronic kidney disease</option>
+                <option value="Past history of IHD or CVD">Past history of IHD or CVD</option>
+                <option value="First degree relative with IHD or CVD <65">First degree relative with IHD or CVD <65</option>
+                <option value="Patient currently smokes">Patient currently smokes</option></select>
+
+        </form>
+
+    </div>
+</div>
+</body>
