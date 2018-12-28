@@ -1,0 +1,42 @@
+<script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js" defer="true"></script>
+<!-- <script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/standard.js" defer="true"></script> -->
+<script type="text/javascript" src="/assets/js/jquery.min.js"></script>
+
+
+<style>
+#clearButton { display: none; }
+#cancelButton { display: none; }
+</style>
+
+<script>
+function loadNumbers() {
+  var f = document.getElementById('inputFrame' + tstCurrentPage);
+  f.style = 'width: 96%; height: 90%';
+
+  var b = document.getElementById('nextButton');
+  b.innerHTML = '<span>Refresh</span>';
+  b.setAttribute('onmousedown','refreshList();');
+}
+
+function refreshList() {
+}
+</script>
+
+
+
+
+<body id="mateme">
+  <div id="container">
+    <div id="content">
+
+      <form>
+        <input type="text" name="filing-numbers"
+          tt_onLoad="__$('keyboard').style.display = 'none'; loadNumbers();"
+          tt_pageStyleClass= "NoControls" helpText="Filing numbers" optional = "true"/>
+
+      </form>
+
+   </div>
+ </div>
+</body>
+
