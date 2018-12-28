@@ -71,7 +71,10 @@ function setUpFTalert(e) {
 
   e.setAttribute('onmousedown','isOnFT();');
   e.setAttribute('onclick','');
+  buildFTalertBox();
+}
 
+function buildFTalertBox() {
   var box = document.createElement('div');
   box.setAttribute('id','popup-box');
   
@@ -132,6 +135,10 @@ function isOnFT() {
 
 function continueWithFT() {
   eval(previousActionFT);
+  var box = document.getElementById('popup-box');
+  var boxCover = document.getElementById('box-cover');
+  box.style = "display: none;";
+  boxCover.style = 'display: none;'
 }
 
 function cancelFT() {
@@ -149,6 +156,10 @@ function cancelFT() {
     if (this.readyState == 4) {
       if (this.status == 200) {
         eval(previousActionFT);
+        var box = document.getElementById('popup-box');
+        var boxCover = document.getElementById('box-cover');
+        box.style = "display: none;";
+        boxCover.style = 'display: none;'
       }
     }
   };
