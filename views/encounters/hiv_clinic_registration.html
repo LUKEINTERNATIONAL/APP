@@ -1443,18 +1443,15 @@
                         var agrees_to_followup_agreement_concept_id = 2552;
                         var phone_only_concept_id = 9685;
                         var visit_only_concept_id = 9686;
-                        var visit_and_phone_concept_id = 9687;
 
 
 
-                        var phone_only_answer_yes_no = yesNo_Hash["AGREES TO FOLLOW UP"]["Phone only?"];
+                        var phone_only_answer_yes_no = yesNo_Hash["AGREES TO FOLLOW UP"]["Phone only"];
                         var phone_only_answer_value_coded = getAgreesToFollowUpConceptID(phone_only_answer_yes_no);
 
-                        var visit_only_answer_yes_no = yesNo_Hash["AGREES TO FOLLOW UP"]["Visit only?"];
+                        var visit_only_answer_yes_no = yesNo_Hash["AGREES TO FOLLOW UP"]["Visit only"];
                         var visit_only_answer_value_coded = getAgreesToFollowUpConceptID(visit_only_answer_yes_no);
 
-                        var visit_and_phone_answer_yes_no = yesNo_Hash["AGREES TO FOLLOW UP"]["Visit and phone"];
-                        var visit_and_phone_answer_value_coded = getAgreesToFollowUpConceptID(visit_and_phone_answer_yes_no);
 
 
                         obs.observations.push(
@@ -1465,9 +1462,6 @@
                             {concept_id: agrees_to_followup_agreement_concept_id, value_coded: visit_only_concept_id, child: {concept_id: visit_only_concept_id, value_coded: visit_only_answer_value_coded}}
                         )
 
-                        obs.observations.push(
-                            {concept_id: agrees_to_followup_agreement_concept_id, value_coded: visit_and_phone_concept_id, child: {concept_id: visit_and_phone_concept_id, value_coded: visit_and_phone_answer_value_coded}}
-                        )
 
                         submitParameters(obs,"/observations/", "submitVitalsRegistration()");
                     }
@@ -1866,9 +1860,8 @@
                     function addAgreesToFollowupYesNo() {
                         var concept_name = "AGREES TO FOLLOW UP";
                         var agreesToFollowupConcepts = [
-                            ["Phone only?", 9685],
-                            ["Visit only?", 9686],
-                            ["Visit and phone", 9687]
+                            ["Phone only", 9685],
+                            ["Visit only", 9686]
                         ];
 
                         var frame   = document.getElementById("inputFrame" + tstCurrentPage);
