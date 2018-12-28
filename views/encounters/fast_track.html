@@ -7,6 +7,10 @@
 <script type="text/javascript" src="/assets/js/yes_no_ctrls.js"></script>
 <link rel="stylesheet" href="/assets/css/yes_no_ctrls.css" type="text/css">
 
+<style>
+#clearButton {display: none; }
+</style>
+
 <script>
   var inclusion_list_arr = [
     ['Adult  18 years +', 9533], 
@@ -73,6 +77,7 @@ function changeNextButton() {
 }
 
 var observarions = [];
+var bookClientForFT = 1066;
 
 function submitFT() {
 
@@ -94,6 +99,12 @@ function submitFT() {
       person_id: sessionStorage.patientID
     })
   }
+  
+  observations.push({
+    concept_id: 8471, 
+    value_coded: bookClientForFT,
+    person_id: sessionStorage.patientID
+  })
 
   var answers = yesNo_Hash['FT assessment'];
   
@@ -175,6 +186,52 @@ function changeNextButton() {
   }
 }
 
+function prepareForSubmission() {
+  var nextButton = document.getElementById('nextButton');
+  nextButton.innerHTML = "<span>Book for FT</span>";
+  nextButton.setAttribute('onmousedown','bookFT();');
+
+  var root = document.getElementById('buttons');
+  button = document.createElement('button');
+  button.setAttribute('onmousedown','normalVisit();');
+  button.innerHTML = "<span>Normal visit</span>";
+  button.setAttribute('class','button green navButton');
+  button.setAttribute('id','normal-visit');
+
+  backButton = document.getElementById('backButton');
+  root.insertBefore(button, backButton);
+}
+
+function removeExtraButtons() {
+  var root = document.getElementById('buttons');
+  btn1 = document.getElementById('normal-visit');
+  root.removeChild(btn1);
+
+  btn2 = document.getElementById('nextButton');
+  btn2.setAttribute('onmousedown','gottoNextPage();')
+  btn2.innerHTML = "<span>Next</span>";
+}
+
+function normalVisit() {
+  for(var name in yesNo_Hash){
+    var h = yesNo_Hash[name];
+    for(var q in h){
+      console.log(h[q])
+      if(h[q] == null){
+        showMessage('Please complete all section(s) by clicking Yes/No');
+        break;
+      }
+    }
+  }
+
+  bookClientForFT = 1066;
+  submitFT();
+}
+
+function bookFT() {
+  bookClientForFT = 1065;
+  submitFT();
+}
 </script>
 
 
@@ -192,7 +249,8 @@ function changeNextButton() {
         </select>
 
         <input type="text" name="summary"
-          tt_onLoad="__$('keyboard').style.display = 'none';changeNextButton();addYesNo();"
+          tt_onLoad="__$('keyboard').style.display = 'none';prepareForSubmission();addYesNo();"
+          tt_onUnLoad="removeExtraButtons();"
           tt_pageStyleClass= "NoControls" helpText="FT assessment" optional = "true"/>
 
       </form>
