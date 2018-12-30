@@ -102,8 +102,11 @@
         xhttp.onreadystatechange = function() {
             if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
                 var patient_has_hypertension_obs = JSON.parse(this.responseText);
-                if (patient_has_hypertension_obs.length > 0){
+                if (patient_has_hypertension_obs.length == 0){
                     hypertension_obs = patient_has_hypertension_obs;
+                    setTimeout(function(){
+                        addHypertensionDiagnosisButton();
+                    }, 350);
                 }
 
                 var xhttp2 = new XMLHttpRequest();
@@ -710,22 +713,21 @@
 
     initializeVariables();
 
-    if (hypertension_obs.length == 0){
-        window.onload = function () {
-            var button = document.createElement("button");
-            button.id = "hypeternsion-diagnosis";
-            button.className = 'blue'
-            button.innerHTML = "<span>Hypertension Diagnosis</span>";
-            button.style.cssFloat = "left";
+    function addHypertensionDiagnosisButton(){
+        var button = document.createElement("button");
+        button.id = "hypeternsion-diagnosis";
+        button.className = 'blue'
+        button.innerHTML = "<span>Hypertension Diagnosis</span>";
+        button.style.cssFloat = "left";
 
-            button.onclick = function(){
-                window.location = "/apps/ART/views/htn/hypertension_diagnosis.html";
-            }
+        button.onclick = function(){
+            window.location = "/apps/ART/views/htn/hypertension_diagnosis.html";
+        }
 
-            if(__$("buttons")){
-                __$("buttons").appendChild(button);
-                __$("nextButton").style.display = 'none'; //Hiding the finish button
-            }
+        if(__$("buttons")){
+            __$("buttons").appendChild(button);
+            __$("nextButton").style.display = 'none'; //Hiding the finish button
         }
     }
+
 </script>
