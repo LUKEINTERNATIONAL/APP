@@ -19,7 +19,7 @@
     var patient_on_bp_drugs = false;
     var first_visit = false;
 
-    var bp_trail = [{date: "27/Dec/2018", systolic: 160,diastolic: 92, plan: 'Life style advice given' }];
+    var bp_trail = [];
     var todays_date = moment(sessionStorage.sessionDate).format('YYYY-MM-DD');
     var note = null;
     var risks_count = 0;
@@ -49,6 +49,8 @@
     }
 
 
+    var patientOnBpDrugs = false;
+    var patientPregnant = false;
 
     function initializeVariables(){
         //jQuery(".loader").show();
@@ -61,6 +63,8 @@
         var is_patient_pregnant_concept_id = 6131;
         var yes_concept_id = 1065;
 
+        var lab_trail_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+        lab_trail_url +=  "/api/v1/patients/" + sessionStorage.patientID + "/bp_trail";
 
         var patient_has_hypertension_url = apiProtocol + "://" + apiURL + ":" + apiPort;
         patient_has_hypertension_url +=  "/api/v1/observations?person_id=" + sessionStorage.patientID;
@@ -116,8 +120,21 @@
                                         if (is_patient_pregnant_obs.length > 0){
                                             patientPregnant = true;
                                         }
+                                        ///////////////////////////////
+                                        var xhttp5 = new XMLHttpRequest();
+                                        xhttp5.onreadystatechange = function() {
+                                            if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                                                bp_trail = JSON.parse(this.responseText);
+                                                buildHighBpPage();
 
-                                        buildHighBpPage();
+                                            }
+                                        };
+
+                                        xhttp5.open("GET", lab_trail_url, true);
+                                        xhttp5.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                                        xhttp5.setRequestHeader('Content-type', "application/json");
+                                        xhttp5.send();
+                                        ///////////////////////////////
 
                                     }
                                 };
@@ -152,11 +169,6 @@
         xhttp.setRequestHeader('Content-type', "application/json");
         xhttp.send();
     }
-
-
-
-
-
 
 
     function buildHighBpPage(){
@@ -203,10 +215,13 @@
 
         for (var key in bp_trail){
             date = bp_trail[key]["date"];
-            systolic = bp_trail[key]["systolic"];
-            diastolic = bp_trail[key]["diastolic"];
-            current_bp_drugs = "";
-            plan = bp_trail[key]["plan"];
+            systolic = bp_trail[key]["sbp"];
+            diastolic = bp_trail[key]["dbp"];
+            current_bp_drugs = bp_trail[key]["drugs"];
+            plan = bp_trail[key]["note"];
+            if (!plan){
+                plan = "";
+            }
             past_drug_use = [];
 
             class_name = bp_grade(systolic, diastolic);
@@ -578,7 +593,7 @@
         window.location = "/htn_encounter/refer_to_clinician"
     }
 
-    buildHighBpPage();
+    initializeVariables();
 
     if (hypertension_obs.length == 0){
         window.onload = function () {
