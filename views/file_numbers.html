@@ -1,7 +1,5 @@
 <script type="text/javascript" src="/assets/js/jquery.min.js"></script>
 <script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js" defer="true"></script>
-<!-- <script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/standard.js" defer="true"></script> -->
-
 
 <style>
   #clearButton { display: none; }
@@ -71,7 +69,7 @@
 </style>
 
 <script>
-  function loadNumbers() {
+  function init() {
   var f = document.getElementById('inputFrame' + tstCurrentPage);
   f.style = 'width: 96%; height: 90%; overflow: scroll';
 
@@ -82,6 +80,8 @@
   const fileNumbers = document.createElement('div')
   fileNumbers.setAttribute('id', 'activeFileNumbers')
   f.appendChild(fileNumbers)
+
+  fetchFileNumber(fetchArgumentFromUrlString('patient_id'))
 }
 
 function refreshList() {
@@ -94,7 +94,7 @@ function refreshList() {
     <div id="content">
       <form>
         <input type="text" name="filing-numbers"
-          tt_onLoad="__$('keyboard').style.display = 'none'; loadNumbers(); fetchFileNumber(fetchArgumentFromUrlString('patient_id'));"
+          tt_onLoad="__$('keyboard').style.display = 'none'; init();"
           tt_pageStyleClass="NoControls" helpText="Filing numbers" optional="true" />
 
       </form>
@@ -103,7 +103,6 @@ function refreshList() {
 
   <script>
     const apiUrl = `http://${sessionStorage.getItem('apiURL')}:${sessionStorage.getItem('apiPort')}/api/v1`
-
     function populatePageWithActiveFileNumbers(activeFileNumbers) {
       activeFileNumbers.forEach((activeFileNumber) => {
         document.getElementById('activeFileNumbers').innerHTML += createFileNumberElement(activeFileNumber)
@@ -168,8 +167,8 @@ function refreshList() {
     }
 
     function fetchArgumentFromUrlString (argumentName, url = location.href) {
-      const url = new URL(url)
-      const argument = url.searchParams.get(argumentName)
+      const urlToSearch = new URL(url)
+      const argument = urlToSearch.searchParams.get(argumentName)
       return argument
     }
 
@@ -192,7 +191,7 @@ function refreshList() {
           }
         },
         (error) => {
-          showMessage('An error occured while fetching the patient\'s file number. Please try again.')
+          showMessage('An error occured while fetching the patient\'s file number.')
           console.error(error)
         }
       )
@@ -218,7 +217,7 @@ function refreshList() {
           console.log(data)
         },
         (error) => {
-          showMessage('An error occured while creating the patient\'s file number. Please try again.')
+          showMessage('An error occured while creating the patient\'s file number.')
           console.error(error)
         }
       )
@@ -230,15 +229,15 @@ function refreshList() {
       request.onreadystatechange = () => {
         if (request.readyState === 4 && [200, 204].indexOf(request.status) >= 0) {
           successCallback(JSON.parse(request.responseText), status)
-        } else if (request.status >= 400) {
+        } else if (request.readyState ===4 && request.status >= 400) {
           failureCallback(request.responseText, status)
         } 
       }
 
       request.open('POST', config.url, config.async)
 
-      config.headers.keys().forEach((key) => {
-        request.setRequestHeader(key, headers[key])
+      Object.keys(config.headers).forEach((key) => {
+        request.setRequestHeader(key, config.headers[key])
       })
 
       request.send(encodeURI(buildParametersString(data)))
