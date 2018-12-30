@@ -52,6 +52,7 @@
     var patientOnBpDrugs = false;
     var patientPregnant = false;
     var drug_use_history_concept_id = 2466;
+    var transferred_concept_id = 6986;
     var drug_use_history_data = {};
 
     function initializeVariables(){
@@ -81,8 +82,6 @@
         var treatment_status_url = apiProtocol + "://" + apiURL + ":" + apiPort;
         treatment_status_url +=  "/api/v1/observations?person_id=" + sessionStorage.patientID;
         treatment_status_url +=  "&concept_id=" + treatment_status_concept_id;
-        treatment_status_url +=  "&value_coded=" + yes_concept_id;
-        treatment_status_url +=  "&obs_datetime=" + sessionStorage.sessionDate;
 
         var is_patient_pregnant_url = apiProtocol + "://" + apiURL + ":" + apiPort;
         is_patient_pregnant_url +=  "/api/v1/observations?person_id=" + sessionStorage.patientID;
@@ -93,6 +92,10 @@
         var drug_use_history_url = apiProtocol + "://" + apiURL + ":" + apiPort;
         drug_use_history_url +=  "/api/v1/observations?person_id=" + sessionStorage.patientID;
         drug_use_history_url +=  "&concept_id=" + drug_use_history_concept_id;
+
+        var transferred_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+        transferred_url +=  "/api/v1/observations?person_id=" + sessionStorage.patientID;
+        transferred_url +=  "&concept_id=" + transferred_concept_id;
 
 
         var xhttp = new XMLHttpRequest();
@@ -116,7 +119,10 @@
                             if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
                                 var treatment_status_obs = JSON.parse(this.responseText);
                                 if (treatment_status_obs.length > 0){
-                                    patientOnBpDrugs = true;
+                                    var value_text = treatment_status_obs[0]["value_text"];
+                                    if (value_text.match(/BP Drugs started/i)){
+                                        patientOnBpDrugs = true;
+                                    }
                                 }
 
                                 var xhttp4 = new XMLHttpRequest();
@@ -136,7 +142,6 @@
                                                         obs_datetime = drug_use_history_obs[0]["obs_datetime"]
                                                         date = moment(obs_datetime).format('YYYY-MM-DD');
                                                         drug =  drug_use_history_obs[0]["value_text"];
-                                                        console.log(drug_use_history_obs)
                                                         if (!drug_use_history_data[date]){
                                                             drug_use_history_data[date] = []
                                                         }
@@ -147,7 +152,32 @@
                                                 xhttp5.onreadystatechange = function() {
                                                     if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
                                                         bp_trail = JSON.parse(this.responseText);
-                                                        buildHighBpPage();
+
+                                                        var xhttp7 = new XMLHttpRequest();
+                                                        xhttp7.onreadystatechange = function() {
+                                                            if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                                                                var transfer_obs = JSON.parse(this.responseText);
+
+                                                                if (transfer_obs.length == 0){
+                                                                    first_visit = true;
+                                                                }
+
+                                                                for (var key in bp_trail){
+                                                                    var bp_drugs = bp_trail[key]["drugs"];
+                                                                    if (bp_drugs.length > 0){
+                                                                        first_visit = false;
+                                                                    }
+                                                                }
+
+                                                                buildHighBpPage();
+
+                                                            }
+                                                        };
+
+                                                        xhttp7.open("GET", transferred_url, true);
+                                                        xhttp7.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                                                        xhttp7.setRequestHeader('Content-type', "application/json");
+                                                        xhttp7.send();
 
                                                     }
                                                 };
@@ -249,6 +279,10 @@
             systolic = bp_trail[key]["sbp"];
             diastolic = bp_trail[key]["dbp"];
             current_bp_drugs = bp_trail[key]["drugs"];
+            if (current_bp_drugs.length > 0){
+                patient_current_bp_drugs = current_bp_drugs;
+            }
+
             plan = bp_trail[key]["note"];
             if (!plan){
                 plan = "";
