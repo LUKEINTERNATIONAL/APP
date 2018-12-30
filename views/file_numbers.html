@@ -1,6 +1,6 @@
+<script type="text/javascript" src="/assets/js/jquery.min.js"></script>
 <script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js" defer="true"></script>
 <!-- <script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/standard.js" defer="true"></script> -->
-<script type="text/javascript" src="/assets/js/jquery.min.js"></script>
 
 
 <style>
@@ -82,8 +82,6 @@
   const fileNumbers = document.createElement('div')
   fileNumbers.setAttribute('id', 'activeFileNumbers')
   f.appendChild(fileNumbers)
-
-  populatePageWithActiveFileNumbers(fetchFileNumbers())
 }
 
 function refreshList() {
@@ -91,13 +89,12 @@ function refreshList() {
 </script>
 
 
-
-
 <body id="mateme">
   <div id="container">
     <div id="content">
       <form>
-        <input type="text" name="filing-numbers" tt_onLoad="__$('keyboard').style.display = 'none'; loadNumbers();"
+        <input type="text" name="filing-numbers"
+          tt_onLoad="__$('keyboard').style.display = 'none'; loadNumbers(); fetchFileNumber(fetchArgumentFromUrlString('patient_id'));"
           tt_pageStyleClass="NoControls" helpText="Filing numbers" optional="true" />
 
       </form>
@@ -105,6 +102,8 @@ function refreshList() {
   </div>
 
   <script>
+    const apiUrl = `http://${sessionStorage.getItem('apiURL')}:${sessionStorage.getItem('apiPort')}/api/v1`
+
     function populatePageWithActiveFileNumbers(activeFileNumbers) {
       activeFileNumbers.forEach((activeFileNumber) => {
         document.getElementById('activeFileNumbers').innerHTML += createFileNumberElement(activeFileNumber)
@@ -124,7 +123,7 @@ function refreshList() {
       </div>`;
     }
 
-    function fetchFileNumbers() {
+    function fetchArchivingCandidates() {
       return [{
           id: 1,
           name: 'Daniel Mwakanema',
@@ -164,21 +163,96 @@ function refreshList() {
       ]
     }
 
-    function fetchMoreFileNumbers() {
-      alert('Refresh has been clicked!')
-    }
-
-    function archiveFileNumber(event) {
+    function archiveFileNumber (event) {
       const response = confirm(`Are you sure you want to archive file number ${event.id}?`)
     }
 
-    /* $.get(
-      'https://jsonplaceholder.typicode.com/todos/1',
-      (data) => {
-        console.log(data)
+    function fetchArgumentFromUrlString (argumentName, url = location.href) {
+      const url = new URL(url)
+      const argument = url.searchParams.get(argumentName)
+      return argument
+    }
+
+    function fetchFileNumber (patientId) {
+      POST(
+        {
+          url: `${apiUrl}/patients/${patientId}/filing_number`,
+          async: true,
+          headers: {
+            'Authorization': sessionStorage.getItem('authorization'),
+            'Content-Type': 'application/json'
+          }
+        },
+        {},
+        (data, status) => {
+          if (status === 200) {
+            createPatientFilingNumber(patientId, data.filing_number)
+          } else {
+            populatePageWithActiveFileNumbers(fetchArchivingCandidates())
+          }
+        },
+        (error) => {
+          showMessage('An error occured while fetching the patient\'s file number. Please try again.')
+          console.error(error)
+        }
+      )
+    }
+
+    function redirectToUrl (url) {
+      window.location = url
+    }
+
+    function createPatientFilingNumber (patientId, filingNumber) {
+      POST(
+        {
+          url: `${apiUrl}/patients/${patientId}/filing_number`,
+          async: true,
+          headers: {
+            'Authorization': sessionStorage.getItem('authorization'),
+            'Content-Type': 'application/json'
+          }
+        },
+        { filing_number: filingNumber},
+        (data) => {
+          showMessage('The patient\'s filing number was successfully assigned.')
+          console.log(data)
+        },
+        (error) => {
+          showMessage('An error occured while creating the patient\'s file number. Please try again.')
+          console.error(error)
+        }
+      )
+    }
+
+    function POST (config, data = {}, successCallback, failureCallback) {
+      const request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP')
+
+      request.onreadystatechange = () => {
+        if (request.readyState === 4 && [200, 204].indexOf(request.status) >= 0) {
+          successCallback(JSON.parse(request.responseText), status)
+        } else if (request.status >= 400) {
+          failureCallback(request.responseText, status)
+        } 
       }
-    ).fail((error) => {
-      console.error(error)
-    }) */
+
+      request.open('POST', config.url, config.async)
+
+      config.headers.keys().forEach((key) => {
+        request.setRequestHeader(key, headers[key])
+      })
+
+      request.send(encodeURI(buildParametersString(data)))
+    }
+
+    function buildParametersString(params) {
+      let paramsString = ''
+      Object.keys(params).forEach((key, index, array) => {
+        paramsString += `${key}=${params[key]}`
+        if (index < array.length - 1) {
+          paramsString += '&'
+        }
+      })
+      return paramsString
+    }
   </script>
 </body>
