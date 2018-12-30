@@ -51,6 +51,8 @@
 
     var patientOnBpDrugs = false;
     var patientPregnant = false;
+    var drug_use_history_concept_id = 2466;
+    var drug_use_history_data = {};
 
     function initializeVariables(){
         //jQuery(".loader").show();
@@ -88,6 +90,10 @@
         is_patient_pregnant_url +=  "&value_coded=" + yes_concept_id;
         is_patient_pregnant_url +=  "&obs_datetime=" + sessionStorage.sessionDate;
 
+        var drug_use_history_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+        drug_use_history_url +=  "/api/v1/observations?person_id=" + sessionStorage.patientID;
+        drug_use_history_url +=  "&concept_id=" + drug_use_history_concept_id;
+
 
         var xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function() {
@@ -120,21 +126,46 @@
                                         if (is_patient_pregnant_obs.length > 0){
                                             patientPregnant = true;
                                         }
-                                        ///////////////////////////////
-                                        var xhttp5 = new XMLHttpRequest();
-                                        xhttp5.onreadystatechange = function() {
+                                        /*****************************************************/
+                                        var xhttp6 = new XMLHttpRequest();
+                                        xhttp6.onreadystatechange = function() {
                                             if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
-                                                bp_trail = JSON.parse(this.responseText);
-                                                buildHighBpPage();
+                                                var drug_use_history_obs = JSON.parse(this.responseText);
+
+                                                if (drug_use_history_obs.length > 0){
+                                                        obs_datetime = drug_use_history_obs[0]["obs_datetime"]
+                                                        date = moment(obs_datetime).format('YYYY-MM-DD');
+                                                        drug =  drug_use_history_obs[0]["value_text"];
+                                                        console.log(drug_use_history_obs)
+                                                        if (!drug_use_history_data[date]){
+                                                            drug_use_history_data[date] = []
+                                                        }
+                                                        drug_use_history_data[date].push(drug)
+                                                }
+
+                                                var xhttp5 = new XMLHttpRequest();
+                                                xhttp5.onreadystatechange = function() {
+                                                    if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                                                        bp_trail = JSON.parse(this.responseText);
+                                                        buildHighBpPage();
+
+                                                    }
+                                                };
+
+                                                xhttp5.open("GET", lab_trail_url, true);
+                                                xhttp5.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                                                xhttp5.setRequestHeader('Content-type', "application/json");
+                                                xhttp5.send();
+
 
                                             }
                                         };
 
-                                        xhttp5.open("GET", lab_trail_url, true);
-                                        xhttp5.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
-                                        xhttp5.setRequestHeader('Content-type', "application/json");
-                                        xhttp5.send();
-                                        ///////////////////////////////
+                                        xhttp6.open("GET", drug_use_history_url, true);
+                                        xhttp6.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                                        xhttp6.setRequestHeader('Content-type', "application/json");
+                                        xhttp6.send();
+                                        /****************************************************/
 
                                     }
                                 };
@@ -222,7 +253,7 @@
             if (!plan){
                 plan = "";
             }
-            past_drug_use = [];
+            past_drug_use = drug_use_history_data[date];
 
             class_name = bp_grade(systolic, diastolic);
             try{
@@ -236,7 +267,7 @@
             html += '<td style="text-align: center">' + systolic + '</td>';
             html += '<td style="text-align: center">' + diastolic + '</td>';
             html += '<td style="text-align: center">' + current_bp_drugs + '</td>';
-            if (past_drug_use.length == 0){
+            if (!past_drug_use){
                 html += '<td style="padding-left: 10px;">' + plan + '</td>'
             } else {
                 if (plan.length > 0){
