@@ -1698,11 +1698,9 @@ function buildResonForSwitchinPopup() {
 
 
   var switching_reasons = [
-    'Reduce the number of pills, doses or drugs that are taken daily',
-    'Improve side effects issues in the short- and long-term',
-    'Ease possible drug-drug interactions','Ease swallowing',
-    'Support the best use of meds during pregnancy',
-    'Regimen not available / Expensive','Other'
+    'Policy change','High pill burden','Drug drug interaction',
+    'Difficult to swallow','Not recommended fro pregnant women',
+    'Side effects','Weight Change','Other'
   ];
 
   var switchingTable = document.createElement('div');
