@@ -4,6 +4,7 @@
 <script type="text/javascript" src="/assets/js/moment.js"></script>
 <script type="text/javascript" src="/assets/js/generic_ajaxrequest.js"></script>
 <script type="text/javascript" src="/assets/js/post_parameters.js"></script>
+<script src="/apps/ART/assets/js/fast_track_alert.js"></script>
 
 <script type="text/javascript">
   var patientID = sessionStorage.getItem("patientID");
@@ -684,6 +685,16 @@ function calculateExpected(given, equivalent_daily_dose, start_date){
 
 /* ##################################################################### */
 function submitAdherence() {
+  if(client_on_ft){
+    previousActionFT = 'submitAdherenceEdited();';
+    buildFTalertBox();
+    isOnFT();
+  }else{
+    submitAdherenceEdited();
+  }
+}
+
+function submitAdherenceEdited() {  
   var currentTime = moment().format(' HH:mm:ss');
   var encounter_datetime = moment(sessionStorage.sessionDate).format('YYYY-MM-DD');
   encounter_datetime += currentTime;
@@ -828,3 +839,34 @@ function validateReason() {
                                                                                 
 <div id="confirmatory-test-popup-div"></div>                                    
 <div id="confirmatory-test-cover"></div> 
+
+<script>
+var client_on_ft = false;
+
+function onFT(){
+  var url = 'http://'+apiURL+':'+apiPort+'/api/v1/on_fast_track?person_id=';
+  url += sessionStorage.patientID + '&date=' + sessionStorage.sessionDate;
+  var req = new XMLHttpRequest();
+  req.onreadystatechange = function(){
+    if (this.readyState == 4) {
+      if (this.status == 200) {
+        var results = JSON.parse(this.responseText);
+        if(results['continue FT'] == true) {
+          client_on_ft = true; 
+          //var finishButton = document.getElementById('continue');
+          //setUpFTalert(finishButton);    
+        }
+      }
+    }
+  };
+  try {
+    req.open('GET', url, true);
+    req.setRequestHeader('Authorization',sessionStorage.getItem('authorization'));
+    req.send(null);
+  } catch (e) {
+  
+  }
+}
+
+onFT();
+</script>
