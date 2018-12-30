@@ -86,6 +86,16 @@ function checkForPossibleConnection() {
 
   sideEffectConcepts = [];
 
+  try {
+    var body = document.getElementsByTagName('body')[0];
+    var box = document.getElementById('box');
+    var boxCover = document.getElementById('box-cover');
+    body.removeChild(box);
+    body.removeChild(boxCover);
+  }catch(e){
+  
+  }
+
   for(var i = 0 ; i < clicked.length ; i++){
     if(clicked[i].getAttribute('whichone').toUpperCase() == 'YES'){
       if(clicked[i].getAttribute('question').toUpperCase() != 'OTHER')
@@ -158,8 +168,6 @@ function addConnetion(index) {
   if(previousMedsGivens.length > 0){
     addMeds(table, sideEffectConcepts[index][1]);
   }
-
-  console.log("XXXXXXXXXXXXXXXXX")
 
   addPreExisitingConditions(table, sideEffectConcepts[index][1]);
   addBackButton(index);

@@ -1542,7 +1542,6 @@
                                             }
 
                                             liElement = jQuery("[tstvalue='" + selected_value + "']")[0];
-                                            console.log(liElement)
                                             if (liElement){
                                                 id = liElement.getAttribute("id");
                                                 updateTouchscreenInputForSelect(__$('optionValue' + id), liElement)
@@ -1841,28 +1840,30 @@
         
                         for(var name in reasonForSideEffects){
                           var data = reasonForSideEffects[name];
-                          for(var i = 0 ; i < data.length ; i++ ){
-                            var value_coded = null;
-                            var value_drug = null;
-                            
-                            if(parseInt(data[i][1]) == 1107){
-                              value_coded = data[i][1];
-                            }else{
-                              value_drug = data[i][1];
+                          var side_effect_concept_id; 
+                          for(var se = 0 ; se < sideEffectConcepts.length ; se++){
+                            if(sideEffectConcepts[se][1] == name){
+                              side_effect_concept_id = sideEffectConcepts[se][0];
                             }
-                              
+                          } 
+                          
+                          if(data.ps != null) {   
                             obs.observations.push({
-                              concept_id: 7567, 
-                              value_coded: data[i][0],
-                              child: {
-                                concept_id: data[i][0], 
-                                value_coded: value_coded, 
-                                value_drug: value_drug
-                              }
+                              concept_id: 9661, 
+                              value_coded: side_effect_concept_id,
                             });
+                          }else{
+                            var meds = data.drug_ids;
+                            console.log(data)
+                            for(var d = 0 ; d < meds.length ; d++){
+                              obs.observations.push({
+                                concept_id: 7567, 
+                                value_coded: side_effect_concept_id,
+                                value_drug: meds[d]
+                              });
+                            }
                           }
                         }
-
                         submitParameters(obs, "/observations", "nextPage")
                     }
 
@@ -1994,7 +1995,6 @@
                     function getOtherSideEffectAnswer(key){                        
                         other_side_effects_answers = yesNo_Hash["OTHER MALAWI ART SIDE EFFECTS"];
                         if(other_side_effects_answers != undefined) {
-                          console.log(key + " XXXXXXXXXX");
                           other_side_effect_answer = other_side_effects_answers[key];
                           if (other_side_effect_answer.toUpperCase() == "YES"){
                               return "1065";
