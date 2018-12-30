@@ -131,16 +131,11 @@ function buildConnection() {
   nextB.innerHTML = '<span>Next side effect</span>';
   nextB.setAttribute('class','button green navButton nav-order-btns');
   nextB.setAttribute('onmousedown','nextSideEffect(1);');
+  nextB.setAttribute('currentPage', 0);
   nextB.setAttribute('id','next-button');
   nextB.style = 'width: 220px;'
   boxNavBar.appendChild(nextB);
 /*
-  var cancelB = document.createElement('button');
-  cancelB.innerHTML = '<span>Cancel</span>';
-  cancelB.style = 'float: left; left: 5px;';
-  cancelB.setAttribute('class','button red navButton nav-order-btns');
-  cancelB.setAttribute('onmousedown','cancelOrder();');
-  boxNavBar.appendChild(cancelB);
 */
   addConnetion(0);
 }
@@ -161,10 +156,13 @@ function addConnetion(index) {
   container.appendChild(table);
 
   if(previousMedsGivens.length > 0){
-    addMeds(table, sideEffectConcepts[index][2]);
+    addMeds(table, sideEffectConcepts[index][1]);
   }
 
-  addPreExisitingConditions(table, sideEffectConcepts[index][2]);
+  console.log("XXXXXXXXXXXXXXXXX")
+
+  addPreExisitingConditions(table, sideEffectConcepts[index][1]);
+  addBackButton(index);
 }
 
 function addPreExisitingConditions(t, side_effect) {
@@ -194,6 +192,44 @@ function addPreExisitingConditions(t, side_effect) {
   var td = document.createElement('td')
   td.innerHTML = "Potential contraindication"
   tr.appendChild(td);
+
+  var nextButton = document.getElementById('next-button');
+  var i = parseInt(nextButton.getAttribute('currentPage'));
+  
+  if(sideEffectConcepts[(i + 1)] == undefined) {
+    nextButton.setAttribute('currentPage', (i + 1));
+    nextButton.setAttribute('onmousedown','selectedDI();');
+    nextButton.innerHTML = '<span>Done</span>';
+  }else{
+    nextButton.setAttribute('currentPage', (i + 1));
+    nextButton.setAttribute('onmousedown','nextSideEffect(' + (i + 1) + ');');
+  }
+
+}
+
+function addBackButton(num) {
+  var root = document.getElementById('box-nav-bar');
+  
+  if(num > 0) {
+    if(root.getElementsByTagName('button').length == 1) {
+      var backB = document.createElement('button');
+      backB.innerHTML = '<span>Previous side effect</span>';
+      backB.setAttribute('onmousedown','addConnetion(' + (num - 1) + ');');
+      backB.setAttribute('class','button blue navButton');
+      backB.setAttribute('id','previous-button');
+      backB.style = 'margin: 10px 10px 0px 0px;';
+      root.appendChild(backB);
+    }
+  }else{
+    if(root.getElementsByTagName('button').length > 1) {
+      var backB = document.getElementById('previous-button');
+      root.removeChild(backB);
+
+      var nextS = document.getElementById('next-button');
+      nextS.setAttribute('onmousedown','nextSideEffect(1);');
+      nextS.innerHTML = '<span>Next side effect</span>';
+    }
+  }
 }
 
 function addMeds(t, side_effect) {
@@ -257,8 +293,6 @@ function updateSelectedMedSideEffects(e, side_effect_id) {
   if(selected){
     var row = document.getElementById("pre-exisiting-" + side_effect_id);
   /* ..................... */ 
-    console.log(e.id)
-    console.log(row)
     row.style = 'background-color: "";';
     var img = document.getElementById('img-side-effect-' + side_effect_id);
     img.setAttribute('src','/public/touchscreentoolkit/lib/images/unticked.jpg');
@@ -325,6 +359,30 @@ function nextSideEffect(i) {
   addConnetion(i);
 }
 
+function selectedDI() {
+  if(isHashEmpty(reasonForSideEffects)) {
+    showMessage('x1Please select from the list');
+    return;
+  }
+
+  for(se in reasonForSideEffects) {
+    var drugs = reasonForSideEffects[se].drug_ids;
+    var ps  = reasonForSideEffects[se].ps;
+
+    if(drugs.length < 1 && ps == null){
+      console.log(drugs.length < 1 && ps == null);
+      showMessage('x2Please select from the list');
+      return;
+    }
+  }
+
+  var box = document.getElementById('box');
+  var boxCover = document.getElementById('box-cover');
+  box.style = 'display: none;';
+  boxCover.style = 'display: none;';
+  gotoNextPage();
+}
+
 function possibleCausedMedicationOfSideEffects() {
   var session_date = moment(new Date(sessionStorage.sessionDate)).format('YYYY-MM-DD');
   var url = 'http://' + apiURL + ':' + apiPort + '/api/v1/programs/1/patients/';
@@ -345,6 +403,14 @@ function possibleCausedMedicationOfSideEffects() {
     } catch (e) {
     }
 
+}
+
+function isHashEmpty(obj) {
+  for(var key in obj) {
+    if(obj.hasOwnProperty(key))
+      return false;
+    }
+  return true;
 }
 
 possibleCausedMedicationOfSideEffects();
