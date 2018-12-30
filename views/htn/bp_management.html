@@ -539,6 +539,10 @@
         option.children[0].firstChild.setAttribute("src", (state == "true" ? "/public/touchscreentoolkit/lib/images/unchecked.png" : "/public/touchscreentoolkit/lib/images/checked.png"))
     }
 
+    var chosenPlan = "";
+    var path = "";
+    var state = "";
+
     function nextPage()
     {
         options = document.getElementsByClassName("option")
@@ -550,24 +554,34 @@
                 checked = true;
                 switch (options[i].children[1].innerHTML){
                     case 'Start anti-hypertensives' :
-                        path = "/htn_encounter/change_drugs?patient_id=<%= @patient.patient_id %>"
+                        path = "/apps/ART/views/htn/change_drugs.html";
                         break;
                     case 'Review Drugs':
-                        path = "/htn_encounter/bp_drug_management?patient_id=<%= @patient.patient_id %>&review=true"
+                        path = "/apps/ART/views/htn/bp_drug_management.html?review=true";
                         break;
                     case 'Continue Drugs':
-                        path = "/htn_encounter/bp_drug_management?patient_id=<%= @patient.patient_id %>"
+                        path = "/apps/ART/views/htn/bp_drug_management.html";
                         break;
                     case 'Did not take prescribed BP drugs today':
-                        path = "/htn_encounter/bp_drug_management?patient_id=<%= @patient.patient_id %>"
+                        path = "/apps/ART/views/htn/bp_drug_management.html";
                         break;
                     default :
-                        path = "/htn_encounter/redirect_to_next_task?patient_id=<%= @patient.patient_id %>"
+                        path = "next_task";
                         break;
                 }
-                document.getElementById("nextButton").setAttribute("onmousedown", "")
-                document.getElementById("message").style.display = "block";
+                nextButton = document.getElementById("nextButton");
+                messageDiv = document.getElementById("message");
 
+                if (nextButton){
+                    document.getElementById("nextButton").setAttribute("onmousedown", "");
+                }
+
+                if (messageDiv){
+                    document.getElementById("message").style.display = "block";
+                }
+                
+                chosenPlan = options[i].children[1].innerHTML;
+                state = options[i].children[1].getAttribute("state");
                 return createEncounter(options[i].children[1].innerHTML, path, options[i].children[1].getAttribute("state"));
 
                 break;
@@ -586,6 +600,37 @@
             state = null;
         }
 
+        var currentTime = moment().format(' HH:mm:ss');
+        var encounter_datetime = moment(sessionStorage.sessionDate).format('YYYY-MM-DD');
+        encounter_datetime += currentTime;
+
+        var encounter = {
+            encounter_type_name: 'HYPERTENSION MANAGEMENT',
+            encounter_type_id:  48,
+            patient_id: sessionStorage.patientID,
+            encounter_datetime: encounter_datetime
+        }
+
+        submitParameters(encounter, "/encounters", "postHypertensionManagementObs");
+
+    }
+
+    var plan_concept_id = 7834;
+
+    function postHypertensionManagementObs(encounter){
+
+        var obs = {
+            encounter_id: encounter["encounter_id"],
+            observations: [
+                { concept_id: plan_concept_id, value_text: chosenPlan}
+            ]
+        };
+
+        submitParameters(obs, "/observations", redirectToRequiredTask())
+    }
+
+    function redirectToRequiredTask(){
+        window.location = path;
     }
 
     function referPatient()
