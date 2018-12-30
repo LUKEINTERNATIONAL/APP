@@ -579,7 +579,7 @@
                 if (messageDiv){
                     document.getElementById("message").style.display = "block";
                 }
-                
+
                 chosenPlan = options[i].children[1].innerHTML;
                 state = options[i].children[1].getAttribute("state");
                 return createEncounter(options[i].children[1].innerHTML, path, options[i].children[1].getAttribute("state"));
@@ -630,6 +630,11 @@
     }
 
     function redirectToRequiredTask(){
+        if (path.match(/next_task/i)){
+            nextEncounter(sessionStorage.patientID, 1);
+            return;
+        }
+
         window.location = path;
     }
 
