@@ -113,7 +113,7 @@ function isOnFT() {
   buttonContainerRow.setAttribute('class','buttonContainerRow');
   buttonContainer.appendChild(buttonContainerRow);
 
-  var cells = ['Cancel','Continue'];
+  var cells = ['Stop','Continue'];
 
   for(var i = 0 ; i < cells.length ; i++){
     var buttonContainerCell = document.createElement('div');
