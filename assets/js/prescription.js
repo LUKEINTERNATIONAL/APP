@@ -931,7 +931,7 @@ function buildCustomPrescriptionPage() {
 
 function addMedColumns() {
   var adultDiv = document.createElement('div');
-  adultDivCSS = 'overflow: auto; height: 580px;';
+  adultDivCSS = 'overflow-x: hidden; height: 580px;';
   adultDivCSS += 'border: solid 1px;';
   adultDiv.setAttribute('style', adultDivCSS);
 
@@ -958,7 +958,7 @@ function addMedColumns() {
   }
   
   var adultDiv = document.createElement('div');
-  adultDivCSS = 'overflow: auto; height: 580px;';
+  adultDivCSS = 'overflow-x: hidden; height: 580px;';
   adultDivCSS += 'border: solid 1px;';
   adultDiv.setAttribute('style', adultDivCSS);
 
