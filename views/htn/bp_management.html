@@ -72,7 +72,6 @@
         var patient_has_hypertension_url = apiProtocol + "://" + apiURL + ":" + apiPort;
         patient_has_hypertension_url +=  "/api/v1/observations?person_id=" + sessionStorage.patientID;
         patient_has_hypertension_url +=  "&concept_id=" + patient_has_hypertension_concept_id;
-        patient_has_hypertension_url +=  "&obs_datetime=" + sessionStorage.sessionDate;
 
         var diastollic_url = apiProtocol + "://" + apiURL + ":" + apiPort;
         diastollic_url +=  "/api/v1/observations?person_id=" + sessionStorage.patientID;
