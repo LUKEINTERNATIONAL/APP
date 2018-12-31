@@ -28,6 +28,10 @@ customListCSS.innerHTML = "<style>\
   font-family: 'Nimbus Sans L','Arial Narrow',sans-serif;\
   font-size: 1.2em;\
 }\
+.scrollableList img {\
+width: 45px;\
+height: 45px;\
+}\
 </style>";
 
 
