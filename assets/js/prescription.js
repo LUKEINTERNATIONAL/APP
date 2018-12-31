@@ -16,6 +16,20 @@ var medication_orders = {};
 
 var starterPackSelected = false;
 
+var customListCSS = document.createElement('span');
+customListCSS.innerHTML = "<style>\
+.scrollableList li {\
+  color: black;\
+  list-style: none;\
+  padding-left: 5px;\
+  padding-right: 5px;\
+  margin-top: 5px;\
+  margin-bottom: 5px;\
+  font-family: 'Nimbus Sans L','Arial Narrow',sans-serif;\
+  font-size: 1.2em;\
+}\
+</style>";
+
 
 function buildRegimenPage() {
     var frame = document.getElementById("inputFrame" + tstCurrentPage);
@@ -934,53 +948,84 @@ function addMedColumns() {
   adultDivCSS = 'overflow-x: hidden; height: 580px;';
   adultDivCSS += 'border: solid 1px;';
   adultDiv.setAttribute('style', adultDivCSS);
+  adultDiv.setAttribute('class', 'scrollable');
+
+  var body = document.getElementsByTagName('body')[0];
+  body.appendChild(customListCSS);
 
   var leftTD = document.getElementById('adults-meds');
   leftTD.appendChild(adultDiv);
  
-  var table = document.createElement('table');
-  table.setAttribute('class','regimen-tables');
-  adultDiv.appendChild(table);
+  var ul = document.createElement('ul');
+  ul.setAttribute('class', 'scrollableList');
+  adultDiv.appendChild(ul);
    
   for(var i = 0 ; i < custom_regimen_ingredients.length; i++){
-    var tr = document.createElement('tr');
-    table.appendChild(tr);
 
-    var td = document.createElement('td');
-    td.innerHTML = custom_regimen_ingredients[i].name
-    td.setAttribute('id', custom_regimen_ingredients[i].drug_id);
-    td.setAttribute('class','regimen-names');
-    tr.appendChild(td);
+    var innerHTML = '<div style="display: table; border-spacing: 0px;"><div style="display: table-row"><div style="display: table-cell;"><img id="img';
+    innerHTML += i + '" src="/public/touchscreentoolkit/lib/images/unticked.jpg" alt="[ ]"></div><div style="display: table-cell; vertical-align:      middle; text-align: left; padding-left: 15px;"';
+    innerHTML += ' id="optionValue' + i + '">';
+    innerHTML+= custom_regimen_ingredients[i].name + "</div></div></div>";
+    
+    var li = document.createElement("li");
+    li.setAttribute("id", i );
+    li.setAttribute("tstvalue", custom_regimen_ingredients[i].drug_id);
+    li.setAttribute("onmousedown", "null; updateCustomList(__$('optionValue' + this.id), this); ");
+    li.setAttribute("style","");
+    li.setAttribute("class","even");
+    li.innerHTML = innerHTML;
+    ul.appendChild(li); 
 
     if(i == 40)
       break;
        
   }
   
-  var adultDiv = document.createElement('div');
-  adultDivCSS = 'overflow-x: hidden; height: 580px;';
-  adultDivCSS += 'border: solid 1px;';
-  adultDiv.setAttribute('style', adultDivCSS);
+  /* ............ */ 
+  var peadsDiv = document.createElement('div');
+  peadsDivCSS = 'overflow-x: hidden; height: 580px;';
+  peadsDivCSS += 'border: solid 1px;';
+  peadsDiv.setAttribute('style', adultDivCSS);
+  peadsDiv.setAttribute('class', 'scrollable');
 
-  var rightTD = document.getElementById('peads-meds');
-  rightTD.appendChild(adultDiv);
+  var righTD = document.getElementById('peads-meds');
+  righTD.appendChild(peadsDiv);
  
-  var table = document.createElement('table');
-  table.setAttribute('class','regimen-tables');
-  adultDiv.appendChild(table);
-  
+  var ul = document.createElement('ul');
+  ul.setAttribute('class', 'scrollableList');
+  peadsDiv.appendChild(ul);
+   
   for(var i = 41 ; i < custom_regimen_ingredients.length; i++){
-    var tr = document.createElement('tr');
-    table.appendChild(tr);
 
-    var td = document.createElement('td');
-    td.innerHTML = custom_regimen_ingredients[i].name
-    td.setAttribute('id', custom_regimen_ingredients[i].drug_id);
-    td.setAttribute('class','regimen-names');
-    tr.appendChild(td);
+    var innerHTML = '<div style="display: table; border-spacing: 0px;"><div style="display: table-row"><div style="display: table-cell;"><img id="img';
+    innerHTML += i + '" src="/public/touchscreentoolkit/lib/images/unticked.jpg" alt="[ ]"></div><div style="display: table-cell; vertical-align:      middle; text-align: left; padding-left: 15px;"';
+    innerHTML += ' id="optionValue' + i + '">';
+    innerHTML+= custom_regimen_ingredients[i].name + "</div></div></div>";
+    
+    var li = document.createElement("li");
+    li.setAttribute("id", i );
+    li.setAttribute("tstvalue", custom_regimen_ingredients[i].drug_id);
+    li.setAttribute("onmousedown", "null; updateCustomList(__$('optionValue' + this.id), this); ");
+    li.setAttribute("style","");
+    li.setAttribute("class","even");
+    li.innerHTML = innerHTML;
+    ul.appendChild(li); 
 
   }
-   
+  
+  /* ............ */ 
+}
+
+function updateCustomList(e, element) {
+  var selected = element.getAttribute('style');
+  var img = document.getElementById('img' + element.id);
+  if(selected.match(/lightblue/i)) {
+    element.setAttribute("style",'');
+    img.setAttribute('src', "/public/touchscreentoolkit/lib/images/unticked.jpg");
+  }else{
+    element.setAttribute("style",'background-color: lightblue');
+    img.setAttribute('src', "/public/touchscreentoolkit/lib/images/ticked.jpg");
+  }
 }
 
 var custom_regimen_ingredients = [];
@@ -997,7 +1042,7 @@ function getMedication() {
           var drug_name = objs[i].alternative_names[0]
           drug_name = (drug_name == null ? objs[i].name : drug_name);
           custom_regimen_ingredients.push({
-            name: drug_name, drug_id: null
+            name: drug_name, drug_id: objs[i].drug_id
           });
         }
       }
