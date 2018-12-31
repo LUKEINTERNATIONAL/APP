@@ -156,7 +156,7 @@ function checkForWeightLoss(element) {
 }
 
 function checkIfTBsymptomsAlreadyDone() {
-  var mwSideEffects = yesNo_Hash['MALAWI ART SIDE EFFECTS'];
+  /*var mwSideEffects = yesNo_Hash['MALAWI ART SIDE EFFECTS'];
   var otherSelected = mwSideEffects['Other'] == 'Yes' ? true : false;
 
   if(!otherSelected){
@@ -179,7 +179,8 @@ function checkIfTBsymptomsAlreadyDone() {
     }
   }
 
-  return true;
+  return true; */
+  return false;
 }
 
 function addTBassociatedSymptomsYesNo() {
