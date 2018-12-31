@@ -527,7 +527,7 @@
                     <button id="continueButton" class="button green navButton"
                             onclick="nextDestinations()"><span>Continue</span></button>
                     <button id="cancelButton" class="button red navButton"
-                            onclick="window.location='/htn_encounter/bp_management?patient_id=25&skip_provider_check=true'">
+                            onclick="window.location='/apps/ART/views/htn/bp_management.html'">
                         <span>Cancel</span></button>
                 </div>
                 <div id="shield">
@@ -651,59 +651,80 @@
                 showFixedKeyboard(input, holder, {}, false, false)
             }
 
+            var notes_concept_id = 2592;
+            var notes_obs = [];
+            var drug_map_name_id = {
+                "HCZ (25mg tablet)": 275,
+                "Enalapril (5mg tablet)": 942,
+                "Enalapril (10mg tablet)": 943,
+                "Amlodipine (5mg tablet)": 558,
+                "Amlodipine (10mg tablet)": 559,
+                "Atenolol (50mg tablet)": 117,
+                "Atenolol (100mg tablet)": 116
+            }
+
             function nextDestinations() {
-
-                nodes = document.getElementsByClassName("today-note-td");
-                received = 0;
-
+                var nodes = document.getElementsByClassName("today-note-td");
                 //check for prescriptions reroutes
 
                 var result = [];
+                var htn_drug_data = [];
                 for (var i = 0; i < checks.length; i++) {
-
                     if (!checks[i].src.match("unticked")) {
                         result.push(checks[i].id)
+                        var htn_drug_id = drug_map_name_id[checks[i].id]
+                        htn_drug_data.push({drug_id: htn_drug_id, name: checks[i].id})
                     }
                 }
 
-                var form = document.createElement("form")
-                form.id = "form";
-                form.action = "/regimens/new?patient_id=25"
-                document.body.appendChild(form);
-
-                var input = document.createElement("input");
-                input.setAttribute("type", "hidden");
-                input.setAttribute("name", "patient_id");
-                input.setAttribute("value", "25");
-                form.appendChild(input);
-
-                for (var i = 0; i < result.length; i++) {
-                    var input = document.createElement("input");
-                    input.setAttribute("type", "hidden");
-                    input.setAttribute("name", "auto_rx[]");
-                    input.setAttribute("value", result[i]);
-                    form.appendChild(input)
-                }
+                sessionStorage.setItem("htn_drugs", JSON.stringify(htn_drug_data))
+                //sessionStorage.htn_drugs = htn_drug_data;
 
                 for (var i = 0; i < nodes.length; i++) {
                     var drug = nodes[i].getAttribute("drug");
                     var notes = nodes[i].innerHTML;
+                    var drug_id = drug_map_name_id[drug];
+                    if (!drug_id){
+                        drug_id = "";
+                    }
 
-                    jQuery.ajax({
-                        url: "/htn_encounter/save_notes?patient_id=25&drug_name=" +
-                            escape(drug) + "&notes=" + escape(notes),
-                        success: function (result) {
-                            received = parseInt(received) + 1;
-                            if (received == nodes.length) {
-                                document.getElementById("form").submit();
-                            }
-                        }
-                    })
+                    notes_obs.push(
+                        {
+                            concept_id: notes_concept_id,
+                            value_text: escape(notes),
+                            value_drug: drug_id
+                        })
                 }
 
-                if (nodes.length == 0)
-                    document.getElementById("form").submit();
+                var currentTime = moment().format(' HH:mm:ss');
+                var encounter_datetime = moment(sessionStorage.sessionDate).format('YYYY-MM-DD');
+                encounter_datetime += currentTime;
 
+                var encounter = {
+                    encounter_type_name: 'HYPERTENSION MANAGEMENT',
+                    encounter_type_id:  48,
+                    patient_id: sessionStorage.patientID,
+                    encounter_datetime: encounter_datetime
+                }
+
+                submitParameters(encounter, "/encounters", "postHypertensionManagementObs");
+
+                if (nodes.length == 0){
+                    gotoRequiredNextTask();
+                }
+            }
+
+            function postHypertensionManagementObs(encounter){
+                var obs = {
+                    encounter_id: encounter["encounter_id"],
+                    observations: notes_obs
+                };
+
+                submitParameters(obs, "/observations", "gotoRequiredNextTask");
+            }
+
+            function gotoRequiredNextTask(){
+                nextEncounter(sessionStorage.patientID, 1);
             }
 
             function showFixedKeyboard(ctrl, container, disabled, numbers, caps) {

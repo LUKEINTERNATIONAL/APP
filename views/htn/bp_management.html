@@ -712,6 +712,64 @@
 
     initializeVariables();
 
+    var transferred_concept_id = 6986;
+    var answer_concept_id = "";
+    var yes_concept_id = 1065;
+    var no_concept_id = 1066;
+    var vitals_obs = {}
+
+    function createVitalsTransferObs(){
+        var options = document.getElementsByClassName("option")
+        var checked = false;
+        for(i = 0; i < options.length; i ++){
+            if (options[i].getAttribute("selected") == "true"){
+                checked = true;
+                var value = options[i].getAttribute("value");
+
+                if (value.match(/YES/i)){
+                    answer_concept_id = yes_concept_id;
+                }
+
+                if (value.match(/NO/i)){
+                    answer_concept_id = no_concept_id;
+                }
+
+                vitals_obs = {concept_id: transferred_concept_id, value_coded: answer_concept_id}
+                var currentTime = moment().format(' HH:mm:ss');
+                var encounter_datetime = moment(sessionStorage.sessionDate).format('YYYY-MM-DD');
+                encounter_datetime += currentTime;
+
+                var encounter = {
+                    encounter_type_name: 'VITALS',
+                    encounter_type_id:  6,
+                    patient_id: sessionStorage.patientID,
+                    encounter_datetime: encounter_datetime
+                }
+
+                submitParameters(encounter, "/encounters", "postVitalsObs");
+
+                break;
+            }
+        }
+
+        if (checked == false) showMessage("Please select one action to proceed");
+    }
+
+    function postVitalsObs(encounter) {
+
+        var obs = {
+            encounter_id: encounter["encounter_id"],
+            observations: [vitals_obs]
+        };
+
+        submitParameters(obs, "/observations", "gotoRequiredNextTask")
+    }
+
+    function gotoRequiredNextTask(){
+        nextEncounter(sessionStorage.patientID, 1);
+    }
+
+
     function addHypertensionDiagnosisButton(){
         var button = document.createElement("button");
         button.id = "hypeternsion-diagnosis";

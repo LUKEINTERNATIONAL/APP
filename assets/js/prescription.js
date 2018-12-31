@@ -195,6 +195,12 @@ function showSelectedMeds() {
 }
 
 function continueShowSelectedMeds() {
+    var htn_drugs = []
+    try {
+        htn_drugs = JSON.parse(sessionStorage.htn_drugs)
+    } catch(e){
+
+    }
     var frame = document.getElementById("inputFrame" + tstCurrentPage);
     frame.style = "height: 89%; width: 96%;";
     document.getElementById("clearButton").style = "display: none;";
@@ -319,11 +325,43 @@ function continueShowSelectedMeds() {
         tr.appendChild(td);
     }
 
+    for (var i=0; i<= htn_drugs.length - 1; i++){
+        var am_dose = "0";
+        var drug_id = htn_drugs[i]["drug_id"];
+        var drug_name =  htn_drugs[i]["name"];
+        var pm_dose = "1";
+        var units = "tabs(s)";
 
+        var tr = document.createElement("tr");
+        tbody.appendChild(tr);
 
+        var td = document.createElement("td");
+        td.innerHTML = drug_name;
+        td.setAttribute("class","numbers");
+        td.setAttribute("class","med-names");
+        tr.appendChild(td);
+
+        var td = document.createElement("td");
+        td.innerHTML = units;
+        td.setAttribute("class","numbers");
+        tr.appendChild(td);
+
+        var td = document.createElement("td");
+        td.innerHTML = am_dose;
+        td.setAttribute("class","numbers");
+        tr.appendChild(td);
+
+        var td = document.createElement("td");
+        td.innerHTML = "N/A";
+        td.setAttribute("class","numbers");
+        tr.appendChild(td);
+
+        var td = document.createElement("td");
+        td.innerHTML = pm_dose;
+        td.setAttribute("class","numbers");
+        tr.appendChild(td);
+    }
 }
-
-
 
 /* ###################################################### */
 var setDataTable = null;
@@ -1532,6 +1570,22 @@ function postRegimenOrders(encounter){
     if (!drug_orders){
          drug_orders = [];
     }
+    var htn_drugs = []
+    try {
+        htn_drugs = JSON.parse(sessionStorage.htn_drugs)
+    } catch(e){
+
+    }
+    for (var i=0; i<=htn_drugs.length - 1; i++){
+        var am_dose = "0";
+        var drug_id = htn_drugs[i]["drug_id"];
+        var drug_name = htn_drugs[i]["name"];
+        var pm_dose = "1";
+        var units = "tab(s)";
+
+        var drug_order = {drug_name: drug_name, drug_id: drug_id, units: units, am: am_dose, pm: pm_dose}
+        drug_orders.push(drug_order)
+    }
 
     for (var drugName in medication_orders){
         var am_dose = medication_orders[drugName]["am"];
@@ -1642,6 +1696,8 @@ function getFormattedDate(set_date) {
 }
 
 function nextPage(){
+    // htn_drugs = JSON.parse(sessionStorage.htn_drugs)
+    sessionStorage.removeItem("htn_drugs");
     nextEncounter(sessionStorage.patientID, 1);
 
 }
