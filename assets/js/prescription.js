@@ -1133,6 +1133,7 @@ function addMedColumns() {
     li.setAttribute("tstvalue", custom_regimen_ingredients[i].drug_id);
     li.setAttribute("onmousedown", "null; updateCustomList(__$('optionValue' + this.id), this); ");
     li.setAttribute("style","");
+    li.setAttribute("units", custom_regimen_ingredients[i].units);
     li.setAttribute("drug_name", custom_regimen_ingredients[i].name);
     li.setAttribute("class", class_name + " custom-ingredients-list");
     li.innerHTML = innerHTML;
@@ -1160,7 +1161,9 @@ function updateCustomList(e, element) {
           name: tempContainer[drug_id].name,
           am: tempContainer[drug_id].am, 
           noon: tempContainer[drug_id].noon, 
-          pm: tempContainer[drug_id].pm
+          pm: tempContainer[drug_id].pm,
+          units: tempContainer[drug_id].units,
+          drug_id: drug_id
         }
       }
     }
@@ -1170,8 +1173,8 @@ function updateCustomList(e, element) {
     
     if(customRegimenIngredients[parseInt(element.getAttribute('tstvalue'))] == undefined){
       customRegimenIngredients[parseInt(element.getAttribute('tstvalue'))] = {
-        name: element.getAttribute('drug_name'),
-        am: null, noon: null, pm: null
+        name: element.getAttribute('drug_name'), drug_id: null,
+        am: null, noon: null, pm: null, units: element.getAttribute('units')
       }
     }
   }
@@ -1200,7 +1203,8 @@ function getMedication() {
           var drug_name = objs[i].alternative_names[0]
           drug_name = (drug_name == null ? objs[i].name : drug_name);
           custom_regimen_ingredients.push({
-            name: drug_name, drug_id: objs[i].drug_id
+            name: drug_name, drug_id: objs[i].drug_id,
+            units: objs[i].units
           });
         }
       }
@@ -1947,7 +1951,7 @@ function setCustomRegimen() {
   for (var drug_id in customRegimenIngredients){
     givenRegimens['Unknown'].push({
       drug_name: customRegimenIngredients[drug_id].name,
-      units: 'Tab',
+      units: customRegimenIngredients[drug_id].units,
       am: customRegimenIngredients[drug_id].am,  
       noon: customRegimenIngredients[drug_id].noon,
       pm: customRegimenIngredients[drug_id].pm, 
