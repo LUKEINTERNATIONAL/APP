@@ -668,7 +668,6 @@ function addPrescriptionInfo(table, medicationPillCountsArray) {
 
 }
 
-
 function calculateAdherence(given, pill_count, expected) {
   return Math.round(100*(given - pill_count) / (given - expected));
 }
@@ -792,6 +791,7 @@ function validateReason() {
           <option value='Shared with partner / friend'>Shared with partner / friend</option>
           <option value='Accumulated medication from another clinic'>Accumulated medication from another clinic</option>
           <option value='Medication lost / expired'>Medication lost / expired</option>
+          <option value='Run-out of medication'>Run-out of medication</option>
           <option value='System error'>System error</option>
           <option value="UNKNOWN">Unknown</option>
         </select>
