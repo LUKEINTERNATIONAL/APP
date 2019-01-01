@@ -1,5 +1,7 @@
 <script type="text/javascript" src="/assets/js/jquery.min.js"></script>
 <script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js" defer="true"></script>
+<script type="text/javascript" src="/assets/js/generic_ajaxrequest.js"></script>
+<script type="text/javascript" src="/assets/js/moment.js"></script>
 
 <style>
   #clearButton { display: none; }
@@ -73,18 +75,13 @@
   var f = document.getElementById('inputFrame' + tstCurrentPage);
   f.style = 'width: 96%; height: 90%; overflow: scroll';
 
-  var b = document.getElementById('nextButton');
-  b.innerHTML = '<span>Refresh</span>';
-  b.setAttribute('onmousedown','refreshList();');
+  document.getElementById('nextButton').style.display = 'none'
 
   const fileNumbers = document.createElement('div')
   fileNumbers.setAttribute('id', 'activeFileNumbers')
   f.appendChild(fileNumbers)
 
   fetchFileNumber(fetchArgumentFromUrlString('patient_id'))
-}
-
-function refreshList() {
 }
 </script>
 
@@ -103,67 +100,82 @@ function refreshList() {
 
   <script>
     const apiUrl = `http://${sessionStorage.getItem('apiURL')}:${sessionStorage.getItem('apiPort')}/api/v1`
-    function populatePageWithActiveFileNumbers(activeFileNumbers) {
+    const PAGE_SIZE = 6
+    let paginationPage = 0
+
+    function populatePageWithActiveFileNumbers (activeFileNumbers) {
       activeFileNumbers.forEach((activeFileNumber) => {
         document.getElementById('activeFileNumbers').innerHTML += createFileNumberElement(activeFileNumber)
       })
     }
 
-    function createFileNumberElement(fileData) {
-      return `<div class='activeFileNumber' onclick='archiveFileNumber(this)' id=${fileData.fileNumber}>
-        <h3>${fileData.name}</h3>
+    function createFileNumberElement (fileData) {
+      return `<div class='activeFileNumber' onclick='archiveFileNumber(this, ${fetchArgumentFromUrlString("patient_id")})' id=${fileData.identifier}>
+        <h3>${fileData.given_name} ${fileData.family_name}</h3>
         <hr width='100%'/>
         <p>
-          Last Visited:&nbsp;&nbsp;${fileData.lastVisited}<br />
-          File Number:&nbsp;&nbsp;${fileData.fileNumber}<br />
-          Last Visited:&nbsp;&nbsp;${fileData.lastVisited}<br />
-          File Number:&nbsp;&nbsp;${fileData.fileNumber}<br />
+          File Number:&nbsp;&nbsp;${fileData.identifier}<br />
+          Date Started:&nbsp;&nbsp;${fileData.start_date}<br />
+          Last Visit:&nbsp;&nbsp;${new moment(fileData.appointment_date).format('MM-DD-YYYY')}<br />
+          State:&nbsp;&nbsp;${fileData.state}<br />
         </p>
       </div>`;
     }
 
     function fetchArchivingCandidates() {
-      return [{
-          id: 1,
-          name: 'Daniel Mwakanema',
-          lastVisited: '2018-10-12',
-          fileNumber: '12345GGGhh'
+      GET (
+        {
+          url: `${apiUrl}/archiving_candidates`,
+          async: true,
+          headers: {
+            'Authorization': sessionStorage.getItem('authorization')
+          }
         },
         {
-          id: 2,
-          name: 'Shnoopy Bloopers',
-          lastVisited: '2018-10-12',
-          fileNumber: '12345GGGhh'
+          page: paginationPage,
+          page_size: PAGE_SIZE
         },
-        {
-          id: 3,
-          name: 'Lard Nar',
-          lastVisited: '2018-10-12',
-          fileNumber: '12345GGGhh'
+        (data) => {
+          addNextButton()
+          if (paginationPage > 0) {
+            addPrevButton()
+          } else if (paginationPage === 0 && document.getElementById('previousButton') && document.getElementById('previousButton').style.display === 'block') {
+            document.getElementById('previousButton').style.display = 'none'
+          }
+          populatePageWithActiveFileNumbers(data)
         },
-        {
-          id: 4,
-          name: 'Krombopulos Michael',
-          lastVisited: '2018-10-12',
-          fileNumber: '12345GGGhh'
-        },
-        {
-          id: 5,
-          name: 'Invader Larb',
-          lastVisited: '2018-10-12',
-          fileNumber: '12345GGGhh'
-        },
-        {
-          id: 6,
-          name: 'Quentin Tarantino',
-          lastVisited: '2018-10-12',
-          fileNumber: '12345GGGhh'
+        (error) => {
+          console.error(error)
         }
-      ]
+      )
     }
 
-    function archiveFileNumber (event) {
-      const response = confirm(`Are you sure you want to archive file number ${event.id}?`)
+    function archiveFileNumber (event, patientId) {
+      const response = confirm(`Are you sure you want to archive the patient with file number ${event.id}?`)
+
+      if (response) {
+        POST (
+          {
+            url: `${apiUrl}/patients/${patientId}/filing_number`,
+            async: true,
+            headers: {
+              'Authorization': sessionStorage.getItem('authorization'),
+              'Content-Type': 'application/x-www-form-urlencoded'
+            }
+          },
+          { filing_number: event.id },
+          (data) => {
+            showMessage('The patient\'s filing number was successfully reassigned.')
+            setTimeout(() => {
+              nextEncounter(sessionStorage.patientID, 1, true)
+            }, 3000)
+          },
+          (error) => {
+            console.error(error)
+            showMessage('There was a problem reassigning the file number.')
+          }
+        )
+      }
     }
 
     function fetchArgumentFromUrlString (argumentName, url = location.href) {
@@ -184,15 +196,15 @@ function refreshList() {
         },
         {},
         (data, status) => {
-          if (status === 200) {
-            createPatientFilingNumber(patientId, data.filing_number)
+          if (status === 201) {
+            createPatientFilingNumber(patientId, data.new_identifier.identifier)
           } else {
-            populatePageWithActiveFileNumbers(fetchArchivingCandidates())
+            fetchArchivingCandidates()
           }
         },
         (error) => {
-          showMessage('An error occured while fetching the patient\'s file number.')
           console.error(error)
+          showMessage('An error occured while fetching the patient\'s file number.')
         }
       )
     }
@@ -208,17 +220,19 @@ function refreshList() {
           async: true,
           headers: {
             'Authorization': sessionStorage.getItem('authorization'),
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/x-www-form-urlencoded'
           }
         },
-        { filing_number: filingNumber},
+        { filing_number: filingNumber },
         (data) => {
           showMessage('The patient\'s filing number was successfully assigned.')
-          console.log(data)
+          setTimeout(() => {
+            nextEncounter(sessionStorage.patientID, 1, true)
+          }, 3000)
         },
         (error) => {
-          showMessage('An error occured while creating the patient\'s file number.')
           console.error(error)
+          showMessage('An error occured while creating the patient\'s file number.')
         }
       )
     }
@@ -227,10 +241,12 @@ function refreshList() {
       const request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP')
 
       request.onreadystatechange = () => {
-        if (request.readyState === 4 && [200, 204].indexOf(request.status) >= 0) {
-          successCallback(JSON.parse(request.responseText), status)
-        } else if (request.readyState ===4 && request.status >= 400) {
-          failureCallback(request.responseText, status)
+        if (request.readyState === 4 && request.status === 201) {
+          successCallback(JSON.parse(request.responseText), request.status)
+        } else if (request.readyState === 4 && request.status === 204) {
+          successCallback({}, request.status)
+        } else if (request.readyState === 4 && request.status >= 400) {
+          failureCallback(request.responseText, request.status)
         } 
       }
 
@@ -243,7 +259,27 @@ function refreshList() {
       request.send(encodeURI(buildParametersString(data)))
     }
 
-    function buildParametersString(params) {
+    function GET (config, data = {}, successCallback, failureCallback) {
+      const request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP')
+
+      request.onreadystatechange = () => {
+        if (request.readyState === 4 && request.status === 200) {
+          successCallback(JSON.parse(request.responseText), request.status)
+        } else if (request.readyState === 4 && request.status >= 400) {
+          failureCallback(request.responseText, request.status)
+        } 
+      }
+
+      request.open('GET', config.url + `?${encodeURI(buildParametersString(data))}`, config.async)
+
+      Object.keys(config.headers).forEach((key) => {
+        request.setRequestHeader(key, config.headers[key])
+      })
+
+      request.send()
+    }
+
+    function buildParametersString (params) {
       let paramsString = ''
       Object.keys(params).forEach((key, index, array) => {
         paramsString += `${key}=${params[key]}`
@@ -252,6 +288,40 @@ function refreshList() {
         }
       })
       return paramsString
+    }
+
+    function clearActiveFileNumbersDiv () {
+      document.getElementById('activeFileNumbers').innerHTML = ''
+    }
+
+    function addNextButton () {
+      const nextButton = document.getElementById('nextButton')
+      nextButton.innerHTML = '<span>Next List</span>'
+      nextButton.setAttribute('onmousedown','clearActiveFileNumbersDiv(); nextPage(); fetchArchivingCandidates();')
+      document.getElementById('nextButton').style.display = 'block'
+    }
+
+    function addPrevButton () {
+      if (document.getElementById('previousButton') && document.getElementById('previousButton').style.display === 'block') {
+        return
+      }
+      const prevButton = document.createElement('button')
+      prevButton.innerHTML = '<span>Previous List</span>'
+      prevButton.setAttribute('onmousedown', 'clearActiveFileNumbersDiv(); previousPage(); fetchArchivingCandidates();')
+      prevButton.setAttribute('id', 'previousButton')
+      prevButton.setAttribute('style', 'display: block;')
+      document.getElementById('buttons').appendChild(prevButton)
+    }
+
+    function nextPage () {
+      paginationPage = paginationPage + 1
+    }
+
+    function previousPage () {
+      if (paginationPage === 0) {
+        return
+      }
+      paginationPage = paginationPage - 1
     }
   </script>
 </body>
