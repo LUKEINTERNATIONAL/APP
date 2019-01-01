@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js" defer="true"></script>
+    <script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js"
+            defer="true"></script>
     <script type="text/javascript" src="/assets/js/jquery.min.js"></script>
     <script type="text/javascript" src="/assets/js/yes_no_ctrls.js"></script>
     <link rel="stylesheet" href="/assets/css/yes_no_ctrls.css" type="text/css">
@@ -13,13 +14,20 @@
     <script>
         var imgTick = 'data:image/png;base64,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';
 
-        var current_bp_drugs = ["Amlodipine (5mg tablet)"];
+        var current_bp_drugs = ["HCZ (25mg tablet)"];
+        var last_dispensations = {
+            "HCZ (25mg tablet)": {
+                "remaining": 28,
+                "obs_datetime": "2018/12/30 00:00:01 +0200",
+                "value_numeric": 30.0
+            }
+        }
 
         function loadCurrentBPDrugs() {
             var html = "<img width='45' height='35' class='tick' src='" + imgTick + "' </img>";
             for (var i = 0; i <= current_bp_drugs.length - 1; i++) {
                 var textBoxDrugInput = document.getElementById(current_bp_drugs[i] + "-remaining");
-                if (textBoxDrugInput){
+                if (textBoxDrugInput) {
                     var inputID = current_bp_drugs[i] + "-current";
                     var currentDrugInput = document.getElementById(inputID);
                     if (currentDrugInput) {
@@ -30,11 +38,51 @@
 
                     textBoxDrugInput.innerHTML = input;
                 }
-/*
-<input id='Enalapril (5mg tablet)' onclick="showNumber('Enalapril (5mg tablet)', 0, 500)" class="butt" value=""></input>
-
-* */
             }
+
+            var adherence_html = "";
+            for (var drug in last_dispensations) {
+                var amount_remaining = last_dispensations[drug]["remaining"];
+                var obs_datetime = last_dispensations[drug]["obs_datetime"];
+                var value_numeric = last_dispensations[drug]["value_numeric"];
+                var amount_expected_id = "amount_expected_" + drug;
+                var adherence_id = "adherence_" + drug;
+
+                adherence_html += '<tr class="data-tr">';
+                adherence_html += '<td class="name value">' + drug + '</td>';
+                adherence_html += '<td class="value">' + value_numeric + '</td>';
+                adherence_html += '<td class="value" id="' + amount_expected_id + '">' + amount_remaining + '</td>';
+                adherence_html += '<td class="value" id="' + adherence_id + '">?</td>';
+
+            }
+
+            var summaryTable = document.getElementById("summary-table");
+            summaryTable.innerHTML += adherence_html;
+
+
+            /*
+            * <tr class="data-tr">
+                    <td class="name value">
+                        Enalapril (5mg tablet)
+                    </td>
+
+                    <td class="value">
+                        57
+                    </td>
+
+                    <td class="value" id="amount_expected_Enalapril (5mg tablet)">
+                        30
+                    </td>
+
+                    <td class="value" id="adherence_Enalapril (5mg tablet)">
+                        ?
+                    </td>
+                </tr>
+            *
+            *
+            * */
+
+
         }
 
 
@@ -236,28 +284,12 @@
                         } else {
                             global_control = global_control.trim();
 
-                            try {
-                                __$(node).value = global_control;
-                                __$("input").innerHTML = "";
-                                __$("tblKeyboard").parentNode.removeChild(__$("tblKeyboard"));
-                                __$("input").parentNode.removeChild(__$("input"));
-                                jQuery.ajax({
-                                    url: "/htn_encounter/update_remaining_drugs?pills=" + global_control +
-                                        "&drug_name=" + node + "&patient_id=27",
-                                    success: function (result) {
-                                        try {
-                                            result = JSON.parse(result)
-                                            if (result.toString().length > 0) {
-                                                __$("adherence_" + node).innerHTML = result[0] + "%"
-                                                __$("amount_expected_" + node).innerHTML = result[1]
-                                            }
-                                        } catch (e) {
-                                        }
-                                    }
-                                })
-                            } catch (e) {
-                                showMessage("Failed to update input!");
-                            }
+                            __$(node).value = global_control;
+                            __$("input").innerHTML = "";
+                            __$("tblKeyboard").parentNode.removeChild(__$("tblKeyboard"));
+                            __$("input").parentNode.removeChild(__$("input"));
+                            updateRemainingDrugs(global_control, node);
+
                             jQuery("#shield, #popup").css("display", "none");
                             jQuery('#backButton, #nextButton').attr("disabled", false);
                         }
@@ -378,6 +410,32 @@
 
             document.body.appendChild(popup);
         }
+
+        function updateRemainingDrugs(global_control, node) {
+
+            var update_pills_remaining_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+            update_pills_remaining_url += "/api/v1/update_pills_remaining?person_id=" + sessionStorage.patientID;
+            update_pills_remaining_url += "&drug_name=" + node;
+            update_pills_remaining_url += "&pills=" + global_control;
+
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                    var result = JSON.parse(this.responseText);
+                    if (result.toString().length > 0) {
+                        __$("adherence_" + node).innerHTML = result[0] + "%"
+                        __$("amount_expected_" + node).innerHTML = result[1]
+                    }
+
+                }
+            };
+
+            xhttp.open("GET", update_pills_remaining_url, true);
+            xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+            xhttp.setRequestHeader('Content-type', "application/json");
+            xhttp.send();
+        }
+
 
     </script>
 
@@ -802,33 +860,12 @@
                     </th>
                 </tr>
 
-
-                <tr class="data-tr">
-                    <td class="name value">
-                        Enalapril (5mg tablet)
-                    </td>
-
-                    <td class="value">
-                        57
-                    </td>
-
-                    <td class="value" id="amount_expected_Enalapril (5mg tablet)">
-                        30
-                    </td>
-
-                    <td class="value" id="adherence_Enalapril (5mg tablet)">
-                        ?
-                    </td>
-                </tr>
-
             </table>
         </div>
 
         <div id="buttons" class="buttonsDiv">
-            <button id="continueButton" class="button green navButton"
-                    onmousedown="postAnswer()"><span>Continue</span></button>
-            <button id="cancelButton" class="button red navButton"
-                    onmousedown="window.location = '/htn_encounter/bp_management?patient_id=27&skip_provider_check=true'">
+            <button id="continueButton" class="button green navButton" onmousedown="postAnswer()"><span>Continue</span></button>
+            <button id="cancelButton" class="button red navButton" onmousedown="window.location = '/apps/ART/views/htn/bp_management.html'">
                 <span>Cancel</span></button>
         </div>
 
@@ -865,10 +902,32 @@
                 form.submit();*/
             }
 
-            function postAnswer() {
-                //window.location = '/htn_encounter/change_drugs?patient_id=27'
+            var drug_map_name_id = {
+                "HCZ (25mg tablet)": 275,
+                "Enalapril (5mg tablet)": 942,
+                "Enalapril (10mg tablet)": 943,
+                "Amlodipine (5mg tablet)": 558,
+                "Amlodipine (10mg tablet)": 559,
+                "Atenolol (50mg tablet)": 117,
+                "Atenolol (100mg tablet)": 116
             }
 
+            function postAnswer() {
+                if (window.location.search.indexOf("review=true")){
+                    window.location = '/apps/ART/views/htn/change_drugs.html';
+                } else {
+                    var htn_drug_data = [];
+                    for (var i = 0; i < current_bp_drugs.length; i++) {
+                            var htn_drug_id = drug_map_name_id[current_bp_drugs[i].id]
+                            htn_drug_data.push({drug_id: htn_drug_id, name: current_bp_drugs[i].id})
+                    }
+
+                    sessionStorage.setItem("htn_drugs", JSON.stringify(htn_drug_data))
+                    nextEncounter(sessionStorage.patientID, 1);
+                }
+            }
+
+            loadCurrentBPDrugs();
         </script>
 
         <div id="footer">
