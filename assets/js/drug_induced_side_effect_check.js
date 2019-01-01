@@ -138,12 +138,12 @@ function buildConnection() {
   box.appendChild(boxNavBar);
 
   var nextB = document.createElement('button');
-  nextB.innerHTML = '<span>Next side effect</span>';
+  nextB.innerHTML = '<span>Next</span>';
   nextB.setAttribute('class','button green navButton nav-order-btns');
   nextB.setAttribute('onmousedown','nextSideEffect(1);');
   nextB.setAttribute('currentPage', 0);
   nextB.setAttribute('id','next-button');
-  nextB.style = 'width: 220px;'
+  nextB.style = 'width: 120px;'
   boxNavBar.appendChild(nextB);
 /*
 */
@@ -177,7 +177,7 @@ function addPreExisitingConditions(t, side_effect) {
   var tr = document.createElement('tr');
   t.appendChild(tr);
   var th = document.createElement('th');
-  th.innerHTML = "Pre-existing condition";
+  th.innerHTML = "Past medical history";
   th.setAttribute('colspan', 2);
   tr.appendChild(th);
 
@@ -198,8 +198,32 @@ function addPreExisitingConditions(t, side_effect) {
   td.appendChild(img);
 
   var td = document.createElement('td')
-  td.innerHTML = "Potential contraindication"
+  td.innerHTML = "Other, not drug related"
   tr.appendChild(td);
+
+  /* WWWWWWWWW................................................. */
+  tr = document.createElement('tr');
+  tr.setAttribute('id', "pre-exisiting-drug-" + side_effect);
+  tr.setAttribute('side-effect', side_effect);
+  tr.setAttribute('onmousedown', 'updateSelectedPreExisiting(this);');
+  t.appendChild(tr);
+
+  var td = document.createElement('td')
+  td.style = "width: 20px;";
+  tr.appendChild(td);
+
+  var img = document.createElement('img');
+  img.setAttribute('src','/public/touchscreentoolkit/lib/images/unticked.jpg');
+  img.setAttribute('alt', '[ ]');
+  img.setAttribute('id', 'img-pre-exisiting-side-effect-' + side_effect);
+  td.appendChild(img);
+
+  var td = document.createElement('td')
+  td.innerHTML = "Drug side effect";
+  tr.appendChild(td);
+  /* ................................................. */
+
+
 
   var nextButton = document.getElementById('next-button');
   var i = parseInt(nextButton.getAttribute('currentPage'));
@@ -221,11 +245,11 @@ function addBackButton(num) {
   if(num > 0) {
     if(root.getElementsByTagName('button').length == 1) {
       var backB = document.createElement('button');
-      backB.innerHTML = '<span>Previous side effect</span>';
+      backB.innerHTML = '<span>Back</span>';
       backB.setAttribute('onmousedown','addConnetion(' + (num - 1) + ');');
       backB.setAttribute('class','button blue navButton');
       backB.setAttribute('id','previous-button');
-      backB.style = 'margin: 10px 10px 0px 0px;';
+      backB.style = 'margin: 10px 10px 0px 0px;width: 120px;';
       root.appendChild(backB);
     }
   }else{
@@ -244,7 +268,8 @@ function addMeds(t, side_effect) {
   var tr = document.createElement('tr');
   t.appendChild(tr);
   var th = document.createElement('th');
-  th.innerHTML = "Medication";
+  th.setAttribute('colspan', 2);
+  th.innerHTML = "Current medication";
   tr.appendChild(th);
   
   for(var i = 0 ; i < previousMedsGivens.length ; i++){
@@ -256,7 +281,7 @@ function addMeds(t, side_effect) {
     t.appendChild(tr);
 
     var td = document.createElement('td')
-    td.style = "width: 20px;";
+    td.style = "width: 5px;";
     tr.appendChild(td);
 
     var img = document.createElement('img');
@@ -285,37 +310,46 @@ function updateSelectedMedSideEffects(e, side_effect_id) {
     e.style = "background-color: '';";
   }
 
+  var sideEffect = e.getAttribute('side-effect').replace('drug-','');
+
   if(selected){
-    if(reasonForSideEffects[e.getAttribute('side-effect')] == undefined) 
-      reasonForSideEffects[e.getAttribute('side-effect')] = {drug_ids: [], ps: null};
+    if(reasonForSideEffects[sideEffect] == undefined) 
+      reasonForSideEffects[sideEffect] = {drug_ids: [], ps: null};
 
-    reasonForSideEffects[e.getAttribute('side-effect')].drug_ids.push(e.id);
+    reasonForSideEffects[sideEffect].drug_ids.push(e.id);
   }else{
-    if(reasonForSideEffects[e.getAttribute('side-effect')] == undefined) 
-      reasonForSideEffects[e.getAttribute('side-effect')] = {drug_ids: [], ps: null};
+    if(reasonForSideEffects[sideEffect] == undefined) 
+      reasonForSideEffects[sideEffect] = {drug_ids: [], ps: null};
 
-    reasonForSideEffects[e.getAttribute('side-effect')].drug_ids = [];
+    reasonForSideEffects[sideEffect].drug_ids = [];
   }
   
   
   if(selected){
-    var row = document.getElementById("pre-exisiting-" + side_effect_id);
-  /* ..................... */ 
-    row.style = 'background-color: "";';
-    var img = document.getElementById('img-side-effect-' + side_effect_id);
-    img.setAttribute('src','/public/touchscreentoolkit/lib/images/unticked.jpg');
-    
-    if(reasonForSideEffects[row.id.replace('pre-exisiting-','')] == undefined) 
-      reasonForSideEffects[row.id.replace('pre-exisiting-','')] = {drug_ids: [], ps: null};
+    var cells = [
+      ['pre-exisiting-drug-','img-pre-exisiting-side-effect-'],
+      ['pre-exisiting-','img-side-effect-']
+    ];
 
-    reasonForSideEffects[row.id.replace('pre-exisiting-','')].ps = null;
-  /* ..................... */ 
-    
+    for(var i = 0 ; i < cells.length ; i++) {
+      var row = document.getElementById(cells[i][0] + side_effect_id);
+      /* ..................... */ 
+        row.style = 'background-color: "";';
+        var img = document.getElementById(cells[i][1] + side_effect_id);
+        img.setAttribute('src','/public/touchscreentoolkit/lib/images/unticked.jpg');
+        
+        if(reasonForSideEffects[sideEffect] == undefined) 
+          reasonForSideEffects[sideEffect] = {drug_ids: [], ps: null};
+
+        reasonForSideEffects[sideEffect].ps = null;
+        reasonForSideEffects[sideEffect].pre_exisiting = null;
+      /* ..................... */ 
+    }  
   }
 }
 
 function updateSelectedPS(e) {
-  var img = document.getElementById('img-side-effect-' + e.id.replace('pre-exisiting-',''));
+  var img = document.getElementById('img-side-effect-' + e.getAttribute('side-effect'));
   var selected = false;
   if(img.getAttribute('src').match(/unticked/i)){
     img.setAttribute('src','/public/touchscreentoolkit/lib/images/ticked.jpg');
@@ -328,13 +362,13 @@ function updateSelectedPS(e) {
 
   if(selected){
     if(reasonForSideEffects[e.getAttribute('side-effect')] == undefined) 
-      reasonForSideEffects[e.getAttribute('side-effect')] = {drug_ids: [], ps: null};
+      reasonForSideEffects[e.getAttribute('side-effect')] = {drug_ids: [], ps: null, pre_exisiting: null};
 
     reasonForSideEffects[e.getAttribute('side-effect')].drug_ids = [];
     reasonForSideEffects[e.getAttribute('side-effect')].ps = 'Yes';
   }else{
     if(reasonForSideEffects[e.getAttribute('side-effect')] == undefined) 
-      reasonForSideEffects[e.getAttribute('side-effect')] = {drug_ids: [], ps: null};
+      reasonForSideEffects[e.getAttribute('side-effect')] = {drug_ids: [], ps: null, pre_exisiting: null};
 
     reasonForSideEffects[e.getAttribute('side-effect')].ps = null;
   }
@@ -344,17 +378,92 @@ function updateSelectedPS(e) {
     for(var i = 0 ; i < list.length ; i++){
    
     /* ..................... */ 
-      if(reasonForSideEffects[e.id.replace('pre-exisiting-','')] == undefined) 
-        reasonForSideEffects[e.id.replace('pre-exisiting-','')] = {drug_ids: [], ps: null};
+      if(reasonForSideEffects[e.getAttribute('side-effect')] == undefined) 
+        reasonForSideEffects[e.getAttribute('side-effect')] = {drug_ids: [], ps: null, pre_exisiting: null};
 
-      reasonForSideEffects[e.id.replace('pre-exisiting-','')].drug_ids = [];
+      reasonForSideEffects[e.getAttribute('side-effect')].drug_ids = [];
       list[i].style = 'background-color: "";'; 
       var img = document.getElementById('img-side-effect-' + list[i].id)
       img.setAttribute('src','/public/touchscreentoolkit/lib/images/unticked.jpg');
     /* ..................... */ 
     
     }
+
+    var side_effect_id = e.getAttribute('side-effect');
+    var row = document.getElementById("pre-exisiting-drug-" + side_effect_id);
+    /* ..................... */
+      row.style = 'background-color: "";';
+      var img = document.getElementById('img-pre-exisiting-side-effect-' + side_effect_id);
+      img.setAttribute('src','/public/touchscreentoolkit/lib/images/unticked.jpg');
+
+      if(reasonForSideEffects[side_effect_id] == undefined)
+        reasonForSideEffects[side_effect_id] = {drug_ids: [], ps: null, pre_exisiting: null};
+
+      reasonForSideEffects[side_effect_id].pre_exisiting = null;
+    /* ..................... */
+
   }
+}
+
+function updateSelectedPreExisiting(e) {
+  var img = document.getElementById('img-pre-exisiting-side-effect-' + e.getAttribute('side-effect'));
+  var selected = false;
+  if(img.getAttribute('src').match(/unticked/i)){
+    img.setAttribute('src','/public/touchscreentoolkit/lib/images/ticked.jpg');
+    e.style = "background-color: lightblue;";
+    selected = true;
+  }else{  
+    img.setAttribute('src','/public/touchscreentoolkit/lib/images/unticked.jpg');
+    e.style = "background-color: '';";
+  }
+
+  if(selected){
+    if(reasonForSideEffects[e.getAttribute('side-effect')] == undefined) 
+      reasonForSideEffects[e.getAttribute('side-effect')] = {drug_ids: [], ps: null, pre_exisiting: null };
+
+    reasonForSideEffects[e.getAttribute('side-effect')].drug_ids = [];
+    reasonForSideEffects[e.getAttribute('side-effect')].ps = null;
+    reasonForSideEffects[e.getAttribute('side-effect')].pre_exisiting = 'Yes';
+  }else{
+    if(reasonForSideEffects[e.getAttribute('side-effect')] == undefined) 
+      reasonForSideEffects[e.getAttribute('side-effect')] = {drug_ids: [], ps: null, pre_exisiting: null};
+
+    reasonForSideEffects[e.getAttribute('side-effect')].pre_exisiting = null;
+  }
+ 
+  if(selected) {
+    removeRest(e) 
+  }
+}
+
+function removeRest(e){
+  var list = document.getElementsByClassName(e.getAttribute('side-effect'));
+  for(var i = 0 ; i < list.length ; i++){
+ 
+  /* ..................... */ 
+    if(reasonForSideEffects[e.getAttribute('side-effect')] == undefined) 
+      reasonForSideEffects[e.getAttribute('side-effect')] = {drug_ids: [], ps: null, pre_exisiting: null};
+
+    reasonForSideEffects[e.getAttribute('side-effect')].drug_ids = [];
+    list[i].style = 'background-color: "";'; 
+    var img = document.getElementById('img-side-effect-' + list[i].id)
+    img.setAttribute('src','/public/touchscreentoolkit/lib/images/unticked.jpg');
+  /* ..................... */ 
+  
+  }
+
+  var side_effect_id = e.getAttribute('side-effect');
+  var row = document.getElementById("pre-exisiting-" + side_effect_id);
+  /* ..................... */
+    row.style = 'background-color: "";';
+    var img = document.getElementById('img-side-effect-' + side_effect_id);
+    img.setAttribute('src','/public/touchscreentoolkit/lib/images/unticked.jpg');
+
+    if(reasonForSideEffects[side_effect_id] == undefined)
+      reasonForSideEffects[side_effect_id] = {drug_ids: [], ps: null, pre_exisiting: null};
+
+    reasonForSideEffects[side_effect_id].ps = null;
+  /* ..................... */
 }
 
 function nextSideEffect(i) {
@@ -369,17 +478,17 @@ function nextSideEffect(i) {
 
 function selectedDI() {
   if(isHashEmpty(reasonForSideEffects)) {
-    showMessage('x1Please select from the list');
+    showMessage('Please select from the list');
     return;
   }
 
   for(se in reasonForSideEffects) {
     var drugs = reasonForSideEffects[se].drug_ids;
     var ps  = reasonForSideEffects[se].ps;
+    var pre_exisiting  = reasonForSideEffects[se].pre_exisiting;
 
-    if(drugs.length < 1 && ps == null){
-      console.log(drugs.length < 1 && ps == null);
-      showMessage('x2Please select from the list');
+    if(drugs.length < 1 && ps == null && pre_exisiting == null){
+      showMessage('Please select from the list');
       return;
     }
   }

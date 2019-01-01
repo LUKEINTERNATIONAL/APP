@@ -137,9 +137,9 @@ function buildRegimenPage() {
   }
   
 function loadRegimens() {
-    var side = "right";
     for(var regimen in givenRegimens){
-      side = (side == "right" ? "left" : "right");
+      var regimen_num = parseInt(regimen.split(' ')[0]);
+      var side = (regimen_num < 9 ? "left" : "right");
       var table = document.getElementById("regimen-table-" + side);
   
       var tr = document.createElement("tr");
@@ -918,7 +918,8 @@ function checkIFRegimenHasLPv() {
   
   var regimen = parseInt(selectedRegimens, 10);
   var w = parseFloat(sessionStorage.currentWeight); 
-  if (regimen == 11 || regimen == 9 && (w >= 3 && w <= 25) ) {
+  regimen_nine_or_eleven = (regimen == 11 || regimen == 9);
+  if (regimen_nine_or_eleven && (w >= 3 && w <= 25) ) {
     buildPalletBox();
   }else{
     gotoNextPage();
@@ -1530,7 +1531,7 @@ function buildResonForSwitchinPopup() {
   
   var switchingTableTitle = document.createElement('div');
   switchingTableTitle.setAttribute('id','switching-table-caption');
-  switchingTableTitle.innerHTML = "Reason for changing regimen"
+  switchingTableTitle.innerHTML = "Main reason for regimen change"
   popBox.appendChild(switchingTableTitle);
 
 
@@ -1573,7 +1574,7 @@ function buildResonForSwitchinPopup() {
   buttonContainerRow.setAttribute('class','buttonContainerRow');
   buttonContainer.appendChild(buttonContainerRow);
 
-  var cells = ['Cancel','Switch'];
+  var cells = ['Keep previous','Change'];
 
   for(var i = 0 ; i < cells.length ; i++){
     var buttonContainerCell = document.createElement('div');

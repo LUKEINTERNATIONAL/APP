@@ -172,6 +172,11 @@ getVisits();
 var encounter_date = moment(new Date()).format("YYYY-MM-DD");
 submitParameters(stats, "/reports/encounters?date=" + encounter_date, "renderStats");
 
+try {
+  var cover = document.getElementById('submit-cover');
+  cover.style = 'display: none;';
+}catch(e) {}
+
 var encounters_created = [];
 var counter = 1;
 
