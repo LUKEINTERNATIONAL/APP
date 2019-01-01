@@ -1082,7 +1082,19 @@ function addMedColumns() {
   var ul = document.createElement('ul');
   ul.setAttribute('class', 'scrollableList');
   adultDiv.appendChild(ul);
-   
+ 
+  try { 
+    custom_regimen_ingredients = custom_regimen_ingredients.sort(function(a, b){
+      var nameA=a.name.toLowerCase(), nameB=b.name.toLowerCase()
+      if (nameA < nameB) //sort string ascending
+          return -1 
+      if (nameA > nameB)
+          return 1
+      return 0 //default return value (no sorting)
+    });
+  }catch(x){
+  }
+
   for(var i = 0 ; i < custom_regimen_ingredients.length; i++){
 
     var innerHTML = '<div style="display: table; border-spacing: 0px;"><div style="display: table-row"><div style="display: table-cell;"><img id="img';
