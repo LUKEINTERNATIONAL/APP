@@ -19,7 +19,7 @@
     var patient_on_bp_drugs = false;
     var first_visit = false;
 
-    var bp_trail = [{date: "27/Dec/2018", systolic: 160,diastolic: 92, plan: 'Life style advice given' }];
+    var bp_trail = [];
     var todays_date = moment(sessionStorage.sessionDate).format('YYYY-MM-DD');
     var note = null;
     var risks_count = 0;
@@ -49,6 +49,11 @@
     }
 
 
+    var patientOnBpDrugs = false;
+    var patientPregnant = false;
+    var drug_use_history_concept_id = 2466;
+    var transferred_concept_id = 6986;
+    var drug_use_history_data = {};
 
     function initializeVariables(){
         //jQuery(".loader").show();
@@ -61,11 +66,12 @@
         var is_patient_pregnant_concept_id = 6131;
         var yes_concept_id = 1065;
 
+        var lab_trail_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+        lab_trail_url +=  "/api/v1/patients/" + sessionStorage.patientID + "/bp_trail";
 
         var patient_has_hypertension_url = apiProtocol + "://" + apiURL + ":" + apiPort;
         patient_has_hypertension_url +=  "/api/v1/observations?person_id=" + sessionStorage.patientID;
         patient_has_hypertension_url +=  "&concept_id=" + patient_has_hypertension_concept_id;
-        patient_has_hypertension_url +=  "&obs_datetime=" + sessionStorage.sessionDate;
 
         var diastollic_url = apiProtocol + "://" + apiURL + ":" + apiPort;
         diastollic_url +=  "/api/v1/observations?person_id=" + sessionStorage.patientID;
@@ -75,8 +81,6 @@
         var treatment_status_url = apiProtocol + "://" + apiURL + ":" + apiPort;
         treatment_status_url +=  "/api/v1/observations?person_id=" + sessionStorage.patientID;
         treatment_status_url +=  "&concept_id=" + treatment_status_concept_id;
-        treatment_status_url +=  "&value_coded=" + yes_concept_id;
-        treatment_status_url +=  "&obs_datetime=" + sessionStorage.sessionDate;
 
         var is_patient_pregnant_url = apiProtocol + "://" + apiURL + ":" + apiPort;
         is_patient_pregnant_url +=  "/api/v1/observations?person_id=" + sessionStorage.patientID;
@@ -84,13 +88,24 @@
         is_patient_pregnant_url +=  "&value_coded=" + yes_concept_id;
         is_patient_pregnant_url +=  "&obs_datetime=" + sessionStorage.sessionDate;
 
+        var drug_use_history_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+        drug_use_history_url +=  "/api/v1/observations?person_id=" + sessionStorage.patientID;
+        drug_use_history_url +=  "&concept_id=" + drug_use_history_concept_id;
+
+        var transferred_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+        transferred_url +=  "/api/v1/observations?person_id=" + sessionStorage.patientID;
+        transferred_url +=  "&concept_id=" + transferred_concept_id;
+
 
         var xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function() {
             if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
                 var patient_has_hypertension_obs = JSON.parse(this.responseText);
-                if (patient_has_hypertension_obs.length > 0){
+                if (patient_has_hypertension_obs.length == 0){
                     hypertension_obs = patient_has_hypertension_obs;
+                    setTimeout(function(){
+                        addHypertensionDiagnosisButton();
+                    }, 350);
                 }
 
                 var xhttp2 = new XMLHttpRequest();
@@ -106,7 +121,10 @@
                             if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
                                 var treatment_status_obs = JSON.parse(this.responseText);
                                 if (treatment_status_obs.length > 0){
-                                    patientOnBpDrugs = true;
+                                    var value_text = treatment_status_obs[0]["value_text"];
+                                    if (value_text.match(/BP Drugs started/i)){
+                                        patientOnBpDrugs = true;
+                                    }
                                 }
 
                                 var xhttp4 = new XMLHttpRequest();
@@ -116,8 +134,70 @@
                                         if (is_patient_pregnant_obs.length > 0){
                                             patientPregnant = true;
                                         }
+                                        /*****************************************************/
+                                        var xhttp6 = new XMLHttpRequest();
+                                        xhttp6.onreadystatechange = function() {
+                                            if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                                                var drug_use_history_obs = JSON.parse(this.responseText);
 
-                                        buildHighBpPage();
+                                                if (drug_use_history_obs.length > 0){
+                                                        obs_datetime = drug_use_history_obs[0]["obs_datetime"]
+                                                        date = moment(obs_datetime).format('YYYY-MM-DD');
+                                                        drug =  drug_use_history_obs[0]["value_text"];
+                                                        if (!drug_use_history_data[date]){
+                                                            drug_use_history_data[date] = []
+                                                        }
+                                                        drug_use_history_data[date].push(drug)
+                                                }
+
+                                                var xhttp5 = new XMLHttpRequest();
+                                                xhttp5.onreadystatechange = function() {
+                                                    if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                                                        bp_trail = JSON.parse(this.responseText);
+
+                                                        var xhttp7 = new XMLHttpRequest();
+                                                        xhttp7.onreadystatechange = function() {
+                                                            if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                                                                var transfer_obs = JSON.parse(this.responseText);
+
+                                                                if (transfer_obs.length == 0){
+                                                                    first_visit = true;
+                                                                }
+
+                                                                for (var key in bp_trail){
+                                                                    var bp_drugs = bp_trail[key]["drugs"];
+                                                                    if (bp_drugs.length > 0){
+                                                                        first_visit = false;
+                                                                    }
+                                                                }
+
+                                                                buildHighBpPage();
+
+                                                            }
+                                                        };
+
+                                                        xhttp7.open("GET", transferred_url, true);
+                                                        xhttp7.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                                                        xhttp7.setRequestHeader('Content-type', "application/json");
+                                                        xhttp7.send();
+
+                                                    }
+                                                };
+
+                                                xhttp5.open("GET", lab_trail_url, true);
+                                                xhttp5.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                                                xhttp5.setRequestHeader('Content-type', "application/json");
+                                                xhttp5.send();
+
+
+                                            }
+                                        };
+
+                                        xhttp6.open("GET", drug_use_history_url, true);
+                                        xhttp6.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                                        xhttp6.setRequestHeader('Content-type', "application/json");
+                                        xhttp6.send();
+                                        /****************************************************/
 
                                     }
                                 };
@@ -152,11 +232,6 @@
         xhttp.setRequestHeader('Content-type', "application/json");
         xhttp.send();
     }
-
-
-
-
-
 
 
     function buildHighBpPage(){
@@ -203,11 +278,18 @@
 
         for (var key in bp_trail){
             date = bp_trail[key]["date"];
-            systolic = bp_trail[key]["systolic"];
-            diastolic = bp_trail[key]["diastolic"];
-            current_bp_drugs = "";
-            plan = bp_trail[key]["plan"];
-            past_drug_use = [];
+            systolic = bp_trail[key]["sbp"];
+            diastolic = bp_trail[key]["dbp"];
+            current_bp_drugs = bp_trail[key]["drugs"];
+            if (current_bp_drugs.length > 0){
+                patient_current_bp_drugs = current_bp_drugs;
+            }
+
+            plan = bp_trail[key]["note"];
+            if (!plan){
+                plan = "";
+            }
+            past_drug_use = drug_use_history_data[date];
 
             class_name = bp_grade(systolic, diastolic);
             try{
@@ -221,7 +303,7 @@
             html += '<td style="text-align: center">' + systolic + '</td>';
             html += '<td style="text-align: center">' + diastolic + '</td>';
             html += '<td style="text-align: center">' + current_bp_drugs + '</td>';
-            if (past_drug_use.length == 0){
+            if (!past_drug_use){
                 html += '<td style="padding-left: 10px;">' + plan + '</td>'
             } else {
                 if (plan.length > 0){
@@ -524,6 +606,10 @@
         option.children[0].firstChild.setAttribute("src", (state == "true" ? "/public/touchscreentoolkit/lib/images/unchecked.png" : "/public/touchscreentoolkit/lib/images/checked.png"))
     }
 
+    var chosenPlan = "";
+    var path = "";
+    var state = "";
+
     function nextPage()
     {
         options = document.getElementsByClassName("option")
@@ -535,24 +621,34 @@
                 checked = true;
                 switch (options[i].children[1].innerHTML){
                     case 'Start anti-hypertensives' :
-                        path = "/htn_encounter/change_drugs?patient_id=<%= @patient.patient_id %>"
+                        path = "/apps/ART/views/htn/change_drugs.html";
                         break;
                     case 'Review Drugs':
-                        path = "/htn_encounter/bp_drug_management?patient_id=<%= @patient.patient_id %>&review=true"
+                        path = "/apps/ART/views/htn/bp_drug_management.html?review=true";
                         break;
                     case 'Continue Drugs':
-                        path = "/htn_encounter/bp_drug_management?patient_id=<%= @patient.patient_id %>"
+                        path = "/apps/ART/views/htn/bp_drug_management.html";
                         break;
                     case 'Did not take prescribed BP drugs today':
-                        path = "/htn_encounter/bp_drug_management?patient_id=<%= @patient.patient_id %>"
+                        path = "/apps/ART/views/htn/bp_drug_management.html";
                         break;
                     default :
-                        path = "/htn_encounter/redirect_to_next_task?patient_id=<%= @patient.patient_id %>"
+                        path = "next_task";
                         break;
                 }
-                document.getElementById("nextButton").setAttribute("onmousedown", "")
-                document.getElementById("message").style.display = "block";
+                nextButton = document.getElementById("nextButton");
+                messageDiv = document.getElementById("message");
 
+                if (nextButton){
+                    document.getElementById("nextButton").setAttribute("onmousedown", "");
+                }
+
+                if (messageDiv){
+                    document.getElementById("message").style.display = "block";
+                }
+
+                chosenPlan = options[i].children[1].innerHTML;
+                state = options[i].children[1].getAttribute("state");
                 return createEncounter(options[i].children[1].innerHTML, path, options[i].children[1].getAttribute("state"));
 
                 break;
@@ -571,6 +667,42 @@
             state = null;
         }
 
+        var currentTime = moment().format(' HH:mm:ss');
+        var encounter_datetime = moment(sessionStorage.sessionDate).format('YYYY-MM-DD');
+        encounter_datetime += currentTime;
+
+        var encounter = {
+            encounter_type_name: 'HYPERTENSION MANAGEMENT',
+            encounter_type_id:  48,
+            patient_id: sessionStorage.patientID,
+            encounter_datetime: encounter_datetime
+        }
+
+        submitParameters(encounter, "/encounters", "postHypertensionManagementObs");
+
+    }
+
+    var plan_concept_id = 7834;
+
+    function postHypertensionManagementObs(encounter){
+
+        var obs = {
+            encounter_id: encounter["encounter_id"],
+            observations: [
+                { concept_id: plan_concept_id, value_text: chosenPlan}
+            ]
+        };
+
+        submitParameters(obs, "/observations", redirectToRequiredTask())
+    }
+
+    function redirectToRequiredTask(){
+        if (path.match(/next_task/i)){
+            nextEncounter(sessionStorage.patientID, 1);
+            return;
+        }
+
+        window.location = path;
     }
 
     function referPatient()
@@ -578,24 +710,81 @@
         window.location = "/htn_encounter/refer_to_clinician"
     }
 
-    buildHighBpPage();
+    initializeVariables();
 
-    if (hypertension_obs.length == 0){
-        window.onload = function () {
-            var button = document.createElement("button");
-            button.id = "hypeternsion-diagnosis";
-            button.className = 'blue'
-            button.innerHTML = "<span>Hypertension Diagnosis</span>";
-            button.style.cssFloat = "left";
+    var transferred_concept_id = 6986;
+    var answer_concept_id = "";
+    var yes_concept_id = 1065;
+    var no_concept_id = 1066;
+    var vitals_obs = {}
 
-            button.onclick = function(){
-                window.location = "/apps/ART/views/htn/hypertension_diagnosis.html";
-            }
+    function createVitalsTransferObs(){
+        var options = document.getElementsByClassName("option")
+        var checked = false;
+        for(i = 0; i < options.length; i ++){
+            if (options[i].getAttribute("selected") == "true"){
+                checked = true;
+                var value = options[i].getAttribute("value");
 
-            if(__$("buttons")){
-                __$("buttons").appendChild(button);
-                __$("nextButton").style.display = 'none'; //Hiding the finish button
+                if (value.match(/YES/i)){
+                    answer_concept_id = yes_concept_id;
+                }
+
+                if (value.match(/NO/i)){
+                    answer_concept_id = no_concept_id;
+                }
+
+                vitals_obs = {concept_id: transferred_concept_id, value_coded: answer_concept_id}
+                var currentTime = moment().format(' HH:mm:ss');
+                var encounter_datetime = moment(sessionStorage.sessionDate).format('YYYY-MM-DD');
+                encounter_datetime += currentTime;
+
+                var encounter = {
+                    encounter_type_name: 'VITALS',
+                    encounter_type_id:  6,
+                    patient_id: sessionStorage.patientID,
+                    encounter_datetime: encounter_datetime
+                }
+
+                submitParameters(encounter, "/encounters", "postVitalsObs");
+
+                break;
             }
         }
+
+        if (checked == false) showMessage("Please select one action to proceed");
     }
+
+    function postVitalsObs(encounter) {
+
+        var obs = {
+            encounter_id: encounter["encounter_id"],
+            observations: [vitals_obs]
+        };
+
+        submitParameters(obs, "/observations", "gotoRequiredNextTask")
+    }
+
+    function gotoRequiredNextTask(){
+        nextEncounter(sessionStorage.patientID, 1);
+    }
+
+
+    function addHypertensionDiagnosisButton(){
+        var button = document.createElement("button");
+        button.id = "hypeternsion-diagnosis";
+        button.className = 'blue'
+        button.innerHTML = "<span>Hypertension Diagnosis</span>";
+        button.style.cssFloat = "left";
+
+        button.onclick = function(){
+            window.location = "/apps/ART/views/htn/hypertension_diagnosis.html";
+        }
+
+        if(__$("buttons")){
+            __$("buttons").appendChild(button);
+            __$("nextButton").style.display = 'none'; //Hiding the finish button
+        }
+    }
+
 </script>

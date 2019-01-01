@@ -2,7 +2,8 @@
 <html>
 <head>
 
-    <script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js" defer="true"></script>
+    <script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js"
+            defer="true"></script>
     <!-- <script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/standard.js" defer="true"></script> -->
     <script type="text/javascript" src="/assets/js/jquery.min.js"></script>
 
@@ -15,6 +16,41 @@
 
     <script>
         var imgTick = 'data:image/png;base64,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';
+
+        var current_bp_drugs = ["Amlodipine (5mg tablet)"];
+        var notes = {
+            "HCZ":{"2018-12-31":["HCT notes goes here","Notes from new architecture","Test notetetetetetetettetee"]},
+            "Enalapril": {"2018-11-30": ["This is another day"]}
+        };
+
+        function loadCurrentBPDrugs() {
+            var html = "<img width='45' height='35' class='tick' src='" + imgTick + "' </img>";
+            for (var i = 0; i <= current_bp_drugs.length - 1; i++) {
+                var checkBoxDrugInput = document.getElementById(current_bp_drugs[i]);
+                if (checkBoxDrugInput){
+                    var inputID = current_bp_drugs[i] + "-current";
+                    var currentDrugInput = document.getElementById(inputID);
+                    if (currentDrugInput) {
+                        currentDrugInput.innerHTML = html;
+                    }
+                    checkBoxDrugInput.src = "/public/touchscreentoolkit/lib/images/ticked.jpg";
+                }
+
+            }
+
+            for (var key in notes){
+                var table_html = "";
+                for (date in notes[key]){
+                    var table = document.getElementById("notes-" + key);
+                    table_html += '<tr class="date-tr"><td class="date-td">' + date + '</td></tr>';
+                    for (var i=0; i<=notes[key][date].length - 1; i++){
+                        table_html += '<tr class="note-tr"><td colspan= \'2\' class="note-td">' + notes[key][date][i] + '</td></tr>'
+                    }
+                    table.innerHTML += table_html;
+                }
+            }
+        }
+
     </script>
 
     <style>
@@ -289,7 +325,7 @@
                                 <table style="width: 100%;">
                                     <tr>
                                         <td style="width: 100%;">
-                                            <span>&nbsp;</span>
+                                            <span id="HCZ (25mg tablet)-current">&nbsp;</span>
                                         </td>
                                     </tr>
                                 </table>
@@ -299,23 +335,10 @@
                                 <table style="width: 100%;">
                                     <tr>
                                         <td style="width: 50%;">
-                                            <span>&nbsp;</span>
+                                            <span id="Enalapril (5mg tablet)-current">&nbsp;</span>
                                         </td>
                                         <td style="width: 50%;">
-                                            <span>&nbsp;</span>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </td>
-
-                            <td class="td-current td-value">
-                                <table style="width: 100%;">
-                                    <tr>
-                                        <td style="width: 50%;">
-                                            <span>&nbsp;</span>
-                                        </td>
-                                        <td style="width: 50%;">
-                                            <span>&nbsp;</span>
+                                            <span id="Enalapril (10mg tablet)-current">&nbsp;</span>
                                         </td>
                                     </tr>
                                 </table>
@@ -325,10 +348,23 @@
                                 <table style="width: 100%;">
                                     <tr>
                                         <td style="width: 50%;">
-                                            <span>&nbsp;</span>
+                                            <span id="Amlodipine (5mg tablet)-current">&nbsp;</span>
                                         </td>
                                         <td style="width: 50%;">
-                                            <span>&nbsp;</span>
+                                            <span id="Amlodipine (10mg tablet)-current">&nbsp;</span>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+
+                            <td class="td-current td-value">
+                                <table style="width: 100%;">
+                                    <tr>
+                                        <td style="width: 50%;">
+                                            <span id="Atenolol (50mg tablet)-current">&nbsp;</span>
+                                        </td>
+                                        <td style="width: 50%;">
+                                            <span id="Atenolol (100mg tablet)-current">&nbsp;</span>
                                         </td>
                                     </tr>
                                 </table>
@@ -402,7 +438,8 @@
                             <td class="td-remaining td-value">
                                 <table style="width: 100%;">
                                     <tr>
-                                        <td colspan="1" style="max-height: 20px !important; margin: 0px !important; padding: 0px !important; height: 15px !important;">
+                                        <td colspan="1"
+                                            style="max-height: 20px !important; margin: 0px !important; padding: 0px !important; height: 15px !important;">
 
                                             </span>
 
@@ -527,7 +564,7 @@
                     <button id="continueButton" class="button green navButton"
                             onclick="nextDestinations()"><span>Continue</span></button>
                     <button id="cancelButton" class="button red navButton"
-                            onclick="window.location='/htn_encounter/bp_management?patient_id=25&skip_provider_check=true'">
+                            onclick="window.location='/apps/ART/views/htn/bp_management.html'">
                         <span>Cancel</span></button>
                 </div>
                 <div id="shield">
@@ -651,59 +688,80 @@
                 showFixedKeyboard(input, holder, {}, false, false)
             }
 
+            var notes_concept_id = 2592;
+            var notes_obs = [];
+            var drug_map_name_id = {
+                "HCZ (25mg tablet)": 275,
+                "Enalapril (5mg tablet)": 942,
+                "Enalapril (10mg tablet)": 943,
+                "Amlodipine (5mg tablet)": 558,
+                "Amlodipine (10mg tablet)": 559,
+                "Atenolol (50mg tablet)": 117,
+                "Atenolol (100mg tablet)": 116
+            }
+
             function nextDestinations() {
-
-                nodes = document.getElementsByClassName("today-note-td");
-                received = 0;
-
+                var nodes = document.getElementsByClassName("today-note-td");
                 //check for prescriptions reroutes
 
                 var result = [];
+                var htn_drug_data = [];
                 for (var i = 0; i < checks.length; i++) {
-
                     if (!checks[i].src.match("unticked")) {
                         result.push(checks[i].id)
+                        var htn_drug_id = drug_map_name_id[checks[i].id]
+                        htn_drug_data.push({drug_id: htn_drug_id, name: checks[i].id})
                     }
                 }
 
-                var form = document.createElement("form")
-                form.id = "form";
-                form.action = "/regimens/new?patient_id=25"
-                document.body.appendChild(form);
-
-                var input = document.createElement("input");
-                input.setAttribute("type", "hidden");
-                input.setAttribute("name", "patient_id");
-                input.setAttribute("value", "25");
-                form.appendChild(input);
-
-                for (var i = 0; i < result.length; i++) {
-                    var input = document.createElement("input");
-                    input.setAttribute("type", "hidden");
-                    input.setAttribute("name", "auto_rx[]");
-                    input.setAttribute("value", result[i]);
-                    form.appendChild(input)
-                }
+                sessionStorage.setItem("htn_drugs", JSON.stringify(htn_drug_data))
+                //sessionStorage.htn_drugs = htn_drug_data;
 
                 for (var i = 0; i < nodes.length; i++) {
                     var drug = nodes[i].getAttribute("drug");
                     var notes = nodes[i].innerHTML;
+                    var drug_id = drug_map_name_id[drug];
+                    if (!drug_id) {
+                        drug_id = "";
+                    }
 
-                    jQuery.ajax({
-                        url: "/htn_encounter/save_notes?patient_id=25&drug_name=" +
-                            escape(drug) + "&notes=" + escape(notes),
-                        success: function (result) {
-                            received = parseInt(received) + 1;
-                            if (received == nodes.length) {
-                                document.getElementById("form").submit();
-                            }
-                        }
-                    })
+                    notes_obs.push(
+                        {
+                            concept_id: notes_concept_id,
+                            value_text: escape(notes),
+                            value_drug: drug_id
+                        })
                 }
 
-                if (nodes.length == 0)
-                    document.getElementById("form").submit();
+                var currentTime = moment().format(' HH:mm:ss');
+                var encounter_datetime = moment(sessionStorage.sessionDate).format('YYYY-MM-DD');
+                encounter_datetime += currentTime;
 
+                var encounter = {
+                    encounter_type_name: 'HYPERTENSION MANAGEMENT',
+                    encounter_type_id: 48,
+                    patient_id: sessionStorage.patientID,
+                    encounter_datetime: encounter_datetime
+                }
+
+                submitParameters(encounter, "/encounters", "postHypertensionManagementObs");
+
+                if (nodes.length == 0) {
+                    gotoRequiredNextTask();
+                }
+            }
+
+            function postHypertensionManagementObs(encounter) {
+                var obs = {
+                    encounter_id: encounter["encounter_id"],
+                    observations: notes_obs
+                };
+
+                submitParameters(obs, "/observations", "gotoRequiredNextTask");
+            }
+
+            function gotoRequiredNextTask() {
+                nextEncounter(sessionStorage.patientID, 1);
             }
 
             function showFixedKeyboard(ctrl, container, disabled, numbers, caps) {
@@ -889,7 +947,7 @@
 
                                 }
 
-                                if (__$('.')){
+                                if (__$('.')) {
                                     __$('.').setAttribute('class', 'button blue');
                                 }
 
@@ -944,6 +1002,7 @@
                 return document.getElementById(id);
             }
 
+            loadCurrentBPDrugs();
         </script>
 
         <div id="footer">
