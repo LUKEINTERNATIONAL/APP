@@ -17,38 +17,58 @@
     <script>
         var imgTick = 'data:image/png;base64,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';
 
-        var current_bp_drugs = ["Amlodipine (5mg tablet)"];
-        var notes = {
-            "HCZ":{"2018-12-31":["HCT notes goes here","Notes from new architecture","Test notetetetetetetettetee"]},
-            "Enalapril": {"2018-11-30": ["This is another day"]}
-        };
+        var current_bp_drugs = []
+
+        var current_bp_drugs_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+        current_bp_drugs_url +=  "/api/v1/patients/" + sessionStorage.patientID + "/current_bp_drugs";
 
         function loadCurrentBPDrugs() {
-            var html = "<img width='45' height='35' class='tick' src='" + imgTick + "' </img>";
-            for (var i = 0; i <= current_bp_drugs.length - 1; i++) {
-                var checkBoxDrugInput = document.getElementById(current_bp_drugs[i]);
-                if (checkBoxDrugInput){
-                    var inputID = current_bp_drugs[i] + "-current";
-                    var currentDrugInput = document.getElementById(inputID);
-                    if (currentDrugInput) {
-                        currentDrugInput.innerHTML = html;
-                    }
-                    checkBoxDrugInput.src = "/public/touchscreentoolkit/lib/images/ticked.jpg";
-                }
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                    var current_bp_drugs_data = JSON.parse(this.responseText)["drugs"];
+                    var notes = JSON.parse(this.responseText)["notes"];
 
-            }
-
-            for (var key in notes){
-                var table_html = "";
-                for (date in notes[key]){
-                    var table = document.getElementById("notes-" + key);
-                    table_html += '<tr class="date-tr"><td class="date-td">' + date + '</td></tr>';
-                    for (var i=0; i<=notes[key][date].length - 1; i++){
-                        table_html += '<tr class="note-tr"><td colspan= \'2\' class="note-td">' + notes[key][date][i] + '</td></tr>'
+                    for (var i=0; i<=current_bp_drugs_data.length - 1; i++){
+                        var drug_name = current_bp_drugs_data[i].name;
+                        current_bp_drugs.push(drug_name);
                     }
-                    table.innerHTML += table_html;
+
+
+                    var html = "<img width='45' height='35' class='tick' src='" + imgTick + "' </img>";
+                    for (var i = 0; i <= current_bp_drugs.length - 1; i++) {
+                        var checkBoxDrugInput = document.getElementById(current_bp_drugs[i]);
+                        if (checkBoxDrugInput){
+                            var inputID = current_bp_drugs[i] + "-current";
+                            var currentDrugInput = document.getElementById(inputID);
+                            if (currentDrugInput) {
+                                currentDrugInput.innerHTML = html;
+                            }
+                            checkBoxDrugInput.src = "/public/touchscreentoolkit/lib/images/ticked.jpg";
+                        }
+
+                    }
+
+                    for (var key in notes){
+                        var table_html = "";
+                        for (date in notes[key]){
+                            var table = document.getElementById("notes-" + key);
+                            table_html += '<tr class="date-tr"><td class="date-td">' + date + '</td></tr>';
+                            for (var i=0; i<=notes[key][date].length - 1; i++){
+                                table_html += '<tr class="note-tr"><td colspan= \'2\' class="note-td">' + notes[key][date][i] + '</td></tr>'
+                            }
+                            table.innerHTML += table_html;
+                        }
+                    }
+
+
                 }
-            }
+            };
+
+            xhttp.open("GET", current_bp_drugs_url, true);
+            xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+            xhttp.setRequestHeader('Content-type', "application/json");
+            xhttp.send();
         }
 
     </script>
