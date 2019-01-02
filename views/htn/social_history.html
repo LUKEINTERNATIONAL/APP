@@ -1,0 +1,206 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html;charset=UTF-8"/>
+
+    <script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js" defer="true"></script>
+    <script type="text/javascript" src="/assets/js/jquery.min.js"></script>
+
+    <script type="text/javascript" src="/assets/js/yes_no_ctrls.js"></script>
+    <link rel="stylesheet" href="/assets/css/yes_no_ctrls.css" type="text/css">
+    <script type="text/javascript" src="/assets/js/post_parameters.js"></script>
+    <script type="text/javascript" src="/assets/js/generic_ajaxrequest.js"></script>
+    <script type="text/javascript" src="/apps/ART/assets/js/arv_number.js"></script>
+    <script type="text/javascript" src="/assets/js/moment.js"></script>
+
+    <script type="text/javascript">
+        var tt_cancel_destination = "/patients/show/44";
+        var displayText = "";
+
+        function showSummary() {
+            var conditions = [];
+            var smokingConditions = [
+                ['numberOfCigarettes', "Number of cigarettes per day : <b>"],
+                ['smokingDuration', "Smoking Duration : <b>"],
+                ['currentSmoker', "Current Smokes : <b>"]
+            ];
+
+            var alcoholConditions = [
+                ['numberOfDrinks', "Number of drinks per day : <b>"],
+                ['daysAlcoholUsed', "Number of days patient drinks : <b>"]
+            ];
+
+            jQuery('#keyboard').empty();
+            conditions.push("Smokes Cigarettes : <b>" + $('smokingHistory').value + "</b><br/>")
+            if ($('smokingHistory').value == "YES") {
+                for (i = 0; i < smokingConditions.length; i++) {
+                    conditions.push(smokingConditions[i][1] + $(smokingConditions[i][0]).value + "</b><br/>")
+                }
+            }
+            else {
+                for (i = 0; i < smokingConditions.length; i++) {
+                    $(smokingConditions[i][0]).value = "";
+                }
+            }
+
+            conditions.push("Drinks Alcohol : <b>" + $('alcoholHistory').value + "</b><br/>");
+
+            if ($('alcoholHistory').value == "YES") {
+                for (i = 0; i < alcoholConditions.length; i++) {
+                    conditions.push(alcoholConditions[i][1] + $(alcoholConditions[i][0]).value + "</b><br/>")
+                }
+            }
+            else {
+                for (i = 0; i < alcoholConditions.length; i++) {
+                    $(alcoholConditions[i][0]).value = "";
+                }
+            }
+
+            conditions.push("Does Exercises : <b>" + $('physicalExercises').value + "</b><br/>")
+            conditions.push("Type of Employment : <b>" + $('employmentType').value + "</b><br/>")
+
+            for (i = 0; i < conditions.length; i++) {
+                displayText += conditions[i];
+            }
+
+            document.getElementById('inputFrame' + tstCurrentPage).innerHTML = '<div id="summary">' + displayText + '</div>';
+        }
+
+
+        var smoking_history_concept_id = 1551;
+        var number_of_cigarettes_smoked_per_day_concept_id = 6161;
+        var smoking_duration_concept_id = 2464;
+        var current_smoker_concept_id = 3339;
+        var does_the_patient_drink_alcohol_concept_id = 2318;
+        var alcoholic_drinks_per_day = 2246;
+        var number_of_days_per_week_alcohol_is_used_concept_id = 2243;
+        var physical_exercises_concept_id = 9238;
+        var type_of_employment_concept_id = 9173;
+
+        var answers_hash = {
+            "smokingHistory": "",
+            "numberOfCigarettes": "",
+            "smokingDuration": "",
+            "currentSmoker": "",
+            "alcoholHistory": "",
+            "numberOfDrinks": "",
+            "daysAlcoholUsed": "",
+            "physicalExercises": "",
+            "employmentType": ""
+        }
+
+        function setNextButtonToGetInputValue(key){
+            __$('nextButton').onmousedown = function(){
+                var value = __$('touchscreenInput' + tstCurrentPage).value;
+                answers_hash[key] = value;
+                gotoNextPage();
+            }
+        }
+
+    </script>
+
+    <style type="text/css">
+
+        #summary {
+            padding: 0px;
+            font-size: 1.2em;
+            margin-left: 20px;
+            height: 90px;
+            max-height: 90px;
+            overflow: hide;
+
+        }
+
+        #tt_page_summary .inputFrameClass {
+            height: 85%;
+        }
+
+    </style>
+</head>
+
+<body id="mateme">
+<div id="container">
+    <div id="content">
+
+        <form>
+            <input id="encounter_encounter_type_name" name="encounter[encounter_type_name]" type="hidden"
+                   value="SOCIAL HISTORY"/>
+
+            <select allowFreeText="false" helpText="Have you ever smoked cigarettes?" id="smokingHistory"
+                    tt_onLoad="setNextButtonToGetInputValue('smokingHistory');"
+                    name="observations[][value_coded_or_text]" tt_pageStyleClass="NoKeyboard">
+                <option value=''></option>
+                <option value=""></option>
+                <option value="YES">Yes</option>
+                <option value="NO">No</option>
+            </select>
+
+            <input absoluteMax="90" absoluteMin="1" allowFreeText="true" condition="$('smokingHistory').value == 'YES'"
+                   field_type="number" helpText="Number of cigarettes smoked per day?" id="numberOfCigarettes"
+                   tt_onLoad="setNextButtonToGetInputValue('numberOfCigarettes');"
+                   name="observations[][value_text]" tt_pageStyleClass="Keyboard Numeric NumbersOnly" type="text"
+                   validationMessage="You must enter numbers only" validationRule="^([1-9]+)|Unknown$"/>
+
+            <select allowFreeText="false" condition="$('smokingHistory').value == 'YES'"
+                    helpText="How long Have been smoking?" id="smokingDuration"
+                    tt_onLoad="setNextButtonToGetInputValue('smokingDuration');"
+                    name="observations[][value_coded_or_text]" tt_pageStyleClass="NoKeyboard">
+                <option value=''></option>
+                <option value="Less than five years">Less than five years</option>
+                <option value="Five years or more">Five years or more</option>
+            </select>
+
+            <select allowFreeText="false" condition="$('smokingHistory').value == 'YES'" helpText="Do you still smoke?"
+                    tt_onLoad="setNextButtonToGetInputValue('currentSmoker');"
+                    id="currentSmoker" name="observations[][value_coded_or_text]" tt_pageStyleClass="NoKeyboard">
+                <option value=""></option>
+                <option value="YES">Yes</option>
+                <option value="NO">No</option>
+            </select>
+
+            <select allowFreeText="false" helpText="Do you drink alcohol?" id="alcoholHistory"
+                    tt_onLoad="setNextButtonToGetInputValue('alcoholHistory');"
+                    name="observations[][value_coded_or_text]" tt_pageStyleClass="NoKeyboard">
+                <option value=""></option>
+                <option value="YES">Yes</option>
+                <option value="NO">No</option>
+            </select>
+
+            <input allowFreeText="true" condition="$('alcoholHistory').value == 'YES'" field_type="number"
+                   helpText="How many alcoholic drinks do you have per day?" id="numberOfDrinks"
+                   name="observations[][value_text]" tt_pageStyleClass="Numeric NumbersOnly" type="text"
+                   tt_onLoad="setNextButtonToGetInputValue('numberOfDrinks');"
+                   validationMessage="You must enter numbers only" validationRule="^([0-9]+)|Unknown$"/>
+
+            <input absoluteMax="7" absoluteMin="1" allowFreeText="true" condition="$('alcoholHistory').value == 'YES'"
+                   field_type="number" helpText="Number of days per week alcohol is used?" id="daysAlcoholUsed"
+                   name="observations[][value_text]" tt_pageStyleClass="Numeric NumbersOnly" type="text"
+                   tt_onLoad="setNextButtonToGetInputValue('daysAlcoholUsed');"
+                   validationMessage="You must enter numbers only" validationRule="^([0-9]+)|Unknown$"/>
+
+            <select allowFreeText="false" helpText="Do you do any physical exercises?" id="physicalExercises"
+                    tt_onLoad="setNextButtonToGetInputValue('physicalExercises');"
+                    name="observations[][value_coded_or_text]" tt_pageStyleClass="NoKeyboard">
+                <option value=""></option>
+                <option value="YES">Yes</option>
+                <option value="NO">No</option>
+            </select>
+
+            <select allowFreeText="false" helpText="Type of employment?" id="employmentType"
+                    tt_onLoad="setNextButtonToGetInputValue('employmentType');"
+                    name="observations[][value_coded_or_text]" tt_pageStyleClass="NoKeyboard">
+                <option value=''></option>
+                <option value="Active">Active</option>
+                <option value="Sedentary">Sedentary</option>
+            </select>
+
+            <input helpText="Summary" id="showSummary" name="showSummary" optional="true"
+                   tt_onLoad="showSummary();  $('clearButton').style.display = 'none'; "
+                   tt_onUnLoad=" $('clearButton').style.display = 'inline';" type="text"/>
+        </form>
+
+    </div>
+</div>
+</body>
+</html>

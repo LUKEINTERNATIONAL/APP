@@ -1,0 +1,208 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+    <script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js" defer="true"></script>
+    <script type="text/javascript" src="/assets/js/jquery.min.js"></script>
+
+    <script type="text/javascript" src="/assets/js/yes_no_ctrls.js"></script>
+    <link rel="stylesheet" href="/assets/css/yes_no_ctrls.css" type="text/css">
+    <script type="text/javascript" src="/assets/js/post_parameters.js"></script>
+    <script type="text/javascript" src="/assets/js/generic_ajaxrequest.js"></script>
+    <script type="text/javascript" src="/apps/ART/assets/js/arv_number.js"></script>
+    <script type="text/javascript" src="/assets/js/moment.js"></script>
+
+    <script type="text/javascript">
+        var tt_cancel_destination = "/apps/ART/views/htn/bp_management.html";
+
+        function addButton() {
+            var nextDrugInput = document.getElementById("nextDrug");
+            if (nextDrugInput){
+                nextDrugInput.parentNode.removeChild(nextDrugInput);
+            }
+            var nextDrug = document.createElement("button");
+            nextDrug.innerHTML = "<span>New Drug</span>";
+            nextDrug.setAttribute("onclick", "newDrug()");
+            nextDrug.setAttribute("id", "nextDrug")
+            document.getElementById("buttons").appendChild(nextDrug);
+        }
+
+        function newDrug(){
+            var currentInput = document.getElementById("touchscreenInput" + tstCurrentPage).value;
+            if (currentInput == ''){
+                console.log("No Value detected")
+                showMessage('You must enter a value to continue');
+                return false;
+            }
+            gotoNextPage();
+        }
+
+        var inputValues = {}
+        var bp_drugs = ""
+        function changeDefaultSettings(){
+            nextButton = document.getElementById('nextButton');
+            nextButton.innerHTML = '<span>Finish</span>';
+            nextButton.onmousedown = function(){
+                var drug = document.getElementById("touchscreenInput" + tstCurrentPage).value;
+                if (drug == ''){
+                    console.log("No Value detected")
+                    showMessage('You must enter a value to continue');
+                    return false;
+                }
+                var value = document.getElementById('touchscreenInput' + tstCurrentPage).value;
+
+                for (var i=0; i<=tstPages.length - 1; i++){
+                    input = document.getElementById('touchscreenInput' + i)
+                    if (input){
+                        if (input.value == ''){
+                            continue;
+                        }
+                        inputValues[i] = input.value;
+                    }
+                }
+
+                var drugs = "";
+                var drugArray = [];
+                var keys = Object.keys(inputValues);
+                for (var i=0; i<= keys.length - 1; i++){
+                    drugArray.push(inputValues[keys[i]]);
+                }
+                drugs = drugArray.join(', ');
+                bp_drugs = drugs;
+
+                jQuery('.drug_name').remove();//Remove all unnecessary parameters before submitting to server
+                submitDiabetesHypertensionInitialVisit();
+
+            }
+        }
+
+        function submitDiabetesHypertensionInitialVisit() {
+            var currentTime = moment().format(' HH:mm:ss');
+            var encounter_datetime = moment(sessionStorage.sessionDate).format('YYYY-MM-DD');
+            encounter_datetime += currentTime;
+
+            var encounter = {
+                encounter_type_name: 'DIABETES HYPERTENSION INITIAL VISIT',
+                encounter_type_id:  29,
+                patient_id: sessionStorage.patientID,
+                encounter_datetime: encounter_datetime
+            };
+
+            submitParameters(encounter, "/encounters", "postDiabetesHypertensionInitialVisitObs");
+
+        }
+
+        var transferred_from_concept_id = 3510;
+        var drug_use_history_concept_id = 2466;
+
+        function postDiabetesHypertensionInitialVisitObs(encounter) {
+            var obs = {
+                encounter_id: encounter["encounter_id"],
+                observations: [
+                    { concept_id: transferred_from_concept_id, value_text: transferred_from },
+                    { concept_id: drug_use_history_concept_id, value_text: bp_drugs }
+                ]
+            };
+
+            submitParameters(obs, "/observations", "nextPage")
+        }
+
+        function nextPage(){
+            nextEncounter(sessionStorage.patientID, 1);
+        }
+
+        var transferred_from = "";
+
+        function setTransferredFromVariable(){
+            __$('nextButton').onmousedown = function(){
+                var value = __$('touchscreenInput' + tstCurrentPage).value;
+                transferred_from = value;
+                gotoNextPage();
+            }
+        }
+
+        function updateParams(){
+            var currentInputValue = document.getElementById('touchscreenInput' + tstCurrentPage).value;
+            inputValues[tstCurrentPage] = currentInputValue;
+            var drugs = "";
+            var drugArray = [];
+            keys = Object.keys(inputValues);
+            for (var i=0; i<= keys.length - 1; i++){
+                drugArray.push(inputValues[keys[i]]);
+            }
+            bp_drugs = drugArray.join(', ');
+        }
+
+        function processParameters(){
+            var nextButton = document.getElementById('nextButton');
+            nextButton.onmousedown = function(){
+                jQuery('.drug_name').remove();
+                gotoNextPage();
+            }
+        }
+
+        function changeBackSettings(){
+            var keys = Object.keys(inputValues);
+            var sortedKeys = keys.sort();
+            var lastKey = parseInt(sortedKeys[sortedKeys.length - 1]);
+            var backButton = document.getElementById('backButton');
+            backButton.onmousedown = function(){
+                gotoPage(lastKey);
+            }
+        }
+
+    </script>
+
+</head>
+<body id="mateme">
+<div id="container">
+    <div id="content">
+
+        <form id="myDrugs">
+
+            <select objectType="location" ajaxURL="/locations?name=" allowFreeText="true" field_type="alpha"
+                    helpText="Facility from which the patient is transferred from" id="transferred_from"
+                    name="location" tt_onLoad="setTransferredFromVariable();">
+            </select>
+
+
+            <input class="drug_name" helpText="Drug 1 that the patient was taking" id="drug_1" name="bp_drugs_1"
+                   tt_onLoad="addButton(); changeDefaultSettings();" tt_onUnLoad="updateParams();" type="text" />
+
+            <input class="drug_name" helpText="Drug 2 that the patient was taking" id="drug_2" name="bp_drugs_2"
+                   optional="true" tt_onLoad="changeDefaultSettings();" tt_onUnLoad="updateParams();" type="text" />
+
+            <input class="drug_name" helpText="Drug 3 that the patient was taking" id="drug_3" name="bp_drugs_3"
+                   optional="true" tt_onLoad="changeDefaultSettings();" tt_onUnLoad="updateParams();" type="text" />
+
+            <input class="drug_name" helpText="Drug 4 that the patient was taking" id="drug_4" name="bp_drugs_4"
+                   optional="true" tt_onLoad="changeDefaultSettings();" tt_onUnLoad="updateParams();" type="text" />
+
+            <input class="drug_name" helpText="Drug 5 that the patient was taking" id="drug_5" name="bp_drugs_5"
+                   optional="true" tt_onLoad="changeDefaultSettings();" tt_onUnLoad="updateParams();" type="text" />
+
+            <input class="drug_name" helpText="Drug 6 that the patient was taking" id="drug_6" name="bp_drugs_6"
+                   optional="true" tt_onLoad="changeDefaultSettings();" tt_onUnLoad="updateParams();" type="text" />
+
+            <input class="drug_name" helpText="Drug 7 that the patient was taking" id="drug_7" name="bp_drugs_7"
+                   optional="true" tt_onLoad="changeDefaultSettings();" tt_onUnLoad="updateParams();" type="text" />
+
+            <input class="drug_name" helpText="Drug 8 that the patient was taking" id="drug_8" name="bp_drugs_8"
+                   optional="true" tt_onLoad="changeDefaultSettings();" tt_onUnLoad="updateParams();" type="text" />
+
+            <input class="drug_name" helpText="Drug 9 that the patient was taking" id="drug_9" name="bp_drugs_9"
+                   optional="true" tt_onLoad="changeDefaultSettings();" tt_onUnLoad="updateParams();" type="text" />
+
+            <input class="drug_name" helpText="Drug 10 that the patient was taking" id="drug_10" name="bp_drugs_10"
+                   optional="true" tt_onLoad="changeDefaultSettings();" tt_onUnLoad="updateParams();" type="text" />
+
+
+        </form>
+
+        <div id="footer">
+        </div>
+    </div>
+</div>
+</body>
+</html>
