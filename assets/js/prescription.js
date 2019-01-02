@@ -1679,7 +1679,7 @@ function buildSuggestion() {
   initiationBox.appendChild(initiationBoxRow);
 
   var initiationBoxCell = document.createElement('div');
-  var text = '<b style="color: green;">Use hanging pills to calculate next appoint date?</b> ';
+  var text = '<b style="color: green;">Add hanging pills?</b> ';
   initiationBoxCell.setAttribute('class','initiationBoxCell');
   initiationBoxCell.innerHTML = text;
   
