@@ -147,12 +147,37 @@ function loadRegimens() {
   
       var td = document.createElement("td");
       td.setAttribute("class","regimen-names");
+      td.setAttribute("selected-regimen", regimen);
       td.setAttribute("id", regimen);
+      //td.innerHTML = regimen;
       td.setAttribute("onmousedown","selectRegimen(this);checkIfSwitchingRegimen(this);");
-      td.innerHTML = regimen;
+      addPrettyPrint(td, regimen);
       tr.appendChild(td);
     }
     
+}
+
+function addPrettyPrint(container, regimen) {
+  var num = regimen.split(' ')[0];
+  var medication = regimen.replace(num, ''); 
+
+  var table = document.createElement('table');
+  table.setAttribute('class','pretty-regimen-display');
+  var tr  = document.createElement('tr');
+  table.appendChild(tr);
+
+  var td = document.createElement('td');
+  td.setAttribute('class','pretty-regimen-one');
+  td.innerHTML = num;
+  tr.appendChild(td);
+
+  var td = document.createElement('td');
+  td.innerHTML = medication;
+  td.setAttribute('class','pretty-regimen-two');
+  tr.appendChild(td);
+
+
+  container.appendChild(table);
 }
 
 function selectRegimen(e) {
@@ -162,7 +187,7 @@ function selectRegimen(e) {
     }
 
     e.setAttribute("style","background-color: lightblue;");
-    selectedRegimens = e.innerHTML;
+    selectedRegimens = e.getAttribute('selected-regimen');
 
     //checkForPossibleSideEffects(e);
 }
@@ -1509,6 +1534,15 @@ function buildResonForSwitchinPopup() {
     'Difficult to swallow','Not recommended fro pregnant women',
     'Side effects','Weight Change','Other'
   ];
+
+  var res = switching_reasons;
+  switching_reasons = [];
+  for(var i = 0 ; i < res.length; i++){
+    if(sessionStorage.patientGender != 'F' && res[i] == 'Not recommended fro pregnant women')
+      continue;
+
+    switching_reasons.push(res[i]);  
+  }
 
   var switchingTable = document.createElement('div');
   switchingTable.setAttribute('class','switching-table');
