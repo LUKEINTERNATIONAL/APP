@@ -1135,6 +1135,7 @@ function addMedColumns() {
     var class_name = (i % 2 === 0 ? 'even' : 'odd');
     li.setAttribute("class", class_name + " custom-ingredients-list");
     li.setAttribute("drug_name", custom_regimen_ingredients[i].name);
+    li.setAttribute("units", custom_regimen_ingredients[i].units);
     li.innerHTML = innerHTML;
     ul.appendChild(li); 
 
@@ -1237,11 +1238,15 @@ function getMedication() {
       if (this.readyState == 4 && this.status == 200) {
         var objs = JSON.parse(this.responseText);
         for(var i = 0 ; i < objs.length ; i++){
-          var drug_name = objs[i].alternative_names[0]
-          drug_name = (drug_name == null ? objs[i].name : drug_name);
+          if(objs[i].alternative_names.length == 0){
+            var drug_name = objs[i].name;
+          }else{
+            var drug_name = objs[i].alternative_names[0].short_name;
+          }
+
           custom_regimen_ingredients.push({
             name: drug_name, drug_id: objs[i].drug_id,
-            units: objs[i].units
+            units: (objs[i].units.length < 1 ? 'N/A' : objs[i].units)
           });
         }
       }
