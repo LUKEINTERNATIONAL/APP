@@ -27,6 +27,138 @@
     var normatensive = false;
     var hypertension_obs = []
 
+
+    var diabetes_concept_id = 3720;
+    var chronic_kidney_disease_concept_id = 7623;
+    var past_history_of_ihd_or_cvd_concept_id = 9499;
+    var first_degree_relative_with_ihd_or_cvd_concept_id = 9501;
+    var patiently_currently_smokes_concept_id = 3339;
+
+    var yes_concept_id = 1065;
+
+    var diabetes_risk_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+    diabetes_risk_url += "/api/v1/observations?person_id=" + sessionStorage.patientID;
+    diabetes_risk_url += "&concept_id=" + diabetes_concept_id;
+    diabetes_risk_url += "&value_coded=" + yes_concept_id;
+
+    var chronic_kidney_disease_risk_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+    chronic_kidney_disease_risk_url += "/api/v1/observations?person_id=" + sessionStorage.patientID;
+    chronic_kidney_disease_risk_url += "&concept_id=" + chronic_kidney_disease_concept_id;
+    chronic_kidney_disease_risk_url += "&value_coded=" + yes_concept_id;
+
+    var past_history_of_ihd_or_cvd_risk_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+    past_history_of_ihd_or_cvd_risk_url += "/api/v1/observations?person_id=" + sessionStorage.patientID;
+    past_history_of_ihd_or_cvd_risk_url += "&concept_id=" + past_history_of_ihd_or_cvd_concept_id;
+    past_history_of_ihd_or_cvd_risk_url += "&value_coded=" + yes_concept_id;
+
+    var first_degree_relative_with_ihd_or_cvd_risk_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+    first_degree_relative_with_ihd_or_cvd_risk_url += "/api/v1/observations?person_id=" + sessionStorage.patientID;
+    first_degree_relative_with_ihd_or_cvd_risk_url += "&concept_id=" + first_degree_relative_with_ihd_or_cvd_concept_id;
+    first_degree_relative_with_ihd_or_cvd_risk_url += "&value_coded=" + yes_concept_id;
+
+    var patiently_currently_smokes_risk_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+    patiently_currently_smokes_risk_url += "/api/v1/observations?person_id=" + sessionStorage.patientID;
+    patiently_currently_smokes_risk_url += "&concept_id=" + patiently_currently_smokes_concept_id;
+    patiently_currently_smokes_risk_url += "&value_coded=" + yes_concept_id;
+
+    var risk_factors = [];
+
+    function getRiskFactors() {
+        var xhttp1 = new XMLHttpRequest();
+        xhttp1.onreadystatechange = function () {
+            if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                var observations = JSON.parse(this.responseText);
+                if (observations.length > 0) {
+                    risk_factors.push("Diabetes");
+                }
+
+                var xhttp2 = new XMLHttpRequest();
+                xhttp2.onreadystatechange = function () {
+                    if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                        var observations = JSON.parse(this.responseText);
+                        if (observations.length > 0) {
+                            risk_factors.push("Chronic kidney disease");
+                        }
+
+                        var xhttp3 = new XMLHttpRequest();
+                        xhttp3.onreadystatechange = function () {
+                            if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                                var observations = JSON.parse(this.responseText);
+                                if (observations.length > 0) {
+                                    risk_factors.push("Past history of IHD or CVD");
+                                }
+
+                                var xhttp4 = new XMLHttpRequest();
+                                xhttp4.onreadystatechange = function () {
+                                    if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                                        var observations = JSON.parse(this.responseText);
+                                        if (observations.length > 0) {
+                                            risk_factors.push("First degree relative with IHD or CVD <65");
+                                        }
+
+                                        var xhttp5 = new XMLHttpRequest();
+                                        xhttp5.onreadystatechange = function () {
+                                            if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                                                var observations = JSON.parse(this.responseText);
+                                                if (observations.length > 0) {
+                                                    risk_factors.push("Patient currently smokes");
+                                                }
+                                                risk_factors = risk_factors.unique();
+                                                risks_count = risk_factors.length;
+                                                initializeVariables();
+                                            }
+                                        };
+
+                                        xhttp5.open("GET", patiently_currently_smokes_risk_url, true);
+                                        xhttp5.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                                        xhttp5.setRequestHeader('Content-type', "application/json");
+                                        xhttp5.send();
+                                    }
+
+                                };
+
+                                xhttp4.open("GET", first_degree_relative_with_ihd_or_cvd_risk_url, true);
+                                xhttp4.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                                xhttp4.setRequestHeader('Content-type', "application/json");
+                                xhttp4.send();
+                            }
+                        };
+
+                        xhttp3.open("GET", past_history_of_ihd_or_cvd_risk_url, true);
+                        xhttp3.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                        xhttp3.setRequestHeader('Content-type', "application/json");
+                        xhttp3.send();
+
+                    }
+
+                };
+
+                xhttp2.open("GET", chronic_kidney_disease_risk_url, true);
+                xhttp2.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                xhttp2.setRequestHeader('Content-type', "application/json");
+                xhttp2.send();
+
+            }
+
+
+        };
+
+        xhttp1.open("GET", diabetes_risk_url, true);
+        xhttp1.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+        xhttp1.setRequestHeader('Content-type', "application/json");
+        xhttp1.send();
+    }
+
+    Array.prototype.unique = function () {
+        var arr = [];
+        for (var i = 0; i < this.length; i++) {
+            if (!arr.includes(this[i])) {
+                arr.push(this[i]);
+            }
+        }
+        return arr;
+    }
+
     function bp_grade(sbp, dbp) {
         sbp = parseInt(sbp);
         dbp = parseInt(dbp);
@@ -57,7 +189,6 @@
 
     function initializeVariables(){
         //jQuery(".loader").show();
-
         var patient_has_hypertension_concept_id = 6414;
 
 
@@ -710,7 +841,8 @@
         window.location = "/htn_encounter/refer_to_clinician"
     }
 
-    initializeVariables();
+    //initializeVariables();
+    getRiskFactors();
 
     var transferred_concept_id = 6986;
     var answer_concept_id = "";
@@ -769,6 +901,14 @@
         nextEncounter(sessionStorage.patientID, 1);
     }
 
+
+    function addMedicalHistory(){
+        window.location = "/apps/ART/views/htn/medical_history.html";
+    }
+
+    function editMedicalHistory(){
+        window.location = "/apps/ART/views/htn/risk_factors_index.html";
+    }
 
     function addHypertensionDiagnosisButton(){
         var button = document.createElement("button");
