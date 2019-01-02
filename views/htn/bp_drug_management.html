@@ -868,9 +868,7 @@
         </div>
 
         <div id="buttons" class="buttonsDiv">
-            <button id="continueButton" class="button green navButton" onmousedown="postAnswer()"><span>Continue</span></button>
-            <button id="cancelButton" class="button red navButton" onmousedown="window.location = '/apps/ART/views/htn/bp_management.html'">
-                <span>Cancel</span></button>
+
         </div>
 
         <script>
@@ -917,7 +915,7 @@
             }
 
             function postAnswer() {
-                if (window.location.search.indexOf("review=true")){
+                if (window.location.search.indexOf("review=true") == 1){
                     window.location = '/apps/ART/views/htn/change_drugs.html';
                 } else {
                     var htn_drug_data = [];
@@ -931,7 +929,28 @@
                 }
             }
 
+            function loadFooterButtons(){
+                var html = '<button id="continueButton" class="button green navButton"\n' +
+                    '                  onmousedown="postAnswer();"><span>Continue</span></button>';
+                if (!(window.location.search.indexOf("review=true") == 1)){
+                    html += '<button id="continueButton" class="button green navButton"\n' +
+                        '                  onmousedown="gotoRequiredNextTask();"><span>Continue without prescribing</span></button>';
+                    html += '<button id="nextButton" class="button blue navButton"\n' +
+                        '                  onmousedown="window.location = \'/apps/ART/views/htn/change_drugs.html\'"><span>Change BP drugs</span></button>';
+                }
+                html += '<button id="cancelButton" class="button red navButton"\n' +
+                    '                  onmousedown="window.location = \'/apps/ART/views/htn/bp_management.html\'"><span>Cancel</span></button>\n';
+                var buttonsDiv = document.getElementById("buttons");
+                buttonsDiv.innerHTML = html;
+
+            }
+
+            function gotoRequiredNextTask(){
+                nextEncounter(sessionStorage.patientID, 1);
+            }
+
             loadCurrentBPDrugs();
+            loadFooterButtons();
         </script>
 
         <div id="footer">
