@@ -20,7 +20,7 @@
     var first_visit = false;
 
     var bp_trail = [];
-    var todays_date = moment(sessionStorage.sessionDate).format('YYYY-MM-DD');
+    var todays_date = moment(sessionStorage.sessionDate).format('DD MMMM YYYY');
     var note = null;
     var risks_count = 0;
     var patient_current_bp_drugs = [];
@@ -409,6 +409,7 @@
 
         for (var key in bp_trail){
             date = bp_trail[key]["date"];
+            formatted_date = moment(date).format('DD MMM YYYY')
             systolic = bp_trail[key]["sbp"];
             diastolic = bp_trail[key]["dbp"];
             current_bp_drugs = bp_trail[key]["drugs"];
@@ -430,7 +431,7 @@
             }
 
             html += '<tr class="' + class_name + '">';
-            html += '<td style="text-align: center">' + date + '</td>';
+            html += '<td style="text-align: center">' + formatted_date + '</td>';
             html += '<td style="text-align: center">' + systolic + '</td>';
             html += '<td style="text-align: center">' + diastolic + '</td>';
             html += '<td style="text-align: center">' + current_bp_drugs + '</td>';
