@@ -116,7 +116,7 @@
 
         function setTransferredFromVariable(){
             __$('nextButton').onmousedown = function(){
-                value = __$('touchscreenInput' + tstCurrentPage).value;
+                var value = __$('touchscreenInput' + tstCurrentPage).value;
                 transferred_from = value;
                 gotoNextPage();
             }
