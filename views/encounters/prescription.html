@@ -175,6 +175,12 @@ function resetPage(){
                        tt_onLoad="__$('keyboard').style.display = 'none';buildCustomPrescriptionPage();"
                        tt_pageStyleClass= "NoControls" helpText="Custom prescription" optional = "true"/>
 
+                <input type="text" name="custom-regimen-dose"
+                       condition = "showCustomPrescriptionPage() == true"
+                       tt_onUnLoad = "document.getElementById('nextButton').style='display: inline;'"
+                       tt_onLoad="__$('keyboard').style.display = 'none';buildCustomDosagePage();"
+                       tt_pageStyleClass= "NoControls" helpText="Custom dose" optional = "true"/>
+
 
                 <input type="text" name="selected-medications"
                        tt_onLoad="__$('keyboard').style.display = 'none'; showSelectedMeds(); initDataTable(); showWeight();"

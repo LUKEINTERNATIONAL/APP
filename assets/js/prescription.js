@@ -15,6 +15,96 @@ var prescribe_ipt = false;
 var medication_orders = {};
 
 var starterPackSelected = false;
+var customRegimenIngredients = {};
+
+var customListCSS = document.createElement('span');
+customListCSS.innerHTML = "<style>\
+.scrollableList li {\
+  color: black;\
+  list-style: none;\
+  padding-left: 5px;\
+  padding-right: 5px;\
+  margin-top: 5px;\
+  margin-bottom: 5px;\
+  font-family: 'Nimbus Sans L','Arial Narrow',sans-serif;\
+  font-size: 1.2em;\
+}\
+.scrollableList img {\
+width: 45px;\
+height: 45px;\
+}\
+.custom-regimen-th {\
+  background-color: lightgray;\
+}\
+.custom-regimen-td {\
+  border-style: solid;\
+  border-width: 1px 0px 0px 0px;\
+  text-align: center;\
+}\
+.dosage-inputs {\
+  border: solid 1px;\
+  height: 60px;\
+  width: 60px;\
+  background-color: lightgoldenrodyellow;\
+}\
+.custom-regimen-th img {\
+  height: 40px;\
+  width: 40px;\
+}\
+.keypad-buttons {\
+  padding: 20% 0px 0px 0px;\
+  float: left;\
+  text-align: center;\
+  margin-right: auto;\
+  margin-left: auto;\
+  display: block;\
+  margin: 5px;\
+  border: 1px solid #5ca6c4;\
+  cursor: pointer;\
+  /*box-shadow: inset 2px -4px 2px 0px;*/\
+  background-color: white;\
+  border-radius: 7px;\
+  border: solid black 3px;\
+  -webkit-box-sizing: border-box;\
+  -moz-box-sizing: border-box;\
+  box-sizing: border-box;\
+  border: 1px solid #7eb9d0;\
+  -webkit-border-radius: 3px;\
+  -moz-border-radius: 3px;\
+  border-radius: 3px;\
+  font-size: 23px;\
+  font-family: arial, helvetica, sans-serif;\
+  padding: 10px 10px 10px 10px;\
+  text-decoration: none;\
+  display: inline-block;\
+  text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.3);\
+  font-weight: bold;\
+  color: #FFFFFF;\
+  background-color: #a7cfdf;\
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#a7cfdf), to(#23538a));\
+  background-image: -webkit-linear-gradient(top, #a7cfdf, #23538a);\
+  background-image: -moz-linear-gradient(top, #a7cfdf, #23538a);\
+  background-image: -ms-linear-gradient(top, #a7cfdf, #23538a);\
+  background-image: -o-linear-gradient(top, #a7cfdf, #23538a);\
+  background-image: linear-gradient(to bottom, #a7cfdf, #23538a);\
+  filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr=#a7cfdf, endColorstr=#23538a);\
+  text-align: center;\
+  width: 75px;\
+  height: 65px;\
+}\
+#custom-keypad-container {\
+  background-color: #F4F4F4;\
+  border: 2px solid #E0E0E0;\
+  border-radius: 15px;\
+  padding: 5px;\
+  position: absolute;\
+  top: 60px;\
+  width: 280px;\
+  /*margin-left: 430px;*/\
+  left: 39%;\
+  z-index: 991;\
+  }\
+</style>";
 
 
 function buildRegimenPage() {
@@ -225,6 +315,12 @@ function continueShowSelectedMeds() {
 
         tr.appendChild(th);
     }
+
+    /* .............................................Will clean up later */
+    if(isHashEmpty(customRegimenIngredients) == false){
+      setCustomRegimen();
+    }
+    /* .............................................Will clean up later */
 
     var tbody = document.createElement("tbody");
     tbody.setAttribute("id","selected-medication-tbody");
@@ -543,7 +639,6 @@ function getRegimens() {
     show_custom_regimens = false;
 
     resetCustomRegimens();
-
 
     var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1/programs/1/regimens";
 
@@ -947,568 +1042,224 @@ function customRegimen() {
 }
 
 function buildCustomPrescriptionPage() {
-    var frame = document.getElementById("inputFrame" + tstCurrentPage);
-    frame.style = "height: 89%; width: 96%;";
+  var frame = document.getElementById("inputFrame" + tstCurrentPage);
+  frame.style = "height: 89%; width: 96%;";
 
-    var nextBtn = document.getElementById("nextButton");
-    nextBtn.style = "display: none;";
+  var table = document.createElement('table');
+  table.style = 'width: 100%;';
+  frame.appendChild(table);
 
-    var custom = document.createElement("div");
-    custom.setAttribute("class","custom-regimens");
-    frame.appendChild(custom);
+  var tr = document.createElement('tr');
+  table.appendChild(tr);
 
-    var customRow = document.createElement("div");
-    customRow.setAttribute("class","custom-regimens-row");
-    custom.appendChild(customRow);
-
-    var cells = [["Medication","left"], ["Dosage","right"]];
-    for(var i = 0 ; i < cells.length ; i++){
-        var customCell = document.createElement("div");
-        customCell.setAttribute("class","custom-regimens-cell");
-        customCell.setAttribute("id","custom-regimens-cell-" + cells[i][1]);
-        customCell.innerHTML = cells[i][0];
-        customCell.setAttribute("onmousedown","selectView(this);");
-
-        customRow.appendChild(customCell);
-    }
-
-
-    buildMainCustomContainer();
-    var e = document.getElementById("custom-regimens-cell-left");
-    selectView(e)
-}
-
-function buildMainCustomContainer() {
-    var container = document.getElementById("inputFrame" + tstCurrentPage)
-    var controllers = document.createElement("div");
-    controllers.setAttribute("class","controllers-div");
-    controllers.setAttribute("id","controllers-div");
-    container.appendChild(controllers);
-}
-
-function medicationView() {
-    controllers = document.getElementById("controllers-div");
-
-    var table = document.createElement("table");
-    table.setAttribute("class","medication-search");
-    controllers.appendChild(table);
-
-    var tr = document.createElement("tr");
-    table.appendChild(tr);
-
-    var td = document.createElement("td")
-    td.setAttribute("id","search-results-td");
-
-    var searchResults = document.createElement("div");
-    searchResults.setAttribute("id","search-results");
-    td.appendChild(searchResults);
-
+  var cells = ['adults','peads'];
+  for(var i = 0 ; i < cells.length ; i++){
+    var td = document.createElement('td');
+    td.setAttribute('id', cells[i] + '-meds');
     tr.appendChild(td);
+  }
 
+  addMedColumns();
+  autoSelect();
 
-    var td = document.createElement("td")
-    td.setAttribute("id","selected-results-td");
-
-    var selectedResults = document.createElement("div");
-    selectedResults.setAttribute("id","selected-results");
-    td.appendChild(selectedResults);
-
-    tr.appendChild(td);
-
-
-
-
-    var tr = document.createElement("tr");
-    table.appendChild(tr);
-
-    var td = document.createElement("td")
-    td.setAttribute("id","keayboard-td");
-    td.setAttribute("colspan", "2");
-    tr.appendChild(td);
-
-    addKeyBoard();
-
+  var nextButton = document.getElementById('nextButton');
+  nextButton.setAttribute('onmousedown','validateCustomPrescription()');
 }
 
-function addKeyBoard() {
-    var container = document.getElementById("keayboard-td");
-    var e = document.createElement("div");
-    e.setAttribute("class","search-results-keyboard");
-    container.appendChild(e);
+function addMedColumns() {
+  var adultDiv = document.createElement('div');
+  adultDivCSS = 'overflow-x: hidden; height: 580px;';
+  adultDivCSS += 'border: solid 1px;';
+  adultDiv.setAttribute('style', adultDivCSS);
+  adultDiv.setAttribute('class', 'scrollable');
 
-    var qwerty = [];
-    qwerty.push(["q","w","e","r","t","y","u","i","o","p"]);
-    qwerty.push(["a","s","d","f","g","h","j","k","l"]);
-    qwerty.push(["Shift","z","x","c","v","b","n","m","Del.","Clear"]);
+  var body = document.getElementsByTagName('body')[0];
+  body.appendChild(customListCSS);
 
+  var leftTD = document.getElementById('adults-meds');
+  leftTD.appendChild(adultDiv);
+ 
+  var ul = document.createElement('ul');
+  ul.setAttribute('class', 'scrollableList');
+  adultDiv.appendChild(ul);
+ 
+  try { 
+    custom_regimen_ingredients = custom_regimen_ingredients.sort(function(a, b){
+      var nameA=a.name.toLowerCase(), nameB=b.name.toLowerCase()
+      if (nameA < nameB) //sort string ascending
+          return -1 
+      if (nameA > nameB)
+          return 1
+      return 0 //default return value (no sorting)
+    });
+  }catch(x){
+  }
 
+  for(var i = 0 ; i < custom_regimen_ingredients.length; i++){
 
-    for(var i = 0 ; i < qwerty.length; i++){
-        var row = document.createElement("div");
-        row.setAttribute("class","search-results-keyboard-row");
-
-        for(var j = 0 ; j < qwerty[i].length; j++){
-            var cell = document.createElement("div");
-            cell.setAttribute("class","search-results-keyboard-cell");
-            var span = document.createElement("span");
-            span.setAttribute("class","keyboard-buttons");
-            span.innerHTML = qwerty[i][j];
-            span.setAttribute("onmousedown","setEnteredKey(this);");
-            cell.appendChild(span);
-            row.appendChild(cell);
-        }
-        e.appendChild(row);
-    }
-
-    var keyInput = document.createElement("input");
-    keyInput.setAttribute("id","key-input");
-    keyInput.setAttribute("type","hidden");
-
-    e.appendChild(keyInput);
-}
-
-function selectView(e) {
-    var main = document.getElementById("controllers-div");
-    main.innerHTML = null;
-
-    var cells = document.getElementsByClassName("custom-regimens-cell");
-    for(var i = 0 ; i < cells.length ; i++){
-        cells[i].setAttribute("class","custom-regimens-cell");
-    }
-    e.setAttribute("class", "custom-regimens-cell selected-bar");
-
-    if(e.innerHTML == "Medication"){
-        medicationView();
-        displaySelected("selected-results");
-    }else{
-        dosageView();
-        displaySelected("dosage-container-cell-left");
-        checkIfDone();
-    }
-
-
-}
-
-function setEnteredKey(key) {
-    var inputBox = document.getElementById("key-input");
-
-    try{
-
-        if(key.innerHTML.match(/Del/i)){
-            inputBox.value = inputBox.value.substring(0, inputBox.value.length - 1);
-        }else if(key.innerHTML.match(/Clear/i)){
-            inputBox.value = null;
-        }else{
-            inputBox.value += key.innerHTML;
-        }
-
-    }catch(x) { }
-
-    getMedication(inputBox.value);
-}
-
-function getMedication(search_str) {
-    var url = apiProtocol+'://'+apiURL+':'+apiPort+'/api/v1/drugs';
-
-    var xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function() {
-        if (this.readyState == 4 && this.status == 200) {
-            var objs = JSON.parse(this.responseText);
-            renderResults(objs);
-        }
-    };
-    xhttp.open("GET", (url + "?name=" + search_str), true);
-    xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
-    xhttp.setRequestHeader('Content-type', "application/json");
-    xhttp.send();
-}
-
-function renderResults(medication) {
-    var resultsContainer = document.getElementById("search-results");
-    resultsContainer.innerHTML = null;
-
-    var ul = document.createElement("ul");
-    ul.setAttribute("id", "results-ul");
-
-    for(var i = 0 ; i < medication.length ; i++) {
-        var drug_name;
-        try {
-          if(medication[i].alternative_names.length > 0){
-            drug_name = medication[i].alternative_names[0].name
-          }else{
-            continue;
-            drug_name = medication[i].name;
-          }
-        }catch(x) {
-          drug_name = medication[i].name;
-        }
+    var innerHTML = '<div style="display: table; border-spacing: 0px;"><div style="display: table-row"><div style="display: table-cell;"><img id="img';
+    innerHTML += i + '" src="/public/touchscreentoolkit/lib/images/unticked.jpg" alt="[ ]"></div><div style="display: table-cell; vertical-align:      middle; text-align: left; padding-left: 15px;"';
+    innerHTML += ' id="optionValue' + i + '">';
+    innerHTML+= custom_regimen_ingredients[i].name + "</div></div></div>";
     
-        var li = document.createElement("li");
-        li.innerHTML = drug_name;
-        li.setAttribute("tstvalue", drug_name);
-        li.setAttribute("class", "results-list");
-        li.setAttribute("dose_strength", medication[i].dose_strength);
-        li.setAttribute("units", medication[i].units);
-        li.setAttribute("id", medication[i].drug_id);
-        li.setAttribute("onmousedown", "null; updateSelection(this);");
-        ul.appendChild(li);
-    }
+    var li = document.createElement("li");
+    li.setAttribute("id", i );
+    li.setAttribute("tstvalue", custom_regimen_ingredients[i].drug_id);
+    li.setAttribute("onmousedown", "null; updateCustomList(__$('optionValue' + this.id), this); ");
+    li.setAttribute("style","");
+    var class_name = (i % 2 === 0 ? 'even' : 'odd');
+    li.setAttribute("class", class_name + " custom-ingredients-list");
+    li.setAttribute("drug_name", custom_regimen_ingredients[i].name);
+    li.innerHTML = innerHTML;
+    ul.appendChild(li); 
 
-    resultsContainer.appendChild(ul);
+    if(i == 40)
+      break;
+       
+  }
+  
+  /* ............ */ 
+  var peadsDiv = document.createElement('div');
+  peadsDivCSS = 'overflow-x: hidden; height: 580px;';
+  peadsDivCSS += 'border: solid 1px;';
+  peadsDiv.setAttribute('style', adultDivCSS);
+  peadsDiv.setAttribute('class', 'scrollable');
+
+  var righTD = document.getElementById('peads-meds');
+  righTD.appendChild(peadsDiv);
+ 
+  var ul = document.createElement('ul');
+  ul.setAttribute('class', 'scrollableList');
+  peadsDiv.appendChild(ul);
+   
+  for(var i = 41 ; i < custom_regimen_ingredients.length; i++){
+    var class_name = (i % 2 === 0 ? 'even' : 'odd');
+     
+    var innerHTML = '<div style="display: table; border-spacing: 0px;"><div style="display: table-row"><div style="display: table-cell;"><img id="img';
+    innerHTML += i + '" src="/public/touchscreentoolkit/lib/images/unticked.jpg" alt="[ ]"></div><div style="display: table-cell; vertical-align:      middle; text-align: left; padding-left: 15px;"';
+    innerHTML += ' id="optionValue' + i + '">';
+    innerHTML+= custom_regimen_ingredients[i].name + "</div></div></div>";
+    
+    var li = document.createElement("li");
+    li.setAttribute("id", i );
+    li.setAttribute("tstvalue", custom_regimen_ingredients[i].drug_id);
+    li.setAttribute("onmousedown", "null; updateCustomList(__$('optionValue' + this.id), this); ");
+    li.setAttribute("style","");
+    li.setAttribute("units", custom_regimen_ingredients[i].units);
+    li.setAttribute("drug_name", custom_regimen_ingredients[i].name);
+    li.setAttribute("class", class_name + " custom-ingredients-list");
+    li.innerHTML = innerHTML;
+    ul.appendChild(li); 
+
+  }
+  
+  /* ............ */ 
 }
+
+function updateCustomList(e, element) {
+  var selected = element.getAttribute('style');
+  var img = document.getElementById('img' + element.id);
+  
+  if(selected.match(/lightblue/i)) {
+    element.setAttribute("style",'');
+    img.setAttribute('src', "/public/touchscreentoolkit/lib/images/unticked.jpg");
+    
+    var tempContainer = customRegimenIngredients;
+    customRegimenIngredients = {}
+
+    for(drug_id in tempContainer){
+      if(element.getAttribute('drug_name') != tempContainer[drug_id].name) {
+        customRegimenIngredients[parseInt(drug_id)] = {
+          name: tempContainer[drug_id].name,
+          am: tempContainer[drug_id].am, 
+          noon: tempContainer[drug_id].noon, 
+          pm: tempContainer[drug_id].pm,
+          units: tempContainer[drug_id].units,
+          drug_id: drug_id
+        }
+      }
+    }
+  }else{
+    element.setAttribute("style",'background-color: lightblue');
+    img.setAttribute('src', "/public/touchscreentoolkit/lib/images/ticked.jpg");
+    
+    if(customRegimenIngredients[parseInt(element.getAttribute('tstvalue'))] == undefined){
+      customRegimenIngredients[parseInt(element.getAttribute('tstvalue'))] = {
+        name: element.getAttribute('drug_name'), drug_id: null,
+        am: null, noon: null, pm: null, units: element.getAttribute('units')
+      }
+    }
+  }
+  
+}
+
+function isHashEmpty(obj) {
+  for(var key in obj) {
+    if(obj.hasOwnProperty(key))
+      return false;
+    }
+  return true;
+}
+
+var custom_regimen_ingredients = [];
+
+function getMedication() {
+  var url = apiProtocol+'://'+apiURL+':'+apiPort+'/api/v1/';
+  url += 'programs/1/custom_regimen_ingredients';
+
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+      if (this.readyState == 4 && this.status == 200) {
+        var objs = JSON.parse(this.responseText);
+        for(var i = 0 ; i < objs.length ; i++){
+          var drug_name = objs[i].alternative_names[0]
+          drug_name = (drug_name == null ? objs[i].name : drug_name);
+          custom_regimen_ingredients.push({
+            name: drug_name, drug_id: objs[i].drug_id,
+            units: objs[i].units
+          });
+        }
+      }
+    };
+  xhttp.open("GET", url, true);
+  xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+  xhttp.setRequestHeader('Content-type', "application/json");
+  xhttp.send();
+}
+
+getMedication();
 
 var selected_meds = {};
 
-function updateSelection(li) {
-    var lists = document.getElementsByClassName("results-list");
-    for(var i = 0 ; i < lists.length ; i++){
-        lists[i].style = "background-color: none;";
-    }
-
-    li.style = "background-color: lightblue;";
-
-    selected_meds[li.id] = {
-        name: li.innerHTML, am: null,
-        noon: null, pm: null,
-        dose_strength: li.getAttribute("dose_strength"),
-        units: li.getAttribute("units")
-    };
-    displaySelected("selected-results");
-
-    var keyInput = document.getElementById("key-input");
-    keyInput.value = null;
-}
-
-function displaySelected(container_name) {
-    var mainContainer = document.getElementById(container_name);
-
-    try{
-        mainContainer.innerHTML = null;
-    }catch(z){
-    }
-
-    var table = document.createElement("table");
-    table.style = "width: 98%; margin: 5px; border-collapse: collapse;";
-
-    for(var drug_id in selected_meds){
-        var row = document.createElement("tr");
-
-        row.setAttribute("id","row-" + drug_id);
-        row.setAttribute("class","selected-meds-row");
-        row.setAttribute("onmousedown","setDosage(this, '" + container_name + "');");
-        table.appendChild(row);
-
-        var td = document.createElement("td");
-        td.setAttribute("style","width: 40px; padding: 5px 0px 5px 0px;");
-        td.innerHTML = "&nbsp;"
-
-        var img = document.createElement("img");
-        img.setAttribute("src","../../../../assets/images/delete.png");
-        img.setAttribute("id", drug_id);
-        img.setAttribute("onmousedown", "deleteFromList(this,'" + container_name + "');");
-        img.setAttribute("class","icons");
-        td.appendChild(img);
-        row.appendChild(td);
-
-        var td = document.createElement("td");
-        td.setAttribute("style"," padding: 5px 0px 5px 0px; font-family: 'Nimbus Sans L','Arial Narrow',sans-serif; font-size: 1.2em;");
-        td.innerHTML = selected_meds[drug_id].name;
-        row.appendChild(td);
-
-
-    }
-
-    mainContainer.appendChild(table);
-}
-
-function setDosage(e, container_name) {
-    if(container_name != "dosage-container-cell-left")
-        return;
-
-    var rows = document.getElementsByClassName("selected-meds-row");
-    for(var i = 0 ; i < rows.length ; i++){
-        rows[i].style = "background-color: none; color: black;";
-    }
-    e.style = "color: black; background-color: #87ceeb;";
-    resetDosageContainers();
-
-    var drug_id = e.id.replace("row-","");
-
-    try {
-        document.getElementById("dosage-input-am").value      = selected_meds[drug_id].am;
-        document.getElementById("dosage-input-noon").value    = selected_meds[drug_id].noon;
-        document.getElementById("dosage-input-pm").value      = selected_meds[drug_id].pm;
-    }catch(i) {}
-
-}
-
-function resetDosageContainers() {
-    document.getElementById("dosage-input-am").value = null;
-    document.getElementById("dosage-input-noon").value = null;
-    document.getElementById("dosage-input-pm").value = null;
-}
-
-function deleteFromList(e, container_name) {
-    delete selected_meds[e.id];
-    displaySelected(container_name);
-
-    if(container_name.match(/dosage-table-cell-left/i)){
-        resetDosageContainers();
-    }
-
-    checkIfDone();
-}
-
-function dosageView() {
-    var main = document.getElementById("controllers-div");
-
-    var row = document.createElement("div");
-    row.setAttribute("class","dosage-container-row");
-    main.appendChild(row);
-
-    var cells = ["left", "right"];
-    for(var i = 0 ; i < cells.length ; i++){
-        var cell = document.createElement("div");
-        cell.setAttribute("class","dosage-container-cell");
-        cell.setAttribute("id","dosage-container-cell-" + cells[i]);
-        row.appendChild(cell);
-    }
-
-    addKeyPad();
-}
-
-function addKeyPad() {
-    var main = document.getElementById("dosage-container-cell-right");
-
-    var table = document.createElement("table");
-    table.setAttribute("id","keypad-table");
-    main.appendChild(table);
-
-    var tr = document.createElement("tr");
-    table.appendChild(tr);
-
-
-    var tds = [["Am","morning.png"],["Noon","noon.png"], ["PM","evening.png"]];
-
-    for(var i = 0 ; i < tds.length ; i++){
-
-        var th = document.createElement("th");
-        tr.appendChild(th);
-
-        var img = document.createElement("img");
-        img.setAttribute("src","../../../../assets/images/prescription/" + tds[i][1]);
-        img.setAttribute("draggable", "false");
-        img.setAttribute("class","icons");
-        th.appendChild(img);
-
-        var p = document.createElement("p");
-        p.innerHTML = tds[i][0];
-        th.appendChild(p);
-
-    }
-
-    var tds = [["Am","morning.png"],["Noon","noon.png"], ["PM","evening.png"]];
-
-    var tr = document.createElement("tr");
-    table.appendChild(tr);
-
-    for(var i = 0 ; i < tds.length ; i++){
-        var td = document.createElement("td");
-        td.setAttribute("class","text-inputs-tds");
-
-        var inputBox = document.createElement("input");
-        inputBox.setAttribute("class","dosage-inputs");
-        inputBox.setAttribute("id","dosage-input-" + tds[i][0].toLowerCase());
-
-        inputBox.setAttribute("onfocus","setKeyPadFocus(this)")
-        //inputBox.setAttribute("id","text-" + tds[i][0].toLowerCase());
-
-
-        td.appendChild(inputBox);
-
-        tr.appendChild(td);
-    }
-
-    var tr = document.createElement("tr");
-    table.appendChild(tr);
-
-    var td = document.createElement("td")
-    td.setAttribute("colspan", "3");
-    td.setAttribute("id","keypad-td");
-    tr.appendChild(td)
-
-
-    createKeyPad();
-}
-
-function createKeyPad() {
-    var e = document.getElementById("keypad-td");
-
-    var table = document.createElement('table');
-    table.setAttribute("class","prescription-keypad");
-
-    /* ........................................ */
-    /* ........................................ */
-
-    var keypad_attributes = [];
-    keypad_attributes.push([1,2,3]);
-    keypad_attributes.push([4,5,6]);
-    keypad_attributes.push([7,8,9]);
-    keypad_attributes.push(["Del.",0,"."]);
-    //keypad_attributes.push(["Clear","%","/"]);
-
-    for(var i = 0 ; i < keypad_attributes.length ; i++) {
-        var tr = document.createElement("tr");
-        table.appendChild(tr);
-
-        for(var j = 0 ; j < keypad_attributes[i].length ; j++){
-            var td = document.createElement('td');
-            tr.appendChild(td);
-
-            var span = document.createElement('span');
-            span.setAttribute("class","keypad-buttons");
-            span.setAttribute("onmousedown","enterKeypadValue(this);");
-            span.innerHTML = keypad_attributes[i][j];
-            td.appendChild(span);
-        }
-    }
-
-    e.appendChild(table);
-
-}
-
-function enterKeypadValue(key) {
-}
-
-
-function setKeyPadFocus(e) {
-    var keys = document.getElementsByClassName("keypad-buttons");
-
-    for(var i = 0 ; i < keys.length ; i++){
-        keys[i].setAttribute("onmousedown", "dosageEntered(this,'" + e.id + "');");
-    }
-
-}
-
-var rowSelected;
-
-function dosageEntered(key, text_box_id){
-    var inputBox = document.getElementById(text_box_id);
-    rowSelected = getRowSelected();
-
-    if(!rowSelected)
-        return;
-
-    var drug_id = rowSelected.id.replace("row-","");
-
-    try{
-
-        if(key.innerHTML.match(/Del/i)){
-            inputBox.value = inputBox.value.substring(0, inputBox.value.length - 1);
-        }else if(key.innerHTML.match(/Clear/i)){
-            inputBox.value = null;
-        }else{
-            inputBox.value += key.innerHTML;
-        }
-
-        if(text_box_id.match(/am/i)){
-            selected_meds[drug_id].am = inputBox.value;
-        }else if(text_box_id.match(/noon/i)){
-            selected_meds[drug_id].noon = inputBox.value;
-        }else if(text_box_id.match(/pm/i)){
-            selected_meds[drug_id].pm = inputBox.value;
-        }
-    }catch(x) { }
-
-    checkIfDone();
-}
-
-function getRowSelected(){
-    var rows = document.getElementsByClassName("selected-meds-row");
-    var row = null;
-    for(var i = 0 ; i < rows.length ; i++){
-        var styles = rows[i].style.backgroundColor;
-        if(styles == "rgb(135, 206, 235)")
-            row = rows[i];
-
-    }
-    return row;
-}
-
 function checkIfDone() {
-    var done = false
-    var nextBtn = document.getElementById("nextButton");
-
-    for(var drug_id in selected_meds) {
-        var am    = selected_meds[drug_id].am;
-        var noon  = selected_meds[drug_id].noon;
-        var pm    = selected_meds[drug_id].pm;
-
-        if (!isNumeric(am) && isNumeric(noon) && isNumeric(pm)){
-            done = false
-            break;
-        }
-
-        if (isEmpty(am) || isEmpty(noon) || isEmpty(pm)){
-            done = false
-            break;
-        }
-
-        done = true;
-    }
-
-    if(!done){
-        nextBtn.style = "display: none";
-        //showMessage("Set medication dosage first<br />before going to Summary");
-        return;
-    }
-
-    givenRegimens["Unknown regimen"] = [];
-
-    for(var drug_id in selected_meds){
-        var med = {
-            concept_name: "Unknown",
-            drug_name: selected_meds[drug_id].name,
-            am: selected_meds[drug_id].am,
-            noon: selected_meds[drug_id].noon,
-            pm: selected_meds[drug_id].pm,
-            drug_id: drug_id,
-            units:  selected_meds[drug_id].units,
-            pack_size: 30
-        }
-
-        selectedRegimens = "Unknown regimen";
-        givenRegimens["Unknown regimen"].push(med);
-    }
-
-    nextBtn.style = "display: inline";
 }
 
 function isNumeric(n) {
-    return !isNaN(parseFloat(n)) && isFinite(n);
+  return !isNaN(parseFloat(n)) && isFinite(n);
 }
 
 function isEmpty(str){
-    try {
-        return (str.replace(/\s+/g, '').length < 1);
-    }catch(e){
-        return true;
-    }
+  try {
+      return (str.replace(/\s+/g, '').length < 1);
+  }catch(e){
+      return true;
+  }
 }
 
 function resetCustomRegimens() {
-    if(selectedRegimens != "Unknown regimen"){
+    if(selectedRegimens != "Unknown"){
         return;
     }
 
     selectedRegimens = null;
     show_custom_regimens = false;
-    givenRegimens["Unknown regimen"] = null;
+    customRegimenIngredients = {};
+    givenRegimens["Unknown"] = null;
 
     var originalRegimens = {};
 
     for(var regimen in givenRegimens){
-        if(regimen == "Unknown regimen")
+        if(regimen == "Unknown")
             continue;
 
         originalRegimens[regimen] = givenRegimens[regimen];
@@ -1754,11 +1505,9 @@ function buildResonForSwitchinPopup() {
 
 
   var switching_reasons = [
-    'Reduce the number of pills, doses or drugs that are taken daily',
-    'Improve side effects issues in the short- and long-term',
-    'Ease possible drug-drug interactions','Ease swallowing',
-    'Support the best use of meds during pregnancy',
-    'Regimen not available / Expensive','Other'
+    'Policy change','High pill burden','Drug drug interaction',
+    'Difficult to swallow','Not recommended fro pregnant women',
+    'Side effects','Weight Change','Other'
   ];
 
   var switchingTable = document.createElement('div');
@@ -1974,4 +1723,251 @@ function useHangingPills(ans) {
   appointment_type = (ans == 'Yes' ? 'Optimize - including hanging pills' : 'Exact - excluding hanging pills');
   closePopUp();
   validateEntries();
+}
+
+function buildCustomDosagePage() {
+  var f = document.getElementById('inputFrame' + tstCurrentPage);
+  f.style = 'width: 96%; height: 88%;'
+
+  var nextBtn = document.getElementById("nextButton");
+  nextButton.setAttribute("onmousedown", "validateCustomPrescriptionDosageInputs();");
+
+  var table = document.createElement('table');
+  var tableCSS = 'width: 100%; font-size: 16px;';
+  tableCSS += 'border-collapse: collapse';
+  table.style = tableCSS;
+  f.appendChild(table);
+  var tr = document.createElement('tr');
+  table.appendChild(tr);
+
+  var ths = [
+    ['Medication', null],
+    ['Morning','/assets/images/prescription/morning.png'],
+    ['Noon','/assets/images/prescription/noon.png'],
+    ['Evening','/assets/images/prescription/evening.png']
+  ];
+
+  for(var i = 0 ; i < ths.length; i++){
+    var th = document.createElement('th');
+    th.setAttribute('class','custom-regimen-th');
+    
+    if(ths[i][1] != null){
+      var img = document.createElement('img');
+      img.setAttribute('src', ths[i][1]);
+      th.appendChild(img);
+    }
+
+    var span = document.createElement('span');
+    span.innerHTML = '<br />' + ths[i][0];
+    th.appendChild(span);
+    
+    if(i == 0)
+      th.style = 'text-align: left; marging-left: 5px;'
+    
+    tr.appendChild(th)
+  }
+
+  for(var drug_id in customRegimenIngredients){
+    var tr  = document.createElement('tr');
+    
+    var td = document.createElement('td');
+    td.setAttribute('class','custom-regimen-td');
+    td.innerHTML = customRegimenIngredients[drug_id].name;
+    td.style = 'text-align: left; marging-left: 5px;'
+    tr.appendChild(td);
+    
+    var td = document.createElement('td');
+    td.setAttribute('class','custom-regimen-td');
+    var input = document.createElement('input');
+    input.setAttribute('id', 'am-' + drug_id);
+    input.setAttribute('type','text');
+    input.setAttribute('onmousedown','enterCustomDosage(this)');
+    input.setAttribute('class','dosage-inputs');
+    //input.disabled = true;
+    td.appendChild(input);
+    tr.appendChild(td);
+     
+    var td = document.createElement('td');
+    td.setAttribute('class','custom-regimen-td');
+    var input = document.createElement('input');
+    input.setAttribute('id', 'noon-' + drug_id);
+    input.setAttribute('type','text');
+    input.setAttribute('onmousedown','enterCustomDosage(this)');
+    input.setAttribute('class','dosage-inputs');
+    //input.disabled = true;
+    td.appendChild(input);
+    tr.appendChild(td);
+     
+    var td = document.createElement('td');
+    td.setAttribute('class','custom-regimen-td');
+    var input = document.createElement('input');
+    input.setAttribute('id', 'pm-' + drug_id);
+    input.setAttribute('type','text');
+    input.setAttribute('class','dosage-inputs');
+    input.setAttribute('onmousedown','enterCustomDosage(this)');
+    td.appendChild(input);
+    //input.disabled = true;
+    tr.appendChild(td);
+    table.appendChild(tr); 
+  }
+
+  autoInput();
+}
+
+function enterCustomDosage(e) {
+  document.getElementById('confirmatory-test-cover').style = 'display: inline;';                                               
+  var keypadDIV = document.createElement('div');
+  keypadDIV.setAttribute('id','custom-keypad-container');
+  createKeyPad(keypadDIV, e);
+
+  var body = document.getElementsByTagName('body')[0];
+  body.appendChild(keypadDIV);
+
+}
+
+function createKeyPad(e, cell) {
+  var table = document.createElement('table');
+  table.setAttribute("class","prescription-keypad");
+  
+  var tr = document.createElement('tr');
+  table.appendChild(tr);
+  var input = document.createElement('input');
+  input.setAttribute('type','text');
+  input.setAttribute('id','custom-input-box');
+  input.setAttribute('style','width: 100%;height: 70px;text-align: center;font-size: 50px;');
+  var td = document.createElement('td');
+  td.setAttribute('colspan', 3);
+  td.appendChild(input);
+  tr.appendChild(td);
+  /* ........................................ */
+  /* ........................................ */
+  var keypad_attributes = [];
+  keypad_attributes.push([1,2,3]);
+  keypad_attributes.push([4,5,6]);
+  keypad_attributes.push([7,8,9]);
+  keypad_attributes.push([".",0,"Del."]);
+  keypad_attributes.push(["Done"]);
+  //keypad_attributes.push(["Clear","%","/"]);
+
+  for(var i = 0 ; i < keypad_attributes.length ; i++) {
+    var tr = document.createElement("tr");
+    table.appendChild(tr);
+
+    for(var j = 0 ; j < keypad_attributes[i].length ; j++){
+      var td = document.createElement('td');
+      tr.appendChild(td);
+
+      var span = document.createElement('span');
+      span.setAttribute("class","keypad-buttons");
+      span.setAttribute("onmousedown","enterKeypadValue(this,'" + cell.id + "');");
+      span.innerHTML = keypad_attributes[i][j];
+      td.appendChild(span);
+
+      if(keypad_attributes[i][j] == 'Done'){
+        td.setAttribute('colspan', 3);
+        span.setAttribute('id', 'add-custom-dose');
+        span.setAttribute('style','width: 95%;');
+      }
+    }
+  }
+
+  e.appendChild(table);
+
+}
+
+function enterKeypadValue(e, cell_id){
+  var inputBox = document.getElementById('custom-input-box');
+  var inputCELL = document.getElementById(cell_id);
+
+  try{
+
+    if(e.innerHTML.match(/Del/i)){
+      inputBox.value = inputBox.value.substring(0, inputBox.value.length - 1);
+    }else if(e.innerHTML.match(/Clear/i)){
+      inputBox.value = null;
+      removeFromHash();
+    }else if(e.innerHTML.match(/Done/i)){
+      closeCustomBox();
+    }else{
+      inputBox.value += e.innerHTML;
+    }
+
+  }catch(x) { }
+
+  inputCELL.value = inputBox.value;
+}
+
+function closeCustomBox() {
+  document.getElementById('confirmatory-test-cover').style = 'display: none;';                                               
+  var body = document.getElementsByTagName('body')[0];
+  var div = document.getElementById('custom-keypad-container');
+  body.removeChild(div);             
+}
+
+function autoSelect() {
+  var list = document.getElementsByClassName('custom-ingredients-list');
+  for(var drug_id in customRegimenIngredients) {
+    for(var i = 0 ; i < list.length; i++){
+      var liID = parseInt(list[i].getAttribute('tstvalue'));
+      if(liID == parseInt(drug_id)){
+        updateCustomList(__$('optionValue' + list[i].id), list[i]); 
+      }
+    }
+  }
+}
+
+function validateCustomPrescription() {
+  if(isHashEmpty(customRegimenIngredients)){
+    showMessage('Select one or more medications to continue.');
+    return;
+  }
+
+  gotoNextPage();
+}
+
+function validateCustomPrescriptionDosageInputs() {
+  var inputBoxes = document.getElementsByClassName('dosage-inputs');
+  for(var i = 0 ; i < inputBoxes.length ; i++){
+    if(isNumeric(inputBoxes[i].value) == false){
+      showMessage('Make sure all input boxes are filled correctly.<br />Enter valid numbers e.g; 1 or 2.5')
+      return;
+    }else{
+      var drug_id = parseInt(inputBoxes[i].id.split('-')[1]);
+      var period  = inputBoxes[i].id.split('-')[0];
+      customRegimenIngredients[drug_id][period] = parseFloat(inputBoxes[i].value);
+    }
+  }
+
+  selectedRegimens = null;
+  gotoNextPage();
+}  
+
+function autoInput() {
+  var list = document.getElementsByClassName('dosage-inputs');
+  
+  for(var drug_id in customRegimenIngredients) {
+    for(var i = 0 ; i < list.length ; i++){
+      var inID    = parseInt(list[i].id.split('-')[1]);
+      var period  = list[i].id.split('-')[0];
+      if(customRegimenIngredients[drug_id][period] != null && drug_id == inID){
+        list[i].value = customRegimenIngredients[drug_id][period];
+      }
+    }  
+  }
+}
+
+function setCustomRegimen() {
+  selectedRegimens = 'Unknown';
+  givenRegimens[selectedRegimens] = [];
+   
+  for (var drug_id in customRegimenIngredients){
+    givenRegimens['Unknown'].push({
+      drug_name: customRegimenIngredients[drug_id].name,
+      units: customRegimenIngredients[drug_id].units,
+      am: customRegimenIngredients[drug_id].am,  
+      noon: customRegimenIngredients[drug_id].noon,
+      pm: customRegimenIngredients[drug_id].pm, 
+      drug_id: drug_id
+    });
+  }
 }

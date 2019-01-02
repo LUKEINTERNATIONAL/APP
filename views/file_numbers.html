@@ -1,42 +1,327 @@
-<script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js" defer="true"></script>
-<!-- <script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/standard.js" defer="true"></script> -->
 <script type="text/javascript" src="/assets/js/jquery.min.js"></script>
-
+<script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js" defer="true"></script>
+<script type="text/javascript" src="/assets/js/generic_ajaxrequest.js"></script>
+<script type="text/javascript" src="/assets/js/moment.js"></script>
 
 <style>
-#clearButton { display: none; }
+  #clearButton { display: none; }
 #cancelButton { display: none; }
+
+#activeFileNumbers {
+        width: 90%;
+        padding: 2%;
+        margin: 0 auto;
+      }
+
+      .activeFileNumber {
+        background-color: white;
+        display: inline-block;
+        width: 27%;
+        margin: 1%;
+        padding: 2%;
+        border-radius: 2px;
+        box-shadow: 0 1px 1px black;
+      }
+
+      .activeFileNumber:hover {
+        cursor: pointer;
+        box-shadow: 0 6px 6px brown;
+      }
+
+      .activeFileNumber h3 {
+        font-family: Ubuntu;
+        color: crimson;
+      }
+
+      .activeFileNumber p {
+        font-family: Ubuntu;
+        font-weight: 100;
+        text-align: justify;
+        word-spacing: .2em;
+      }
+
+      h3 {
+        font-size: 1.2em;
+      }
+
+      #footer {
+        width: 95%;
+        margin: 0 auto;
+        padding-top: 2%;
+      }
+
+      button {
+        color: white;
+        border-radius: 6px;
+        font-size: 1.5em;
+        padding: 1%;
+      }
+
+      button:hover {
+        cursor: pointer;
+      }
+
+      .button.red {
+        float: left;
+      }
+
+      .button.blue {
+        float: right;
+      }
 </style>
 
 <script>
-function loadNumbers() {
+  function init() {
   var f = document.getElementById('inputFrame' + tstCurrentPage);
-  f.style = 'width: 96%; height: 90%';
+  f.style = 'width: 96%; height: 90%; overflow: scroll';
 
-  var b = document.getElementById('nextButton');
-  b.innerHTML = '<span>Refresh</span>';
-  b.setAttribute('onmousedown','refreshList();');
-}
+  document.getElementById('nextButton').style.display = 'none'
 
-function refreshList() {
+  const fileNumbers = document.createElement('div')
+  fileNumbers.setAttribute('id', 'activeFileNumbers')
+  f.appendChild(fileNumbers)
+
+  fetchFileNumber(fetchArgumentFromUrlString('patient_id'))
 }
 </script>
-
-
 
 
 <body id="mateme">
   <div id="container">
     <div id="content">
-
       <form>
         <input type="text" name="filing-numbers"
-          tt_onLoad="__$('keyboard').style.display = 'none'; loadNumbers();"
-          tt_pageStyleClass= "NoControls" helpText="Filing numbers" optional = "true"/>
+          tt_onLoad="__$('keyboard').style.display = 'none'; init();"
+          tt_pageStyleClass="NoControls" helpText="Filing numbers" optional="true" />
 
       </form>
+    </div>
+  </div>
 
-   </div>
- </div>
+  <script>
+    const apiUrl = `http://${sessionStorage.getItem('apiURL')}:${sessionStorage.getItem('apiPort')}/api/v1`
+    const PAGE_SIZE = 6
+    let paginationPage = 0
+
+    function populatePageWithActiveFileNumbers (activeFileNumbers) {
+      activeFileNumbers.forEach((activeFileNumber) => {
+        document.getElementById('activeFileNumbers').innerHTML += createFileNumberElement(activeFileNumber)
+      })
+    }
+
+    function createFileNumberElement (fileData) {
+      return `<div class='activeFileNumber' onclick='archiveFileNumber(this, ${fetchArgumentFromUrlString("patient_id")})' id=${fileData.identifier}>
+        <h3>${fileData.given_name} ${fileData.family_name}</h3>
+        <hr width='100%'/>
+        <p>
+          File Number:&nbsp;&nbsp;${fileData.identifier}<br />
+          Date Started:&nbsp;&nbsp;${fileData.start_date}<br />
+          Last Visit:&nbsp;&nbsp;${new moment(fileData.appointment_date).format('MM-DD-YYYY')}<br />
+          State:&nbsp;&nbsp;${fileData.state}<br />
+        </p>
+      </div>`;
+    }
+
+    function fetchArchivingCandidates() {
+      GET (
+        {
+          url: `${apiUrl}/archiving_candidates`,
+          async: true,
+          headers: {
+            'Authorization': sessionStorage.getItem('authorization')
+          }
+        },
+        {
+          page: paginationPage,
+          page_size: PAGE_SIZE
+        },
+        (data) => {
+          addNextButton()
+          if (paginationPage > 0) {
+            addPrevButton()
+          } else if (paginationPage === 0 && document.getElementById('previousButton') && document.getElementById('previousButton').style.display === 'block') {
+            document.getElementById('previousButton').style.display = 'none'
+          }
+          populatePageWithActiveFileNumbers(data)
+        },
+        (error) => {
+          console.error(error)
+        }
+      )
+    }
+
+    function archiveFileNumber (event, patientId) {
+      const response = confirm(`Are you sure you want to archive the patient with file number ${event.id}?`)
+
+      if (response) {
+        POST (
+          {
+            url: `${apiUrl}/patients/${patientId}/filing_number`,
+            async: true,
+            headers: {
+              'Authorization': sessionStorage.getItem('authorization'),
+              'Content-Type': 'application/x-www-form-urlencoded'
+            }
+          },
+          { filing_number: event.id },
+          (data) => {
+            showMessage('The patient\'s filing number was successfully reassigned.')
+            setTimeout(() => {
+              nextEncounter(sessionStorage.patientID, 1, true)
+            }, 3000)
+          },
+          (error) => {
+            console.error(error)
+            showMessage('There was a problem reassigning the file number.')
+          }
+        )
+      }
+    }
+
+    function fetchArgumentFromUrlString (argumentName, url = location.href) {
+      const urlToSearch = new URL(url)
+      const argument = urlToSearch.searchParams.get(argumentName)
+      return argument
+    }
+
+    function fetchFileNumber (patientId) {
+      POST(
+        {
+          url: `${apiUrl}/patients/${patientId}/filing_number`,
+          async: true,
+          headers: {
+            'Authorization': sessionStorage.getItem('authorization'),
+            'Content-Type': 'application/json'
+          }
+        },
+        {},
+        (data, status) => {
+          if (status === 201) {
+            createPatientFilingNumber(patientId, data.new_identifier.identifier)
+          } else {
+            fetchArchivingCandidates()
+          }
+        },
+        (error) => {
+          console.error(error)
+          showMessage('An error occured while fetching the patient\'s file number.')
+        }
+      )
+    }
+
+    function redirectToUrl (url) {
+      window.location = url
+    }
+
+    function createPatientFilingNumber (patientId, filingNumber) {
+      POST(
+        {
+          url: `${apiUrl}/patients/${patientId}/filing_number`,
+          async: true,
+          headers: {
+            'Authorization': sessionStorage.getItem('authorization'),
+            'Content-Type': 'application/x-www-form-urlencoded'
+          }
+        },
+        { filing_number: filingNumber },
+        (data) => {
+          showMessage('The patient\'s filing number was successfully assigned.')
+          setTimeout(() => {
+            nextEncounter(sessionStorage.patientID, 1, true)
+          }, 3000)
+        },
+        (error) => {
+          console.error(error)
+          showMessage('An error occured while creating the patient\'s file number.')
+        }
+      )
+    }
+
+    function POST (config, data = {}, successCallback, failureCallback) {
+      const request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP')
+
+      request.onreadystatechange = () => {
+        if (request.readyState === 4 && request.status === 201) {
+          successCallback(JSON.parse(request.responseText), request.status)
+        } else if (request.readyState === 4 && request.status === 204) {
+          successCallback({}, request.status)
+        } else if (request.readyState === 4 && request.status >= 400) {
+          failureCallback(request.responseText, request.status)
+        } 
+      }
+
+      request.open('POST', config.url, config.async)
+
+      Object.keys(config.headers).forEach((key) => {
+        request.setRequestHeader(key, config.headers[key])
+      })
+
+      request.send(encodeURI(buildParametersString(data)))
+    }
+
+    function GET (config, data = {}, successCallback, failureCallback) {
+      const request = (window.XMLHttpRequest) ? new XMLHttpRequest() : new ActiveXObject('Microsoft.XMLHTTP')
+
+      request.onreadystatechange = () => {
+        if (request.readyState === 4 && request.status === 200) {
+          successCallback(JSON.parse(request.responseText), request.status)
+        } else if (request.readyState === 4 && request.status >= 400) {
+          failureCallback(request.responseText, request.status)
+        } 
+      }
+
+      request.open('GET', config.url + `?${encodeURI(buildParametersString(data))}`, config.async)
+
+      Object.keys(config.headers).forEach((key) => {
+        request.setRequestHeader(key, config.headers[key])
+      })
+
+      request.send()
+    }
+
+    function buildParametersString (params) {
+      let paramsString = ''
+      Object.keys(params).forEach((key, index, array) => {
+        paramsString += `${key}=${params[key]}`
+        if (index < array.length - 1) {
+          paramsString += '&'
+        }
+      })
+      return paramsString
+    }
+
+    function clearActiveFileNumbersDiv () {
+      document.getElementById('activeFileNumbers').innerHTML = ''
+    }
+
+    function addNextButton () {
+      const nextButton = document.getElementById('nextButton')
+      nextButton.innerHTML = '<span>Next List</span>'
+      nextButton.setAttribute('onmousedown','clearActiveFileNumbersDiv(); nextPage(); fetchArchivingCandidates();')
+      document.getElementById('nextButton').style.display = 'block'
+    }
+
+    function addPrevButton () {
+      if (document.getElementById('previousButton') && document.getElementById('previousButton').style.display === 'block') {
+        return
+      }
+      const prevButton = document.createElement('button')
+      prevButton.innerHTML = '<span>Previous List</span>'
+      prevButton.setAttribute('onmousedown', 'clearActiveFileNumbersDiv(); previousPage(); fetchArchivingCandidates();')
+      prevButton.setAttribute('id', 'previousButton')
+      prevButton.setAttribute('style', 'display: block;')
+      document.getElementById('buttons').appendChild(prevButton)
+    }
+
+    function nextPage () {
+      paginationPage = paginationPage + 1
+    }
+
+    function previousPage () {
+      if (paginationPage === 0) {
+        return
+      }
+      paginationPage = paginationPage - 1
+    }
+  </script>
 </body>
-
