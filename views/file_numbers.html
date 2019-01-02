@@ -1,6 +1,5 @@
 <script type="text/javascript" src="/assets/js/jquery.min.js"></script>
 <script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js" defer="true"></script>
-<script type="text/javascript" src="/assets/js/generic_ajaxrequest.js"></script>
 <script type="text/javascript" src="/assets/js/moment.js"></script>
 
 <style>
@@ -110,7 +109,9 @@
     }
 
     function createFileNumberElement (fileData) {
-      return `<div class='activeFileNumber' onclick='archiveFileNumber(this, ${fetchArgumentFromUrlString("patient_id")})' id=${fileData.identifier}>
+      return `<div class='activeFileNumber' 
+        onclick='promptToArchiveFileNumber(this, ${fetchArgumentFromUrlString("patient_id")})' 
+        id=${fileData.identifier} ${fileData.family_name}'>
         <h3>${fileData.given_name} ${fileData.family_name}</h3>
         <hr width='100%'/>
         <p>
@@ -150,32 +151,35 @@
       )
     }
 
-    function archiveFileNumber (event, patientId) {
-      const response = confirm(`Are you sure you want to archive the patient with file number ${event.id}?`)
+    function promptToArchiveFileNumber (event, patientId) {
+      showPrompt (
+        {
+          message: `Are you sure want to archive the patient with file number ${event.id}?`,
+          yesCallback: () => { removePrompt(); archiveFileNumber(event, patientId)},
+          noCallback: removePrompt
+        }
+      )
+    }
 
-      if (response) {
-        POST (
-          {
-            url: `${apiUrl}/patients/${patientId}/filing_number`,
-            async: true,
-            headers: {
-              'Authorization': sessionStorage.getItem('authorization'),
-              'Content-Type': 'application/x-www-form-urlencoded'
-            }
-          },
-          { filing_number: event.id },
-          (data) => {
-            showMessage('The patient\'s filing number was successfully reassigned.')
-            setTimeout(() => {
-              nextEncounter(sessionStorage.patientID, 1, true)
-            }, 3000)
-          },
-          (error) => {
-            console.error(error)
-            showMessage('There was a problem reassigning the file number.')
+    function archiveFileNumber (event, patientId) {
+      POST (
+        {
+          url: `${apiUrl}/patients/${patientId}/filing_number`,
+          async: true,
+          headers: {
+            'Authorization': sessionStorage.getItem('authorization'),
+            'Content-Type': 'application/x-www-form-urlencoded'
           }
-        )
-      }
+        },
+        { filing_number: event.id },
+        (data) => {
+          redirectToUrl(`/apps/ART/views/assigned_patient_file_number.html?old=${data.archived_identifier.identifier}&new=${data.new_identifier.identifier}`);
+        },
+        (error) => {
+          console.error(error)
+          showMessage('There was a problem reassigning the file number.')
+        }
+      )
     }
 
     function fetchArgumentFromUrlString (argumentName, url = location.href) {
@@ -185,7 +189,7 @@
     }
 
     function fetchFileNumber (patientId) {
-      POST(
+      POST (
         {
           url: `${apiUrl}/patients/${patientId}/filing_number`,
           async: true,
@@ -199,7 +203,10 @@
           if (status === 201) {
             createPatientFilingNumber(patientId, data.new_identifier.identifier)
           } else {
-            fetchArchivingCandidates()
+            showMessage('No available active file numbers. Please archive a dormant one from the following list.')
+            setTimeout(() => {
+              fetchArchivingCandidates()
+            }, 3000)
           }
         },
         (error) => {
@@ -210,11 +217,11 @@
     }
 
     function redirectToUrl (url) {
-      window.location = url
+      document.location = url
     }
 
     function createPatientFilingNumber (patientId, filingNumber) {
-      POST(
+      POST (
         {
           url: `${apiUrl}/patients/${patientId}/filing_number`,
           async: true,
@@ -225,10 +232,7 @@
         },
         { filing_number: filingNumber },
         (data) => {
-          showMessage('The patient\'s filing number was successfully assigned.')
-          setTimeout(() => {
-            nextEncounter(sessionStorage.patientID, 1, true)
-          }, 3000)
+          redirectToUrl("/apps/ART/views/assigned_patient_file_number.html?new=" + data.new_identifier.identifier);
         },
         (error) => {
           console.error(error)
@@ -322,6 +326,92 @@
         return
       }
       paginationPage = paginationPage - 1
+    }
+
+    function showPrompt (options = {}) {
+      const prompt = document.createElement('div')
+      prompt.setAttribute('id', 'dankPrompt')
+      prompt.style = `
+        background-color: white;
+        font-size: 1.5em;
+        font-family: Ubuntu;
+        position: fixed;
+        width: 50%;
+        height: auto;
+        top: 25%;
+        left: 25%;
+        padding: 2%;
+        border-radius: 4px; 
+        z-index: 9000;`
+      
+      const promptMessage = document.createElement('h3')
+      promptMessage.innerText = options.message
+      promptMessage.innerHTML += '<hr />'
+      prompt.appendChild(promptMessage)
+
+      prompt.appendChild(createToolkitButton({
+        text: 'Yes',
+        listeners: [
+          { event: 'click', handler: options.yesCallback }
+        ],
+        style: 'color: white; float: left'
+      }))
+
+      prompt.appendChild(createToolkitButton({
+        text: 'No',
+        listeners: [
+          { event: 'click', handler: options.noCallback }
+        ],
+        style: 'color: white; float: right'
+      }))
+      
+      document.body.appendChild(createScreenOverlay({ color: 'black', opacity: .8}))
+      document.body.appendChild(prompt)
+    }
+
+    function createScreenOverlay (options = {}) {
+      const overlay = document.createElement('div')
+      overlay.setAttribute('id', 'dankOverlay')
+      overlay.style = `
+        background-color: ${options.color};
+        opacity: ${options.opacity};
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 9000;`
+      return overlay
+    }
+
+    function removePrompt () {
+      document.body.removeChild(document.getElementById('dankOverlay'))
+      document.body.removeChild(document.getElementById('dankPrompt'))
+    }
+
+    function createToolkitButton (options = {}) {
+      const button = document.createElement('button')
+      button.innerHTML += `<span>${options.text}</span>`
+
+      if (options.attributes) {
+        options.attributes.forEach((attribute) => {
+          button.setAttribute(attribute.name, attribute.value)
+        })
+      }
+
+      if (options.listeners) {
+        options.listeners.forEach((listener) => {
+          button.addEventListener(listener.event, listener.handler)
+        })
+      }
+
+      if (options.style) {
+        button.style = options.style
+      }
+
+      return button
     }
   </script>
 </body>
