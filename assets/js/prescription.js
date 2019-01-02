@@ -1507,7 +1507,7 @@ function buildResonForSwitchinPopup() {
   var switching_reasons = [
     'Policy change','High pill burden','Drug drug interaction',
     'Difficult to swallow','Not recommended fro pregnant women',
-    'Side effects','Weight Change','Other'
+    'Side effects','Failure','Weight Change','Other'
   ];
 
   var switchingTable = document.createElement('div');
