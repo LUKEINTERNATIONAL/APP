@@ -1500,7 +1500,7 @@ function buildResonForSwitchinPopup() {
   
   var switchingTableTitle = document.createElement('div');
   switchingTableTitle.setAttribute('id','switching-table-caption');
-  switchingTableTitle.innerHTML = "Reason for switching regimen"
+  switchingTableTitle.innerHTML = "Reason for changing regimen"
   popBox.appendChild(switchingTableTitle);
 
 
