@@ -3,6 +3,24 @@ body {
   color: black;
 }
 
+.pretty-regimen-one {
+  border-style: solid;
+  border-width: 0px 1px 0px 0px;
+  text-align: center;
+  width: 35px;
+  font-weight: bold;
+}
+
+.pretty-regimen-two {
+  border-style: solid;
+  border-width: 0px 0px 0px 0px;
+  text-align: center;
+}
+
+.pretty-regimen-display {
+  width: 100%;
+}
+
 .regimen-container {
   display: table;
   width: 100%;
