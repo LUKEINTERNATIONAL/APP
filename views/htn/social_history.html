@@ -98,6 +98,63 @@
             }
         }
 
+        function changeFinishButton(){
+            __$('nextButton').onmousedown = function(){
+                submitSocialHistoryEncounter();
+            }
+        }
+
+        function submitSocialHistoryEncounter() {
+            var currentTime = moment().format(' HH:mm:ss');
+            var encounter_datetime = moment(sessionStorage.sessionDate).format('YYYY-MM-DD');
+            encounter_datetime += currentTime;
+
+            var encounter = {
+                encounter_type_name: 'SOCIAL HISTORY',
+                encounter_type_id:  84,
+                patient_id: sessionStorage.patientID,
+                encounter_datetime: encounter_datetime
+            }
+
+            submitParameters(encounter, "/encounters", "postSocialHistoryObs");
+
+        }
+
+        function postSocialHistoryObs(encounter) {
+
+            var obs = {
+                encounter_id: encounter["encounter_id"],
+                observations: [
+                    { concept_id: smoking_history_concept_id, value_coded: getYesNoConceptId(answers_hash["smokingHistory"])},
+                    { concept_id: number_of_cigarettes_smoked_per_day_concept_id, value_numeric: answers_hash["numberOfCigarettes"]},
+                    { concept_id: smoking_duration_concept_id, value_text: answers_hash["smokingDuration"]},
+                    { concept_id: current_smoker_concept_id, value_coded: getYesNoConceptId(answers_hash["currentSmoker"]) },
+                    { concept_id: does_the_patient_drink_alcohol_concept_id, value_coded: getYesNoConceptId(answers_hash["alcoholHistory"])},
+                    { concept_id: alcoholic_drinks_per_day, value_numeric: answers_hash["numberOfDrinks"] },
+                    { concept_id: number_of_days_per_week_alcohol_is_used_concept_id, value_numeric: answers_hash["daysAlcoholUsed"]},
+                    { concept_id: physical_exercises_concept_id, value_coded: getYesNoConceptId(answers_hash["physicalExercises"])},
+                    { concept_id: type_of_employment_concept_id, value_text: answers_hash["employmentType"]}
+                ]
+            };
+
+            submitParameters(obs, "/observations", "nextPage")
+        }
+
+        function getYesNoConceptId(value){
+            value = value.toLowerCase();
+            hash = {
+                "": "",
+                "yes": "1065",
+                "no": "1066"
+            }
+
+            return hash[value]
+        }
+
+        function nextPage(){
+            nextEncounter(sessionStorage.patientID, 1);
+        }
+
     </script>
 
     <style type="text/css">
@@ -124,9 +181,6 @@
     <div id="content">
 
         <form>
-            <input id="encounter_encounter_type_name" name="encounter[encounter_type_name]" type="hidden"
-                   value="SOCIAL HISTORY"/>
-
             <select allowFreeText="false" helpText="Have you ever smoked cigarettes?" id="smokingHistory"
                     tt_onLoad="setNextButtonToGetInputValue('smokingHistory');"
                     name="observations[][value_coded_or_text]" tt_pageStyleClass="NoKeyboard">
@@ -196,7 +250,7 @@
             </select>
 
             <input helpText="Summary" id="showSummary" name="showSummary" optional="true"
-                   tt_onLoad="showSummary();  $('clearButton').style.display = 'none'; "
+                   tt_onLoad="showSummary();  $('clearButton').style.display = 'none'; changeFinishButton(); "
                    tt_onUnLoad=" $('clearButton').style.display = 'inline';" type="text"/>
         </form>
 
