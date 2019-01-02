@@ -25,6 +25,7 @@
                 ['smokingDuration', "Smoking Duration : <b>"],
                 ['currentSmoker', "Current Smokes : <b>"]
             ];
+
             var alcoholConditions = [
                 ['numberOfDrinks', "Number of drinks per day : <b>"],
                 ['daysAlcoholUsed', "Number of days patient drinks : <b>"]
@@ -77,6 +78,26 @@
         var physical_exercises_concept_id = 9238;
         var type_of_employment_concept_id = 9173;
 
+        var answers_hash = {
+            "smokingHistory": "",
+            "numberOfCigarettes": "",
+            "smokingDuration": "",
+            "currentSmoker": "",
+            "alcoholHistory": "",
+            "numberOfDrinks": "",
+            "daysAlcoholUsed": "",
+            "physicalExercises": "",
+            "employmentType": ""
+        }
+
+        function setNextButtonToGetInputValue(key){
+            __$('nextButton').onmousedown = function(){
+                var value = __$('touchscreenInput' + tstCurrentPage).value;
+                answers_hash[key] = value;
+                gotoNextPage();
+            }
+        }
+
     </script>
 
     <style type="text/css">
@@ -107,6 +128,7 @@
                    value="SOCIAL HISTORY"/>
 
             <select allowFreeText="false" helpText="Have you ever smoked cigarettes?" id="smokingHistory"
+                    tt_onLoad="setNextButtonToGetInputValue('smokingHistory');"
                     name="observations[][value_coded_or_text]" tt_pageStyleClass="NoKeyboard">
                 <option value=''></option>
                 <option value=""></option>
@@ -116,11 +138,13 @@
 
             <input absoluteMax="90" absoluteMin="1" allowFreeText="true" condition="$('smokingHistory').value == 'YES'"
                    field_type="number" helpText="Number of cigarettes smoked per day?" id="numberOfCigarettes"
+                   tt_onLoad="setNextButtonToGetInputValue('numberOfCigarettes');"
                    name="observations[][value_text]" tt_pageStyleClass="Keyboard Numeric NumbersOnly" type="text"
                    validationMessage="You must enter numbers only" validationRule="^([1-9]+)|Unknown$"/>
 
             <select allowFreeText="false" condition="$('smokingHistory').value == 'YES'"
                     helpText="How long Have been smoking?" id="smokingDuration"
+                    tt_onLoad="setNextButtonToGetInputValue('smokingDuration');"
                     name="observations[][value_coded_or_text]" tt_pageStyleClass="NoKeyboard">
                 <option value=''></option>
                 <option value="Less than five years">Less than five years</option>
@@ -128,6 +152,7 @@
             </select>
 
             <select allowFreeText="false" condition="$('smokingHistory').value == 'YES'" helpText="Do you still smoke?"
+                    tt_onLoad="setNextButtonToGetInputValue('currentSmoker');"
                     id="currentSmoker" name="observations[][value_coded_or_text]" tt_pageStyleClass="NoKeyboard">
                 <option value=""></option>
                 <option value="YES">Yes</option>
@@ -135,6 +160,7 @@
             </select>
 
             <select allowFreeText="false" helpText="Do you drink alcohol?" id="alcoholHistory"
+                    tt_onLoad="setNextButtonToGetInputValue('alcoholHistory');"
                     name="observations[][value_coded_or_text]" tt_pageStyleClass="NoKeyboard">
                 <option value=""></option>
                 <option value="YES">Yes</option>
@@ -144,14 +170,17 @@
             <input allowFreeText="true" condition="$('alcoholHistory').value == 'YES'" field_type="number"
                    helpText="How many alcoholic drinks do you have per day?" id="numberOfDrinks"
                    name="observations[][value_text]" tt_pageStyleClass="Numeric NumbersOnly" type="text"
+                   tt_onLoad="setNextButtonToGetInputValue('numberOfDrinks');"
                    validationMessage="You must enter numbers only" validationRule="^([0-9]+)|Unknown$"/>
 
             <input absoluteMax="7" absoluteMin="1" allowFreeText="true" condition="$('alcoholHistory').value == 'YES'"
                    field_type="number" helpText="Number of days per week alcohol is used?" id="daysAlcoholUsed"
                    name="observations[][value_text]" tt_pageStyleClass="Numeric NumbersOnly" type="text"
+                   tt_onLoad="setNextButtonToGetInputValue('daysAlcoholUsed');"
                    validationMessage="You must enter numbers only" validationRule="^([0-9]+)|Unknown$"/>
 
             <select allowFreeText="false" helpText="Do you do any physical exercises?" id="physicalExercises"
+                    tt_onLoad="setNextButtonToGetInputValue('physicalExercises');"
                     name="observations[][value_coded_or_text]" tt_pageStyleClass="NoKeyboard">
                 <option value=""></option>
                 <option value="YES">Yes</option>
@@ -159,6 +188,7 @@
             </select>
 
             <select allowFreeText="false" helpText="Type of employment?" id="employmentType"
+                    tt_onLoad="setNextButtonToGetInputValue('employmentType');"
                     name="observations[][value_coded_or_text]" tt_pageStyleClass="NoKeyboard">
                 <option value=''></option>
                 <option value="Active">Active</option>
@@ -169,7 +199,7 @@
                    tt_onLoad="showSummary();  $('clearButton').style.display = 'none'; "
                    tt_onUnLoad=" $('clearButton').style.display = 'inline';" type="text"/>
         </form>
-        
+
     </div>
 </div>
 </body>
