@@ -1,6 +1,5 @@
 <script type="text/javascript" src="/assets/js/jquery.min.js"></script>
 <script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js" defer="true"></script>
-<script type="text/javascript" src="/assets/js/generic_ajaxrequest.js"></script>
 <script type="text/javascript" src="/assets/js/moment.js"></script>
 
 <style>
@@ -165,10 +164,7 @@
           },
           { filing_number: event.id },
           (data) => {
-            showMessage('The patient\'s filing number was successfully reassigned.')
-            setTimeout(() => {
-              nextEncounter(sessionStorage.patientID, 1, true)
-            }, 3000)
+            redirectToUrl(`/apps/ART/views/assigned_patient_file_number.html?old=${data.archived_identifier.identifier}&new=${data.new_identifier.identifier}`);
           },
           (error) => {
             console.error(error)
@@ -185,7 +181,7 @@
     }
 
     function fetchFileNumber (patientId) {
-      POST(
+      POST (
         {
           url: `${apiUrl}/patients/${patientId}/filing_number`,
           async: true,
@@ -199,7 +195,10 @@
           if (status === 201) {
             createPatientFilingNumber(patientId, data.new_identifier.identifier)
           } else {
-            fetchArchivingCandidates()
+            showMessage('No available active file numbers. Please archive a dormant one from the following list.')
+            setTimeout(() => {
+              fetchArchivingCandidates()
+            }, 3000)
           }
         },
         (error) => {
@@ -210,11 +209,11 @@
     }
 
     function redirectToUrl (url) {
-      window.location = url
+      document.location = url
     }
 
     function createPatientFilingNumber (patientId, filingNumber) {
-      POST(
+      POST (
         {
           url: `${apiUrl}/patients/${patientId}/filing_number`,
           async: true,
@@ -225,10 +224,7 @@
         },
         { filing_number: filingNumber },
         (data) => {
-          showMessage('The patient\'s filing number was successfully assigned.')
-          setTimeout(() => {
-            nextEncounter(sessionStorage.patientID, 1, true)
-          }, 3000)
+          redirectToUrl("/apps/ART/views/assigned_patient_file_number.html?new=" + data.new_identifier.identifier);
         },
         (error) => {
           console.error(error)
