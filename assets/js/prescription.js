@@ -1530,14 +1530,14 @@ function buildResonForSwitchinPopup() {
   
   var switchingTableTitle = document.createElement('div');
   switchingTableTitle.setAttribute('id','switching-table-caption');
-  switchingTableTitle.innerHTML = "Reason for switching regimen"
+  switchingTableTitle.innerHTML = "Reason for changing regimen"
   popBox.appendChild(switchingTableTitle);
 
 
   var switching_reasons = [
     'Policy change','High pill burden','Drug drug interaction',
-    'Difficult to swallow','Not recommended fro pregnant women',
-    'Side effects','Weight Change','Other'
+    'Difficult to swallow','Not recommended for pregnant women',
+    'Side effects','Failure','Weight Change','Other'
   ];
 
   var res = switching_reasons;
@@ -1718,7 +1718,7 @@ function buildSuggestion() {
   initiationBox.appendChild(initiationBoxRow);
 
   var initiationBoxCell = document.createElement('div');
-  var text = '<b style="color: green;">Use hanging pills to calculate next appoint date?</b> ';
+  var text = '<b style="color: green;">Add hanging pills?</b> ';
   initiationBoxCell.setAttribute('class','initiationBoxCell');
   initiationBoxCell.innerHTML = text;
   
