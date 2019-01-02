@@ -109,7 +109,9 @@
     }
 
     function createFileNumberElement (fileData) {
-      return `<div class='activeFileNumber' onclick='archiveFileNumber(this, ${fetchArgumentFromUrlString("patient_id")})' id=${fileData.identifier}>
+      return `<div class='activeFileNumber' 
+        onclick='promptToArchiveFileNumber(this, ${fetchArgumentFromUrlString("patient_id")})' 
+        id=${fileData.identifier} ${fileData.family_name}'>
         <h3>${fileData.given_name} ${fileData.family_name}</h3>
         <hr width='100%'/>
         <p>
@@ -149,29 +151,36 @@
       )
     }
 
-    function archiveFileNumber (event, patientId) {
-      const response = confirm(`Are you sure you want to archive the patient with file number ${event.id}?`)
+    function promptToArchiveFileNumber (event, patientId) {
+      showPrompt (
+        `Are you sure want to archive the patient with file number ${event.id}?`,
+        () => {
+          removePrompt(),
+          archiveFileNumber(event, patientId)
+        },
+        removePrompt
+      )
+    }
 
-      if (response) {
-        POST (
-          {
-            url: `${apiUrl}/patients/${patientId}/filing_number`,
-            async: true,
-            headers: {
-              'Authorization': sessionStorage.getItem('authorization'),
-              'Content-Type': 'application/x-www-form-urlencoded'
-            }
-          },
-          { filing_number: event.id },
-          (data) => {
-            redirectToUrl(`/apps/ART/views/assigned_patient_file_number.html?old=${data.archived_identifier.identifier}&new=${data.new_identifier.identifier}`);
-          },
-          (error) => {
-            console.error(error)
-            showMessage('There was a problem reassigning the file number.')
+    function archiveFileNumber (event, patientId) {
+      POST (
+        {
+          url: `${apiUrl}/patients/${patientId}/filing_number`,
+          async: true,
+          headers: {
+            'Authorization': sessionStorage.getItem('authorization'),
+            'Content-Type': 'application/x-www-form-urlencoded'
           }
-        )
-      }
+        },
+        { filing_number: event.id },
+        (data) => {
+          redirectToUrl(`/apps/ART/views/assigned_patient_file_number.html?old=${data.archived_identifier.identifier}&new=${data.new_identifier.identifier}`);
+        },
+        (error) => {
+          console.error(error)
+          showMessage('There was a problem reassigning the file number.')
+        }
+      )
     }
 
     function fetchArgumentFromUrlString (argumentName, url = location.href) {
@@ -318,6 +327,72 @@
         return
       }
       paginationPage = paginationPage - 1
+    }
+
+    function showPrompt (message, yesCallback, noCallback) {
+      document.body.appendChild(createScreenOverlay('black', .8))
+
+      const prompt = document.createElement('div')
+      prompt.setAttribute('id', 'dankPrompt')
+      prompt.style = `
+        background-color: white;
+        font-size: 1.5em;
+        font-family: Ubuntu;
+        position: fixed;
+        width: 50%;
+        height: auto;
+        top: 30%;
+        left: 25%;
+        padding: 2%;
+        border-radius: 4px; 
+        z-index: 9000;`
+      
+      const promptMessage = document.createElement('h3')
+      promptMessage.innerText = message
+      promptMessage.innerHTML += '<hr />'
+      prompt.appendChild(promptMessage)
+      
+      const yes = document.createElement('button')
+      yes.innerHTML = '<span>Yes</span>'
+      yes.addEventListener('click', yesCallback)
+      yes.style = `
+        color: white;
+        float: left;
+      `
+      prompt.appendChild(yes)
+
+      const no = document.createElement('button')
+      no.innerHTML = '<span>No</span>'
+      no.addEventListener('click', noCallback)
+      no.style = `
+        color: white;
+        float: right;
+      `
+      prompt.appendChild(no)
+      
+      document.body.appendChild(prompt)
+    }
+
+    function createScreenOverlay (color, opacity) {
+      const overlay = document.createElement('div')
+      overlay.setAttribute('id', 'dankOverlay')
+      overlay.style = `
+        background-color: ${color};
+        opacity: ${opacity};
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 9000;`
+      return overlay
+    }
+
+    function removePrompt () {
+      document.body.removeChild(document.getElementById('dankOverlay'))
+      document.body.removeChild(document.getElementById('dankPrompt'))
     }
   </script>
 </body>
