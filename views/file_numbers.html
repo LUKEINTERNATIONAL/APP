@@ -153,12 +153,11 @@
 
     function promptToArchiveFileNumber (event, patientId) {
       showPrompt (
-        `Are you sure want to archive the patient with file number ${event.id}?`,
-        () => {
-          removePrompt(),
-          archiveFileNumber(event, patientId)
-        },
-        removePrompt
+        {
+          message: `Are you sure want to archive the patient with file number ${event.id}?`,
+          yesCallback: () => { removePrompt(); archiveFileNumber(event, patientId)},
+          noCallback: removePrompt
+        }
       )
     }
 
@@ -201,7 +200,7 @@
         },
         {},
         (data, status) => {
-          if (status === 208) {
+          if (status === 201) {
             createPatientFilingNumber(patientId, data.new_identifier.identifier)
           } else {
             showMessage('No available active file numbers. Please archive a dormant one from the following list.')
@@ -329,9 +328,7 @@
       paginationPage = paginationPage - 1
     }
 
-    function showPrompt (message, yesCallback, noCallback) {
-      document.body.appendChild(createScreenOverlay({ color: 'black', opacity: .8}))
-
+    function showPrompt (options = {}) {
       const prompt = document.createElement('div')
       prompt.setAttribute('id', 'dankPrompt')
       prompt.style = `
@@ -348,14 +345,14 @@
         z-index: 9000;`
       
       const promptMessage = document.createElement('h3')
-      promptMessage.innerText = message
+      promptMessage.innerText = options.message
       promptMessage.innerHTML += '<hr />'
       prompt.appendChild(promptMessage)
 
       prompt.appendChild(createToolkitButton({
         text: 'Yes',
         listeners: [
-          { event: 'click', handler: yesCallback }
+          { event: 'click', handler: options.yesCallback }
         ],
         style: 'color: white; float: left'
       }))
@@ -363,15 +360,16 @@
       prompt.appendChild(createToolkitButton({
         text: 'No',
         listeners: [
-          { event: 'click', handler: noCallback }
+          { event: 'click', handler: options.noCallback }
         ],
         style: 'color: white; float: right'
       }))
       
+      document.body.appendChild(createScreenOverlay({ color: 'black', opacity: .8}))
       document.body.appendChild(prompt)
     }
 
-    function createScreenOverlay (options) {
+    function createScreenOverlay (options = {}) {
       const overlay = document.createElement('div')
       overlay.setAttribute('id', 'dankOverlay')
       overlay.style = `
@@ -393,7 +391,7 @@
       document.body.removeChild(document.getElementById('dankPrompt'))
     }
 
-    function createToolkitButton (options) {
+    function createToolkitButton (options = {}) {
       const button = document.createElement('button')
       button.innerHTML += `<span>${options.text}</span>`
 
