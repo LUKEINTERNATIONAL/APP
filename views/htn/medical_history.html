@@ -1,5 +1,5 @@
-
-<script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js" defer="true"></script>
+<script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js"
+        defer="true"></script>
 <script type="text/javascript" src="/assets/js/jquery.min.js"></script>
 
 <script type="text/javascript" src="/assets/js/yes_no_ctrls.js"></script>
@@ -15,6 +15,149 @@
     var apiPort = sessionStorage.apiPort;
     var patientID = sessionStorage.patientID;
 
+    var diabetes_concept_id = 3720;
+    var chronic_kidney_disease_concept_id = 7623;
+    var past_history_of_ihd_or_cvd_concept_id = 9499;
+    var first_degree_relative_with_ihd_or_cvd_concept_id = 9501;
+    var patiently_currently_smokes_concept_id = 3339;
+
+    var yes_concept_id = 1065;
+
+    var diabetes_risk_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+    diabetes_risk_url += "/api/v1/observations?person_id=" + sessionStorage.patientID;
+    diabetes_risk_url += "&concept_id=" + diabetes_concept_id;
+    diabetes_risk_url += "&value_coded=" + yes_concept_id;
+
+    var chronic_kidney_disease_risk_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+    chronic_kidney_disease_risk_url += "/api/v1/observations?person_id=" + sessionStorage.patientID;
+    chronic_kidney_disease_risk_url += "&concept_id=" + chronic_kidney_disease_concept_id;
+    chronic_kidney_disease_risk_url += "&value_coded=" + yes_concept_id;
+
+    var past_history_of_ihd_or_cvd_risk_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+    past_history_of_ihd_or_cvd_risk_url += "/api/v1/observations?person_id=" + sessionStorage.patientID;
+    past_history_of_ihd_or_cvd_risk_url += "&concept_id=" + past_history_of_ihd_or_cvd_concept_id;
+    past_history_of_ihd_or_cvd_risk_url += "&value_coded=" + yes_concept_id;
+
+    var first_degree_relative_with_ihd_or_cvd_risk_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+    first_degree_relative_with_ihd_or_cvd_risk_url += "/api/v1/observations?person_id=" + sessionStorage.patientID;
+    first_degree_relative_with_ihd_or_cvd_risk_url += "&concept_id=" + first_degree_relative_with_ihd_or_cvd_concept_id;
+    first_degree_relative_with_ihd_or_cvd_risk_url += "&value_coded=" + yes_concept_id;
+
+    var patiently_currently_smokes_risk_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+    patiently_currently_smokes_risk_url += "/api/v1/observations?person_id=" + sessionStorage.patientID;
+    patiently_currently_smokes_risk_url += "&concept_id=" + patiently_currently_smokes_concept_id;
+    patiently_currently_smokes_risk_url += "&value_coded=" + yes_concept_id;
+
+    var risk_factors = [];
+
+    function getRiskFactors() {
+        var xhttp1 = new XMLHttpRequest();
+        xhttp1.onreadystatechange = function () {
+            if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                var observations = JSON.parse(this.responseText);
+                if (observations.length > 0) {
+                    risk_factors.push("Diabetes");
+                }
+
+                var xhttp2 = new XMLHttpRequest();
+                xhttp2.onreadystatechange = function () {
+                    if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                        var observations = JSON.parse(this.responseText);
+                        if (observations.length > 0) {
+                            risk_factors.push("Chronic kidney disease");
+                        }
+
+                        var xhttp3 = new XMLHttpRequest();
+                        xhttp3.onreadystatechange = function () {
+                            if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                                var observations = JSON.parse(this.responseText);
+                                if (observations.length > 0) {
+                                    risk_factors.push("Past history of IHD or CVD");
+                                }
+
+                                var xhttp4 = new XMLHttpRequest();
+                                xhttp4.onreadystatechange = function () {
+                                    if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                                        var observations = JSON.parse(this.responseText);
+                                        if (observations.length > 0) {
+                                            risk_factors.push("First degree relative with IHD or CVD <65");
+                                        }
+
+                                        var xhttp5 = new XMLHttpRequest();
+                                        xhttp5.onreadystatechange = function () {
+                                            if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                                                var observations = JSON.parse(this.responseText);
+                                                if (observations.length > 0) {
+                                                    risk_factors.push("Patient currently smokes");
+                                                }
+                                                risk_factors = risk_factors.unique();
+                                                SelectRiskFactors(risk_factors);
+                                            }
+                                        };
+
+                                        xhttp5.open("GET", patiently_currently_smokes_risk_url, true);
+                                        xhttp5.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                                        xhttp5.setRequestHeader('Content-type', "application/json");
+                                        xhttp5.send();
+                                    }
+
+                                };
+
+                                xhttp4.open("GET", first_degree_relative_with_ihd_or_cvd_risk_url, true);
+                                xhttp4.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                                xhttp4.setRequestHeader('Content-type', "application/json");
+                                xhttp4.send();
+                            }
+                        };
+
+                        xhttp3.open("GET", past_history_of_ihd_or_cvd_risk_url, true);
+                        xhttp3.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                        xhttp3.setRequestHeader('Content-type', "application/json");
+                        xhttp3.send();
+
+                    }
+
+                };
+
+                xhttp2.open("GET", chronic_kidney_disease_risk_url, true);
+                xhttp2.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                xhttp2.setRequestHeader('Content-type', "application/json");
+                xhttp2.send();
+
+            }
+
+
+        };
+
+        xhttp1.open("GET", diabetes_risk_url, true);
+        xhttp1.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+        xhttp1.setRequestHeader('Content-type', "application/json");
+        xhttp1.send();
+    }
+
+    function SelectRiskFactors(risk_factors) {
+        for (var i = 0; i <= risk_factors.length - 1; i++) {
+            try {
+                var risk_factor_option_input = jQuery("li[tstvalue='" + risk_factors[i] + "']")[0];
+                var risk_factor_option_id = risk_factor_option_input.id;
+                var risk_factor_input = document.getElementById('optionValue' + risk_factor_option_id);
+                updateTouchscreenInputForSelect(risk_factor_input);
+            } catch (e) {
+                showMessage("There was an error selecting conditions previously selected")
+            }
+        }
+    }
+
+    Array.prototype.unique = function () {
+        var arr = [];
+        for (var i = 0; i < this.length; i++) {
+            if (!arr.includes(this[i])) {
+                arr.push(this[i]);
+            }
+        }
+        return arr;
+    }
+
     function submitMedicalHistoryEncounter() {
         var currentTime = moment().format(' HH:mm:ss');
         var encounter_datetime = moment(sessionStorage.sessionDate).format('YYYY-MM-DD');
@@ -22,7 +165,7 @@
 
         var encounter = {
             encounter_type_name: 'MEDICAL HISTORY',
-            encounter_type_id:  30,
+            encounter_type_id: 30,
             patient_id: patientID,
             encounter_datetime: encounter_datetime
         }
@@ -44,11 +187,20 @@
         var obs = {
             encounter_id: encounter["encounter_id"],
             observations: [
-                { concept_id: diabetes_concept_id, value_coded: answers_hash["diabetes"]},
-                { concept_id: chronic_kidney_disease_concept_id, value_coded: answers_hash["chronic_kidney_disease"]},
-                { concept_id: past_history_of_ihd_or_cvd_concept_id, value_coded: answers_hash["past_history_of_ihd_or_cvd"]},
-                { concept_id: first_degree_relative_with_ihd_or_cvd_concept_id, value_coded: answers_hash["first_degree_relative_with_ihd_or_cvd"]},
-                { concept_id: patiently_currently_smokes_concept_id, value_coded: answers_hash["patiently_currently_smokes"]}
+                {concept_id: diabetes_concept_id, value_coded: answers_hash["diabetes"]},
+                {concept_id: chronic_kidney_disease_concept_id, value_coded: answers_hash["chronic_kidney_disease"]},
+                {
+                    concept_id: past_history_of_ihd_or_cvd_concept_id,
+                    value_coded: answers_hash["past_history_of_ihd_or_cvd"]
+                },
+                {
+                    concept_id: first_degree_relative_with_ihd_or_cvd_concept_id,
+                    value_coded: answers_hash["first_degree_relative_with_ihd_or_cvd"]
+                },
+                {
+                    concept_id: patiently_currently_smokes_concept_id,
+                    value_coded: answers_hash["patiently_currently_smokes"]
+                }
             ]
         };
 
@@ -64,26 +216,26 @@
     }
 
     function changeSubmitButton() {
-        __$('nextButton').onmousedown = function(){
+        __$('nextButton').onmousedown = function () {
             var splitted_values = __$('touchscreenInput' + tstCurrentPage).value.split(";");
-            for (var i=0; i<=splitted_values.length - 1; i++){
-                if (splitted_values[i].match(/DIABETES/i)){
+            for (var i = 0; i <= splitted_values.length - 1; i++) {
+                if (splitted_values[i].match(/DIABETES/i)) {
                     answers_hash["diabetes"] = yes_concept_id;
                 }
 
-                if (splitted_values[i].match(/Chronic kidney disease/i)){
+                if (splitted_values[i].match(/Chronic kidney disease/i)) {
                     answers_hash["chronic_kidney_disease"] = yes_concept_id;
                 }
 
-                if (splitted_values[i].match(/Past history of IHD or CVD/i)){
+                if (splitted_values[i].match(/Past history of IHD or CVD/i)) {
                     answers_hash["past_history_of_ihd_or_cvd"] = yes_concept_id;
                 }
 
-                if (splitted_values[i].match(/First degree relative with IHD or CVD <65/i)){
+                if (splitted_values[i].match(/First degree relative with IHD or CVD <65/i)) {
                     answers_hash["first_degree_relative_with_ihd_or_cvd"] = yes_concept_id;
                 }
 
-                if (splitted_values[i].match(/Patient currently smokes/i)){
+                if (splitted_values[i].match(/Patient currently smokes/i)) {
                     answers_hash["patiently_currently_smokes"] = yes_concept_id;
                 }
             }
@@ -92,7 +244,7 @@
         }
     }
 
-    function nextPage(){
+    function nextPage() {
         nextEncounter(sessionStorage.patientID, 1);
     }
 
@@ -103,13 +255,17 @@
 <div id="container">
     <div id="content">
         <form>
-            <select name="riskFactor[]" id="riskFactors" field_type="text" helpText="Does patient have any of these conditions?" multiple="multiple"
-                    tt_onLoad="changeSubmitButton();" tt_pageStyleClass="MultiSelectList" optional="true">
+            <select name="riskFactor[]" id="riskFactors" field_type="text"
+                    helpText="Does patient have any of these conditions?" multiple="multiple"
+                    tt_onLoad="changeSubmitButton(); getRiskFactors();" tt_pageStyleClass="MultiSelectList"
+                    optional="true">
                 <option value="Diabetes">Diabetes</option>
                 <option value="Chronic kidney disease">Chronic kidney disease</option>
                 <option value="Past history of IHD or CVD">Past history of IHD or CVD</option>
-                <option value="First degree relative with IHD or CVD <65">First degree relative with IHD or CVD <65</option>
-                <option value="Patient currently smokes">Patient currently smokes</option></select>
+                <option value="First degree relative with IHD or CVD <65">First degree relative with IHD or CVD <65
+                </option>
+                <option value="Patient currently smokes">Patient currently smokes</option>
+            </select>
 
         </form>
 
