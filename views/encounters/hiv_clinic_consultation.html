@@ -1847,7 +1847,13 @@
                           if(data.ps != null) {   
                             obs.observations.push({
                               concept_id: 9661, 
+                              value_coded: side_effect_concept_id
+                            });
+                          }else if(data.pre_exisiting != null) {   
+                            obs.observations.push({
+                              concept_id: 7567, 
                               value_coded: side_effect_concept_id,
+                              value_text: 'Past medication history'
                             });
                           }else{
                             var meds = data.drug_ids;
