@@ -32,18 +32,15 @@
         <link rel="stylesheet" href="/apps/ART/assets/css/generic-keyboard.css" type="text/css">
         <script type="text/javascript" src="/apps/ART/assets/js/cd4_kbd.js"></script>
         
-
-        <!-- <link rel="stylesheet" href="/apps/ART/assets/css/hiv_clinical_consultation_labs.css" type="text/css" /> -->
-        <!-- <script type="text/javascript" src="/apps/ART/assets/js/hiv_clinical_consultation_labs.js"></script> -->
-        <script type="text/javascript" src="/assets/js/order_entry.js"></script>        
+               
         <script type="text/javascript" src="/apps/ART/assets/js/drug_induced_side_effect_check.js"></script>        
-
-        <!--link rel="stylesheet" href="/assets/css/datatables/uikit.min.css" type="text/css">
-        <link rel="stylesheet" href="/assets/css/datatables/dataTables.uikit.min.css" type="text/css"-->
 
         <link rel="stylesheet" href="/assets/css/datatables/fixedHeader.dataTables.min.css" type="text/css">
         <link rel="stylesheet" href="/assets/css/datatables/scroller.dataTables.min.css" type="text/css">
 
+        <link rel="stylesheet" href="/assets/css/lab.min.css" type="text/css">
+        <script type="text/javascript" src="/assets/js/lab.min.js"></script> 
+       
         <script type="text/javascript" src="/assets/js/datatables/jquery.dataTables.min.js"></script>
         <script type="text/javascript" src="/assets/js/datatables/dataTables.fixedHeader.min.js"></script>
         <script type="text/javascript" src="/apps/ART/assets/js/generic-keyboard.js"></script>
@@ -2179,8 +2176,8 @@
   
 
                     <input type="text" name="lab-summary"
-                           tt_onLoad="__$('keyboard').style.display = 'none'; buildOrderEntry();"
-                           tt_pageStyleClass= "NoControls" helpText="Lab results" optional = "true"/>
+                           tt_onLoad="__$('keyboard').style.display = 'none'; buildLabOrderDisplay();"
+                           tt_pageStyleClass= "NoControls" helpText="Lab orders" optional = "true"/>
 
                     <!-- input type="text" name="iac" condition="iac == true"
                     tt_onLoad="__$('keyboard').style.display = 'none';addIACYesNo();"

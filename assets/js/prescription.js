@@ -1530,7 +1530,7 @@ function buildResonForSwitchinPopup() {
   
   var switchingTableTitle = document.createElement('div');
   switchingTableTitle.setAttribute('id','switching-table-caption');
-  switchingTableTitle.innerHTML = "Reason for changing regimen"
+  switchingTableTitle.innerHTML = "Main reason for regimen change"
   popBox.appendChild(switchingTableTitle);
 
 
@@ -1573,7 +1573,7 @@ function buildResonForSwitchinPopup() {
   buttonContainerRow.setAttribute('class','buttonContainerRow');
   buttonContainer.appendChild(buttonContainerRow);
 
-  var cells = ['Cancel','Switch'];
+  var cells = ['Keep previous','Change'];
 
   for(var i = 0 ; i < cells.length ; i++){
     var buttonContainerCell = document.createElement('div');
