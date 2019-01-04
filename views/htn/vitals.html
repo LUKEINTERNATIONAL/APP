@@ -1,0 +1,356 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html;charset=UTF-8"/>
+    <script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js"
+            defer="true"></script>
+    <script type="text/javascript" src="/assets/js/jquery.min.js"></script>
+
+    <script type="text/javascript" src="/assets/js/yes_no_ctrls.js"></script>
+    <link rel="stylesheet" href="/assets/css/yes_no_ctrls.css" type="text/css"/>
+    <script type="text/javascript" src="/assets/js/post_parameters.js"></script>
+    <script type="text/javascript" src="/assets/js/generic_ajaxrequest.js"></script>
+    <script type="text/javascript" src="/assets/js/moment.js"></script>
+    <script>
+        var tt_cancel_destination = "";
+        var apiProtocol = sessionStorage.apiProtocol;
+        var apiURL = sessionStorage.apiURL;
+        var apiPort = sessionStorage.apiPort;
+        var patientID = sessionStorage.patientID;
+
+        jQuery.noConflict();
+        var currentHeight = "";
+        var displayText;
+        var bpOverRide;
+
+        bpOverRide = false;
+
+        function $(e) {
+            return document.getElementById(e);
+        }
+
+        function showSummary() {
+            jQuery('#keyboard').empty();
+            displayText = "";
+            var sbp = document.getElementById("systolic_blood_pressure").value
+            var dbp = document.getElementById("diastolic_blood_pressure").value
+
+            displayText += "<div><span class='title'>Weight (Kg) :</span>" + __$('weight').value + "<br/>";
+            displayText += "<div><span class='title'>Height (cm) :</span>" + currentHeight + "<br/>";
+            displayText += "<div><span class='title'>BMI :</span>";
+            displayText += "</div>"
+
+            if ((parseInt(sbp) > 0) && (parseInt(dbp) > 0)) {
+
+                displayText += "<div><span class='title'>BP Reading:</span><span class='lowBMIcounselling'>" + sbp + "/" +
+                    dbp + "</span><span class='recommendation'>Patient's blood pressure is high</span><br/>";
+            }
+            else {
+                if (sbp != "") {
+                    displayText += "<div><span class='title'>BP:</span>" + sbp + "/" + dbp + "<br/>";
+                }
+
+            }
+
+
+            document.getElementById('inputFrame' + tstCurrentPage).innerHTML = '<div id="summary">' + displayText + '</div>';
+        }
+
+
+        function hookKeyboard() {
+
+            __$("nextButton").onclick = function () {
+                __$('keyboard').style.display = "block";
+            }
+            __$("backButton").onclick = function () {
+                __$('keyboard').style.display = "block";
+
+            }
+        }
+
+        function captureBP() {
+            if (true && true && !bpOverRide) {
+                return true
+            }
+            else if (true && false && bpOverRide) {
+                return true
+            }
+            else {
+                return false
+            }
+
+        }
+
+        function toggleOverride() {
+            bpOverRide = (!bpOverRide);
+            document.getElementById("captureBPBtn").innerHTML = (document.getElementById("captureBPBtn").innerHTML == "<span>Capture BP</span>" ? "<span>BP Unavailable</span>" : "<span>Capture BP</span>");
+        }
+
+        function addButton() {
+            if ((true) && (false)) {
+                var bp = document.createElement("button");
+                bp.innerHTML = "<span>Capture BP</span>";
+                bp.setAttribute("onClick", "toggleOverride()");
+                bp.setAttribute("id", "captureBPBtn")
+                document.getElementById("buttons").appendChild(bp);
+            }
+            else if ((true) && (true)) {
+                var bp = document.createElement("button");
+                bp.innerHTML = "<span>BP Unavailable</span>";
+                bp.setAttribute("onClick", "toggleOverride()");
+                bp.setAttribute("id", "captureBPBtn")
+                document.getElementById("buttons").appendChild(bp);
+            }
+
+        }
+
+        function hideButton() {
+            if (true) {
+                document.getElementById("captureBPBtn").style.display = 'none'
+            }
+        }
+
+        function displayButton() {
+            if (true) {
+                document.getElementById("captureBPBtn").style.display = 'block'
+            }
+        }
+
+        //setTimeout("addButton()", 300)
+
+        function hasHighBp() {
+            var sbp = document.getElementById("systolic_blood_pressure").value
+            var dbp = document.getElementById("diastolic_blood_pressure").value
+
+            if ((parseInt(sbp) > 0) && (parseInt(dbp) > 0)) {
+                return true
+            }
+            else {
+                return false
+            }
+        }
+
+
+        function submitVitals() {
+            var currentTime = moment().format(' HH:mm:ss');
+            var encounter_datetime = moment(sessionStorage.sessionDate).format('YYYY-MM-DD');
+            encounter_datetime += currentTime;
+
+            var encounter = {
+                encounter_type_name: 'Vitals',
+                encounter_type_id: 6,
+                patient_id: sessionStorage.patientID,
+                encounter_datetime: encounter_datetime
+            }
+
+            submitParameters(encounter, "/encounters", "postVitalsObs");
+        }
+
+        var answers_hash = {
+            "weight": "",
+            "height": "",
+            "systollic": "",
+            "diastollic": "",
+            "treatment_status": ""
+        };
+
+        var weight_concept_id = 5089;
+        var height_concept_id = 5090;
+        var systollic_concept_id = 5085;
+        var diastollic_concept_id = 5086;
+        var treatment_status_concept_id = 1484;
+
+        function postVitalsObs(encounter) {
+
+            var obs = {
+                encounter_id: encounter.encounter_id,
+                observations: [
+                    {concept_id: weight_concept_id, value_numeric: answers_hash["weight"], value_modifier: "kg"},
+                    {concept_id: height_concept_id, value_numeric: answers_hash["height"], value_modifier: "cm"},
+                    {concept_id: systollic_concept_id, value_numeric: answers_hash["systollic"]},
+                    {concept_id: diastollic_concept_id, value_numeric: answers_hash["diastollic"]},
+                    {concept_id: treatment_status_concept_id, value_text: treatment_status}
+                ]
+            };
+
+            submitParameters(obs, "/observations", "nextPage");
+        }
+
+        function nextPage() {
+            nextEncounter(sessionStorage.patientID, 1);
+        }
+
+        function setNextButtonToGetInputValue(key) {
+            __$('nextButton').onmousedown = function () {
+                var value = __$('touchscreenInput' + tstCurrentPage).value;
+                answers_hash[key] = value;
+                gotoNextPage();
+            }
+        }
+
+        function changeSubmitButton() {
+            var treatment_status = "";
+            try {
+                treatment_status = __$("treatment_status").value
+                answers_hash["treatment_status"] = treatment_status;
+            } catch (e) {
+
+            }
+
+            __$('nextButton').onmousedown = function () {
+                submitVitals();
+            }
+        }
+
+    </script>
+
+    <style type="text/css">
+        #summary {
+            padding: 0px;
+            font-size: 1.2em;
+            margin-left: 25px;
+            height: 70vh;
+            max-height: 80vh;
+            overflow: hidden;
+
+        }
+
+        #charts {
+            position: absolute;
+            width: 95% ! important;
+            height: 60% ! important;
+        }
+
+        #char {
+            display: none;
+        }
+
+        .title {
+            text-decoration: underline;
+            margin-right: 10px;
+        }
+
+        .lowWeightForHeight {
+            color: black;
+            background: red;
+        }
+
+        .medWeightForHeight {
+            color: black;
+            background: yellow;
+        }
+
+        .lowBMI {
+            color: black;
+            background: red;
+        }
+
+        .lowBMIcounselling {
+            color: black;
+            background: orange;
+        }
+
+        .lowWeightForAge {
+            color: black;
+            background: red;
+        }
+
+        .medWeightForAge {
+            color: black;
+            background: yellow;
+        }
+
+        .goodWeightForAge {
+            color: black;
+        }
+
+        .lowHeightForAge {
+            color: black;
+            background: red;
+        }
+
+        .medHeightForAge {
+            color: black;
+            background: yellow;
+        }
+
+        .goodHeightForAge {
+            color: black;
+        }
+
+        #tt_page_summary .inputFrameClass {
+            height: 90%;
+        }
+
+        .inputFrameClass, .touchscreenTextInput, .keyboard, .inputPage {
+            width: 97.5%;
+        }
+
+        #qwerty {
+            display: none;
+        }
+
+        .unknownButton .numericKeyboard #char, #slash, #star, #plus, #date, #minus, #comma, #percent {
+            display: none;
+        }
+
+    </style>
+
+</head>
+<body id="mateme">
+<div id="container">
+    <div id="content">
+
+        <form action="">
+            <input absoluteMax="250" absoluteMin="0" field_type="number" helpText="Weight (Kg)" id="weight"
+                   name="weight"
+                   tt_onLoad="addButton(); $('clearButton').style.display = 'inline'; setNextButtonToGetInputValue('weight')"
+                   tt_pageStyleClass="Keyboard Numeric NumbersOnlyWithDecimal" type="text" units="kg"
+                   validationMessage="You must enter a decimal between 0 and 9 (for example: 54<b>.6</b>)"
+                   validationRule="([0-9]+\.[0-9])|Unknown$"/>
+
+            <select allowFreeText="false" helpText="Already taking drugs for blood pressure?"
+                    tt_onLoad="setNextButtonToGetInputValue('treatment_status')"
+                    id="treatment_status" name="transfer_in" tt_pageStyleClass="NoKeyboard">
+                <option value=''></option>
+                <option value="BP Drugs started">Yes</option>
+                <option value="Not on BP Drugs">No</option>
+            </select>
+
+
+            <input absoluteMax="228" absoluteMin="10" field_type="number" helpText="Height (cm)" id="height"
+                   tt_onLoad="setNextButtonToGetInputValue('height')"
+                   name="height" tt_pageStyleClass="Numeric NumbersOnly" type="text"
+                   units="cm" validationMessage="You must enter numbers only (for example 157)"
+                   validationRule="^([0-9]+)|Unknown$"/>
+
+            <input absoluteMax="300" absoluteMin="60" condition="captureBP()" field_type="number"
+                   helpText="Systolic blood pressure" id="systolic_blood_pressure"
+                   name="sbp" tt_onLoad="hideButton(); setNextButtonToGetInputValue('systollic');"
+                   tt_pageStyleClass="KeyboardNumeric NumbersOnly" type="text" units="mmHg"
+                   validationMessage="You must enter numbers only (for example 157)"
+                   validationRule="^([0-9]+)|Unknown$"/>
+
+            <input absoluteMax="150" absoluteMin="30" condition="captureBP()" field_type="number"
+                   helpText="Diastolic blood pressure (X/?)" id="diastolic_blood_pressure" max="110" min="50"
+                   name="dbp" tt_pageStyleClass="Keyboard Numeric NumbersOnly" type="text"
+                   tt_onLoad="setNextButtonToGetInputValue('diastollic');"
+                   units="mmHg" validationMessage="You must enter numbers only (for example 157)"
+                   validationRule="^([0-9]+)|Unknown$"/>
+
+            <input helpText="Summary" id="summary" name="summary" optional="true"
+                   tt_onLoad="showSummary();hideButton(); changeSubmitButton();"
+                   type="text"/>
+
+            <!--<input type="hidden" value="BODY MASS INDEX, MEASURED"/>
+
+            <input type='hidden' name='program' value='HYPERTENSION PROGRAM'/>-->
+
+        </form>
+
+    </div>
+</div>
+</body>
+</html>
+

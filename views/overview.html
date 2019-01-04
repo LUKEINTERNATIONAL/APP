@@ -92,7 +92,7 @@
 
 <script type="text/javascript">
 
-function buildChart(stats) {
+function buildChart(complete, incomplete, days) {
 // Build the chart
   Highcharts.chart('chart-column', {
      chart: {
@@ -108,15 +108,15 @@ function buildChart(stats) {
           enabled: false
       },
       xAxis: {
-          categories: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+          categories: days 
       },
 
       series: [{
           name: 'Total visits',
-          data: [29, 71, 106, 129, 144, 176, 135]
+          data: complete
       }, {
           name: 'Total incomplete visits',
-          data: [0, 1, 10, 12, 0, 36, 0],
+          data: incomplete,
           lineWidth: 2
       }]
   });
@@ -137,7 +137,38 @@ encounter_types[51] = "HIV reception";
 encounter_types[52] = "HIV Staging"; 
 encounter_types[53] = "HIV clinic consultation"; 
 encounter_types[68] = "ART Adherence"; 
+var end_date = moment().format("YYYY-MM-DD");
+var start_date = moment().subtract(4, "days").format("YYYY-MM-DD");
+function getVisits(){
+  var url = 'http://'+apiURL+':'+apiPort+'/api/v1/programs/1/reports/visits?name=visits&start_date='+start_date+'&end_date='+end_date;
+  var req = new XMLHttpRequest();
+  req.onreadystatechange = function(){
 
+  if (this.readyState == 4) {
+  if (this.status == 200) {
+  var results = JSON.parse(this.responseText);
+  var complete = new Array;
+  var incomplete = new Array;
+  var days = new Array;
+  var keys = Object.keys(results);
+    for(var x = 0; x < keys.length; x ++){
+      complete.push(results[keys[x]].complete + results[keys[x]].incomplete);  
+      incomplete.push(results[keys[x]].incomplete);  
+      days.push(moment(keys[x]).format("ddd"));
+    }
+      buildChart(complete, incomplete, days);
+  }
+  }
+  };
+  try {
+  req.open('GET', url, true);
+  req.setRequestHeader('Authorization',sessionStorage.getItem('authorization'));
+  req.send(null);
+  } catch (e) {
+}
+}
+
+getVisits();
 var encounter_date = moment(new Date()).format("YYYY-MM-DD");
 submitParameters(stats, "/reports/encounters?date=" + encounter_date, "renderStats");
 

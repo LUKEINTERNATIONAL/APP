@@ -1,5 +1,5 @@
-
-<script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js" defer="true"></script>
+<script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js"
+        defer="true"></script>
 <script type="text/javascript" src="/assets/js/jquery.min.js"></script>
 
 <script type="text/javascript" src="/assets/js/yes_no_ctrls.js"></script>
@@ -16,7 +16,6 @@
     var patientID = sessionStorage.patientID;
 
     var tt_cancel_destination = "/views/patient_dashboard.html?patient_id=" + patientID;
-    var patient_on_bp_drugs = false;
     var first_visit = false;
 
     var bp_trail = [];
@@ -149,6 +148,56 @@
         xhttp1.send();
     }
 
+    function formatBPTrail(trail){
+        var trail_to_be_returned = [];
+        for (var date in trail){
+            var sbp = trail[date]["sbp"];
+            var dbp = trail[date]["dbp"];
+            var date = trail[date]["date"];
+            trail_to_be_returned.push({"systolic": sbp, "diastolic": dbp, "date": date})
+        }
+        return trail_to_be_returned;
+    }
+
+    function normatensiveBP(trail) {
+        var dates_checked = 0;
+        var normal_bp = 0;
+        var dates = [];
+
+        for (var i = 0; i <= 2; i++) {
+            if (!trail[i]) {
+                return false;
+            }
+
+            var diastollic = parseInt(trail[i]["diastolic"]);
+            var systollic = parseInt(trail[i]["systolic"]);
+
+            if (diastollic < 90 && systollic < 140 && !dates.includes(trail[i]["date"])) {
+                normal_bp += 1
+            }
+
+            if (!dates.includes(trail[i]["date"])) {
+                dates_checked += 1;
+            }
+
+            if (!dates.includes(trail[i]["date"])) {
+                dates.push(trail[i]["date"]);
+            }
+
+            if (dates_checked == 2 && normal_bp == 2) {
+                break;
+            }
+        }
+
+        if (dates_checked == 2 && normal_bp == 2) {
+            return true
+        }
+        else {
+            return false
+        }
+
+    }
+
     Array.prototype.unique = function () {
         var arr = [];
         for (var i = 0; i < this.length; i++) {
@@ -163,19 +212,19 @@
         sbp = parseInt(sbp);
         dbp = parseInt(dbp);
 
-        if ((sbp < 140) && (dbp < 90)){
+        if ((sbp < 140) && (dbp < 90)) {
             return "normal"
         }
 
-        else if((sbp >= 140 && sbp.to_i < 160) || (dbp >= 100 && dbp < 110)){
+        else if ((sbp >= 140 && sbp < 160) || (dbp >= 100 && dbp < 110)) {
             return "grade 1"
         }
 
-        else if((sbp >= 180 && dbp > 110) || sbp >= 180){
+        else if ((sbp >= 180 && dbp > 110) || sbp >= 180) {
             return "grade 3"
         }
 
-        else if((sbp >= 160 && sbp < 180) || (dbp >= 110)){
+        else if ((sbp >= 160 && sbp < 180) || (dbp >= 110)) {
             return "grade 2"
         }
     }
@@ -187,117 +236,118 @@
     var transferred_concept_id = 6986;
     var drug_use_history_data = {};
 
-    function initializeVariables(){
+    function initializeVariables() {
         //jQuery(".loader").show();
         var patient_has_hypertension_concept_id = 6414;
 
 
-        var diastollic_blood_pressure_concept_id  = 5086;
+        var diastollic_blood_pressure_concept_id = 5086;
         var treatment_status_concept_id = 1484;
         var is_patient_pregnant_concept_id = 6131;
         var yes_concept_id = 1065;
 
         var lab_trail_url = apiProtocol + "://" + apiURL + ":" + apiPort;
-        lab_trail_url +=  "/api/v1/patients/" + sessionStorage.patientID + "/bp_trail";
+        lab_trail_url += "/api/v1/patients/" + sessionStorage.patientID + "/bp_trail";
 
         var patient_has_hypertension_url = apiProtocol + "://" + apiURL + ":" + apiPort;
-        patient_has_hypertension_url +=  "/api/v1/observations?person_id=" + sessionStorage.patientID;
-        patient_has_hypertension_url +=  "&concept_id=" + patient_has_hypertension_concept_id;
+        patient_has_hypertension_url += "/api/v1/observations?person_id=" + sessionStorage.patientID;
+        patient_has_hypertension_url += "&concept_id=" + patient_has_hypertension_concept_id;
 
         var diastollic_url = apiProtocol + "://" + apiURL + ":" + apiPort;
-        diastollic_url +=  "/api/v1/observations?person_id=" + sessionStorage.patientID;
-        diastollic_url +=  "&concept_id=" + diastollic_blood_pressure_concept_id;
-        diastollic_url +=  "&obs_datetime=" + sessionStorage.sessionDate;
+        diastollic_url += "/api/v1/observations?person_id=" + sessionStorage.patientID;
+        diastollic_url += "&concept_id=" + diastollic_blood_pressure_concept_id;
+        diastollic_url += "&obs_datetime=" + sessionStorage.sessionDate;
 
         var treatment_status_url = apiProtocol + "://" + apiURL + ":" + apiPort;
-        treatment_status_url +=  "/api/v1/observations?person_id=" + sessionStorage.patientID;
-        treatment_status_url +=  "&concept_id=" + treatment_status_concept_id;
+        treatment_status_url += "/api/v1/observations?person_id=" + sessionStorage.patientID;
+        treatment_status_url += "&concept_id=" + treatment_status_concept_id;
 
         var is_patient_pregnant_url = apiProtocol + "://" + apiURL + ":" + apiPort;
-        is_patient_pregnant_url +=  "/api/v1/observations?person_id=" + sessionStorage.patientID;
-        is_patient_pregnant_url +=  "&concept_id=" + is_patient_pregnant_concept_id;
-        is_patient_pregnant_url +=  "&value_coded=" + yes_concept_id;
-        is_patient_pregnant_url +=  "&obs_datetime=" + sessionStorage.sessionDate;
+        is_patient_pregnant_url += "/api/v1/observations?person_id=" + sessionStorage.patientID;
+        is_patient_pregnant_url += "&concept_id=" + is_patient_pregnant_concept_id;
+        is_patient_pregnant_url += "&value_coded=" + yes_concept_id;
+        is_patient_pregnant_url += "&obs_datetime=" + sessionStorage.sessionDate;
 
         var drug_use_history_url = apiProtocol + "://" + apiURL + ":" + apiPort;
-        drug_use_history_url +=  "/api/v1/observations?person_id=" + sessionStorage.patientID;
-        drug_use_history_url +=  "&concept_id=" + drug_use_history_concept_id;
+        drug_use_history_url += "/api/v1/observations?person_id=" + sessionStorage.patientID;
+        drug_use_history_url += "&concept_id=" + drug_use_history_concept_id;
 
         var transferred_url = apiProtocol + "://" + apiURL + ":" + apiPort;
-        transferred_url +=  "/api/v1/observations?person_id=" + sessionStorage.patientID;
-        transferred_url +=  "&concept_id=" + transferred_concept_id;
+        transferred_url += "/api/v1/observations?person_id=" + sessionStorage.patientID;
+        transferred_url += "&concept_id=" + transferred_concept_id;
 
 
         var xhttp = new XMLHttpRequest();
-        xhttp.onreadystatechange = function() {
+        xhttp.onreadystatechange = function () {
             if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
                 var patient_has_hypertension_obs = JSON.parse(this.responseText);
-                if (patient_has_hypertension_obs.length == 0){
+                if (patient_has_hypertension_obs.length == 0) {
                     hypertension_obs = patient_has_hypertension_obs;
-                    setTimeout(function(){
+                    setTimeout(function () {
                         addHypertensionDiagnosisButton();
                     }, 350);
                 }
 
                 var xhttp2 = new XMLHttpRequest();
-                xhttp2.onreadystatechange = function() {
+                xhttp2.onreadystatechange = function () {
                     if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
                         var diastollic_obs = JSON.parse(this.responseText);
-                        if (diastollic_obs.length > 0){
+                        if (diastollic_obs.length > 0) {
                             diastollicBloodPressure = diastollic_obs[0].value_numeric;
                         }
 
                         var xhttp3 = new XMLHttpRequest();
-                        xhttp3.onreadystatechange = function() {
+                        xhttp3.onreadystatechange = function () {
                             if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
                                 var treatment_status_obs = JSON.parse(this.responseText);
-                                if (treatment_status_obs.length > 0){
+                                if (treatment_status_obs.length > 0) {
                                     var value_text = treatment_status_obs[0]["value_text"];
-                                    if (value_text.match(/BP Drugs started/i)){
+                                    if (value_text.match(/BP Drugs started/i)) {
                                         patientOnBpDrugs = true;
                                     }
                                 }
 
                                 var xhttp4 = new XMLHttpRequest();
-                                xhttp4.onreadystatechange = function() {
+                                xhttp4.onreadystatechange = function () {
                                     if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
                                         var is_patient_pregnant_obs = JSON.parse(this.responseText);
-                                        if (is_patient_pregnant_obs.length > 0){
+                                        if (is_patient_pregnant_obs.length > 0) {
                                             patientPregnant = true;
                                         }
                                         /*****************************************************/
                                         var xhttp6 = new XMLHttpRequest();
-                                        xhttp6.onreadystatechange = function() {
+                                        xhttp6.onreadystatechange = function () {
                                             if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
                                                 var drug_use_history_obs = JSON.parse(this.responseText);
 
-                                                if (drug_use_history_obs.length > 0){
-                                                        obs_datetime = drug_use_history_obs[0]["obs_datetime"]
-                                                        date = moment(obs_datetime).format('YYYY-MM-DD');
-                                                        drug =  drug_use_history_obs[0]["value_text"];
-                                                        if (!drug_use_history_data[date]){
-                                                            drug_use_history_data[date] = []
-                                                        }
-                                                        drug_use_history_data[date].push(drug)
+                                                if (drug_use_history_obs.length > 0) {
+                                                    obs_datetime = drug_use_history_obs[0]["obs_datetime"]
+                                                    date = moment(obs_datetime).format('YYYY-MM-DD');
+                                                    drug = drug_use_history_obs[0]["value_text"];
+                                                    if (!drug_use_history_data[date]) {
+                                                        drug_use_history_data[date] = []
+                                                    }
+                                                    drug_use_history_data[date].push(drug)
                                                 }
 
                                                 var xhttp5 = new XMLHttpRequest();
-                                                xhttp5.onreadystatechange = function() {
+                                                xhttp5.onreadystatechange = function () {
                                                     if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
                                                         bp_trail = JSON.parse(this.responseText);
-
+                                                        var trail = formatBPTrail(bp_trail);
+                                                        normatensive = normatensiveBP(trail);
                                                         var xhttp7 = new XMLHttpRequest();
-                                                        xhttp7.onreadystatechange = function() {
+                                                        xhttp7.onreadystatechange = function () {
                                                             if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
                                                                 var transfer_obs = JSON.parse(this.responseText);
 
-                                                                if (transfer_obs.length == 0){
+                                                                if (transfer_obs.length == 0) {
                                                                     first_visit = true;
                                                                 }
 
-                                                                for (var key in bp_trail){
+                                                                for (var key in bp_trail) {
                                                                     var bp_drugs = bp_trail[key]["drugs"];
-                                                                    if (bp_drugs.length > 0){
+                                                                    if (bp_drugs.length > 0) {
                                                                         first_visit = false;
                                                                     }
                                                                 }
@@ -365,24 +415,24 @@
     }
 
 
-    function buildHighBpPage(){
+    function buildHighBpPage() {
         var html = '<div style="display:table; width:100%">\n' +
             '  <div style="display:table-row">\n' +
             '    <div style="display:table-cell">\n' +
             '      <div style="margin-bottom: 5px; padding: 10px;font-size: 110%; font-weight: bold;">';
         html += ' BP Management Screen ' + todays_date;
         html += '<span style="float: right;">';
-        if (note){
+        if (note) {
             html += '<span style="color: red;">' + note + '</span>';
         }
 
-        if (risks_count == 0){
+        if (risks_count == 0) {
             html += '<span onclick="addMedicalHistory();" id="risk_factor">Add Risk Factors</span>';
         } else {
             html += '<span onclick="editMedicalHistory();" id="risk_factor"><span style="color: red">View/Edit Risk Factors (' + risks_count + ')</span></span>'
         }
         html += '</span>';
-        if (patientOnBpDrugs){
+        if (patientOnBpDrugs) {
             html += '<div style="color:green;">\n' +
                 '            (<i>Patient already on BP drugs</i>)\n' +
                 '          </div>';
@@ -407,24 +457,24 @@
             '          </thead>\n' +
             '          <tbody>';
 
-        for (var key in bp_trail){
+        for (var key in bp_trail) {
             date = bp_trail[key]["date"];
             formatted_date = moment(date).format('DD MMM YYYY')
             systolic = bp_trail[key]["sbp"];
             diastolic = bp_trail[key]["dbp"];
             current_bp_drugs = bp_trail[key]["drugs"];
-            if (current_bp_drugs.length > 0){
+            if (current_bp_drugs.length > 0) {
                 patient_current_bp_drugs = current_bp_drugs;
             }
 
             plan = bp_trail[key]["note"];
-            if (!plan){
+            if (!plan) {
                 plan = "";
             }
             past_drug_use = drug_use_history_data[date];
 
             class_name = bp_grade(systolic, diastolic);
-            try{
+            try {
                 class_name = class_name.replace(" ", '');
             } catch (e) {
                 class_name = "normal"
@@ -435,10 +485,10 @@
             html += '<td style="text-align: center">' + systolic + '</td>';
             html += '<td style="text-align: center">' + diastolic + '</td>';
             html += '<td style="text-align: center">' + current_bp_drugs + '</td>';
-            if (!past_drug_use){
+            if (!past_drug_use) {
                 html += '<td style="padding-left: 10px;">' + plan + '</td>'
             } else {
-                if (plan.length > 0){
+                if (plan.length > 0) {
                     html += '<td style="padding-left: 10px;">' + plan + '<br />';
                     html += 'Past BP Drugs: <i><b>' + past_drug_use + '</b></i></td>'
                 } else {
@@ -455,7 +505,7 @@
             '</div>\n' +
             '<br />';
 
-        if (patient_on_bp_drugs == true && first_visit == true){
+        if (patientOnBpDrugs == true && first_visit == true) {
             html += '<div style="display:table-row;border: 1px solid black;width:100%;position:absolute;">\n' +
                 '    <div style="display:table-cell;height: 200px;width:97.8%;position:absolute;">\n' +
                 '      <div style="width:100%" class="heading">Does the patient want to transfer in for HTN management?</div>\n' +
@@ -481,7 +531,7 @@
             html += '<div style="display:table-row;border: 1px solid black;width:100%;position:absolute;">\n' +
                 '    <div style="display:table-cell;height: 200px;width:97.8%;position:absolute;">\n' +
                 '      <div style="width:100%" class="heading">Select Action</div>;'
-            if (patient_current_bp_drugs.length > 0){
+            if (patient_current_bp_drugs.length > 0) {
                 html += '<div class="row">\n' +
                     '          <div class="cell"><div id = "1" class="option" selected=false onclick="selected(this)">\n' +
                     '              <div style="display: table-cell; vertical-align: middle; "><img src="/public/touchscreentoolkit/lib/images/unchecked.png"></div>\n' +
@@ -518,7 +568,7 @@
                     '          </div>\n' +
                     '        </div>';
                 html += '<div class="row">';
-                if (normatensive){
+                if (normatensive) {
                     html += '<div class="cell"><div class="option" selected=false onclick="selected(this)">\n' +
                         '                <div style="display: table-cell; vertical-align: middle; "><img src="/public/touchscreentoolkit/lib/images/unchecked.png"></div>\n' +
                         '                <div style="display: table-cell; vertical-align: middle;padding-left: 5px;font-size:70% !important;" state="Alive">Return to annual screening</div>\n' +
@@ -539,7 +589,7 @@
         }
 
         html += '<div id="buttons" class="buttonsDiv">';
-        if (patient_on_bp_drugs == true && first_visit == true){
+        if (patientOnBpDrugs == true && first_visit == true) {
             html += '<button id="nextButton" class="button green navButton" onmousedown="createVitalsTransferObs();"><span>Finish</span></button>\n' +
                 '    <button onmousedown="confirmCancelEntry();" id="cancelButton" class="button navButton red"><span>Cancel</span></button>;'
         } else {
@@ -559,41 +609,49 @@
         padding-left: 10px;
         padding-top: 5px;
     }
-    th{
+
+    th {
         background-color: silver;
         height: 20px;
         font-size: 1.1em;
         padding: 5px;
     }
+
     td {
-        border-bottom:1pt solid black;
+        border-bottom: 1pt solid black;
     }
-    tr.normal{
+
+    tr.normal {
         background-color: #ffffff;
     }
-    tr.grade1{
+
+    tr.grade1 {
         background-color: #FFC3CE;
     }
-    tr.grade2{
+
+    tr.grade2 {
         background-color: #F20056;
         color: white;
     }
-    tr.grade3{
+
+    tr.grade3 {
         background-color: #FF3333;
     }
-    div.heading{
+
+    div.heading {
         background-color: lightgrey;
         font-size: 1.5em;
         padding: 10px;
 
     }
+
     #popup_box {
-        display:none;
-        z-index:1001;
-        left:300px;
-        top:100px;
-        text-align:center;
-        font-size:28;
+        display: none;
+        z-index: 1001;
+        left: 300px;
+        top: 100px;
+        text-align: center;
+        font-size: 28;
         color: black;
         border: 2px solid #9999FF;
         border-radius: 15px 15px 15px 15px;
@@ -603,25 +661,25 @@
         position: absolute;
         top: 199px;
         width: 450px;
-        -moz-user-select:none;
+        -moz-user-select: none;
     }
 
-    #popup_box span{
-        font-size:35px;
+    #popup_box span {
+        font-size: 35px;
     }
 
-    #popup_box a{
+    #popup_box a {
         background-color: silver;
         border-bottom: 1px outset black;
         border-style: outset;
         padding: 10px 25px 10px 25px;
-        border-radius:5px;
-        font-size:29;
+        border-radius: 5px;
+        font-size: 29;
         cursor: pointer;
 
     }
 
-    #cover{
+    #cover {
         display: none;
         position: absolute;
         background-color: black;
@@ -632,7 +690,8 @@
         z-index: 1000;
         opacity: 0.5;
     }
-    #risk_factor{
+
+    #risk_factor {
         background: lightblue;
         border-radius: 5px;
         padding: 5px;
@@ -640,42 +699,43 @@
         background-color: lightgray;
         margin: 15px;
         border: 3px outset gray;
-        -moz-user-select:none;
+        -moz-user-select: none;
         text-align: center;
     }
-    div.message{
+
+    div.message {
         display: none;
         font-size: 2em;
-        font-family: 'Nimbus Sans L','Arial Narrow',sans-serif;
+        font-family: 'Nimbus Sans L', 'Arial Narrow', sans-serif;
         position: absolute;
-        top:100px;
+        top: 100px;
         height: 200px;
         width: 40%;
-        left:250px;
-        text-align:center;
-        padding:30px;
+        left: 250px;
+        text-align: center;
+        padding: 30px;
         background: tomato;
         border-radius: 15px;
-        border:5px outset tomato;
+        border: 5px outset tomato;
     }
 
-    .confirm_div{
+    .confirm_div {
         display: none;
         font-size: 2em;
-        font-family: 'Nimbus Sans L','Arial Narrow',sans-serif;
+        font-family: 'Nimbus Sans L', 'Arial Narrow', sans-serif;
         position: absolute;
-        top:100px;
+        top: 100px;
         height: 130px;
         width: 40%;
-        left:250px;
-        text-align:center;
-        padding:30px;
+        left: 250px;
+        text-align: center;
+        padding: 30px;
         background: tomato;
         border-radius: 15px;
-        border:5px outset tomato;
+        border: 5px outset tomato;
     }
 
-    .update_drug_button{
+    .update_drug_button {
         background-color: #006dcc;
         background-image: linear-gradient(to bottom, #08c, #04c);
         background-repeat: repeat-x;
@@ -701,7 +761,7 @@
         vertical-align: middle;
     }
 
-    .update_drug_button:hover{
+    .update_drug_button:hover {
         background-color: #e6e6e6;
         text-decoration: none;
         background-position: 0 -0.2px;
@@ -720,21 +780,18 @@
 </body>
 
 
-
 <script type="text/javascript">
-    function selected(option)
-    {
+    function selected(option) {
         options = document.getElementsByClassName("option")
 
-        for(i = 0; i < options.length; i ++)
-        {
+        for (i = 0; i < options.length; i++) {
             options[i].style.backgroundColor = "white";
             options[i].setAttribute("selected", false)
             options[i].children[0].firstChild.setAttribute("src", "/public/touchscreentoolkit/lib/images/unchecked.png")
         }
 
         var state = option.getAttribute('selected');
-        option.setAttribute("selected",(state == "true" ? false : true));
+        option.setAttribute("selected", (state == "true" ? false : true));
         option.children[0].firstChild.setAttribute("src", (state == "true" ? "/public/touchscreentoolkit/lib/images/unchecked.png" : "/public/touchscreentoolkit/lib/images/checked.png"))
     }
 
@@ -742,16 +799,13 @@
     var path = "";
     var state = "";
 
-    function nextPage()
-    {
+    function nextPage() {
         options = document.getElementsByClassName("option")
         var checked = false;
-        for(i = 0; i < options.length; i ++)
-        {
-            if (options[i].getAttribute("selected") == "true")
-            {
+        for (i = 0; i < options.length; i++) {
+            if (options[i].getAttribute("selected") == "true") {
                 checked = true;
-                switch (options[i].children[1].innerHTML){
+                switch (options[i].children[1].innerHTML) {
                     case 'Start anti-hypertensives' :
                         path = "/apps/ART/views/htn/change_drugs.html";
                         break;
@@ -771,11 +825,11 @@
                 nextButton = document.getElementById("nextButton");
                 messageDiv = document.getElementById("message");
 
-                if (nextButton){
+                if (nextButton) {
                     document.getElementById("nextButton").setAttribute("onmousedown", "");
                 }
 
-                if (messageDiv){
+                if (messageDiv) {
                     document.getElementById("message").style.display = "block";
                 }
 
@@ -791,11 +845,9 @@
             showMessage("Please select one action to proceed");
     }
 
-    function createEncounter(chosenPlan, path, state)
-    {
+    function createEncounter(chosenPlan, path, state) {
 
-        if (state == "On Treatment")
-        {
+        if (state == "On Treatment") {
             state = null;
         }
 
@@ -805,7 +857,7 @@
 
         var encounter = {
             encounter_type_name: 'HYPERTENSION MANAGEMENT',
-            encounter_type_id:  48,
+            encounter_type_id: 48,
             patient_id: sessionStorage.patientID,
             encounter_datetime: encounter_datetime
         }
@@ -816,20 +868,20 @@
 
     var plan_concept_id = 7834;
 
-    function postHypertensionManagementObs(encounter){
+    function postHypertensionManagementObs(encounter) {
 
         var obs = {
             encounter_id: encounter["encounter_id"],
             observations: [
-                { concept_id: plan_concept_id, value_text: chosenPlan}
+                {concept_id: plan_concept_id, value_text: chosenPlan}
             ]
         };
 
         submitParameters(obs, "/observations", redirectToRequiredTask())
     }
 
-    function redirectToRequiredTask(){
-        if (path.match(/next_task/i)){
+    function redirectToRequiredTask() {
+        if (path.match(/next_task/i)) {
             nextEncounter(sessionStorage.patientID, 1);
             return;
         }
@@ -837,8 +889,7 @@
         window.location = path;
     }
 
-    function referPatient()
-    {
+    function referPatient() {
         window.location = "/htn_encounter/refer_to_clinician"
     }
 
@@ -851,19 +902,19 @@
     var no_concept_id = 1066;
     var vitals_obs = {}
 
-    function createVitalsTransferObs(){
+    function createVitalsTransferObs() {
         var options = document.getElementsByClassName("option")
         var checked = false;
-        for(i = 0; i < options.length; i ++){
-            if (options[i].getAttribute("selected") == "true"){
+        for (i = 0; i < options.length; i++) {
+            if (options[i].getAttribute("selected") == "true") {
                 checked = true;
                 var value = options[i].getAttribute("value");
 
-                if (value.match(/YES/i)){
+                if (value.match(/YES/i)) {
                     answer_concept_id = yes_concept_id;
                 }
 
-                if (value.match(/NO/i)){
+                if (value.match(/NO/i)) {
                     answer_concept_id = no_concept_id;
                 }
 
@@ -874,7 +925,7 @@
 
                 var encounter = {
                     encounter_type_name: 'VITALS',
-                    encounter_type_id:  6,
+                    encounter_type_id: 6,
                     patient_id: sessionStorage.patientID,
                     encounter_datetime: encounter_datetime
                 }
@@ -898,31 +949,31 @@
         submitParameters(obs, "/observations", "gotoRequiredNextTask")
     }
 
-    function gotoRequiredNextTask(){
+    function gotoRequiredNextTask() {
         nextEncounter(sessionStorage.patientID, 1);
     }
 
 
-    function addMedicalHistory(){
+    function addMedicalHistory() {
         window.location = "/apps/ART/views/htn/medical_history.html";
     }
 
-    function editMedicalHistory(){
+    function editMedicalHistory() {
         window.location = "/apps/ART/views/htn/risk_factors_index.html";
     }
 
-    function addHypertensionDiagnosisButton(){
+    function addHypertensionDiagnosisButton() {
         var button = document.createElement("button");
         button.id = "hypeternsion-diagnosis";
         button.className = 'blue'
         button.innerHTML = "<span>Hypertension Diagnosis</span>";
         button.style.cssFloat = "left";
 
-        button.onclick = function(){
+        button.onclick = function () {
             window.location = "/apps/ART/views/htn/hypertension_diagnosis.html";
         }
 
-        if(__$("buttons")){
+        if (__$("buttons")) {
             __$("buttons").appendChild(button);
             __$("nextButton").style.display = 'none'; //Hiding the finish button
         }
