@@ -137,9 +137,9 @@ function buildRegimenPage() {
   }
   
 function loadRegimens() {
-    var side = "right";
     for(var regimen in givenRegimens){
-      side = (side == "right" ? "left" : "right");
+      var regimen_num = parseInt(regimen.split(' ')[0]);
+      var side = (regimen_num < 9 ? "left" : "right");
       var table = document.getElementById("regimen-table-" + side);
   
       var tr = document.createElement("tr");
