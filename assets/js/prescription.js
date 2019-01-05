@@ -918,7 +918,8 @@ function checkIFRegimenHasLPv() {
   
   var regimen = parseInt(selectedRegimens, 10);
   var w = parseFloat(sessionStorage.currentWeight); 
-  if (regimen == 11 || regimen == 9 && (w >= 3 && w <= 25) ) {
+  regimen_nine_or_eleven = (regimen == 11 || regimen == 9);
+  if (regimen_nine_or_eleven && (w >= 3 && w <= 25) ) {
     buildPalletBox();
   }else{
     gotoNextPage();
