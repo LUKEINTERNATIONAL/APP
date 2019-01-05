@@ -38,7 +38,8 @@ function showWeight() {
   var tr = document.createElement('tr');
   table.appendChild(tr);
   var th = document.createElement('th');
-  th.innerHTML = "Client's age:";
+  th.style = 'text-align: left;';
+  th.innerHTML = "Age:";
   tr.appendChild(th);
 
   var td = document.createElement('td');
@@ -46,7 +47,7 @@ function showWeight() {
   tr.appendChild(td);
 
   var th = document.createElement('th');
-  th.innerHTML = "Client's gender:";
+  th.innerHTML = "Gender:";
   tr.appendChild(th);
 
   var td = document.createElement('td');
@@ -64,9 +65,6 @@ function showWeight() {
   td.innerHTML = sessionStorage.currentWeight + ' KG';
   tr.appendChild(td);
 
-
-
-
   var th = document.createElement('th');
   th.innerHTML = "Current regimen:";
   tr.appendChild(th);
@@ -75,6 +73,13 @@ function showWeight() {
   td.innerHTML = '<span id="current-regimen"></span>';
   tr.appendChild(td);
 
+  var th = document.createElement('th');
+  th.innerHTML = "Reason for change:";
+  tr.appendChild(th);
+
+  var td = document.createElement('td');
+  td.innerHTML = '<span id="reason-for-change">N/A</span>';
+  tr.appendChild(td);
 
 
   getCurrentRegimen();
