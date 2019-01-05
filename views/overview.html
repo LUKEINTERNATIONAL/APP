@@ -137,8 +137,8 @@ encounter_types[51] = "HIV reception";
 encounter_types[52] = "HIV Staging"; 
 encounter_types[53] = "HIV clinic consultation"; 
 encounter_types[68] = "ART Adherence"; 
-var end_date = moment().format("YYYY-MM-DD");
-var start_date = moment().subtract(4, "days").format("YYYY-MM-DD");
+var end_date = moment().subtract(1, "days").format("YYYY-MM-DD");
+var start_date = moment().subtract(5, "days").format("YYYY-MM-DD");
 function getVisits(){
   var url = 'http://'+apiURL+':'+apiPort+'/api/v1/programs/1/reports/visits?name=visits&start_date='+start_date+'&end_date='+end_date;
   var req = new XMLHttpRequest();
