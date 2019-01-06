@@ -2019,3 +2019,21 @@ function setCustomRegimen() {
     });
   }
 }
+
+function getReasonForSwitch() {
+    var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1/observations";
+
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+      if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+        var obs = JSON.parse(this.responseText);
+        if(obs.length > 0){
+          document.getElementById('reason-for-change').innerHTML = obs[0].value_text;
+        }
+      }
+    };
+    xhttp.open("GET", url + "?concept_id=1779&person_id=" + sessionStorage.patientID, true);
+    xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+    xhttp.setRequestHeader('Content-type', "application/json");
+    xhttp.send();
+}
