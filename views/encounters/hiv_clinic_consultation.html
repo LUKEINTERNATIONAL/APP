@@ -2190,9 +2190,9 @@
                     tt_pageStyleClass= "NoControls" helpText="intensive adherence counselling" optional = "true"/--> 
 
 
-                    <input type="text" name="pregnant-breastfeeding-questions" condition="sessionStorage.showPregnantQuestion === 'true'&& sessionStorage.patientGender === 'F'"
+                    <input type="text" name="pregnant-breastfeeding-questions" condition="sessionStorage.showPregnantQuestion === 'true'&& sessionStorage.patientGender === 'F' && patientAge >= 12"
                            validationCode="checkPregnancyAndAge() == 'false'"
-                           validationMessage="Patient (Viral Load) is 25 years old. Is she pregnant / Breastfeeding?"
+                           validationMessage="Patient is 25 years old. Is she pregnant / Breastfeeding?"
                            tt_onLoad="__$('keyboard').style.display = 'none';addPregBreastFeedingYesNo(); showCategory2('Clinic consultation');"
                            tt_pageStyleClass= "NoControls" helpText="Pregnant / Breastfeeding" optional = "true"/>
 
