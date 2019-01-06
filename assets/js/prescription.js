@@ -1315,7 +1315,7 @@ function submitRegimen(){
     }
 
   if(appointment_type.length < 1){
-    submitParameters(encounter, "/encounters", "postRegimenOrders");
+    submitParameters(encounter, "/encounters", "treatmentObs");
   }else{
     submitParameters(encounter, "/encounters", "createAppointmentType");
   }
@@ -1330,7 +1330,7 @@ function createAppointmentType(encounter) {
   }; 
   
   
-  submitParameters(obs, "/observations", "postRegimenOrders");
+  submitParameters(obs, "/observations", "treatmentObs");
 }
 
 function postRegimenOrders(encounter){
@@ -1415,23 +1415,31 @@ function postRegimenOrders(encounter){
         drug_orders_params.drug_orders.push(drug_order);
     }
 
-    if(selectedSwitchReason.length > 0) {
-      treatmentObs(drug_orders_params, "/drug_orders", "treatmentObs");
-    }else{
-      //submitParameters(drug_orders_params, "/drug_orders", "submitFastTrack");
-      submitParameters(drug_orders_params, "/drug_orders", "nextPage");
-    }
+
+    submitParameters(drug_orders_params, "/drug_orders", "nextPage");
 }
 
-function treatmentObs(encounter) {
-  var obs = {                                                                   
-    encounter_id: encounter.encounter_id,                                    
-    observations: [                                                             
-      { concept_id: 1779, value_text:  selectedSwitchReason }
-    ]                                                                           
-  };                                                                            
-                                                                                
-  submitParameters(obs, "/observations", "nextPage")  
+function treatmentObs(e) {
+  if(selectedSwitchReason.length > 0) {
+    try {
+      var encounter_id = e.encounter_id;
+      if(encounter_id == undefined){
+        encounter_id = e[0].encounter_id
+      }
+    }catch(i){
+    }
+
+    var obs = {                                                                   
+      encounter_id: encounter_id,                                    
+      observations: [                                                             
+        { concept_id: 1779, value_text:  selectedSwitchReason }
+      ]                                                                           
+    };                                                                            
+                                                                                  
+    submitParameters(obs, "/observations", "postRegimenOrders");  
+  }else{
+    postRegimenOrders(e);
+  }
 }
 
 function submitFastTrack(e){
@@ -1536,15 +1544,15 @@ function buildResonForSwitchinPopup() {
 
 
   var switching_reasons = [
-    'Policy change','High pill burden','Drug drug interaction',
-    'Difficult to swallow','Not recommended for pregnant women',
-    'Side effects','Failure','Weight Change','Other'
+    'Policy change','Ease of administration (pill burden, swallowing)',
+    'Drug drug interaction','Pregnancy intention',
+    'Side effects','Treatment failure','Weight Change','Other'
   ];
 
   var res = switching_reasons;
   switching_reasons = [];
   for(var i = 0 ; i < res.length; i++){
-    if(sessionStorage.patientGender != 'F' && res[i] == 'Not recommended fro pregnant women')
+    if(sessionStorage.patientGender != 'F' && res[i] == 'Pregnancy intention')
       continue;
 
     switching_reasons.push(res[i]);  
