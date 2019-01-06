@@ -197,10 +197,6 @@ function buildPillCountScreenForDrugOrders() {
                 }
 
                 showMedication(orders);;
-
-
-                //console.log(medication_dates);
-                //showMedication(medication);
             }
         }
     };
@@ -519,6 +515,7 @@ function addAdherenceInfo(table, medicationPillCountsArray) {
 
     var given = medicationPillCountsArray[i].quantity;
     var pill_count = medicationPillCountsArray[i].pill_count;
+    var dose = medicationPillCountsArray[i].equivalent_daily_dose;
     var expected = calculateExpected(given, dose, start_date);
     var adherence = calculateAdherence(given, pill_count, expected);
     td.innerHTML = adherence + '%'; 
@@ -544,6 +541,7 @@ function addAdherenceInfo(table, medicationPillCountsArray) {
 
     var given = medicationPillCountsArray[i].quantity;
     var pill_count = medicationPillCountsArray[i].pill_count;
+    var dose = medicationPillCountsArray[i].equivalent_daily_dose;
     var expected = calculateExpected(given, dose, start_date);
     var adherence = calculateAdherence(given, pill_count, expected);
     if(adherence >= 95 && adherence <= 105){
@@ -677,9 +675,7 @@ function calculateExpected(given, equivalent_daily_dose, start_date){
   var date2 = new Date(start_date);
   var days_gone = dateDiffInDays(date2, date1);
 
-  var expected = (given - (days_gone * parseFloat(equivalent_daily_dose)));
-
-  return expected;
+  return (given - (days_gone * parseFloat(equivalent_daily_dose)));
 }
 
 /* ##################################################################### */
