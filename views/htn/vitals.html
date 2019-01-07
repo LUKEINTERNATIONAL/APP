@@ -151,6 +151,10 @@
         var systollic_concept_id = 5085;
         var diastollic_concept_id = 5086;
         var treatment_status_concept_id = 1484;
+        var weight_for_height_concept_id = 1822;
+        var weight_for_age_concept_id = 6396;
+        var height_for_age_concept_id = 6397;
+        var bmi_concept_id = 2137;
 
         function postVitalsObs(encounter) {
             var height = 0;
@@ -170,6 +174,16 @@
                     {concept_id: treatment_status_concept_id, value_text: treatment_status}
                 ]
             };
+
+            if (patient_age <= 14){
+                obs.observations.push({concept_id: weight_for_height_concept_id, value_text: ""})
+                obs.observations.push({concept_id: weight_for_age_concept_id, value_text: ""})
+                obs.observations.push({concept_id: height_for_age_concept_id, value_text: ""})
+            } else {
+                var weight = $("weight").value;
+                var currentBmi = (weight / (height * height) * 10000).toFixed(1);
+                obs.observations.push({concept_id: bmi_concept_id, value_numeric: currentBmi})
+            }
 
             submitParameters(obs, "/observations", "nextPage");
         }
@@ -467,7 +481,7 @@
 
             <input absoluteMax="228" absoluteMin="10" field_type="number" helpText="Height (cm)" id="height"
                    tt_onLoad="setNextButtonToGetInputValue('height')"
-                   condition="currentHeight == 0 || patient_age < 18"
+                   condition="currentHeight == 0 || patient_age <= 18"
                    name="height" tt_pageStyleClass="Numeric NumbersOnly" type="text"
                    units="cm" validationMessage="You must enter numbers only (for example 157)"
                    validationRule="^([0-9]+)|Unknown$"/>
