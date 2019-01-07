@@ -235,6 +235,7 @@
     var drug_use_history_concept_id = 2466;
     var transferred_concept_id = 6986;
     var drug_use_history_data = {};
+    var hypertension_program_id = 20;
 
     function initializeVariables() {
         //jQuery(".loader").show();
@@ -276,7 +277,7 @@
         transferred_url += "/api/v1/observations?person_id=" + sessionStorage.patientID;
         transferred_url += "&concept_id=" + transferred_concept_id;
 
-        var hypertension_program_id = 20;
+
         var get_htn_program_url = apiProtocol + "://" + apiURL + ":" + apiPort;
         get_htn_program_url += "/api/v1/patients/" + sessionStorage.patientID + "/programs/";
 
@@ -347,7 +348,8 @@
                                                 var xhttp5 = new XMLHttpRequest();
                                                 xhttp5.onreadystatechange = function () {
                                                     if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
-                                                        bp_trail = JSON.parse(this.responseText);;
+                                                        bp_trail = JSON.parse(this.responseText);
+                                                        ;
                                                         var trail = formatBPTrail(bp_trail);
                                                         normatensive = normatensiveBP(trail);
                                                         var xhttp7 = new XMLHttpRequest();
@@ -373,11 +375,11 @@
                                                                     if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
                                                                         var programs = JSON.parse(this.responseText);
                                                                         var program_names = [];
-                                                                        for (var i=0; i<=programs.length - 1; i++){
+                                                                        for (var i = 0; i <= programs.length - 1; i++) {
                                                                             program_names.push(programs[i]["program"].name)
                                                                         }
 
-                                                                        if (!program_names.includes("HYPERTENSION PROGRAM")){
+                                                                        if (!program_names.includes("HYPERTENSION PROGRAM")) {
                                                                             console.log("NOT in hypertension")
                                                                             var xhttp9 = new XMLHttpRequest();
                                                                             xhttp9.onreadystatechange = function () {
@@ -398,11 +400,11 @@
                                                                                 if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
                                                                                     var patient_htn_states = JSON.parse(this.responseText);
                                                                                     var patient_states = [];
-                                                                                    for (var i=0; i<= patient_htn_states.length - 1; i++){
+                                                                                    for (var i = 0; i <= patient_htn_states.length - 1; i++) {
                                                                                         patient_states.push(patient_htn_states[i].name);
                                                                                     }
 
-                                                                                    if (!patient_states.includes("Alive")){
+                                                                                    if (!patient_states.includes("Alive")) {
                                                                                         var xhttp11 = new XMLHttpRequest();
                                                                                         xhttp11.onreadystatechange = function () {
                                                                                             if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
@@ -922,11 +924,12 @@
             showMessage("Please select one action to proceed");
     }
 
+    var selected_patient_state = "";
     function createEncounter(chosenPlan, path, state) {
-
         if (state == "On Treatment") {
             state = null;
         }
+        selected_patient_state = state;
 
         var currentTime = moment().format(' HH:mm:ss');
         var encounter_datetime = moment(sessionStorage.sessionDate).format('YYYY-MM-DD');
@@ -954,7 +957,31 @@
             ]
         };
 
-        submitParameters(obs, "/observations", redirectToRequiredTask())
+        submitParameters(obs, "/observations", createPatientState())
+    }
+
+    function createPatientState() {
+        if (patient_state) {
+            var create_or_update_htn_state_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+            create_or_update_htn_state_url += "/api/v1/patients/" + sessionStorage.patientID + "/update_or_create_htn_state";
+
+            var patient_state_xhttp = new XMLHttpRequest();
+            patient_state_xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                    var result = JSON.parse(this.responseText);
+                    redirectToRequiredTask();
+                }
+            };
+
+            patient_state_xhttp.open("POST", create_or_update_htn_state_url, true);
+            patient_state_xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+            patient_state_xhttp.setRequestHeader('Content-type', "application/json");
+
+            var patient_state = JSON.stringify({"state": selected_patient_state});
+            patient_state_xhttp.send(patient_state);
+        }else{
+            redirectToRequiredTask();
+        }
     }
 
     function redirectToRequiredTask() {
