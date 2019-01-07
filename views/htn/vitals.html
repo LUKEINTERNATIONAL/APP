@@ -35,9 +35,18 @@
             var sbp = document.getElementById("systolic_blood_pressure").value
             var dbp = document.getElementById("diastolic_blood_pressure").value
 
+            var patient_weight = __$('weight').value;
             displayText += "<div><span class='title'>Weight (Kg) :</span>" + __$('weight').value + "<br/>";
             displayText += "<div><span class='title'>Height (cm) :</span>" + currentHeight + "<br/>";
             displayText += "<div><span class='title'>BMI :</span>";
+
+            currentBmi = (patient_weight / (currentHeight * currentHeight) * 10000).toFixed(1)
+
+            if (currentBmi > 18.5) {
+                displayText += currentBmi;
+            } else {
+                displayText += "<span class='lowBMI'>" + currentBmi + "</span> <span class='recommendation'>Eligible for therapeutic feeding</span>";
+            }
             displayText += "</div>"
 
             if ((parseInt(sbp) > parseInt(htn_systollic_property)) && (parseInt(dbp) > parseInt(htn_diastollic_property))) {
@@ -367,11 +376,6 @@
         }
 
         function growthIndicators(){
-            currentHeight = ""
-            currentWeight = "";
-            medianWeightHeight = "";
-            currentWeightPercentile = (currentWeight/(medianWeightHeight[0])*100).toFixed(0);
-            currentHeightPercentile = (currentHeight/(medianWeightHeight[1])*100).toFixed(0);
 
             jQuery('#keyboard').empty();
             if ((patient_age) > 14) {
