@@ -2190,7 +2190,7 @@
                     tt_pageStyleClass= "NoControls" helpText="intensive adherence counselling" optional = "true"/--> 
 
 
-                    <input type="text" name="pregnant-breastfeeding-questions" condition="sessionStorage.showPregnantQuestion === 'true'&& sessionStorage.patientGender === 'F' && patientAge >= 12"
+                    <input type="text" name="pregnant-breastfeeding-questions" condition="sessionStorage.showPregnantQuestion === 'true'&& sessionStorage.patientGender === 'F' && parseInt(sessionStorage.patientAge) >= 9 && parseInt(sessionStorage.patientAge) <= 55"
                            validationCode="checkPregnancyAndAge() == 'false'"
                            validationMessage="Patient is 25 years old. Is she pregnant / Breastfeeding?"
                            tt_onLoad="__$('keyboard').style.display = 'none';addPregBreastFeedingYesNo(); showCategory2('Clinic consultation');"
@@ -2203,7 +2203,7 @@
 
                     <input allowFreeText="false" id="on_fpm" name="observations[][value_coded_or_text]" type="hidden" value="" />
 
-                    <select allowFreeText="false" condition="patientGender == 'F' && $('pregnant').value != 'YES'" helpText="What method are you currently on?" id="fpm_used" multiple="multiple" name="observations[][value_coded_or_text_multiple][]" tt_onLoad="setNextButtonToGetInputValue('current_fpm'); showCategory2('Clinic consultation'); fpm_used=false; startFamilyPlanningTimer(); window.setTimeout('controlNoneSelectionForFamilyPlanning(); setOptionsForSafeFamilyPlanningMethodsPopup();', 300);" tt_onUnLoad="stopFamilyPlanningTimer(); updateFamilyPlanningHiddenField();" tt_pageStyleClass="NoKeyboard"><option value=''></option><option value=""></option>
+                    <select allowFreeText="false" condition="patientGender == 'F' && $('pregnant').value != 'YES' && parseInt(sessionStorage.patientAge) >= 9 && parseInt(sessionStorage.patientAge) <= 55" helpText="What method are you currently on?" id="fpm_used" multiple="multiple" name="observations[][value_coded_or_text_multiple][]" tt_onLoad="setNextButtonToGetInputValue('current_fpm'); showCategory2('Clinic consultation'); fpm_used=false; startFamilyPlanningTimer(); window.setTimeout('controlNoneSelectionForFamilyPlanning(); setOptionsForSafeFamilyPlanningMethodsPopup();', 300);" tt_onUnLoad="stopFamilyPlanningTimer(); updateFamilyPlanningHiddenField();" tt_pageStyleClass="NoKeyboard"><option value=''></option><option value=""></option>
                         <option value="ORAL CONTRACEPTIVE PILLS">Oral contraceptive pills</option>
                         <option value="DEPO-PROVERA">Depo-Provera</option>
                         <option value="INTRAUTERINE CONTRACEPTION">Intrauterine device/loop</option>
@@ -2213,7 +2213,7 @@
                         <option value="TUBAL LIGATION">Tubal ligation</option>
                         <option value="NONE">None of the above</option></select>
 
-                    <select allowFreeText="false" condition="patientGender == 'F' && $('pregnant').value != 'YES'" helpText="What method are you providing today?" id="fpm_used" multiple="multiple" name="observations[][value_coded_or_text_multiple][]" tt_onLoad="setNextButtonToGetInputValue('todays_fpm'); showCategory2('Clinic consultation'); fpm_used=false; startFamilyPlanningTimer(); window.setTimeout('controlNoneSelectionForFamilyPlanning(); setOptionsForSafeFamilyPlanningMethodsPopup();', 300)" tt_onUnLoad="stopFamilyPlanningTimer();" tt_pageStyleClass="NoKeyboard"><option value=''></option><option value=""></option>
+                    <select allowFreeText="false" condition="patientGender == 'F' && $('pregnant').value != 'YES' && parseInt(sessionStorage.patientAge) >= 9 && parseInt(sessionStorage.patientAge) <= 55" helpText="What method are you providing today?" id="fpm_used" multiple="multiple" name="observations[][value_coded_or_text_multiple][]" tt_onLoad="setNextButtonToGetInputValue('todays_fpm'); showCategory2('Clinic consultation'); fpm_used=false; startFamilyPlanningTimer(); window.setTimeout('controlNoneSelectionForFamilyPlanning(); setOptionsForSafeFamilyPlanningMethodsPopup();', 300)" tt_onUnLoad="stopFamilyPlanningTimer();" tt_pageStyleClass="NoKeyboard"><option value=''></option><option value=""></option>
                         <option value="ORAL CONTRACEPTIVE PILLS">Oral contraceptive pills</option>
                         <option value="DEPO-PROVERA">Depo-Provera</option>
                         <option value="INTRAUTERINE CONTRACEPTION">Intrauterine device/loop</option>
