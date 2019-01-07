@@ -153,12 +153,18 @@
         var treatment_status_concept_id = 1484;
 
         function postVitalsObs(encounter) {
+            var height = 0;
+            if (patient_age > 18 && currentHeight != 0) {
+                height = currentHeight;
+            } else {
+                height = answers_hash["height"];
+            }
 
             var obs = {
                 encounter_id: encounter.encounter_id,
                 observations: [
                     {concept_id: weight_concept_id, value_numeric: answers_hash["weight"], value_modifier: "kg"},
-                    {concept_id: height_concept_id, value_numeric: answers_hash["height"], value_modifier: "cm"},
+                    {concept_id: height_concept_id, value_numeric: height, value_modifier: "cm"},
                     {concept_id: systollic_concept_id, value_numeric: answers_hash["systollic"]},
                     {concept_id: diastollic_concept_id, value_numeric: answers_hash["diastollic"]},
                     {concept_id: treatment_status_concept_id, value_text: treatment_status}
