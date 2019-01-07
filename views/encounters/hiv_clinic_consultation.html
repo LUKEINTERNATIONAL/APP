@@ -38,16 +38,8 @@
         <link rel="stylesheet" href="/assets/css/datatables/fixedHeader.dataTables.min.css" type="text/css">
         <link rel="stylesheet" href="/assets/css/datatables/scroller.dataTables.min.css" type="text/css">
 
-        <! -- .................. VL component ............................. -->
-        <link rel="stylesheet" href="/apps/ART/assets/css/vl.reminder.css" type="text/css"> 
-        <script type="text/javascript" src="/apps/ART/assets/js/vl.reminder.js"></script> 
-        <! -- .................. VL component ends............................. -->
-
-        <! -- .................. lab component ............................. -->
         <link rel="stylesheet" href="/assets/css/lab.min.css" type="text/css">
         <script type="text/javascript" src="/assets/js/lab.min.js"></script> 
-        <! -- .................. lab component ends ............................. -->
-
        
         <script type="text/javascript" src="/assets/js/datatables/jquery.dataTables.min.js"></script>
         <script type="text/javascript" src="/assets/js/datatables/dataTables.fixedHeader.min.js"></script>
@@ -763,7 +755,7 @@
                     }
 
                     function checkPregnancyAndAge() {
-                        var patientAge = sessionStorage.patientAge;
+                        var patientAge = parseInt(sessionStorage.patientAge);
                         var pregnancyStatus = $('pregnant').value;
 
                         if ((patientAge >= 55) && pregnancyStatus == "YES") {
@@ -774,7 +766,7 @@
                     }
 
                     function checkBreastfeedingAndAge() {
-                        var patientAge = sessionStorage.patientAge;
+                        var patientAge = parseInt(sessionStorage.patientAge);
                         var breastfeedingStatus = $('breast_feeding').value;
 
                         if ((patientAge >= 55) && breastfeedingStatus == "YES") {
