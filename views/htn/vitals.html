@@ -176,13 +176,13 @@
             };
 
             if (patient_age <= 14) {
-
                 var current_weight_percentile = (parseFloat(answers_hash["weight"]) / (parseFloat(patient_median_Weight_height["weight"])) * 100).toFixed(0);
                 var current_height_percentile = (parseFloat(answers_hash["height"]) / (parseFloat(patient_median_Weight_height["height"])) * 100).toFixed(0)
-                //var medianWeightHeight = weightForHeights[currentHeightRounded.toFixed(1)];
-                //var weightForHeightPercentile = (currentWeight/(medianWeightHeight)*100).toFixed(0);
+                var currentHeightRounded = (height % Math.floor(height) < 0.5 ? 0 : 0.5) + Math.floor(height);
+                var medianWeightHeight = patient_weight_for_height_values[currentHeightRounded.toFixed(1)];
+                var weight_for_height_percentile = (answers_hash["weight"]/(medianWeightHeight)*100).toFixed(0);
 
-                obs.observations.push({concept_id: weight_for_height_concept_id, value_text: ""})
+                obs.observations.push({concept_id: weight_for_height_concept_id, value_text: weight_for_height_percentile});
                 obs.observations.push({concept_id: weight_for_age_concept_id, value_text: current_weight_percentile});
                 obs.observations.push({concept_id: height_for_age_concept_id, value_text: current_height_percentile});
             } else {
@@ -230,6 +230,7 @@
 
         var patient_eligible_for_screening = false;
         var patient_median_Weight_height = {};
+        var patient_weight_for_height_values = {}
 
         function initializeVariables() {
             jQuery(".loader").show();
@@ -258,6 +259,9 @@
 
             var weight_height_age_url = apiProtocol + "://" + apiURL + ":" + apiPort;
             weight_height_age_url += "/api/v1/patients/" + sessionStorage.patientID + "/median_weight_height";
+
+            var patient_weight_for_height_values_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+            patient_weight_for_height_values_url += "/api/v1/patient_weight_for_height_values"; //NOT patient specific
 
             var xhttp1 = new XMLHttpRequest();
             xhttp1.onreadystatechange = function () {
@@ -311,6 +315,16 @@
                                                         xhttp6.onreadystatechange = function () {
                                                             if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
                                                                 patient_median_Weight_height = JSON.parse(this.responseText);
+                                                                var xhttp7 = new XMLHttpRequest();
+                                                                xhttp7.onreadystatechange = function () {
+                                                                    if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                                                                        patient_weight_for_height_values = JSON.parse(this.responseText);
+                                                                    }
+                                                                }
+                                                                xhttp7.open("GET", patient_weight_for_height_values_url, true);
+                                                                xhttp7.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                                                                xhttp7.setRequestHeader('Content-type', "application/json");
+                                                                xhttp7.send();
                                                             }
                                                         };
 
