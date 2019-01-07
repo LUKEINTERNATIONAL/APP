@@ -284,6 +284,13 @@
         var post_htn_program_url = apiProtocol + "://" + apiURL + ":" + apiPort;
         post_htn_program_url += "/api/v1/patients/" + sessionStorage.patientID + "/programs";
 
+        var get_htn_program_states = apiProtocol + "://" + apiURL + ":" + apiPort;
+        get_htn_program_states += "/api/v1/programs/" + hypertension_program_id + "/patients/" + sessionStorage.patientID + "/states";
+
+        //post_htn_program_states
+        var post_htn_program_states = apiProtocol + "://" + apiURL + ":" + apiPort;
+        post_htn_program_states += "/api/v1/programs/" + hypertension_program_id + "/patients/" + sessionStorage.patientID + "/states";
+
         var xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function () {
             if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
@@ -377,13 +384,45 @@
                                                                                 if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
                                                                                     //Program created
                                                                                     console.log("HTN program created")
+
                                                                                 }
                                                                             }
                                                                             xhttp9.open("POST", post_htn_program_url, true);
                                                                             xhttp9.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
                                                                             xhttp9.setRequestHeader('Content-type', "application/json");
-                                                                            htn_program_params = JSON.stringify({"program_id": hypertension_program_id})
+                                                                            var htn_program_params = JSON.stringify({"program_id": hypertension_program_id})
                                                                             xhttp9.send(htn_program_params);
+                                                                        } else {
+                                                                            var xhttp10 = new XMLHttpRequest();
+                                                                            xhttp10.onreadystatechange = function () {
+                                                                                if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                                                                                    var patient_htn_states = JSON.parse(this.responseText);
+                                                                                    var patient_states = [];
+                                                                                    for (var i=0; i<= patient_htn_states.length - 1; i++){
+                                                                                        patient_states.push(patient_htn_states[i].name);
+                                                                                    }
+
+                                                                                    if (!patient_states.includes("Alive")){
+                                                                                        var xhttp11 = new XMLHttpRequest();
+                                                                                        xhttp11.onreadystatechange = function () {
+                                                                                            if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                                                                                                console.log("Patient state created")
+                                                                                            }
+                                                                                        }
+                                                                                        xhttp11.open("POST", post_htn_program_states, true);
+                                                                                        xhttp11.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                                                                                        xhttp11.setRequestHeader('Content-type', "application/json");
+                                                                                        var alive_state_id = 160;
+                                                                                        var htn_program_state_params = JSON.stringify({"state": alive_state_id});
+                                                                                        xhttp11.send(htn_program_state_params);
+                                                                                    }
+
+                                                                                }
+                                                                            }
+                                                                            xhttp10.open("GET", get_htn_program_states, true);
+                                                                            xhttp10.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                                                                            xhttp10.setRequestHeader('Content-type', "application/json");
+                                                                            xhttp10.send();
                                                                         }
                                                                     }
                                                                 }

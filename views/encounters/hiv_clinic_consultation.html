@@ -755,7 +755,7 @@
                     }
 
                     function checkPregnancyAndAge() {
-                        var patientAge = "25";
+                        var patientAge = parseInt(sessionStorage.patientAge);
                         var pregnancyStatus = $('pregnant').value;
 
                         if ((patientAge >= 55) && pregnancyStatus == "YES") {
@@ -766,7 +766,7 @@
                     }
 
                     function checkBreastfeedingAndAge() {
-                        var patientAge = "25";
+                        var patientAge = parseInt(sessionStorage.patientAge);
                         var breastfeedingStatus = $('breast_feeding').value;
 
                         if ((patientAge >= 55) && breastfeedingStatus == "YES") {
