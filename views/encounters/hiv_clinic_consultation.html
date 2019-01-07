@@ -38,8 +38,15 @@
         <link rel="stylesheet" href="/assets/css/datatables/fixedHeader.dataTables.min.css" type="text/css">
         <link rel="stylesheet" href="/assets/css/datatables/scroller.dataTables.min.css" type="text/css">
 
+        <! -- .................. lab component ............................. -->
         <link rel="stylesheet" href="/assets/css/lab.min.css" type="text/css">
         <script type="text/javascript" src="/assets/js/lab.min.js"></script> 
+        <! -- .................. lab component ends ............................. -->
+
+        <! -- .................. VL component ............................. -->
+        <script type="text/javascript" src="/apps/ART/assets/js/vl.reminder.js"></script> 
+        <! -- .................. VL component ends............................. -->
+
        
         <script type="text/javascript" src="/assets/js/datatables/jquery.dataTables.min.js"></script>
         <script type="text/javascript" src="/assets/js/datatables/dataTables.fixedHeader.min.js"></script>
@@ -755,7 +762,7 @@
                     }
 
                     function checkPregnancyAndAge() {
-                        var patientAge = "25";
+                        var patientAge = sessionStorage.patientAge;
                         var pregnancyStatus = $('pregnant').value;
 
                         if ((patientAge >= 55) && pregnancyStatus == "YES") {
@@ -766,7 +773,7 @@
                     }
 
                     function checkBreastfeedingAndAge() {
-                        var patientAge = "25";
+                        var patientAge = sessionStorage.patientAge;
                         var breastfeedingStatus = $('breast_feeding').value;
 
                         if ((patientAge >= 55) && breastfeedingStatus == "YES") {
@@ -2190,7 +2197,7 @@
                     tt_pageStyleClass= "NoControls" helpText="intensive adherence counselling" optional = "true"/--> 
 
 
-                    <input type="text" name="pregnant-breastfeeding-questions" condition="sessionStorage.showPregnantQuestion === 'true'&& sessionStorage.patientGender === 'F' && patientAge >= 12"
+                    <input type="text" name="pregnant-breastfeeding-questions" condition="sessionStorage.showPregnantQuestion === 'true'&& sessionStorage.patientGender === 'F' && parseInt(sessionStorage.patientAge) >= 12"
                            validationCode="checkPregnancyAndAge() == 'false'"
                            validationMessage="Patient is 25 years old. Is she pregnant / Breastfeeding?"
                            tt_onLoad="__$('keyboard').style.display = 'none';addPregBreastFeedingYesNo(); showCategory2('Clinic consultation');"
