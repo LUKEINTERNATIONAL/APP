@@ -1321,7 +1321,7 @@
                         <input allowFreeText="false" id="breastfeeding" name="observations[][value_coded_or_text]" condition="patientGender == 'F'"type="hidden" />
 
                         <input type="text" name="pregnant-breastfeeding-questions" 
-                          condition="patientGender == 'F' &&  
+                          condition="patientGender == 'F' && patientAge >= 12 && 
                           sessionStorage.showPregnantQuestion === 'true';"
                           validationCode="checkPregnancyAndAge() == 'false'"
                           validationMessage="Patient (Viral Load) is 25 years old. Is she pregnant / Breastfeeding?"
@@ -1462,7 +1462,7 @@
                         <option value="NO">No</option>
                     </select>
 
-                    <input tt_onLoad="setNextButtonToGetInputValue('cd4_datetime')" condition="$('new_cd4_count_available').value == 'YES'" field_type="date" helpText="CD4 Count Date" id="cd4_count_date" max="2018-09-18" name="observations[][value_datetime]" tt_pageStyleClass="Date DatesOnly" type="text" />
+                    <input tt_onLoad="setNextButtonToGetInputValue('cd4_datetime')" condition="$('new_cd4_count_available').value == 'YES'" field_type="date" helpText="CD4 Count Date" id="cd4_count_date" max=tstCurrentDate name="observations[][value_datetime]" tt_pageStyleClass="Date DatesOnly" type="text" />
 
                     <input absoluteMin="0.0" condition="$('new_cd4_count_available').value == 'YES'" field_type="number" helpText="CD4 Count" id="cd4_count" max="1000" min="1" name="observations[][value_numeric]" tt_onLoad="updateCD4CountKeyPad();showCategory2('CD4 Count Units: cells/mm3');" tt_onUnLoad="updateCD4Count();" tt_pageStyleClass="Numeric NumbersOnly" type="text" units="cells/mm3" validationMessage="You must enter a modifier plus numbers only (for example =90)" validationRule="^(>|<|=)([0-9.]+)$|Unknown$" />
                      

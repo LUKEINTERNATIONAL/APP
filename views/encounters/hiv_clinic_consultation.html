@@ -32,18 +32,15 @@
         <link rel="stylesheet" href="/apps/ART/assets/css/generic-keyboard.css" type="text/css">
         <script type="text/javascript" src="/apps/ART/assets/js/cd4_kbd.js"></script>
         
-
-        <!-- <link rel="stylesheet" href="/apps/ART/assets/css/hiv_clinical_consultation_labs.css" type="text/css" /> -->
-        <!-- <script type="text/javascript" src="/apps/ART/assets/js/hiv_clinical_consultation_labs.js"></script> -->
-        <script type="text/javascript" src="/assets/js/order_entry.js"></script>        
+               
         <script type="text/javascript" src="/apps/ART/assets/js/drug_induced_side_effect_check.js"></script>        
-
-        <!--link rel="stylesheet" href="/assets/css/datatables/uikit.min.css" type="text/css">
-        <link rel="stylesheet" href="/assets/css/datatables/dataTables.uikit.min.css" type="text/css"-->
 
         <link rel="stylesheet" href="/assets/css/datatables/fixedHeader.dataTables.min.css" type="text/css">
         <link rel="stylesheet" href="/assets/css/datatables/scroller.dataTables.min.css" type="text/css">
 
+        <link rel="stylesheet" href="/assets/css/lab.min.css" type="text/css">
+        <script type="text/javascript" src="/assets/js/lab.min.js"></script> 
+       
         <script type="text/javascript" src="/assets/js/datatables/jquery.dataTables.min.js"></script>
         <script type="text/javascript" src="/assets/js/datatables/dataTables.fixedHeader.min.js"></script>
         <script type="text/javascript" src="/apps/ART/assets/js/generic-keyboard.js"></script>
@@ -1850,7 +1847,13 @@
                           if(data.ps != null) {   
                             obs.observations.push({
                               concept_id: 9661, 
+                              value_coded: side_effect_concept_id
+                            });
+                          }else if(data.pre_exisiting != null) {   
+                            obs.observations.push({
+                              concept_id: 7567, 
                               value_coded: side_effect_concept_id,
+                              value_text: 'Past medication history'
                             });
                           }else{
                             var meds = data.drug_ids;
@@ -2179,17 +2182,17 @@
   
 
                     <input type="text" name="lab-summary"
-                           tt_onLoad="__$('keyboard').style.display = 'none'; buildOrderEntry();"
-                           tt_pageStyleClass= "NoControls" helpText="Lab results" optional = "true"/>
+                           tt_onLoad="__$('keyboard').style.display = 'none'; buildLabOrderDisplay();"
+                           tt_pageStyleClass= "NoControls" helpText="Lab orders" optional = "true"/>
 
                     <!-- input type="text" name="iac" condition="iac == true"
                     tt_onLoad="__$('keyboard').style.display = 'none';addIACYesNo();"
                     tt_pageStyleClass= "NoControls" helpText="intensive adherence counselling" optional = "true"/--> 
 
 
-                    <input type="text" name="pregnant-breastfeeding-questions" condition="sessionStorage.showPregnantQuestion === 'true'&& sessionStorage.patientGender === 'F'"
+                    <input type="text" name="pregnant-breastfeeding-questions" condition="sessionStorage.showPregnantQuestion === 'true'&& sessionStorage.patientGender === 'F' && patientAge >= 12"
                            validationCode="checkPregnancyAndAge() == 'false'"
-                           validationMessage="Patient (Viral Load) is 25 years old. Is she pregnant / Breastfeeding?"
+                           validationMessage="Patient is 25 years old. Is she pregnant / Breastfeeding?"
                            tt_onLoad="__$('keyboard').style.display = 'none';addPregBreastFeedingYesNo(); showCategory2('Clinic consultation');"
                            tt_pageStyleClass= "NoControls" helpText="Pregnant / Breastfeeding" optional = "true"/>
 

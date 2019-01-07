@@ -18,7 +18,7 @@
     var tstCurrentDate = moment(tstCurrentDate).format("YYYY-MM-DD");
 
     var programID = sessionStorage.getItem("programID");
-    var tt_cancel_destination = "/views/patient_dashboard.html?patient_id=" + patientID;
+    var tt_cancel_destination = "/apps/ART/views/htn/bp_management.html";
     var yes_concept_id = 1065;
     var no_concept_id = 1066;
     var patient_has_hypertension_concept_id = 6414;
@@ -42,11 +42,23 @@
     }
 
     function postHIVClinicConsultationObs(encounter) {
+        var hypertension_date = "";
+        try {
+            var hypertension_date_string = answers_hash["date_of_hypertension"].split("-");
+            var hypertension_year = hypertension_date_string[2];
+            var hypertension_month = hypertension_date_string[1];
+            var hypertension_day = hypertension_date_string[0];
+
+            hypertension_date = hypertension_year  + "-" + hypertension_month + "-" +  hypertension_day;
+        }catch (e) {
+            hypertension_date = "";
+        }
+
         var obs = {
             encounter_id: encounter["encounter_id"],
             observations: [
                 { concept_id: patient_has_hypertension_concept_id, value_coded: answers_hash["hypertension"]},
-                { concept_id: hypertension_diagnosis_date_concept_id, value_datetime: answers_hash["date_of_hypertension"]}
+                { concept_id: hypertension_diagnosis_date_concept_id, value_datetime: hypertension_date}
             ]
         };
 
@@ -81,7 +93,7 @@
     }
 
     function nextPage(){
-        nextEncounter(sessionStorage.patientID, 1);
+        window.location = '/apps/ART/views/htn/bp_management.html';
     }
 
 </script>

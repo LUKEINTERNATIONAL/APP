@@ -1423,12 +1423,10 @@
                         var obs = {
                             encounter_id: encounter.encounter_id,
                             observations: [
-                                //{ concept_id: 2552, value_coded: answers_hash["followup_agreement"].trim().toUpperCase() == "YES" ? 1065: 1066 },
                                 { concept_id: 7937, value_coded: answers_hash["ever_registered"].trim().toUpperCase() == "YES" ? 1065: 1066 },
                                 { concept_id: 6393, value_coded: answers_hash["has_transfer_letter"].trim().toUpperCase() == "YES" ? 1065: 1066 },
                                 { concept_id: 7881, value_text: answers_hash["confirmatory_hiv_test_location"] },
                                 { concept_id: 7880, value_text: answers_hash["confirmatory_hiv_test_type"] },
-                                //{ concept_id: 8011, value_coded: answers_hash["send_sms"].trim().toUpperCase() == "YES" ? 1065: 1066 },
                                 { concept_id: 7751, value_datetime: answers_hash["date_art_last_taken"], value_text: date_art_last_taken_value_text },
                                 { concept_id: 7752, value_coded: answers_hash["taken_art_in_the_last_two_months"].trim().toUpperCase() == "YES" ? 1065: 1066 },
                                 { concept_id: 6394, value_coded: answers_hash["taken_art_in_the_last_two_weeks"].trim().toUpperCase() == "YES" ? 1065: 1066 },
@@ -1446,10 +1444,10 @@
 
 
 
-                        var phone_only_answer_yes_no = yesNo_Hash["AGREES TO FOLLOW UP"]["Phone only"];
+                        var phone_only_answer_yes_no = yesNo_Hash["AGREES TO FOLLOW UP"]["Phone"];
                         var phone_only_answer_value_coded = getAgreesToFollowUpConceptID(phone_only_answer_yes_no);
 
-                        var visit_only_answer_yes_no = yesNo_Hash["AGREES TO FOLLOW UP"]["Visit only"];
+                        var visit_only_answer_yes_no = yesNo_Hash["AGREES TO FOLLOW UP"]["Home visit"];
                         var visit_only_answer_value_coded = getAgreesToFollowUpConceptID(visit_only_answer_yes_no);
 
 
@@ -1860,8 +1858,8 @@
                     function addAgreesToFollowupYesNo() {
                         var concept_name = "AGREES TO FOLLOW UP";
                         var agreesToFollowupConcepts = [
-                            ["Phone only", 9685],
-                            ["Visit only", 9686]
+                            ["Phone", 9685],
+                            ["Home visit", 9686]
                         ];
 
                         var frame   = document.getElementById("inputFrame" + tstCurrentPage);
@@ -1878,7 +1876,7 @@
                            tt_onLoad="__$('keyboard').style.display = 'none'; addAgreesToFollowupYesNo();"
                            optional="true"
                            tt_pageStyleClass= "NoControls"
-                           helpText="How can we contact you?" />
+                           helpText="Agrees to follow-up" />
 
 
                     <!--<select tt_onLoad="setNextButtonToGetInputValue('followup_agreement')" name="follow_up_agreement" allowFreeText="false" helpText="Agrees to be contacted by phone/visited at home?" id="agrees_to_followup" tt_pageStyleClass="NoKeyboard">

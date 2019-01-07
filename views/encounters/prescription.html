@@ -38,35 +38,24 @@ function showWeight() {
   var tr = document.createElement('tr');
   table.appendChild(tr);
   var th = document.createElement('th');
-  th.innerHTML = "Client's age:";
+  th.style = 'text-align: left;';
+  th.innerHTML = "Age: ";
+  th.innerHTML += "<span style='font-weight: normal;'>" + sessionStorage.patientAge + ' year(s)</span>';
   tr.appendChild(th);
-
-  var td = document.createElement('td');
-  td.innerHTML = sessionStorage.patientAge + ' year(s)';
-  tr.appendChild(td);
 
   var th = document.createElement('th');
-  th.innerHTML = "Client's gender:";
+  th.innerHTML = "Gender: ";
+  th.innerHTML += "<span style='font-weight: normal;'>" + sessionStorage.patientGender + '</span>';
   tr.appendChild(th);
 
-  var td = document.createElement('td');
-  td.innerHTML = sessionStorage.patientGender;
-  tr.appendChild(td);
 
+  var th = document.createElement('th');
+  th.innerHTML = "Current weight: ";
+  th.innerHTML += "<span style='font-weight: normal;'>" + sessionStorage.currentWeight + ' KG</span>';
+  tr.appendChild(th);
 
   var tr = document.createElement('tr');
   table.appendChild(tr);
-  var th = document.createElement('th');
-  th.innerHTML = "Current weight:";
-  tr.appendChild(th);
-
-  var td = document.createElement('td');
-  td.innerHTML = sessionStorage.currentWeight + ' KG';
-  tr.appendChild(td);
-
-
-
-
   var th = document.createElement('th');
   th.innerHTML = "Current regimen:";
   tr.appendChild(th);
@@ -75,10 +64,17 @@ function showWeight() {
   td.innerHTML = '<span id="current-regimen"></span>';
   tr.appendChild(td);
 
+  var th = document.createElement('th');
+  th.innerHTML = "Reason for change:";
+  tr.appendChild(th);
+
+  var td = document.createElement('td');
+  td.innerHTML = '<span id="reason-for-change">N/A</span>';
+  tr.appendChild(td);
 
 
   getCurrentRegimen();
-  //document.getElementById('helpText2').setAttribute("helptext", "Current patient weight: "+ sessionStorage.currentWeight + "KG") ;
+  getReasonForSwitch();
 }
 
 function resetFinishButton() {

@@ -197,10 +197,6 @@ function buildPillCountScreenForDrugOrders() {
                 }
 
                 showMedication(orders);;
-
-
-                //console.log(medication_dates);
-                //showMedication(medication);
             }
         }
     };
@@ -254,7 +250,7 @@ function showMedication(medication) {
 
     var ordersTableCell = document.createElement('div');
     ordersTableCell.setAttribute('class','orders-table-cell medication-cells pill-counts');
-    ordersTableCell.innerHTML = '?';
+    ordersTableCell.innerHTML = ' - ';
     ordersTableCell.setAttribute('id', medication[i].order_id);
     ordersTableCell.setAttribute('quantity', medication[i].quantity);
     ordersTableCell.setAttribute('drug_name', medication[i].drug.name);
@@ -395,7 +391,7 @@ function validateInput() {
   }
 
   if(!valid) {
-    showMessage('Please enter amount remaining by clicking "?"');
+    showMessage('Please enter amount remaining by clicking " - "');
   }else{
     gotoNextPage();
   }
@@ -519,6 +515,7 @@ function addAdherenceInfo(table, medicationPillCountsArray) {
 
     var given = medicationPillCountsArray[i].quantity;
     var pill_count = medicationPillCountsArray[i].pill_count;
+    var dose = medicationPillCountsArray[i].equivalent_daily_dose;
     var expected = calculateExpected(given, dose, start_date);
     var adherence = calculateAdherence(given, pill_count, expected);
     td.innerHTML = adherence + '%'; 
@@ -544,6 +541,7 @@ function addAdherenceInfo(table, medicationPillCountsArray) {
 
     var given = medicationPillCountsArray[i].quantity;
     var pill_count = medicationPillCountsArray[i].pill_count;
+    var dose = medicationPillCountsArray[i].equivalent_daily_dose;
     var expected = calculateExpected(given, dose, start_date);
     var adherence = calculateAdherence(given, pill_count, expected);
     if(adherence >= 95 && adherence <= 105){
@@ -677,9 +675,7 @@ function calculateExpected(given, equivalent_daily_dose, start_date){
   var date2 = new Date(start_date);
   var days_gone = dateDiffInDays(date2, date1);
 
-  var expected = (given - (days_gone * parseFloat(equivalent_daily_dose)));
-
-  return expected;
+  return (given - (days_gone * parseFloat(equivalent_daily_dose)));
 }
 
 /* ##################################################################### */
@@ -782,20 +778,13 @@ function validateReason() {
           tt_onLoad="__$('keyboard').style.display = 'none';changeNextButton(2);buildSummary();" 
           tt_pageStyleClass= "NoControls" helpText="ART adherence" optional = "true"/>
 
-         <select helpText="Reason for poor adherence" 
+         <select helpText="Agree with adherence calculation" 
           id="reason-for-poor-adherence" name="observations[][value_coded_or_text]" 
           tt_pageStyleClass="NoKeyboard" tt_onLoad="renderReasonForPoorAdherence();">
            
           <option value=''></option>
-          <option value='Accumulated medication from another clinic'>Accumulated medication from another clinic</option>
-          <option value='Forgot to take'>Forgot to take</option>
-          <option value='Left medication at home'>Left medication at home</option>
-          <option value='Medication lost / expired'>Medication lost / expired</option>
-          <option value='Run-out of medication'>Run-out of medication</option>
-          <option value='Shared with partner / friend'>Shared with partner / friend</option>
-          <option value='Side effects'>Side effects</option>
-          <option value='System error'>System error</option>
-          <option value="Other">Other</option>
+          <option value='Yes'>Yes</option>
+          <option value='No'>No</option>
         </select>
 
       </form>

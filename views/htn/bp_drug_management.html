@@ -417,24 +417,26 @@
 
         function updateRemainingDrugs(global_control, node) {
 
+            var drug_id = drug_map_name_id[node];
             var update_pills_remaining_url = apiProtocol + "://" + apiURL + ":" + apiPort;
-            update_pills_remaining_url += "/api/v1/update_pills_remaining?person_id=" + sessionStorage.patientID;
-            update_pills_remaining_url += "&drug_name=" + node;
+            update_pills_remaining_url += "/api/v1/patients/" + sessionStorage.patientID + "/remaining_bp_drugs";
+            update_pills_remaining_url += "?drug_id=" + drug_id;
             update_pills_remaining_url += "&pills=" + global_control;
 
             var xhttp = new XMLHttpRequest();
             xhttp.onreadystatechange = function () {
                 if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
                     var result = JSON.parse(this.responseText);
+                    var adherence = result["adherence"]
                     if (result.toString().length > 0) {
-                        __$("adherence_" + node).innerHTML = result[0] + "%"
-                        __$("amount_expected_" + node).innerHTML = result[1]
+                        __$("adherence_" + node).innerHTML = adherence + "%"
+                        //__$("amount_expected_" + node).innerHTML = result[1]
                     }
 
                 }
             };
 
-            xhttp.open("GET", update_pills_remaining_url, true);
+            xhttp.open("POST", update_pills_remaining_url, true);
             xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
             xhttp.setRequestHeader('Content-type', "application/json");
             xhttp.send();
@@ -868,9 +870,7 @@
         </div>
 
         <div id="buttons" class="buttonsDiv">
-            <button id="continueButton" class="button green navButton" onmousedown="postAnswer()"><span>Continue</span></button>
-            <button id="cancelButton" class="button red navButton" onmousedown="window.location = '/apps/ART/views/htn/bp_management.html'">
-                <span>Cancel</span></button>
+
         </div>
 
         <script>
@@ -917,21 +917,41 @@
             }
 
             function postAnswer() {
-                if (window.location.search.indexOf("review=true")){
+                if (window.location.search.indexOf("review=true") == 1){
                     window.location = '/apps/ART/views/htn/change_drugs.html';
                 } else {
                     var htn_drug_data = [];
                     for (var i = 0; i < current_bp_drugs.length; i++) {
-                            var htn_drug_id = drug_map_name_id[current_bp_drugs[i].id]
-                            htn_drug_data.push({drug_id: htn_drug_id, name: current_bp_drugs[i].id})
+                            var htn_drug_id = drug_map_name_id[current_bp_drugs[i]];
+                            htn_drug_data.push({drug_id: htn_drug_id, name: current_bp_drugs[i]})
                     }
-
                     sessionStorage.setItem("htn_drugs", JSON.stringify(htn_drug_data))
                     nextEncounter(sessionStorage.patientID, 1);
                 }
             }
 
+            function loadFooterButtons(){
+                var html = '<button id="continueButton" class="button green navButton"\n' +
+                    '                  onmousedown="postAnswer();"><span>Continue</span></button>';
+                if (!(window.location.search.indexOf("review=true") == 1)){
+                    html += '<button id="continueButton" class="button green navButton"\n' +
+                        '                  onmousedown="gotoRequiredNextTask();"><span>Continue without prescribing</span></button>';
+                    html += '<button id="nextButton" class="button blue navButton"\n' +
+                        '                  onmousedown="window.location = \'/apps/ART/views/htn/change_drugs.html\'"><span>Change BP drugs</span></button>';
+                }
+                html += '<button id="cancelButton" class="button red navButton"\n' +
+                    '                  onmousedown="window.location = \'/apps/ART/views/htn/bp_management.html\'"><span>Cancel</span></button>\n';
+                var buttonsDiv = document.getElementById("buttons");
+                buttonsDiv.innerHTML = html;
+
+            }
+
+            function gotoRequiredNextTask(){
+                nextEncounter(sessionStorage.patientID, 1);
+            }
+
             loadCurrentBPDrugs();
+            loadFooterButtons();
         </script>
 
         <div id="footer">

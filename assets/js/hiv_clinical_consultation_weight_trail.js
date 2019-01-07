@@ -210,12 +210,12 @@ function plotChart(data) {
           enabled: true,
           formatter: function(){
           var index = this.series.data.indexOf(this.point);
-          var secondYa = this.series.chart.series[0].yData[index - 1];
+          var secondYa = this.series.chart.series[0].yData[index + 1];
           if (secondYa == 0 || secondYa == undefined) {
             return "";
           }
           var firstY = this.y;
-          return (((secondYa/firstY)*100)-100).toFixed(2)+' %';
+          return (((firstY/secondYa)*100)-100).toFixed(2)+' %';
           }
       }
       }]

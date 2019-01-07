@@ -406,6 +406,7 @@ function checkIFStartPackApplies() {
   if(!starterPackNeed && !sideEffectMatchFound)
     checkIFRegimenHasLPv();
 
+  sideEffectMatchFound = false;
 }
 
 function getPatientInitiationStatus() {

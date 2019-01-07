@@ -137,9 +137,9 @@ function buildRegimenPage() {
   }
   
 function loadRegimens() {
-    var side = "right";
     for(var regimen in givenRegimens){
-      side = (side == "right" ? "left" : "right");
+      var regimen_num = parseInt(regimen.split(' ')[0]);
+      var side = (regimen_num < 9 ? "left" : "right");
       var table = document.getElementById("regimen-table-" + side);
   
       var tr = document.createElement("tr");
@@ -147,12 +147,37 @@ function loadRegimens() {
   
       var td = document.createElement("td");
       td.setAttribute("class","regimen-names");
+      td.setAttribute("selected-regimen", regimen);
       td.setAttribute("id", regimen);
+      //td.innerHTML = regimen;
       td.setAttribute("onmousedown","selectRegimen(this);checkIfSwitchingRegimen(this);");
-      td.innerHTML = regimen;
+      addPrettyPrint(td, regimen);
       tr.appendChild(td);
     }
     
+}
+
+function addPrettyPrint(container, regimen) {
+  var num = regimen.split(' ')[0];
+  var medication = regimen.replace(num, ''); 
+
+  var table = document.createElement('table');
+  table.setAttribute('class','pretty-regimen-display');
+  var tr  = document.createElement('tr');
+  table.appendChild(tr);
+
+  var td = document.createElement('td');
+  td.setAttribute('class','pretty-regimen-one');
+  td.innerHTML = num;
+  tr.appendChild(td);
+
+  var td = document.createElement('td');
+  td.innerHTML = medication;
+  td.setAttribute('class','pretty-regimen-two');
+  tr.appendChild(td);
+
+
+  container.appendChild(table);
 }
 
 function selectRegimen(e) {
@@ -162,7 +187,7 @@ function selectRegimen(e) {
     }
 
     e.setAttribute("style","background-color: lightblue;");
-    selectedRegimens = e.innerHTML;
+    selectedRegimens = e.getAttribute('selected-regimen');
 
     //checkForPossibleSideEffects(e);
 }
@@ -893,7 +918,8 @@ function checkIFRegimenHasLPv() {
   
   var regimen = parseInt(selectedRegimens, 10);
   var w = parseFloat(sessionStorage.currentWeight); 
-  if (regimen == 11 || regimen == 9 && (w >= 3 && w <= 25) ) {
+  regimen_nine_or_eleven = (regimen == 11 || regimen == 9);
+  if (regimen_nine_or_eleven && (w >= 3 && w <= 25) ) {
     buildPalletBox();
   }else{
     gotoNextPage();
@@ -1110,6 +1136,7 @@ function addMedColumns() {
     var class_name = (i % 2 === 0 ? 'even' : 'odd');
     li.setAttribute("class", class_name + " custom-ingredients-list");
     li.setAttribute("drug_name", custom_regimen_ingredients[i].name);
+    li.setAttribute("units", custom_regimen_ingredients[i].units);
     li.innerHTML = innerHTML;
     ul.appendChild(li); 
 
@@ -1212,11 +1239,15 @@ function getMedication() {
       if (this.readyState == 4 && this.status == 200) {
         var objs = JSON.parse(this.responseText);
         for(var i = 0 ; i < objs.length ; i++){
-          var drug_name = objs[i].alternative_names[0]
-          drug_name = (drug_name == null ? objs[i].name : drug_name);
+          if(objs[i].alternative_names.length == 0){
+            var drug_name = objs[i].name;
+          }else{
+            var drug_name = objs[i].alternative_names[0].short_name;
+          }
+
           custom_regimen_ingredients.push({
             name: drug_name, drug_id: objs[i].drug_id,
-            units: objs[i].units
+            units: (objs[i].units.length < 1 ? 'N/A' : objs[i].units)
           });
         }
       }
@@ -1284,7 +1315,7 @@ function submitRegimen(){
     }
 
   if(appointment_type.length < 1){
-    submitParameters(encounter, "/encounters", "postRegimenOrders");
+    submitParameters(encounter, "/encounters", "treatmentObs");
   }else{
     submitParameters(encounter, "/encounters", "createAppointmentType");
   }
@@ -1299,7 +1330,7 @@ function createAppointmentType(encounter) {
   }; 
   
   
-  submitParameters(obs, "/observations", "postRegimenOrders");
+  submitParameters(obs, "/observations", "treatmentObs");
 }
 
 function postRegimenOrders(encounter){
@@ -1384,23 +1415,31 @@ function postRegimenOrders(encounter){
         drug_orders_params.drug_orders.push(drug_order);
     }
 
-    if(selectedSwitchReason.length > 0) {
-      treatmentObs(drug_orders_params, "/drug_orders", "treatmentObs");
-    }else{
-      //submitParameters(drug_orders_params, "/drug_orders", "submitFastTrack");
-      submitParameters(drug_orders_params, "/drug_orders", "nextPage");
-    }
+
+    submitParameters(drug_orders_params, "/drug_orders", "nextPage");
 }
 
-function treatmentObs(encounter) {
-  var obs = {                                                                   
-    encounter_id: encounter.encounter_id,                                    
-    observations: [                                                             
-      { concept_id: 1779, value_text:  selectedSwitchReason }
-    ]                                                                           
-  };                                                                            
-                                                                                
-  submitParameters(obs, "/observations", "nextPage")  
+function treatmentObs(e) {
+  if(selectedSwitchReason.length > 0) {
+    try {
+      var encounter_id = e.encounter_id;
+      if(encounter_id == undefined){
+        encounter_id = e[0].encounter_id
+      }
+    }catch(i){
+    }
+
+    var obs = {                                                                   
+      encounter_id: encounter_id,                                    
+      observations: [                                                             
+        { concept_id: 1779, value_text:  selectedSwitchReason }
+      ]                                                                           
+    };                                                                            
+                                                                                  
+    submitParameters(obs, "/observations", "postRegimenOrders");  
+  }else{
+    postRegimenOrders(e);
+  }
 }
 
 function submitFastTrack(e){
@@ -1500,15 +1539,24 @@ function buildResonForSwitchinPopup() {
   
   var switchingTableTitle = document.createElement('div');
   switchingTableTitle.setAttribute('id','switching-table-caption');
-  switchingTableTitle.innerHTML = "Reason for changing regimen"
+  switchingTableTitle.innerHTML = "Main reason for regimen change"
   popBox.appendChild(switchingTableTitle);
 
 
   var switching_reasons = [
-    'Policy change','High pill burden','Drug drug interaction',
-    'Difficult to swallow','Not recommended for pregnant women',
-    'Side effects','Failure','Weight Change','Other'
+    'Policy change','Ease of administration (pill burden, swallowing)',
+    'Drug drug interaction','Pregnancy intention',
+    'Side effects','Treatment failure','Weight Change','Other'
   ];
+
+  var res = switching_reasons;
+  switching_reasons = [];
+  for(var i = 0 ; i < res.length; i++){
+    if(sessionStorage.patientGender != 'F' && res[i] == 'Pregnancy intention')
+      continue;
+
+    switching_reasons.push(res[i]);  
+  }
 
   var switchingTable = document.createElement('div');
   switchingTable.setAttribute('class','switching-table');
@@ -1534,7 +1582,7 @@ function buildResonForSwitchinPopup() {
   buttonContainerRow.setAttribute('class','buttonContainerRow');
   buttonContainer.appendChild(buttonContainerRow);
 
-  var cells = ['Cancel','Switch'];
+  var cells = ['Keep previous','Change'];
 
   for(var i = 0 ; i < cells.length ; i++){
     var buttonContainerCell = document.createElement('div');
@@ -1970,4 +2018,22 @@ function setCustomRegimen() {
       drug_id: drug_id
     });
   }
+}
+
+function getReasonForSwitch() {
+    var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1/observations";
+
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+      if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+        var obs = JSON.parse(this.responseText);
+        if(obs.length > 0){
+          document.getElementById('reason-for-change').innerHTML = obs[0].value_text;
+        }
+      }
+    };
+    xhttp.open("GET", url + "?concept_id=1779&person_id=" + sessionStorage.patientID, true);
+    xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+    xhttp.setRequestHeader('Content-type', "application/json");
+    xhttp.send();
 }
