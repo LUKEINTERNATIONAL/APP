@@ -83,32 +83,34 @@ function refreshList() {
   </div>
 
   <script>
-    function populatePageWithSwappedFileNumber (fileNumbers) {
-      document.getElementById('fileNumbers').innerHTML += createFileNumberElement(fileNumbers.new, 'New Patient Gets Active File Number Below:')
+    function populatePageWithSwappedFileNumber(fileNumbers) {
+      document.getElementById('fileNumbers').innerHTML += createFileNumberElement(fileNumbers.new,
+        'New Patient Gets Active File Number Below:');
       if (fileNumbers.old.fileNumber) {
-        document.getElementById('fileNumbers').innerHTML += `<img src='/assets/images/upload.png' style='width: 5%'/>`
-        document.getElementById('fileNumbers').innerHTML += `<img src='/assets/images/download.png' style='width: 5%'/>`
-        document.getElementById('fileNumbers').innerHTML += createFileNumberElement(fileNumbers.old, 'Patient To Be Archived Gets File Number Below:')
+        document.getElementById('fileNumbers').innerHTML +=
+          '<img src=\'/assets/images/upload.png\' style=\'width: 5%\'/>';
+        document.getElementById('fileNumbers').innerHTML +=
+          '<img src=\'/assets/images/download.png\' style=\'width: 5%\'/>';
+        document.getElementById('fileNumbers').innerHTML += createFileNumberElement(fileNumbers.old,
+          'Patient To Be Archived Gets File Number Below:');
       }
     }
 
-    function createFileNumberElement (fileData, status) {
-      return `<div class='fileNumber'>
-        <h3>${status}</h3>
-        <hr width='100%'/>
-        <p>
-          File #:&nbsp;&nbsp;${fileData.fileNumber}
-        </p>
-      </div>`;
+    function createFileNumberElement(fileData, status) {
+      return "<div class='fileNumber'><h3>" + status +
+        "</h3><hr width='100%'/><p>File #:&nbsp;&nbsp;" + fileData.fileNumber +
+        "</p></div>";
     }
 
-    function fetchArgumentFromUrlString (argumentName, url = location.href) {
-      const urlToSearch = new URL(url)
-      const argument = urlToSearch.searchParams.get(argumentName)
-      return argument
+    function fetchArgumentFromUrlString(argumentName) {
+      var url = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : location.href;
+
+      var urlToSearch = new URL(url);
+      var argument = urlToSearch.searchParams.get(argumentName);
+      return argument;
     }
 
-    function fetchFileNumbersToPrint () {
+    function fetchFileNumbersToPrint() {
       return {
         new: {
           fileNumber: fetchArgumentFromUrlString('new')
@@ -116,7 +118,7 @@ function refreshList() {
         old: {
           fileNumber: fetchArgumentFromUrlString('old')
         }
-      }
+      };
     }
   </script>
 </body>
