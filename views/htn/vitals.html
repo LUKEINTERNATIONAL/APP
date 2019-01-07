@@ -171,14 +171,20 @@
                     {concept_id: height_concept_id, value_numeric: height, value_modifier: "cm"},
                     {concept_id: systollic_concept_id, value_numeric: answers_hash["systollic"]},
                     {concept_id: diastollic_concept_id, value_numeric: answers_hash["diastollic"]},
-                    {concept_id: treatment_status_concept_id, value_text: treatment_status}
+                    {concept_id: treatment_status_concept_id, value_text: answers_hash["treatment_status"]}
                 ]
             };
 
-            if (patient_age <= 14){
+            if (patient_age <= 14) {
+
+                current_weight_percentile = (parseFloat(answers_hash["weight"]) / (parseFloat(patient_median_Weight_height["weight"])) * 100);
+                current_height_percentile = (parseFloat(answers_hash["weight"]) / (parseFloat(patient_median_Weight_height["height"])) * 100)
+                //var medianWeightHeight = weightForHeights[currentHeightRounded.toFixed(1)];
+                //var weightForHeightPercentile = (currentWeight/(medianWeightHeight)*100).toFixed(0);
+
                 obs.observations.push({concept_id: weight_for_height_concept_id, value_text: ""})
-                obs.observations.push({concept_id: weight_for_age_concept_id, value_text: ""})
-                obs.observations.push({concept_id: height_for_age_concept_id, value_text: ""})
+                obs.observations.push({concept_id: weight_for_age_concept_id, value_text: current_weight_percentile})
+                obs.observations.push({concept_id: height_for_age_concept_id, value_text: current_height_percentile})
             } else {
                 var weight = $("weight").value;
                 var currentBmi = (weight / (height * height) * 10000).toFixed(1);
@@ -201,14 +207,13 @@
         }
 
         function changeSubmitButton() {
-            var treatment_status = "";
+            var treatment_status_answer = "";
             try {
-                treatment_status = __$("treatment_status").value
-                answers_hash["treatment_status"] = treatment_status;
+                treatment_status_answer = __$("treatment_status").value;
+                answers_hash["treatment_status"] = treatment_status_answer;
             } catch (e) {
 
             }
-
             __$('nextButton').onmousedown = function () {
                 submitVitals();
             }
@@ -224,6 +229,7 @@
         var height_concept_id = 5090;
 
         var patient_eligible_for_screening = false;
+        var patient_median_Weight_height = {};
 
         function initializeVariables() {
             jQuery(".loader").show();
@@ -246,8 +252,12 @@
             var diastollic_property_url = apiProtocol + "://" + apiURL + ":" + apiPort;
             diastollic_property_url += "/api/v1/global_properties?property=htn.diastolic.threshold";
 
+            //eligible_for_htn_screening
             var patient_eligible_for_htn_url = apiProtocol + "://" + apiURL + ":" + apiPort;
-            patient_eligible_for_htn_url += "/api/v1/global_properties?property=htn.diastolic.threshold";
+            patient_eligible_for_htn_url += "/api/v1/patients/" + sessionStorage.patientID + "/eligible_for_htn_screening";
+
+            var weight_height_age_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+            weight_height_age_url += "/api/v1/patients/" + sessionStorage.patientID + "/median_weight_height";
 
             var xhttp1 = new XMLHttpRequest();
             xhttp1.onreadystatechange = function () {
@@ -292,13 +302,26 @@
                                             var xhttp5 = new XMLHttpRequest();
                                             xhttp5.onreadystatechange = function () {
                                                 if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
-                                                    //var eligible_for_screening = JSON.parse(this.responseText);
-                                                    patient_eligible_for_screening = true;
+                                                    var eligible_for_screening = JSON.parse(this.responseText);
+                                                    patient_eligible_for_screening = eligible_for_screening["eligible"];
                                                     addButton();
                                                     resetPage();
+                                                    if (patient_age <= 14) {
+                                                        var xhttp6 = new XMLHttpRequest();
+                                                        xhttp6.onreadystatechange = function () {
+                                                            if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                                                                patient_median_Weight_height = JSON.parse(this.responseText);
+                                                            }
+                                                        };
+
+                                                        xhttp6.open("GET", weight_height_age_url, true);
+                                                        xhttp6.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                                                        xhttp6.setRequestHeader('Content-type', "application/json");
+                                                        xhttp6.send();
+                                                    }
                                                 }
                                             };
-                                            xhttp5.open("GET", diastollic_property_url, true);
+                                            xhttp5.open("GET", patient_eligible_for_htn_url, true);
                                             xhttp5.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
                                             xhttp5.setRequestHeader('Content-type', "application/json");
                                             xhttp5.send();
@@ -503,8 +526,6 @@
             <input helpText="Summary" id="summary" name="summary" optional="true"
                    tt_onLoad="showSummary();hideButton(); changeSubmitButton();"
                    type="text"/>
-
-            <!--<input type="hidden" value="BODY MASS INDEX, MEASURED"/>
 
             <input type='hidden' name='program' value='HYPERTENSION PROGRAM'/>-->
 
