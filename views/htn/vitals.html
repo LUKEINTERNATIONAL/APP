@@ -40,7 +40,7 @@
             displayText += "<div><span class='title'>BMI :</span>";
             displayText += "</div>"
 
-            if ((parseInt(sbp) > 0) && (parseInt(dbp) > 0)) {
+            if ((parseInt(sbp) > parseInt(htn_systollic_property)) && (parseInt(dbp) > parseInt(htn_diastollic_property))) {
 
                 displayText += "<div><span class='title'>BP Reading:</span><span class='lowBMIcounselling'>" + sbp + "/" +
                     dbp + "</span><span class='recommendation'>Patient's blood pressure is high</span><br/>";
@@ -51,7 +51,6 @@
                 }
 
             }
-
 
             document.getElementById('inputFrame' + tstCurrentPage).innerHTML = '<div id="summary">' + displayText + '</div>';
         }
@@ -249,19 +248,28 @@
 
                             var xhttp3 = new XMLHttpRequest();
                             xhttp3.onreadystatechange = function() {
-                                if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
-                                    var systollic_property = JSON.parse(this.responseText);
-                                    if (systollic_property["htn.systolic.threshold"]){
-                                        htn_systollic_property = systollic_property["htn.systolic.threshold"]
+                                if (this.readyState == 4 && (this.status == 201 || this.status == 200 || this.status == 404)) {
+
+                                    try {
+                                        var systollic_property = JSON.parse(this.responseText);
+                                        if (systollic_property["htn.systolic.threshold"]){
+                                            htn_systollic_property = systollic_property["htn.systolic.threshold"]
+                                        }
+                                    } catch (e) {
                                     }
 
                                     var xhttp4 = new XMLHttpRequest();
                                     xhttp4.onreadystatechange = function() {
-                                        if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
-                                            var diastollic_property = JSON.parse(this.responseText);
-                                            if (diastollic_property["htn.diastolic.threshold"]){
-                                                htn_diastollic_property = diastollic_property["htn.diastolic.threshold"];
+                                        if (this.readyState == 4 && (this.status == 201 || this.status == 200 || this.status == 404)) {
+                                            try {
+                                                var diastollic_property = JSON.parse(this.responseText);
+                                                if (diastollic_property["htn.diastolic.threshold"]){
+                                                    htn_diastollic_property = diastollic_property["htn.diastolic.threshold"];
+                                                }
+                                            } catch (e) {
+                                                
                                             }
+
                                             resetPage();
                                         }
                                     }
@@ -437,6 +445,7 @@
 
             <input absoluteMax="228" absoluteMin="10" field_type="number" helpText="Height (cm)" id="height"
                    tt_onLoad="setNextButtonToGetInputValue('height')"
+                   condition="currentHeight == 0 || patient_age < 18"
                    name="height" tt_pageStyleClass="Numeric NumbersOnly" type="text"
                    units="cm" validationMessage="You must enter numbers only (for example 157)"
                    validationRule="^([0-9]+)|Unknown$"/>
@@ -449,7 +458,7 @@
                    validationRule="^([0-9]+)|Unknown$"/>
 
             <input absoluteMax="150" absoluteMin="30" condition="captureBP()" field_type="number"
-                   helpText="Diastolic blood pressure (X/?)" id="diastolic_blood_pressure" max="110" min="50"
+                   helpText="Diastolic blood pressure" id="diastolic_blood_pressure" max="110" min="50"
                    name="dbp" tt_pageStyleClass="Keyboard Numeric NumbersOnly" type="text"
                    tt_onLoad="setNextButtonToGetInputValue('diastollic');"
                    units="mmHg" validationMessage="You must enter numbers only (for example 157)"
