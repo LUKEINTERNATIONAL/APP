@@ -68,16 +68,15 @@
         }
 
         function captureBP() {
-            if (true && true && !bpOverRide) {
-                return true
+            if (patient_eligible_for_screening && !bpOverRide) {
+                return true;
             }
-            else if (true && false && bpOverRide) {
-                return true
+            else if (!patient_eligible_for_screening && bpOverRide) {
+                return true;
             }
             else {
-                return false
+                return false;
             }
-
         }
 
         function toggleOverride() {
@@ -86,14 +85,14 @@
         }
 
         function addButton() {
-            if ((true) && (false)) {
+            if (!patient_eligible_for_screening) {
                 var bp = document.createElement("button");
                 bp.innerHTML = "<span>Capture BP</span>";
                 bp.setAttribute("onClick", "toggleOverride()");
                 bp.setAttribute("id", "captureBPBtn")
                 document.getElementById("buttons").appendChild(bp);
             }
-            else if ((true) && (true)) {
+            else {
                 var bp = document.createElement("button");
                 bp.innerHTML = "<span>BP Unavailable</span>";
                 bp.setAttribute("onClick", "toggleOverride()");
@@ -104,18 +103,12 @@
         }
 
         function hideButton() {
-            if (true) {
-                document.getElementById("captureBPBtn").style.display = 'none'
-            }
+            jQuery("#captureBPBtn").hide();
         }
 
         function displayButton() {
-            if (true) {
-                document.getElementById("captureBPBtn").style.display = 'block'
-            }
+            jQuery("#captureBPBtn").show();
         }
-
-        //setTimeout("addButton()", 300)
 
         function hasHighBp() {
             var sbp = document.getElementById("systolic_blood_pressure").value
@@ -210,6 +203,8 @@
         var treatment_status_concept_id = 1484;
         var height_concept_id = 5090;
 
+        var patient_eligible_for_screening = false;
+
         function initializeVariables() {
             jQuery(".loader").show();
             jQuery('#keyboard').hide();
@@ -218,61 +213,78 @@
             jQuery("#inputFrame" + tstCurrentPage).hide();
 
             var bp_info_url = apiProtocol + "://" + apiURL + ":" + apiPort;
-            bp_info_url +=  "/api/v1/observations?person_id=" + sessionStorage.patientID;
-            bp_info_url +=  "&concept_id=" + treatment_status_concept_id;
+            bp_info_url += "/api/v1/observations?person_id=" + sessionStorage.patientID;
+            bp_info_url += "&concept_id=" + treatment_status_concept_id;
 
             var height_url = apiProtocol + "://" + apiURL + ":" + apiPort;
-            height_url +=  "/api/v1/observations?person_id=" + sessionStorage.patientID;
-            height_url +=  "&concept_id=" + height_concept_id;
+            height_url += "/api/v1/observations?person_id=" + sessionStorage.patientID;
+            height_url += "&concept_id=" + height_concept_id;
 
             var systollic_property_url = apiProtocol + "://" + apiURL + ":" + apiPort;
-            systollic_property_url +=  "/api/v1/global_properties?property=htn.systolic.threshold";
+            systollic_property_url += "/api/v1/global_properties?property=htn.systolic.threshold";
 
             var diastollic_property_url = apiProtocol + "://" + apiURL + ":" + apiPort;
-            diastollic_property_url +=  "/api/v1/global_properties?property=htn.diastolic.threshold";
+            diastollic_property_url += "/api/v1/global_properties?property=htn.diastolic.threshold";
+
+            var patient_eligible_for_htn_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+            patient_eligible_for_htn_url += "/api/v1/global_properties?property=htn.diastolic.threshold";
 
             var xhttp1 = new XMLHttpRequest();
-            xhttp1.onreadystatechange = function() {
+            xhttp1.onreadystatechange = function () {
                 if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
                     var bp_treatment_status_obs = JSON.parse(this.responseText);
-                    if (bp_treatment_status_obs.length > 0){
+                    if (bp_treatment_status_obs.length > 0) {
                         bp_treatment_info_available = true;
                     }
                     var xhttp2 = new XMLHttpRequest();
-                    xhttp2.onreadystatechange = function() {
+                    xhttp2.onreadystatechange = function () {
                         if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
                             var height_obs = JSON.parse(this.responseText);
-                            if (height_obs.length > 0){
+                            if (height_obs.length > 0) {
                                 currentHeight = height_obs[0].value_numeric;
                             }
 
                             var xhttp3 = new XMLHttpRequest();
-                            xhttp3.onreadystatechange = function() {
+                            xhttp3.onreadystatechange = function () {
                                 if (this.readyState == 4 && (this.status == 201 || this.status == 200 || this.status == 404)) {
 
                                     try {
                                         var systollic_property = JSON.parse(this.responseText);
-                                        if (systollic_property["htn.systolic.threshold"]){
+                                        if (systollic_property["htn.systolic.threshold"]) {
                                             htn_systollic_property = systollic_property["htn.systolic.threshold"]
                                         }
                                     } catch (e) {
+
                                     }
 
                                     var xhttp4 = new XMLHttpRequest();
-                                    xhttp4.onreadystatechange = function() {
+                                    xhttp4.onreadystatechange = function () {
                                         if (this.readyState == 4 && (this.status == 201 || this.status == 200 || this.status == 404)) {
                                             try {
                                                 var diastollic_property = JSON.parse(this.responseText);
-                                                if (diastollic_property["htn.diastolic.threshold"]){
+                                                if (diastollic_property["htn.diastolic.threshold"]) {
                                                     htn_diastollic_property = diastollic_property["htn.diastolic.threshold"];
                                                 }
                                             } catch (e) {
-                                                
+
                                             }
 
-                                            resetPage();
+                                            var xhttp5 = new XMLHttpRequest();
+                                            xhttp5.onreadystatechange = function () {
+                                                if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                                                    //var eligible_for_screening = JSON.parse(this.responseText);
+                                                    patient_eligible_for_screening = true;
+                                                    addButton();
+                                                    resetPage();
+                                                }
+                                            };
+                                            xhttp5.open("GET", diastollic_property_url, true);
+                                            xhttp5.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                                            xhttp5.setRequestHeader('Content-type', "application/json");
+                                            xhttp5.send();
+
                                         }
-                                    }
+                                    };
                                     xhttp4.open("GET", diastollic_property_url, true);
                                     xhttp4.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
                                     xhttp4.setRequestHeader('Content-type', "application/json");
@@ -297,7 +309,7 @@
             xhttp1.send();
         }
 
-        function resetPage(){
+        function resetPage() {
             jQuery('#keyboard').show();
             jQuery("#buttons").show();
             jQuery("#innerPop").show()
@@ -413,8 +425,12 @@
         }
 
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
         }
 
     </style>
@@ -428,13 +444,13 @@
         <form action="">
             <input absoluteMax="250" absoluteMin="0" field_type="number" helpText="Weight (Kg)" id="weight"
                    name="weight"
-                   tt_onLoad="addButton(); $('clearButton').style.display = 'inline'; setNextButtonToGetInputValue('weight'); initializeVariables();"
+                   tt_onLoad="$('clearButton').style.display = 'inline'; setNextButtonToGetInputValue('weight'); initializeVariables();"
                    tt_pageStyleClass="Keyboard Numeric NumbersOnlyWithDecimal" type="text" units="kg"
                    validationMessage="You must enter a decimal between 0 and 9 (for example: 54<b>.6</b>)"
                    validationRule="([0-9]+\.[0-9])|Unknown$"/>
 
             <select allowFreeText="false" helpText="Already taking drugs for blood pressure?"
-                    condition = "bp_treatment_info_available == false"
+                    condition="bp_treatment_info_available == false"
                     tt_onLoad="setNextButtonToGetInputValue('treatment_status')"
                     id="treatment_status" name="transfer_in" tt_pageStyleClass="NoKeyboard">
                 <option value=''></option>
