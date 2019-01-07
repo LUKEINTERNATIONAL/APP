@@ -5,7 +5,24 @@
 <style>
   #clearButton { display: none; }
 #cancelButton { display: none; }
+.loader {
+        position: absolute;
+        display: none;
+        top: 30%;
+        left: 40%;
+        border: 16px solid #f3f3f3; /* Light grey */
+        border-top: 16px solid #3498db; /* Blue */
+        border-radius: 50%;
+        width: 120px;
+        height: 120px;
+        animation: spin 2s linear infinite;
+        z-index: 9999999999999;
+    }
 
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
 #activeFileNumbers {
         width: 90%;
         padding: 2%;
@@ -92,6 +109,8 @@
           tt_pageStyleClass="NoControls" helpText="Filing numbers" optional="true" />
 
       </form>
+
+            <div class="loader"></div>
     </div>
   </div>
 
@@ -101,6 +120,8 @@
     var paginationPage = 0;
 
     function populatePageWithActiveFileNumbers(activeFileNumbers) {
+
+      jQuery(".loader").hide();
       activeFileNumbers.forEach(function (activeFileNumber) {
         document.getElementById('activeFileNumbers').innerHTML += createFileNumberElement(activeFileNumber);
       });
@@ -117,6 +138,8 @@
     }
 
     function fetchArchivingCandidates() {
+
+      jQuery(".loader").show();
       GET({
         url: apiUrl + '/archiving_candidates',
         async: true,
