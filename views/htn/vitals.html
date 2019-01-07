@@ -196,7 +196,7 @@
                 obs.observations.push({concept_id: weight_for_age_concept_id, value_text: current_weight_percentile});
                 obs.observations.push({concept_id: height_for_age_concept_id, value_text: current_height_percentile});
             } else {
-                var currentBmi = (weight / (height * height) * 10000).toFixed(1);
+                var currentBmi = (answers_hash["weight"] / (height * height) * 10000).toFixed(1);
                 obs.observations.push({concept_id: bmi_concept_id, value_numeric: currentBmi})
             }
 
