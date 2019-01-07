@@ -20,7 +20,6 @@
         var patientID = sessionStorage.patientID;
 
         jQuery.noConflict();
-        var currentHeight = "";
         var displayText;
         var bpOverRide;
 
@@ -203,6 +202,102 @@
             }
         }
 
+        var currentHeight = 0;
+        var patient_age = parseInt(sessionStorage.patientAge);
+        var htn_systollic_property = 0;
+        var htn_diastollic_property = 0;
+
+        var bp_treatment_info_available = false;
+        var treatment_status_concept_id = 1484;
+        var height_concept_id = 5090;
+
+        function initializeVariables() {
+            jQuery(".loader").show();
+            jQuery('#keyboard').hide();
+            jQuery("#buttons").hide();
+            jQuery("#tt_page_weight_kg").hide();
+            jQuery("#inputFrame" + tstCurrentPage).hide();
+
+            var bp_info_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+            bp_info_url +=  "/api/v1/observations?person_id=" + sessionStorage.patientID;
+            bp_info_url +=  "&concept_id=" + treatment_status_concept_id;
+
+            var height_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+            height_url +=  "/api/v1/observations?person_id=" + sessionStorage.patientID;
+            height_url +=  "&concept_id=" + height_concept_id;
+
+            var systollic_property_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+            systollic_property_url +=  "/api/v1/global_properties?property=htn.systolic.threshold";
+
+            var diastollic_property_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+            diastollic_property_url +=  "/api/v1/global_properties?property=htn.diastolic.threshold";
+
+            var xhttp1 = new XMLHttpRequest();
+            xhttp1.onreadystatechange = function() {
+                if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                    var bp_treatment_status_obs = JSON.parse(this.responseText);
+                    if (bp_treatment_status_obs.length > 0){
+                        bp_treatment_info_available = true;
+                    }
+                    var xhttp2 = new XMLHttpRequest();
+                    xhttp2.onreadystatechange = function() {
+                        if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                            var height_obs = JSON.parse(this.responseText);
+                            if (height_obs.length > 0){
+                                currentHeight = height_obs[0].value_numeric;
+                            }
+
+                            var xhttp3 = new XMLHttpRequest();
+                            xhttp3.onreadystatechange = function() {
+                                if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                                    var systollic_property = JSON.parse(this.responseText);
+                                    if (systollic_property["htn.systolic.threshold"]){
+                                        htn_systollic_property = systollic_property["htn.systolic.threshold"]
+                                    }
+
+                                    var xhttp4 = new XMLHttpRequest();
+                                    xhttp4.onreadystatechange = function() {
+                                        if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                                            var diastollic_property = JSON.parse(this.responseText);
+                                            if (diastollic_property["htn.diastolic.threshold"]){
+                                                htn_diastollic_property = diastollic_property["htn.diastolic.threshold"];
+                                            }
+                                            resetPage();
+                                        }
+                                    }
+                                    xhttp4.open("GET", diastollic_property_url, true);
+                                    xhttp4.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                                    xhttp4.setRequestHeader('Content-type', "application/json");
+                                    xhttp4.send();
+                                }
+                            }
+                            xhttp3.open("GET", systollic_property_url, true);
+                            xhttp3.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                            xhttp3.setRequestHeader('Content-type', "application/json");
+                            xhttp3.send();
+                        }
+                    }
+                    xhttp2.open("GET", height_url, true);
+                    xhttp2.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                    xhttp2.setRequestHeader('Content-type', "application/json");
+                    xhttp2.send();
+                }
+            }
+            xhttp1.open("GET", bp_info_url, true);
+            xhttp1.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+            xhttp1.setRequestHeader('Content-type', "application/json");
+            xhttp1.send();
+        }
+
+        function resetPage(){
+            jQuery('#keyboard').show();
+            jQuery("#buttons").show();
+            jQuery("#innerPop").show()
+            jQuery("#inputFrame" + tstCurrentPage).show();
+            jQuery(".loader").hide();
+            jQuery("#tt_page_weight_kg").show();
+        }
+
     </script>
 
     <style type="text/css">
@@ -295,7 +390,27 @@
             display: none;
         }
 
+        .loader {
+            position: absolute;
+            display: none;
+            top: 30%;
+            left: 40%;
+            border: 16px solid #f3f3f3; /* Light grey */
+            border-top: 16px solid #3498db; /* Blue */
+            border-radius: 50%;
+            width: 120px;
+            height: 120px;
+            animation: spin 2s linear infinite;
+            z-index: 9999999999999;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
     </style>
+
 
 </head>
 <body id="mateme">
@@ -305,12 +420,13 @@
         <form action="">
             <input absoluteMax="250" absoluteMin="0" field_type="number" helpText="Weight (Kg)" id="weight"
                    name="weight"
-                   tt_onLoad="addButton(); $('clearButton').style.display = 'inline'; setNextButtonToGetInputValue('weight')"
+                   tt_onLoad="addButton(); $('clearButton').style.display = 'inline'; setNextButtonToGetInputValue('weight'); initializeVariables();"
                    tt_pageStyleClass="Keyboard Numeric NumbersOnlyWithDecimal" type="text" units="kg"
                    validationMessage="You must enter a decimal between 0 and 9 (for example: 54<b>.6</b>)"
                    validationRule="([0-9]+\.[0-9])|Unknown$"/>
 
             <select allowFreeText="false" helpText="Already taking drugs for blood pressure?"
+                    condition = "bp_treatment_info_available == false"
                     tt_onLoad="setNextButtonToGetInputValue('treatment_status')"
                     id="treatment_status" name="transfer_in" tt_pageStyleClass="NoKeyboard">
                 <option value=''></option>
@@ -349,6 +465,7 @@
 
         </form>
 
+        <div class="loader"></div>
     </div>
 </div>
 </body>
