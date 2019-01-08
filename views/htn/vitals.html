@@ -208,16 +208,6 @@
         }
 
         function setNextButtonToGetInputValue(key) {
-<<<<<<< Updated upstream
-            try {
-              __$('nextButton').onmousedown = function () {
-                  var value = __$('touchscreenInput' + tstCurrentPage).value;
-                  answers_hash[key] = value;
-                  gotoNextPage();
-              }
-            }catch(e){
-              gotoNextPage();
-=======
             __$('nextButton').onmousedown = function () {
                    try {
                     var value = __$('touchscreenInput' + tstCurrentPage).value;
@@ -227,7 +217,6 @@
                    }
             
                 gotoNextPage();
->>>>>>> Stashed changes
             }
         }
 
