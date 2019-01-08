@@ -1443,6 +1443,16 @@
                             ]
                         };
 
+                        var confirmatory_year = $('confirmatory_hiv_test_year').value;
+                        var confirmatory_month = $('confirmatory_hiv_test_month').value;
+                        var confirmatory_day = __$('touchscreenInput' + tstCurrentPage).value;
+                        if (isNumeric(confirmatory_year)){
+                            if (isNumeric(confirmatory_month)){
+                                var confirmatory_date = confirmatory_year + "-" + confirmatory_month + "-" + confirmatory_day;
+                                obs.observations.push({ concept_id: 7882, value_datetime: confirmatory_date });
+                            }
+                        }
+
                         var agrees_to_followup_agreement_concept_id = 2552;
                         var phone_only_concept_id = 9685;
                         var visit_only_concept_id = 9686;
@@ -1467,6 +1477,10 @@
 
 
                         submitParameters(obs,"/observations/", "submitVitalsRegistration()");
+                    }
+
+                    function isNumeric(num){
+                        return !isNaN(num)
                     }
 
                     function getAgreesToFollowUpConceptID(answer){
