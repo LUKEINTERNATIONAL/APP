@@ -1431,27 +1431,38 @@
                                 { concept_id: 7937, value_coded: answers_hash["ever_registered"].trim().toUpperCase() == "YES" ? 1065: 1066 },
                                 { concept_id: 6393, value_coded: answers_hash["has_transfer_letter"].trim().toUpperCase() == "YES" ? 1065: 1066 },
                                 { concept_id: 7881, value_text: answers_hash["confirmatory_hiv_test_location"] },
-                                { concept_id: 7880, value_text: answers_hash["confirmatory_hiv_test_type"] },
-                                { concept_id: 7751, value_datetime: answers_hash["date_art_last_taken"], value_text: date_art_last_taken_value_text },
-                                { concept_id: 7752, value_coded: answers_hash["taken_art_in_the_last_two_months"].trim().toUpperCase() == "YES" ? 1065: 1066 },
-                                { concept_id: 6394, value_coded: answers_hash["taken_art_in_the_last_two_weeks"].trim().toUpperCase() == "YES" ? 1065: 1066 },
-                                { concept_id: 7750, value_text: answers_hash["location_of_art_initiation"] },
-                                { concept_id: 1499, value_datetime: answers_hash["drug_start_date"] },
-                                { concept_id: 2516, value_datetime: answers_hash["date_art_started"] },
-                                { concept_id: 5497, value_numeric: answers_hash["cd4_count"], value_modifier: cd4_count_modifier_global },
-                                { concept_id: 6981, value_text: answers_hash["art_number_at_previous_location"] },
+                                { concept_id: 7880, value_text: answers_hash["confirmatory_hiv_test_type"] }
                             ]
                         };
+
+                        if ($('ever_received_art').value == 'YES'){
+                            obs.observations.push({ concept_id: 6981, value_text: answers_hash["art_number_at_previous_location"]});
+                            obs.observations.push({ concept_id: 7751, value_datetime: answers_hash["date_art_last_taken"], value_text: date_art_last_taken_value_text});
+                            obs.observations.push({ concept_id: 7752, value_coded: answers_hash["taken_art_in_the_last_two_months"].trim().toUpperCase() == "YES" ? 1065: 1066 });
+                            obs.observations.push({ concept_id: 6394, value_coded: answers_hash["taken_art_in_the_last_two_weeks"].trim().toUpperCase() == "YES" ? 1065: 1066 });
+                            obs.observations.push({ concept_id: 7750, value_text: answers_hash["location_of_art_initiation"]});
+                            obs.observations.push({ concept_id: 1499, value_datetime: answers_hash["drug_start_date"]});
+                            obs.observations.push({ concept_id: 2516, value_datetime: answers_hash["date_art_started"]});
+                            obs.observations.push({ concept_id: 5497, value_numeric: answers_hash["cd4_count"], value_modifier: cd4_count_modifier_global});
+                        }
 
                         var confirmatory_year = $('confirmatory_hiv_test_year').value;
                         var confirmatory_month = $('confirmatory_hiv_test_month').value;
                         var confirmatory_day = __$('touchscreenInput' + tstCurrentPage).value;
-                        if (isNumeric(confirmatory_year)){
-                            if (isNumeric(confirmatory_month)){
-                                var confirmatory_date = confirmatory_year + "-" + confirmatory_month + "-" + confirmatory_day;
-                                obs.observations.push({ concept_id: 7882, value_datetime: confirmatory_date });
+                        var current_input = __$('touchscreenInput' + tstCurrentPage).value;
+
+                        if (!current_input.match(/UNKNOWN/i)) {
+                            if (isNumeric(confirmatory_year) == true) {
+                                if (isNumeric(confirmatory_month) == true) {
+                                    var confirmatory_date = confirmatory_year + "-" + confirmatory_month + "-" + confirmatory_day;
+                                    var confirmatory_date_check = new Date(confirmatory_date);
+                                    if (confirmatory_date_check) {
+                                        obs.observations.push({concept_id: 7882, value_datetime: confirmatory_date});
+                                    }
+                                }
                             }
                         }
+
 
                         var agrees_to_followup_agreement_concept_id = 2552;
                         var phone_only_concept_id = 9685;
