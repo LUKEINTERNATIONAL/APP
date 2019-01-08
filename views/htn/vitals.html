@@ -208,10 +208,14 @@
         }
 
         function setNextButtonToGetInputValue(key) {
-            __$('nextButton').onmousedown = function () {
-                var value = __$('touchscreenInput' + tstCurrentPage).value;
-                answers_hash[key] = value;
-                gotoNextPage();
+            try {
+              __$('nextButton').onmousedown = function () {
+                  var value = __$('touchscreenInput' + tstCurrentPage).value;
+                  answers_hash[key] = value;
+                  gotoNextPage();
+              }
+            }catch(e){
+              gotoNextPage();
             }
         }
 
