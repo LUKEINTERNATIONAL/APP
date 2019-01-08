@@ -208,6 +208,7 @@
         }
 
         function setNextButtonToGetInputValue(key) {
+<<<<<<< Updated upstream
             try {
               __$('nextButton').onmousedown = function () {
                   var value = __$('touchscreenInput' + tstCurrentPage).value;
@@ -216,6 +217,17 @@
               }
             }catch(e){
               gotoNextPage();
+=======
+            __$('nextButton').onmousedown = function () {
+                   try {
+                    var value = __$('touchscreenInput' + tstCurrentPage).value;
+                    answers_hash[key] = value;
+                   } catch(e){
+                            console.log(e)
+                   }
+            
+                gotoNextPage();
+>>>>>>> Stashed changes
             }
         }
 
@@ -225,7 +237,7 @@
                 treatment_status_answer = __$("treatment_status").value;
                 answers_hash["treatment_status"] = treatment_status_answer;
             } catch (e) {
-
+              showMessage(e)
             }
             __$('nextButton').onmousedown = function () {
                 submitVitals();

@@ -17,7 +17,7 @@ function getWeights() {
               }
             
               //  = 
-              for (let index = 0; index < results.length; index++) {
+              for (var index = 0; index < results.length; index++) {
                 passedData.push([moment(results[index].obs_datetime).format("YYYY-MM-DD"), results[index].value_numeric]);
               }
               formatData(passedData);  
