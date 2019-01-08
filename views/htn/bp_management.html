@@ -235,6 +235,7 @@
     var drug_use_history_concept_id = 2466;
     var transferred_concept_id = 6986;
     var drug_use_history_data = {};
+    var hypertension_program_id = 20;
 
     function initializeVariables() {
         //jQuery(".loader").show();
@@ -276,13 +277,20 @@
         transferred_url += "/api/v1/observations?person_id=" + sessionStorage.patientID;
         transferred_url += "&concept_id=" + transferred_concept_id;
 
-        var hypertension_program_id = 20;
+
         var get_htn_program_url = apiProtocol + "://" + apiURL + ":" + apiPort;
         get_htn_program_url += "/api/v1/patients/" + sessionStorage.patientID + "/programs/";
 
         //create_htn_program_url
         var post_htn_program_url = apiProtocol + "://" + apiURL + ":" + apiPort;
         post_htn_program_url += "/api/v1/patients/" + sessionStorage.patientID + "/programs";
+
+        var get_htn_program_states = apiProtocol + "://" + apiURL + ":" + apiPort;
+        get_htn_program_states += "/api/v1/programs/" + hypertension_program_id + "/patients/" + sessionStorage.patientID + "/states";
+
+        //post_htn_program_states
+        var post_htn_program_states = apiProtocol + "://" + apiURL + ":" + apiPort;
+        post_htn_program_states += "/api/v1/programs/" + hypertension_program_id + "/patients/" + sessionStorage.patientID + "/states";
 
         var xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function () {
@@ -340,7 +348,8 @@
                                                 var xhttp5 = new XMLHttpRequest();
                                                 xhttp5.onreadystatechange = function () {
                                                     if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
-                                                        bp_trail = JSON.parse(this.responseText);;
+                                                        bp_trail = JSON.parse(this.responseText);
+                                                        ;
                                                         var trail = formatBPTrail(bp_trail);
                                                         normatensive = normatensiveBP(trail);
                                                         var xhttp7 = new XMLHttpRequest();
@@ -366,24 +375,56 @@
                                                                     if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
                                                                         var programs = JSON.parse(this.responseText);
                                                                         var program_names = [];
-                                                                        for (var i=0; i<=programs.length - 1; i++){
+                                                                        for (var i = 0; i <= programs.length - 1; i++) {
                                                                             program_names.push(programs[i]["program"].name)
                                                                         }
 
-                                                                        if (!program_names.includes("HYPERTENSION PROGRAM")){
+                                                                        if (!program_names.includes("HYPERTENSION PROGRAM")) {
                                                                             console.log("NOT in hypertension")
                                                                             var xhttp9 = new XMLHttpRequest();
                                                                             xhttp9.onreadystatechange = function () {
                                                                                 if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
                                                                                     //Program created
                                                                                     console.log("HTN program created")
+
                                                                                 }
                                                                             }
                                                                             xhttp9.open("POST", post_htn_program_url, true);
                                                                             xhttp9.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
                                                                             xhttp9.setRequestHeader('Content-type', "application/json");
-                                                                            htn_program_params = JSON.stringify({"program_id": hypertension_program_id})
+                                                                            var htn_program_params = JSON.stringify({"program_id": hypertension_program_id})
                                                                             xhttp9.send(htn_program_params);
+                                                                        } else {
+                                                                            var xhttp10 = new XMLHttpRequest();
+                                                                            xhttp10.onreadystatechange = function () {
+                                                                                if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                                                                                    var patient_htn_states = JSON.parse(this.responseText);
+                                                                                    var patient_states = [];
+                                                                                    for (var i = 0; i <= patient_htn_states.length - 1; i++) {
+                                                                                        patient_states.push(patient_htn_states[i].name);
+                                                                                    }
+
+                                                                                    if (!patient_states.includes("Alive")) {
+                                                                                        var xhttp11 = new XMLHttpRequest();
+                                                                                        xhttp11.onreadystatechange = function () {
+                                                                                            if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                                                                                                console.log("Patient state created")
+                                                                                            }
+                                                                                        }
+                                                                                        xhttp11.open("POST", post_htn_program_states, true);
+                                                                                        xhttp11.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                                                                                        xhttp11.setRequestHeader('Content-type', "application/json");
+                                                                                        var alive_state_id = 160;
+                                                                                        var htn_program_state_params = JSON.stringify({"state": alive_state_id});
+                                                                                        xhttp11.send(htn_program_state_params);
+                                                                                    }
+
+                                                                                }
+                                                                            }
+                                                                            xhttp10.open("GET", get_htn_program_states, true);
+                                                                            xhttp10.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                                                                            xhttp10.setRequestHeader('Content-type', "application/json");
+                                                                            xhttp10.send();
                                                                         }
                                                                     }
                                                                 }
@@ -883,11 +924,12 @@
             showMessage("Please select one action to proceed");
     }
 
+    var selected_patient_state = "";
     function createEncounter(chosenPlan, path, state) {
-
         if (state == "On Treatment") {
             state = null;
         }
+        selected_patient_state = state;
 
         var currentTime = moment().format(' HH:mm:ss');
         var encounter_datetime = moment(sessionStorage.sessionDate).format('YYYY-MM-DD');
@@ -915,7 +957,31 @@
             ]
         };
 
-        submitParameters(obs, "/observations", redirectToRequiredTask())
+        submitParameters(obs, "/observations", createPatientState())
+    }
+
+    function createPatientState() {
+        if (patient_state) {
+            var create_or_update_htn_state_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+            create_or_update_htn_state_url += "/api/v1/patients/" + sessionStorage.patientID + "/update_or_create_htn_state";
+
+            var patient_state_xhttp = new XMLHttpRequest();
+            patient_state_xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                    var result = JSON.parse(this.responseText);
+                    redirectToRequiredTask();
+                }
+            };
+
+            patient_state_xhttp.open("POST", create_or_update_htn_state_url, true);
+            patient_state_xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+            patient_state_xhttp.setRequestHeader('Content-type', "application/json");
+
+            var patient_state = JSON.stringify({"state": selected_patient_state});
+            patient_state_xhttp.send(patient_state);
+        }else{
+            redirectToRequiredTask();
+        }
     }
 
     function redirectToRequiredTask() {
