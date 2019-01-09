@@ -223,6 +223,12 @@
             }
         }
 
+        function resetNextButton() {
+            __$('nextButton').onmousedown = function () {
+                gotoNextPage();
+            }
+        }
+
         function changeSubmitButton() {
             var treatment_status_answer = "";
             try {
@@ -614,7 +620,7 @@
                    validationRule="^([0-9]+)|Unknown$"/>
 
             <input helpText="Weight Summary" id="showSummary" name="showSummary" optional="true"
-                   tt_onLoad="growthIndicators();  __$('clearButton').style.display = 'none'; displayButton();"
+                   tt_onLoad="growthIndicators();  __$('clearButton').style.display = 'none'; displayButton(); resetNextButton();"
                    tt_onUnLoad=" hideButton();__$('clearButton').style.display = 'block';" type="text"/>
 
             <input absoluteMax="300" absoluteMin="60" condition="captureBP()" field_type="number"
