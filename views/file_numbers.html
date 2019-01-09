@@ -185,6 +185,9 @@
       }, {
         filing_number: event.id
       }, function (data) {
+        //set patient ids to be used in printing file numbers on next page
+        sessionStorage.newPatientID = data.new_identifier.patient_id;
+        sessionStorage.oldPatientID = data.archived_identifier.patient_id;
         redirectToUrl('/apps/ART/views/assigned_patient_file_number.html?old=' + data.archived_identifier.identifier +
           '&new=' + data.new_identifier.identifier);
       }, function (error) {
@@ -239,6 +242,7 @@
       }, {
         filing_number: filingNumber
       }, function (data) {
+        sessionStorage.newPatientID = patientId;
         redirectToUrl("/apps/ART/views/assigned_patient_file_number.html?new=" + data.new_identifier.identifier);
       }, function (error) {
         console.error(error);
