@@ -190,9 +190,12 @@
                 var current_height_percentile = (parseFloat(answers_hash["height"]) / (parseFloat(patient_median_Weight_height["height"])) * 100).toFixed(0)
                 var currentHeightRounded = (height % Math.floor(height) < 0.5 ? 0 : 0.5) + Math.floor(height);
                 var medianWeightHeight = patient_weight_for_height_values[currentHeightRounded.toFixed(1)];
-                var weight_for_height_percentile = (answers_hash["weight"]/(medianWeightHeight)*100).toFixed(0);
+                var weight_for_height_percentile = (answers_hash["weight"] / (medianWeightHeight) * 100).toFixed(0);
 
-                obs.observations.push({concept_id: weight_for_height_concept_id, value_text: weight_for_height_percentile});
+                obs.observations.push({
+                    concept_id: weight_for_height_concept_id,
+                    value_text: weight_for_height_percentile
+                });
                 obs.observations.push({concept_id: weight_for_age_concept_id, value_text: current_weight_percentile});
                 obs.observations.push({concept_id: height_for_age_concept_id, value_text: current_height_percentile});
             } else {
@@ -209,13 +212,14 @@
 
         function setNextButtonToGetInputValue(key) {
             __$('nextButton').onmousedown = function () {
-                   try {
+                try {
                     var value = __$('touchscreenInput' + tstCurrentPage).value;
                     answers_hash[key] = value;
-                   } catch(e){
-                            console.log(e)
-                   }
-            
+                } catch (e) {
+                    console.log(e);
+                    gotoNextPage();
+                }
+
                 gotoNextPage();
             }
         }
@@ -226,7 +230,7 @@
                 treatment_status_answer = __$("treatment_status").value;
                 answers_hash["treatment_status"] = treatment_status_answer;
             } catch (e) {
-              showMessage(e)
+                showMessage(e)
             }
             __$('nextButton').onmousedown = function () {
                 submitVitals();
@@ -380,7 +384,7 @@
             xhttp1.send();
         }
 
-        function growthIndicators(){
+        function growthIndicators() {
 
             jQuery('#keyboard').empty();
             if ((patient_age) > 14) {
@@ -390,7 +394,7 @@
                 showWeightForHeight();
             }
 
-            document.getElementById('inputFrame'+tstCurrentPage).innerHTML = '<div id="summary"><div>' + displayText + '</div><div id="charts" style="overflow: hidden;height:185px;margin:2px 6px 6px !important;padding:2px !important;width:380px;"></div></div>' ;
+            document.getElementById('inputFrame' + tstCurrentPage).innerHTML = '<div id="summary"><div>' + displayText + '</div><div id="charts" style="overflow: hidden;height:185px;margin:2px 6px 6px !important;padding:2px !important;width:380px;"></div></div>';
 
         }
 
@@ -407,12 +411,12 @@
             displayText += "</div>";
         }
 
-        function showWeightHeightForAge(){
+        function showWeightHeightForAge() {
             var current_weight_percentile = (parseFloat(answers_hash["weight"]) / (parseFloat(patient_median_Weight_height["weight"])) * 100).toFixed(0);
             var current_height_percentile = (parseFloat(answers_hash["height"]) / (parseFloat(patient_median_Weight_height["height"])) * 100).toFixed(0);
 
             displayText = "<div><span class='title'>Weight for age:</span>";
-            if (current_weight_percentile >= 80){
+            if (current_weight_percentile >= 80) {
                 displayText += "<span class='goodWeightForAge'>" + current_weight_percentile + "%</span><br>";
             } else if (current_weight_percentile >= 75) {
                 displayText += "<span class='medWeightForAge'>" + current_weight_percentile + "%</span>" + " <span class='recommendation'> Moderate wasting </span><br>";
@@ -422,7 +426,7 @@
             displayText += "</div>";
 
             displayText += "<div><span class='title'>Height for age:</span>";
-            if (current_height_percentile >= 80){
+            if (current_height_percentile >= 80) {
                 displayText += "<span class='goodHeightForAge'>" + current_height_percentile + "%</span><br>";
             } else if (current_height_percentile >= 75) {
                 displayText += "<span class='medHeightForAge'>" + current_height_percentile + "%</span>" + " <span class='recommendation'> Moderate stunted growth </span><br>";
@@ -435,7 +439,7 @@
         function showWeightForHeight() {
             var currentHeightRounded = (answers_hash["height"] % Math.floor(answers_hash["height"]) < 0.5 ? 0 : 0.5) + Math.floor(answers_hash["height"]);
             var medianWeightHeight = patient_weight_for_height_values[currentHeightRounded.toFixed(1)];
-            var weight_for_height_percentile = (parseFloat(answers_hash["weight"])/(medianWeightHeight)*100).toFixed(0);
+            var weight_for_height_percentile = (parseFloat(answers_hash["weight"]) / (medianWeightHeight) * 100).toFixed(0);
 
             displayText += "<div id='displayText'><span class='title'>Weight for height:</span>";
 
@@ -609,7 +613,7 @@
 
             <input helpText="Weight Summary" id="showSummary" name="showSummary" optional="true"
                    tt_onLoad="growthIndicators();  __$('clearButton').style.display = 'none'; displayButton();"
-                   tt_onUnLoad=" hideButton();__$('clearButton').style.display = 'block';" type="text" />
+                   tt_onUnLoad=" hideButton();__$('clearButton').style.display = 'block';" type="text"/>
 
             <input absoluteMax="300" absoluteMin="60" condition="captureBP()" field_type="number"
                    helpText="Systolic blood pressure" id="systolic_blood_pressure"
