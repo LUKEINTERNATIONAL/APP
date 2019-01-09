@@ -1898,6 +1898,13 @@
                         buildYesNoUI(concept_name, questions, frame);
                     }
 
+                    function setValidationsTaken() {
+                        var maxYear = new Date(sessionStorage.sessionDate).getFullYear();
+                        var minYear = new Date(sessionStorage.sessionDate).getFullYear() - 100;
+                        $("touchscreenInput" + tstCurrentPage).setAttribute("absoluteMax", maxYear);
+                        $("touchscreenInput" + tstCurrentPage).setAttribute("absoluteMin", minYear);
+                    }
+
                 </script>
 
                 <form  onsubmit="submitParameters();">
@@ -1921,7 +1928,7 @@
                         <option value="NO">No</option>
                     </select>
 
-                    <input tt_onLoad ="__$('Unknown').style.display='inline';" absoluteMax="2018" absoluteMin="1882" condition="$('ever_received_art').value == 'YES'" field_type="number" helpText="Year last taken ARVs<span style='font-size:0.7em;font-style:italic'> (Chaka chimene munamwa ma ARV komaliza ndi chiti?)</span>" id="year_art_last_taken" min="1882" name="year_art_last_taken" tt_pageStyleClass="Numeric NumbersOnly" type="text" />
+                    <input tt_onLoad ="__$('Unknown').style.display='inline'; setValidationsTaken();"  condition="$('ever_received_art').value == 'YES'" field_type="number" helpText="Year last taken ARVs<span style='font-size:0.7em;font-style:italic'> (Chaka chimene munamwa ma ARV komaliza ndi chiti?)</span>" id="year_art_last_taken" min="1882" name="year_art_last_taken" tt_pageStyleClass="Numeric NumbersOnly" type="text" />
 
                     <select condition="$('year_art_last_taken').value.toLowerCase() != 'unknown' && $('ever_received_art').value == 'YES'" helpText="Month last taken ARVs<span style='font-size:0.7em;font-style:italic'> (Mwezi umene munamwa ma ARV komaliza ndi uti?)</span>" id="month_art_last_taken" name="month_art_last_taken" tt_onLoad="__$('keyboard').style.display = 'none'; validateMonthARTTaken()" validationMessage="Please enter a valid date">
                         <option value=""></option>
