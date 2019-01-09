@@ -294,6 +294,9 @@
                             var height_obs = JSON.parse(this.responseText);
                             if (height_obs.length > 0) {
                                 currentHeight = height_obs[0].value_numeric;
+                                if (!currentHeight){
+                                    currentHeight = height_obs[0].value_text;
+                                }
                             }
 
                             var xhttp3 = new XMLHttpRequest();
