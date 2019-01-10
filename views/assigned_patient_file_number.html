@@ -86,7 +86,7 @@ function refreshList() {
     function populatePageWithSwappedFileNumber(fileNumbers) {
       document.getElementById('fileNumbers').innerHTML += createFileNumberElement(fileNumbers.new,
         'New Patient Gets Active File Number Below:');
-        printFileNumber(sessionStorage.getItem('newPatientID'))
+        printFileNumber(sessionStorage.getItem('newPatientID'), false)
 
       if (fileNumbers.old.fileNumber) {
         document.getElementById('fileNumbers').innerHTML +=
@@ -97,7 +97,7 @@ function refreshList() {
           'Patient To Be Archived Gets File Number Below:');
 
         setTimeout(function () {
-          printFileNumber(sessionStorage.getItem('oldPatientID'))
+          printFileNumber(sessionStorage.getItem('oldPatientID'), true);
         }, 1000)
       }
     }
@@ -127,8 +127,12 @@ function refreshList() {
       };
     }
 
-    function printFileNumber (patientId) {
-      var printURL = "/patients/" + patientId + "/labels/filing_number"
+    function printFileNumber (patientId, archived) {
+      var archived_url = "";
+      if (archived == true) {
+        archived_url = "?archived=true";
+      }
+      var printURL = "/patients/" + patientId + "/labels/filing_number" + archived_url;
       printURL = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1" + printURL;
       document.location = printURL;
     }
