@@ -856,7 +856,7 @@ function showDTGwarning() {
 
   var initiationBoxCell = document.createElement('div');
   var text = '<span style="color: black;">There is currently <u>no confirmation</u>';
-  text += '</span> that <b>DTG</b> is safe in <u>very early preganancy</u><br />';
+  text += '</span> that <b>DTG</b> is safe in <u>very early pregnancy</u><br />';
   text += 'DTG-based regimens are therefore not used as standard 1st line regimens for ';
   text += '<u>girls and women</u> who may get preganant'
   initiationBoxCell.setAttribute('class','initiationBoxCell');
