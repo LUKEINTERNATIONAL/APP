@@ -1905,6 +1905,13 @@
                         $("touchscreenInput" + tstCurrentPage).setAttribute("absoluteMin", minYear);
                     }
 
+                    function setAbsoluteMaxYear(){
+                        var element = document.getElementById('touchscreenInput' + tstCurrentPage);
+                        element.setAttribute("absoluteMax", (new Date().getFullYear()));
+                        element.setAttribute("min", (new Date().getFullYear() - 100)); 
+                        element.setAttribute("absoluteMin", (new Date().getFullYear() - 120)); 
+                    }
+
                 </script>
 
                 <form  onsubmit="submitParameters();">
@@ -2236,7 +2243,7 @@
 
                     <select objectType="location" tt_onLoad="setNextButtonToGetInputValue('confirmatory_hiv_test_location');" ajaxURL="/locations?name=" allowFreeText="true" condition="$('type_of_confirmatory_hiv_test').value != 'NOT DONE'" field_type="alpha" helpText="Location of confirmatory HIV test" id="confirmatory_hiv_test_location" name="observations[][value_coded_or_text]"></select>
 
-                    <input absoluteMax="2018" condition="$('type_of_confirmatory_hiv_test').value != 'NOT DONE'" field_type="number" helpText="Confirmatory HIV test year" id="confirmatory_hiv_test_year" name="year_confirmatory_hiv_test" tt_onLoad="changeNextButtonForConfirmatoryYear(); changeAbsoluteMinForConfirmatoryYear(); __$('Unknown').style.display = 'inline'; submitParametersOnUnknownConfirmatoryDate();" tt_pageStyleClass="Numeric NumbersOnly" type="text" />
+                    <input absoluteMax="2018" condition="$('type_of_confirmatory_hiv_test').value != 'NOT DONE'" field_type="number" helpText="Confirmatory HIV test year" id="confirmatory_hiv_test_year" name="year_confirmatory_hiv_test" tt_onLoad="changeNextButtonForConfirmatoryYear(); changeAbsoluteMinForConfirmatoryYear(); __$('Unknown').style.display = 'inline'; submitParametersOnUnknownConfirmatoryDate();setAbsoluteMaxYear();" tt_pageStyleClass="Numeric NumbersOnly" type="text" />
 
                     <select condition="$('type_of_confirmatory_hiv_test').value != 'NOT DONE' && $('confirmatory_hiv_test_year').value.toLowerCase() != 'unknown'" helpText="Confirmatory HIV test month" id="confirmatory_hiv_test_month" name="month_confirmatory_hiv_test" tt_onLoad="__$('keyboard').style.display = 'none'; validateConfirmatoryMonth();" validationMessage="Please enter a valid date">
                         <option value=""></option>
