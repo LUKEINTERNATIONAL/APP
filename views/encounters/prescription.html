@@ -1,5 +1,5 @@
-
-<script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js" defer="true"></script>
+<script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js"
+        defer="true"></script>
 <!--script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/standard.js" defer="true"></script-->
 <script type="text/javascript" src="/assets/js/jquery.min.js"></script>
 
@@ -23,185 +23,207 @@
 <script type="text/javascript" src="/apps/ART/assets/js/prescription.js"></script>
 
 <script type="text/javascript">
-var patient_id = sessionStorage.patientID;
-var tt_cancel_destination = "/views/patient_dashboard.html?patient_id=" + patient_id;
+    var patient_id = sessionStorage.patientID;
+    var tt_cancel_destination = "/views/patient_dashboard.html?patient_id=" + patient_id;
 
-getMedicationOrders();
-function showWeight() {
-  var clientInfo = document.getElementById('helpText' + tstCurrentPage);
-  var table = document.createElement('table');
-  var cssText = 'float: right; font-size: 14px;';
-  table.setAttribute('style', cssText);
-  clientInfo.appendChild(table);
+    getMedicationOrders();
 
-
-  var tr = document.createElement('tr');
-  table.appendChild(tr);
-  var th = document.createElement('th');
-  th.style = 'text-align: left;';
-  th.innerHTML = "Age: ";
-  th.innerHTML += "<span style='font-weight: normal;'>" + sessionStorage.patientAge + ' year(s)</span>';
-  tr.appendChild(th);
-
-  var th = document.createElement('th');
-  th.innerHTML = "Gender: ";
-  th.innerHTML += "<span style='font-weight: normal;'>" + sessionStorage.patientGender + '</span>';
-  tr.appendChild(th);
+    function showWeight() {
+        var clientInfo = document.getElementById('helpText' + tstCurrentPage);
+        var table = document.createElement('table');
+        var cssText = 'float: right; font-size: 14px;';
+        table.setAttribute('style', cssText);
+        clientInfo.appendChild(table);
 
 
-  var th = document.createElement('th');
-  th.innerHTML = "Current weight: ";
-  th.innerHTML += "<span style='font-weight: normal;'>" + sessionStorage.currentWeight + ' KG</span>';
-  tr.appendChild(th);
+        var tr = document.createElement('tr');
+        table.appendChild(tr);
+        var th = document.createElement('th');
+        th.style = 'text-align: left;';
+        th.innerHTML = "Age: ";
+        th.innerHTML += "<span style='font-weight: normal;'>" + sessionStorage.patientAge + ' year(s)</span>';
+        tr.appendChild(th);
 
-  var tr = document.createElement('tr');
-  table.appendChild(tr);
-  var th = document.createElement('th');
-  th.innerHTML = "Current regimen:";
-  tr.appendChild(th);
-
-  var td = document.createElement('td');
-  td.innerHTML = '<span id="current-regimen"></span>';
-  tr.appendChild(td);
-
-  var th = document.createElement('th');
-  th.innerHTML = "Reason for change:";
-  tr.appendChild(th);
-
-  var td = document.createElement('td');
-  td.innerHTML = '<span id="reason-for-change">N/A</span>';
-  tr.appendChild(td);
+        var th = document.createElement('th');
+        th.innerHTML = "Gender: ";
+        th.innerHTML += "<span style='font-weight: normal;'>" + sessionStorage.patientGender + '</span>';
+        tr.appendChild(th);
 
 
-  getCurrentRegimen();
-  getReasonForSwitch();
-}
+        var th = document.createElement('th');
+        th.innerHTML = "Current weight: ";
+        th.innerHTML += "<span style='font-weight: normal;'>" + sessionStorage.currentWeight + ' KG</span>';
+        tr.appendChild(th);
 
-function resetFinishButton() {
-  var btn = document.getElementById('nextButton');
-  btn.setAttribute("onmousedown","gotoNextButton();");
-}
+        var tr = document.createElement('tr');
+        table.appendChild(tr);
+        var th = document.createElement('th');
+        th.innerHTML = "Current regimen:";
+        tr.appendChild(th);
 
-function initializeVariables(){
-    jQuery(".loader").show();
-    jQuery('#keyboard').hide();
-    jQuery("#buttons").hide(); //inputFrame0
-    jQuery("#inputFrame" + tstCurrentPage).hide();
+        var td = document.createElement('td');
+        td.innerHTML = '<span id="current-regimen"></span>';
+        tr.appendChild(td);
 
-    //var todays_date = new Date(sessionStorage.sessionDate).formt();
-    //todays_date = todays_date.getFullYear() + "-" + (todays_date.getMonth() + 1) + "-" + todays_date.getDate()
-    
-    var medication_order_concept_id = 1282;
-    var antiretroviral_drugs_value_coded  = 1085;
-    var url = apiProtocol + "://" + apiURL + ":" + apiPort;
-    url +=  "/api/v1/observations?person_id=" + sessionStorage.patientID;
-    url +=  "&concept_id=" + medication_order_concept_id;
-    url +=  "&value_coded=" + antiretroviral_drugs_value_coded;
-    url +=  "&obs_datetime=" + sessionStorage.sessionDate;
+        var th = document.createElement('th');
+        th.innerHTML = "Reason for change:";
+        tr.appendChild(th);
 
-    var xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function() {
-        if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
-            var art_prescription_obs = JSON.parse(this.responseText);
-            if (art_prescription_obs.length > 0){
-                prescribe_arv = true;
-            }
+        var td = document.createElement('td');
+        td.innerHTML = '<span id="reason-for-change">N/A</span>';
+        tr.appendChild(td);
 
-            /******/
-            var medication_order_date = new Date(sessionStorage.sessionDate);
-            medication_order_date = medication_order_date.getFullYear() + "-" + (medication_order_date.getMonth() + 1) + "-" + medication_order_date.getDate()
 
-            var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1/programs/1/patients/" + sessionStorage.patientID + "/dosages?date=" + medication_order_date;
-            var medication_order_concept_id = 1282;
-            var xhttp2 = new XMLHttpRequest();
-            xhttp2.onreadystatechange = function() {
-                if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
-                    medication_orders = JSON.parse(this.responseText);
-                    gotoNextPage();
+        getCurrentRegimen();
+        getReasonForSwitch();
+    }
+
+    function resetFinishButton() {
+        var btn = document.getElementById('nextButton');
+        btn.setAttribute("onmousedown", "gotoNextButton();");
+    }
+
+    function initializeVariables() {
+        jQuery(".loader").show();
+        jQuery('#keyboard').hide();
+        jQuery("#buttons").hide(); //inputFrame0
+        jQuery("#inputFrame" + tstCurrentPage).hide();
+
+        //var todays_date = new Date(sessionStorage.sessionDate).formt();
+        //todays_date = todays_date.getFullYear() + "-" + (todays_date.getMonth() + 1) + "-" + todays_date.getDate()
+        var medication_order_concept_id = 1282;
+        var antiretroviral_drugs_value_coded = 1085;
+        var fast_track_concept_id = 8471;
+        var yes_concept_id = 1065;
+
+        var url = apiProtocol + "://" + apiURL + ":" + apiPort;
+        url += "/api/v1/observations?person_id=" + sessionStorage.patientID;
+        url += "&concept_id=" + medication_order_concept_id;
+        url += "&value_coded=" + antiretroviral_drugs_value_coded;
+        url += "&obs_datetime=" + sessionStorage.sessionDate;
+
+        var fast_track_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+        fast_track_url += "/api/v1/observations?person_id=" + sessionStorage.patientID;
+        fast_track_url += "&concept_id=" + fast_track_concept_id;
+
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                var art_prescription_obs = JSON.parse(this.responseText);
+                if (art_prescription_obs.length > 0) {
+                    prescribe_arv = true;
                 }
-            };
 
-            xhttp2.open("GET", url, true);
-            xhttp2.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
-            xhttp2.setRequestHeader('Content-type', "application/json");
-            xhttp2.send();
-            /*******/
+                var medication_order_date = new Date(sessionStorage.sessionDate);
+                medication_order_date = medication_order_date.getFullYear() + "-" + (medication_order_date.getMonth() + 1) + "-" + medication_order_date.getDate()
 
-        }
-    };
+                var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1/programs/1/patients/" + sessionStorage.patientID + "/dosages?date=" + medication_order_date;
+                var medication_order_concept_id = 1282;
+                var xhttp2 = new XMLHttpRequest();
+                xhttp2.onreadystatechange = function () {
+                    if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                        medication_orders = JSON.parse(this.responseText);
+                        var fast_track_http = new XMLHttpRequest();
+                        fast_track_http.onreadystatechange = function () {
+                            if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                                var fast_track_obs = JSON.parse(this.responseText);
+                                if (fast_track_obs.length > 0) {
+                                    latest_fast_track_obs = fast_track_obs[0];
+                                    if (latest_fast_track_obs.value_coded  == yes_concept_id){
+                                        patient_is_fast_track = true;
+                                    }
+                                }
+                                gotoNextPage();
+                            }
+                        };
+                        fast_track_http.open("GET", fast_track_url, true);
+                        fast_track_http.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                        fast_track_http.setRequestHeader('Content-type', "application/json");
+                        fast_track_http.send();
+                    }
+                };
 
-    xhttp.open("GET", url, true);
-    xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
-    xhttp.setRequestHeader('Content-type', "application/json");
-    xhttp.send();
-}
+                xhttp2.open("GET", url, true);
+                xhttp2.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                xhttp2.setRequestHeader('Content-type', "application/json");
+                xhttp2.send();
+                /*******/
 
-function resetPage(){
-    jQuery('#keyboard').show();
-    jQuery("#buttons").show();
-    jQuery("#innerPop").show()
-    jQuery("#inputFrame" + tstCurrentPage).show();
-    jQuery(".loader").hide();
-}
+            }
+        };
+
+        xhttp.open("GET", url, true);
+        xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+        xhttp.setRequestHeader('Content-type', "application/json");
+        xhttp.send();
+    }
+
+    function resetPage() {
+        jQuery('#keyboard').show();
+        jQuery("#buttons").show();
+        jQuery("#innerPop").show()
+        jQuery("#inputFrame" + tstCurrentPage).show();
+        jQuery(".loader").hide();
+    }
 
 
 </script>
 
 <body id="mateme">
-    <div id="container">
-        <div id="content">
+<div id="container">
+    <div id="content">
 
 
-            <form action="post">
+        <form action="post">
 
-                <input type="text" name="regimens"
-                       tt_onLoad="initializeVariables();"
-                       tt_onUnLoad = "resetPage();"
-                       tt_pageStyleClass= "NoControls" optional = "true"/>
+            <input type="text" name="regimens"
+                   tt_onLoad="initializeVariables();"
+                   tt_onUnLoad="resetPage();"
+                   tt_pageStyleClass="NoControls" optional="true"/>
 
-                <input type="text" name="regimens"
-                       tt_onLoad="__$('keyboard').style.display = 'none';getRegimens();showWeight();"
-                       condition = "prescribe_arv == true;"
-                       tt_onUnLoad = "removeCustomBtn();"
-                       tt_pageStyleClass= "NoControls" helpText="ARV Regimen(s)" optional = "true"/>
+            <input type="text" name="regimens"
+                   tt_onLoad="__$('keyboard').style.display = 'none';getRegimens();showWeight();"
+                   condition="prescribe_arv == true;"
+                   tt_onUnLoad="removeCustomBtn();"
+                   tt_pageStyleClass="NoControls" helpText="ARV Regimen(s)" optional="true"/>
 
-                <input type="text" name="regimens"
-                       condition = "showCustomPrescriptionPage() == true"
-                       tt_onUnLoad = "document.getElementById('nextButton').style='display: inline;'"
-                       tt_onLoad="__$('keyboard').style.display = 'none';buildCustomPrescriptionPage();"
-                       tt_pageStyleClass= "NoControls" helpText="Custom prescription" optional = "true"/>
+            <input type="text" name="regimens"
+                   condition="showCustomPrescriptionPage() == true"
+                   tt_onUnLoad="document.getElementById('nextButton').style='display: inline;'"
+                   tt_onLoad="__$('keyboard').style.display = 'none';buildCustomPrescriptionPage();"
+                   tt_pageStyleClass="NoControls" helpText="Custom prescription" optional="true"/>
 
-                <input type="text" name="custom-regimen-dose"
-                       condition = "showCustomPrescriptionPage() == true"
-                       tt_onUnLoad = "document.getElementById('nextButton').style='display: inline;'"
-                       tt_onLoad="__$('keyboard').style.display = 'none';buildCustomDosagePage();"
-                       tt_pageStyleClass= "NoControls" helpText="Custom dose" optional = "true"/>
-
-
-                <input type="text" name="selected-medications"
-                       tt_onLoad="__$('keyboard').style.display = 'none'; showSelectedMeds(); initDataTable(); showWeight();"
-                       tt_pageStyleClass= "NoControls" helpText="Selected medication" optional = "true"/>
-
-                <input type="text" name="duration"
-                       tt_onLoad="__$('keyboard').style.display = 'none';buildNextIntervalPage();preSelectInterval();"
-                       tt_pageStyleClass= "NoControls" helpText="Interval to next visit" optional = "true"/>
-
-                <!-- select name="follow_up_agreement" allowFreeText="false"
-                        helpText="Assess for fast track visit (next appointment)"
-                        tt_onLoad = "adjustFrameHeight();"
-                        tt_onUnLoad = "resetFinishButton();"
-                        id="assess_for_ft" tt_pageStyleClass="NoKeyboard">
-                    <option value=""></option>
-                    <option value="YES">Yes</option>
-                    <option value="NO">No</option>
-                </select-->
+            <input type="text" name="custom-regimen-dose"
+                   condition="showCustomPrescriptionPage() == true"
+                   tt_onUnLoad="document.getElementById('nextButton').style='display: inline;'"
+                   tt_onLoad="__$('keyboard').style.display = 'none';buildCustomDosagePage();"
+                   tt_pageStyleClass="NoControls" helpText="Custom dose" optional="true"/>
 
 
-            </form>
+            <input type="text" name="selected-medications"
+                   tt_onLoad="__$('keyboard').style.display = 'none'; showSelectedMeds(); initDataTable(); showWeight(); loadFastTrackMedications();"
+                   tt_pageStyleClass="NoControls" helpText="Selected medication" optional="true"/>
 
-            <div class="loader"></div>
-        </div>
+            <input type="text" name="duration"
+                   tt_onLoad="__$('keyboard').style.display = 'none';buildNextIntervalPage();preSelectInterval();"
+                   tt_pageStyleClass="NoControls" helpText="Interval to next visit" optional="true"/>
+
+            <!-- select name="follow_up_agreement" allowFreeText="false"
+                    helpText="Assess for fast track visit (next appointment)"
+                    tt_onLoad = "adjustFrameHeight();"
+                    tt_onUnLoad = "resetFinishButton();"
+                    id="assess_for_ft" tt_pageStyleClass="NoKeyboard">
+                <option value=""></option>
+                <option value="YES">Yes</option>
+                <option value="NO">No</option>
+            </select-->
+
+
+        </form>
+
+        <div class="loader"></div>
     </div>
+</div>
 </body>
 
 <!-- ####################################################################### -->
@@ -223,51 +245,54 @@ function resetPage(){
     }
 
     @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
     }
 
- #confirmatory-test-popup-div {
-    display: none;
-    background-color: #F4F4F4;
-    border: 2px solid #E0E0E0;
-    border-radius: 15px;
-    height: 200px;
-    padding: 5px;
-    position: absolute;
-    margin-top: 100px;
-    width: 530px;
-    /*margin-left: 430px;*/
-    left: 20%;
-    z-index: 991;
-  }
+    #confirmatory-test-popup-div {
+        display: none;
+        background-color: #F4F4F4;
+        border: 2px solid #E0E0E0;
+        border-radius: 15px;
+        height: 200px;
+        padding: 5px;
+        position: absolute;
+        margin-top: 100px;
+        width: 530px;
+        /*margin-left: 430px;*/
+        left: 20%;
+        z-index: 991;
+    }
 
-  #confirmatory-test-popup-header{
-    border-bottom: 2px solid #7D9EC0;
-    margin-left: -5px;
-    width: 101.5%;
-    background-color: #FFFFFF;
-    margin-top: -5px;
-    padding-top: 5px;
-    border-radius: 15px 15px 0 0;
-    font-size: 14pt;
-    font-weight: bolder;
-  }
+    #confirmatory-test-popup-header {
+        border-bottom: 2px solid #7D9EC0;
+        margin-left: -5px;
+        width: 101.5%;
+        background-color: #FFFFFF;
+        margin-top: -5px;
+        padding-top: 5px;
+        border-radius: 15px 15px 0 0;
+        font-size: 14pt;
+        font-weight: bolder;
+    }
 
-  #confirmatory-test-cover{
-    display: inline;
-    position: absolute;
-    background-color: black;
-    width: 100%;
-    height: 102%;
-    left: 0%;
-    top: 0%;
-    z-index: 990;
-    opacity: 0.65;
-  }
+    #confirmatory-test-cover {
+        display: inline;
+        position: absolute;
+        background-color: black;
+        width: 100%;
+        height: 102%;
+        left: 0%;
+        top: 0%;
+        z-index: 990;
+        opacity: 0.65;
+    }
 
 </style>
-
 
 
 <div id="confirmatory-test-popup-div"></div>
