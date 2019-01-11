@@ -226,7 +226,7 @@
 
     function showMedication(medication) {
         var frame = document.getElementById('inputFrame' + tstCurrentPage);
-        frame.style = 'width: 96%; height: 89%;';
+        frame.style = 'width: 96%; height: 89%; overflow: scroll;';
 
         var ordersTable = document.createElement('div');
         ordersTable.setAttribute('class', 'orders-table');
