@@ -680,9 +680,75 @@
         }
 
         jQuery("#data").html(html);
+        addReferToClinicianButton();
 
     }
 
+    function referPatient() {
+        submitVitalsEncounter();
+    }
+
+    function submitVitalsEncounter() {
+        var currentTime = moment().format(' HH:mm:ss');
+        var encounter_datetime = moment(sessionStorage.sessionDate).format('YYYY-MM-DD');
+        encounter_datetime += currentTime;
+
+        var encounter = {
+            encounter_type_name: 'VITALS',
+            encounter_type_id: 6,
+            patient_id: sessionStorage.patientID,
+            encounter_datetime: encounter_datetime
+        };
+
+        submitParameters(encounter, "/encounters", "postReferToClinicianObs");
+    }
+
+    function postReferToClinicianObs(encounter) {
+        var refer_patient_to_clinician_concept_id = 7871;
+        var yes_concept_id = 1065;
+        var obs = {
+            encounter_id: encounter["encounter_id"],
+            observations: [
+                {concept_id: refer_patient_to_clinician_concept_id, value_coded: yes_concept_id}
+            ]
+        };
+
+        submitParameters(obs, "/observations", "gotoPatientDashboard")
+    }
+
+    function gotoPatientDashboard(){
+        window.location = "/views/patient_dashboard.html?patient_id=" + sessionStorage.patientID;
+    }
+
+    function addReferToClinicianButton() {
+        var user_roles_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+        user_roles_url += "/api/v1/roles";
+
+        var xhttp1 = new XMLHttpRequest();
+        xhttp1.onreadystatechange = function () {
+            if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                var roles = JSON.parse(this.responseText);
+                var refer_to_clinician = true;
+
+                for (var i = 0; i <= roles.length - 1; i++) {
+                    if (roles[i]["role"].match(/Clinician/i) || roles[i]["role"].match(/Doctor/i)) {
+                        refer_to_clinician = false;
+                    }
+                }
+
+                if (refer_to_clinician) {
+                    var refer_to_clinician_html = '<button id="referButton" class="button red navButton" style="float: left" ' +
+                        'onmousedown="referPatient()"><span>Refer to Clinician</span></button>';
+                    jQuery("#buttons")[0].innerHTML += refer_to_clinician_html;
+                }
+
+            }
+        };
+        xhttp1.open("GET", user_roles_url, true);
+        xhttp1.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+        xhttp1.setRequestHeader('Content-type', "application/json");
+        xhttp1.send();
+    }
 
 </script>
 
@@ -929,6 +995,7 @@
     }
 
     var selected_patient_state = "";
+
     function createEncounter(chosenPlan, path, state) {
         if (state == "On Treatment") {
             state = null;
@@ -983,7 +1050,7 @@
 
             var patient_state = JSON.stringify({"state": selected_patient_state});
             patient_state_xhttp.send(patient_state);
-        }else{
+        } else {
             redirectToRequiredTask();
         }
     }
@@ -995,10 +1062,6 @@
         }
 
         window.location = path;
-    }
-
-    function referPatient() {
-        window.location = "/htn_encounter/refer_to_clinician"
     }
 
     //initializeVariables();
