@@ -14,6 +14,7 @@
         <script type="text/javascript" src="/assets/js/post_parameters.js"></script>
         <script type="text/javascript" src="/assets/js/generic_ajaxrequest.js"></script>
         <script type="text/javascript" src="/assets/js/moment.js"></script>
+        <script type="text/javascript" src="/assets/js/demographics.js"></script>
 
         <script type="text/javascript">
             tstUsername = "admin";
@@ -158,6 +159,7 @@
 
                 <script>
                     var patient_id = sessionStorage.patientID;
+                    getDemographics(patient_id);
                     var tt_cancel_destination = "/views/patient_dashboard.html?patient_id=" + patient_id;
                     var todayDate = new Date(tstCurrentDate);
                     var originaltestDate = ""
@@ -166,8 +168,8 @@
                     alert_date.setDate(alert_date.getDate()- 90);
 
                     var alertDate = createDates(moment(alert_date).format("YYYY"), moment(alert_date).format("MM"), moment(alert_date).format("DD"));
-                    var patient_age = parseInt(sessionStorage.patientAge);
-                    var ageInMonths = patient_age * 12;
+                    // var patient_age = parseInt(sessionStorage.patientAge);
+                    
 
                     var currentYear = moment(tstCurrentDate).format("YYYY");
                     var currentMonth = moment(tstCurrentDate).format("MM");
@@ -208,7 +210,7 @@
                         return conceptMap[conceptID]
                     }
 
-                    var age = patient_age;
+                    
                     var regimen_formulations = {"5": "TDF/3TC/EFV", "11": "AZT/3TC + LPV/r", "0": "ABC/3TC + NVP", "6": "TDF/3TC + NVP", "12": "DRV + r + ETV + RAL", "7": "TDF/3TC + ATV/r", "2": "AZT/3TC/NVP", "8": "AZT/3TC + ATV/r", "9": "ABC/3TC + LPV/r", "4": "AZT/3TC + EFV", "10": "TDF/3TC + LPV/r"};
                     var birthdate = new Date(sessionStorage.patientDOB)
                     var dateCreated = new Date(sessionStorage.patientDOB); //Person day created
@@ -2243,7 +2245,7 @@
 
                     <select objectType="location" tt_onLoad="setNextButtonToGetInputValue('confirmatory_hiv_test_location');" ajaxURL="/locations?name=" allowFreeText="true" condition="$('type_of_confirmatory_hiv_test').value != 'NOT DONE'" field_type="alpha" helpText="Location of confirmatory HIV test" id="confirmatory_hiv_test_location" name="observations[][value_coded_or_text]"></select>
 
-                    <input absoluteMax="2018" condition="$('type_of_confirmatory_hiv_test').value != 'NOT DONE'" field_type="number" helpText="Confirmatory HIV test year" id="confirmatory_hiv_test_year" name="year_confirmatory_hiv_test" tt_onLoad="changeNextButtonForConfirmatoryYear(); changeAbsoluteMinForConfirmatoryYear(); __$('Unknown').style.display = 'inline'; submitParametersOnUnknownConfirmatoryDate();setAbsoluteMaxYear();" tt_pageStyleClass="Numeric NumbersOnly" type="text" />
+                    <input condition="$('type_of_confirmatory_hiv_test').value != 'NOT DONE'" field_type="number" helpText="Confirmatory HIV test year" id="confirmatory_hiv_test_year" name="year_confirmatory_hiv_test" tt_onLoad="changeNextButtonForConfirmatoryYear(); changeAbsoluteMinForConfirmatoryYear(); __$('Unknown').style.display = 'inline'; submitParametersOnUnknownConfirmatoryDate();setAbsoluteMaxYear();" tt_pageStyleClass="Numeric NumbersOnly" type="text" />
 
                     <select condition="$('type_of_confirmatory_hiv_test').value != 'NOT DONE' && $('confirmatory_hiv_test_year').value.toLowerCase() != 'unknown'" helpText="Confirmatory HIV test month" id="confirmatory_hiv_test_month" name="month_confirmatory_hiv_test" tt_onLoad="__$('keyboard').style.display = 'none'; validateConfirmatoryMonth();" validationMessage="Please enter a valid date">
                         <option value=""></option>
