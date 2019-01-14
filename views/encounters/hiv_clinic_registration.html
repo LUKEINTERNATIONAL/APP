@@ -216,9 +216,6 @@
 
                     
                     var regimen_formulations = {"5": "TDF/3TC/EFV", "11": "AZT/3TC + LPV/r", "0": "ABC/3TC + NVP", "6": "TDF/3TC + NVP", "12": "DRV + r + ETV + RAL", "7": "TDF/3TC + ATV/r", "2": "AZT/3TC/NVP", "8": "AZT/3TC + ATV/r", "9": "ABC/3TC + LPV/r", "4": "AZT/3TC + EFV", "10": "TDF/3TC + LPV/r"};
-                    var birthdate = new Date(sessionStorage.patientDOB)
-                    var dateCreated = new Date(sessionStorage.patientDOB); //Person day created
-                    var patientBirthdateEstimated = "0";
                     var median_weight_height = [];
                     var sessionDate = new Date(tstCurrentDate);
                     var birthYear = parseInt(moment(sessionStorage.patientDOB).format("YYYY"));
@@ -710,22 +707,34 @@
                             ARTstartDateEstimate = $("art_start_date_estimation").value;
 
                             if (ARTstartDateEstimate == "6 months ago") {
-                                var startDate = new Date("2018-03-18");
+                                startDate = new Date(sessionStorage.sessionDate);
+                                startDate.setDate(todays_date.getDate() - 6 );
+                                startDate.setFullYear(todays_date.getFullYear() - 1);
                             } else if (ARTstartDateEstimate == "12 months ago") {
-                                var startDate = new Date("2017-09-18");
+                                startDate = new Date(sessionStorage.sessionDate)
+                                startDate.setDate(todays_date.getDate() - 12 );
+                                startDate.setFullYear(todays_date.getFullYear() - 1);
                             } else if (ARTstartDateEstimate == "18 months ago") {
-                                var startDate = new Date("2017-03-18");
+                                startDate = new Date(sessionStorage.sessionDate)
+                                startDate.setDate(todays_date.getDate() - 18);
+                                startDate.setFullYear(todays_date.getFullYear() - 1);
                             } else if (ARTstartDateEstimate == "24 months ago") {
-                                var startDate = new Date("2016-09-18");
+                                startDate = new Date(sessionStorage.sessionDate)
+                                startDate.setDate(todays_date.getDate() - 24 );
+                                startDate.setFullYear(todays_date.getFullYear() - 1);
                             } else if (ARTstartDateEstimate == "Over 2 years ago") {
-                                var startDate = new Date("2016-03-18");
+                                startDate = new Date(sessionStorage.sessionDate)
+                                startDate.setDate(todays_date.getDate() - 30);
+                                startDate.setFullYear(todays_date.getFullYear() - 1);
                             } else {
                                 var startDate = getDateStartedART();
                             }
                         }
 
-                        var patientBirthdate = new Date("1882-04-21");
-                        var dateCreated = new Date("Thu Dec 01 16:29:36 +0200 2016");
+                        var birthdate = sessionStorage.birthdate;
+                        var date_created = sessionStorage.date_created;
+                        var patientBirthdate = new Date(birthdate);
+                        var dateCreated = new Date(date_created);
                         var patientBirthdateEstimated = "0";
 
                         if (!startDate)
