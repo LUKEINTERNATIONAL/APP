@@ -1,0 +1,32 @@
+
+<script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js" defer="true"></script>
+<!-- <script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/standard.js" defer="true"></script> -->
+
+<script type="text/javascript" src="/assets/js/moment.js"></script>
+<script type="text/javascript" src="/apps/ART/assets/js/clinic.appointments.js"></script>
+
+<script>
+function changeFinishButton() {
+  var b = document.getElementById('nextButton');
+  b.innerHTML = '<span>View list</span>';
+  b.setAttribute('onmousedown','viewList();');
+  b.style = 'display: none;';
+}
+</script>
+
+<body id="mateme">
+  <div id="container">
+    <div id="content">
+
+
+      <form>
+
+        <input type="text" name="summary"
+          tt_onLoad="__$('keyboard').style.display = 'none'; changeFinishButton();getSuggestedAppointmentDate();" 
+          tt_pageStyleClass= "NoControls" helpText="Clinic appointments" optional = "true"/>
+
+      </form>
+
+   </div>
+ </div>
+</body>
