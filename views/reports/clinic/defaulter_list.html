@@ -1,0 +1,248 @@
+
+<script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js" defer="true"></script>
+
+<script type="text/javascript" src="/assets/js/moment.js"></script>
+
+<script type="text/javascript" src="/assets/js/jquery.min.js"></script>
+
+<link rel="stylesheet" href="/apps/ART/assets/css/datatable/jquery.dataTables.min.css" type="text/css">
+<link rel="stylesheet" href="/apps/ART/assets/css/datatable/scroller.dataTables.min.css" type="text/css">
+
+<script type="text/javascript" src="/assets/js/datatables/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="/assets/js/datatables/dataTables.fixedHeader.min.js"></script>
+
+<style>
+#clearButton, #cancelButton {
+  display: none;
+}
+
+.btn-primary {
+  display: block;
+  width: 115px;
+  height: 25px;
+  background: #4E9CAF;
+  padding: 10px;
+  text-align: center;
+  border-radius: 5px;
+  color: white;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+#clients th {
+  border-style: solid;
+  border-width: 0px 0px 1px 0px;
+}
+
+#clients td {
+  border-style: solid;
+  border-width: 0px 1px 1px 0px;
+}
+
+#clients {
+  border-collapse: collapse;
+}
+
+.dataTables_scrollBody {
+ overflow-x:hidden !important;
+ overflow-y:auto !important;
+}
+
+.npid, .gender, .birthdate {
+  text-align: center;
+}
+
+.given_name, .family_name {
+  text-align: left;
+  padding-left: 5px;
+}
+
+</style>
+
+
+<script>
+function changeFinishButton() {
+  var b = document.getElementById('nextButton');
+  b.innerHTML = '<span>Back</span>';
+  b.setAttribute('onmousedown','back();');
+}
+
+function back() {
+  document.location = '/';
+}
+
+function buildList() {
+  var f = document.getElementById('inputFrame' + tstCurrentPage);
+  f.style = 'width: 96%; height: 89%;';
+
+  var href = window.location.href;
+  var url = new URL(href);
+  var start_date  = url.searchParams.get("start_date");
+  var end_date    = url.searchParams.get("end_date");
+  
+  buildDataTable(f);
+
+  getList(start_date, end_date);
+}
+
+function buildDataTable(e) {
+  var table = document.createElement('table');
+  table.setAttribute('id','clients');
+  table.style = 'width: 100%;';
+  e.appendChild(table);
+
+  var theader = document.createElement('thead');
+  table.appendChild(theader);
+  var tr = document.createElement('tr');
+  theader.appendChild(tr);
+
+  var headers = ['NPID','First name','Last name', 'Gender','birthdate','Date defaulted','Address','&nbsp;'];
+  
+  for(var i = 0 ; i < headers.length ; i++){
+    var th = document.createElement('th');
+    th.innerHTML = headers[i];
+    tr.appendChild(th);
+    
+    if(i == 0) 
+      th.setAttribute('class', 'npid');
+
+    if(i == 1) 
+      th.setAttribute('class', 'given_name');
+
+    if(i == 2) 
+      th.setAttribute('class', 'family_name');
+
+    if(i == 3) 
+      th.setAttribute('class', 'gender');
+
+    if(i == 4) 
+      th.setAttribute('class', 'birthdate');
+  
+  }
+
+  initDataTable();
+}
+
+  var setDataTable = null;
+
+function initDataTable() {
+  /*setDataTable = jQuery('#clients').DataTable( {
+    fixedHeader: true,
+    searching: false
+  });*/
+}
+
+
+function getList(sdate, edate) {
+  var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1";
+  url += "/programs/1/defaulter_list?start_date=" + sdate + '&end_date=' + edate;
+
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+      var obj = JSON.parse(this.responseText);
+      loadClients(obj);
+    }
+  };
+  xhttp.open("GET", url, true);
+  xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+  xhttp.setRequestHeader('Content-type', "application/json");
+  xhttp.send();
+}
+
+function loadClients(data) {
+  var formatted_data = [];
+
+  for (var i = 0; i < data.length; i++) {
+    var given_name = data[i].given_name;
+    var family_name = data[i].family_name;
+    var gender = data[i].gender;
+    var birthdate = moment(data[i].birthdate).format('DD/MMM/YYYY');
+    var npid = data[i].npid;
+    var person_id = data[i].person_id;
+    var outcome_date = moment(data[i].defaulter_date).format('DD/MMM/YYYY');
+
+  /*  setDataTable.row.add([npid, given_name, family_name, gender, birthdate, '','']).node().id = 'row-' + person_id;
+    setDataTable.draw();
+    addClassIMGcontainter(person_id); */
+    formatted_data.push([npid, given_name, family_name, gender, birthdate, outcome_date, '',addSelectButton(person_id)]);
+  }
+  
+  jQuery('#clients').DataTable( {
+    fixedHeader:    true,
+    searching:      false,
+    data:           formatted_data,
+    deferRender:    true,
+    scrollY:        485,
+    scrollCollapse: false,
+    scroller:       false,
+    pageLength:     10000,
+    lengthChange:   false,
+    paging:         false,
+    order:          [[ 2, "asc" ]],
+    columnDefs: [
+      {"className": "dt-center", "targets": 0},
+      {"className": "dt-center", "targets": 3},
+      {"className": "dt-center", "targets": 4},
+      {"className": "dt-center", "targets": 6}
+    ]
+  } );
+
+}
+
+function addSelectButton(person_id) {
+  var span = document.createElement('span');
+  var button  = document.createElement('a');
+  button.setAttribute('onmousedown', 'selectClient(' + person_id + ')');
+  button.innerHTML = 'Select';
+  button.setAttribute('class','btn-primary');
+  button.setAttribute('href','#');
+  span.appendChild(button);
+  return span.innerHTML;
+}
+
+function selectClient(patient_id) {
+  document.location = '/views/confirm.html?person_id=' + patient_id;
+}
+
+function addClassIMGcontainter(person_id) {
+  var tr = document.getElementById('row-' + person_id);
+  var cells = tr.getElementsByTagName('td');
+
+  for(var i = 0 ; i < cells.length ; i++) {
+    if(i == 0) 
+      cells[i].setAttribute('class', 'npid');
+
+    if(i == 1) 
+      cells[i].setAttribute('class', 'given_name');
+
+    if(i == 2) 
+      cells[i].setAttribute('class', 'family_name');
+
+    if(i == 3) 
+      cells[i].setAttribute('class', 'gender');
+
+    if(i == 4) 
+      cells[i].setAttribute('class', 'birthdate');
+
+  }
+}
+
+</script>
+
+<body id="mateme">
+  <div id="container">
+    <div id="content">
+
+
+      <form>
+
+        <input type="text" name="summary"
+          tt_onLoad="__$('keyboard').style.display = 'none'; changeFinishButton(); buildList();" 
+          tt_pageStyleClass= "NoControls" helpText="Defaulter list" optional = "true"/>
+
+      </form>
+
+   </div>
+ </div>
+</body>
