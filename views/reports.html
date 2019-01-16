@@ -70,7 +70,7 @@ function reportGrouping(group) {
   if(group == 'main'){
     return [
       ['MoH','/assets/images/login-logos/Malawi-Coat_of_arms_of_arms.png','MoH', 'function'],
-      ["Clinic", "","#",'link'],
+      ["Clinic", "","Clinic",'function'],
       ["PEPFAR","/assets/images/login-logos/PEPFAR.png","#",'link']
     ];
   }else if(group == 'MoH'){
@@ -78,6 +78,12 @@ function reportGrouping(group) {
       ['Cohort / disaggregated','','/apps/ART/views/cohort_tool/revised_cohort_menu.html', 'link'],
       ["Viral load", "","#",'link'],
       ["IPT","","#",'link']
+    ];
+  }else if(group == 'Clinic'){
+    return [
+      ['Appointments','','/apps/ART/views/reports/clinic/appointments.html', 'link'],
+      ["Defaulter list","","#",'link'],
+      ["Incomplete visits","","#",'link']
     ];
   }else{
   }  
