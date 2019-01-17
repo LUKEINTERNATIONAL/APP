@@ -116,6 +116,7 @@ function buildRegimenPage() {
     if(show_custom_regimens == true) {
       selectedRegimens = null;
       show_custom_regimens = false;
+      getMedicationOrders();
     }
 
     starterPackSelected = false;
@@ -407,6 +408,9 @@ function continueShowSelectedMeds() {
         }
 
     }
+        
+    if(show_custom_regimens == true)
+      medication_orders = {};
 
     for (var drugName in medication_orders) {
         var am_dose = medication_orders[drugName]["am"];
