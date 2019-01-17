@@ -53,6 +53,8 @@
 </style>
 
 <script>
+    var tt_cancel_destination = "/views/patient_dashboard.html?patient_id=" + sessionStorage.patientID;
+
     var apiProtocol = sessionStorage.apiProtocol;
     var apiURL = sessionStorage.apiURL;
     var apiPort = sessionStorage.apiPort;
@@ -134,6 +136,7 @@
         changeSubmitButton();
     }
 
+    var tt_cancel_destination = "/views/patient_dashboard.html?patient_id=" + sessionStorage.patientID;
 </script>
 
 <body id="mateme">
