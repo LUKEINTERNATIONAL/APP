@@ -113,7 +113,13 @@ function buildRegimenPage() {
     frame.style = "height: 89%; width: 96%;";
     document.getElementById("clearButton").style = "display: none;";
 
+    if(show_custom_regimens == true) {
+      selectedRegimens = null;
+      show_custom_regimens = false;
+    }
+
     starterPackSelected = false;
+    customRegimenIngredients = {};
 
     var regimenContainer = document.createElement("div");
     regimenContainer.setAttribute("class", "regimen-container");
@@ -667,7 +673,7 @@ function getRegimens() {
     customRgimen.setAttribute("class", "button blue navButton");
     customRgimen.innerHTML = "<span>Custom regimen</span>";
     footer.appendChild(customRgimen);
-    show_custom_regimens = false;
+    //show_custom_regimens = false;
 
     resetCustomRegimens();
 
@@ -1287,7 +1293,7 @@ function resetCustomRegimens() {
     }
 
     selectedRegimens = null;
-    show_custom_regimens = false;
+    //show_custom_regimens = false;
     customRegimenIngredients = {};
     givenRegimens["Unknown"] = null;
 
