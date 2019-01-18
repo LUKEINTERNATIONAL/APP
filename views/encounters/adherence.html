@@ -253,8 +253,12 @@
             }
         }
 
-
+        var medication_given_count = 0;
+      
         for (var i = 0; i < medication.length; i++) {
+            if(!isNumeric(medication[i].quantity))
+              continue;
+
             var ordersTableRow = document.createElement('div');
             ordersTableRow.setAttribute('class', 'orders-table-row');
             ordersTable.appendChild(ordersTableRow)
@@ -277,7 +281,14 @@
             ordersTableCell.setAttribute('onmousedown', 'enterPillsRemaining(this);');
             ordersTableCell.style = "font-weight: bold;font-size: 1.3em;text-align: center; width: 20%; float: right;";
             ordersTableRow.appendChild(ordersTableCell)
+            
+            medication_given_count++;
+        }
 
+        if(medication_given_count < 1){
+          showMessage('Client was not given actual <br / > medication / pills last visit');
+          var nextButton = document.getElementById('nextButton');
+          nextButton.style = 'display: none;';
         }
 
         document.getElementById('confirmatory-test-cover').style = 'display: none;';
