@@ -51,7 +51,7 @@
               var results = JSON.parse(this.responseText);
               document.getElementById("art-start-date").innerHTML = ((results.art_start_date !== "N/A") ? results.art_start_date + "/" : "No Start Date Available");
               document.getElementById("art-duration").innerHTML = ((results.art_duration !== "N/A") ? "("+ Math.floor(results.art_duration) + " month(s))" : "")  
-              document.getElementById("filing-number").innerHTML = ((results.filing_number !== "N/A") ? results.filing_number : "No Filing Number Available");
+              document.getElementById("filing-number").innerHTML = ((results.filing_number.number !== "N/A") ? results.filing_number.number : "No Filing Number Available");
               document.getElementById("arv-number").innerHTML = ((results.arv_number !== "N/A") ? "("+results.arv_number+")" : "No ARV Number Available");
               document.getElementById("current-outcome").innerHTML =  ((results.current_outcome !== "N/A") ? results.current_outcome : "No Outcome Available");
             }
