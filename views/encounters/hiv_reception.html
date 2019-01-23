@@ -101,14 +101,15 @@ function postVitalsObs(encounter) {
 function postARVNumber(){
 
     var identifier_type = 4
-    value = __$('touchscreenInput' + tstCurrentPage).value;
+    var value = __$('touchscreenInput' + tstCurrentPage).value;
     var arv_number = site_prefix + "-ARV-" + value;
 
-    var identifier_data = {identifier: arv_number,
+    var identifier_data = {
+        identifier: arv_number,
         identifier_type: identifier_type,
         patient_id: patientID
        }
-    var url = "/patients/" + patientID + "/patient_identifiers"
+    var url = "/patient_identifiers/";
     submitParameters(identifier_data, url, "afterIdentifierCreation")
 }
 
