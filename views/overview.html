@@ -9,224 +9,260 @@
 
 
 <style>
-.encounter-types {
-  border-style: solid;
-  border-width: 0px 0px 1px 0px;
-}
+    .encounter-types {
+        border-style: solid;
+        border-width: 0px 0px 1px 0px;
+    }
 
-.numbers {
-  text-align: right;
-  padding-right: 5px;
-  border-style: solid;
-  border-width: 0px 0px 1px 0px;
-}
+    .numbers {
+        text-align: right;
+        padding-right: 5px;
+        border-style: solid;
+        border-width: 0px 0px 1px 0px;
+    }
 
-.overview-main-container {
-  display: table;
-  width: 100%;
-  overflow: auto;
-}
+    .overview-main-container {
+        display: table;
+        width: 100%;
+        overflow: auto;
+    }
 
-.overview-main-container-row {
-  display: table-row;
-}
+    .overview-main-container-row {
+        display: table-row;
+    }
 
-.overview-main-container-cell {
-  vertical-align: top;
-  display: table-cell;
-}
+    .overview-main-container-cell {
+        vertical-align: top;
+        display: table-cell;
+    }
 
-#chart-column {
-  width: 40%;
-  height: 315px;
-}
+    #chart-column {
+        width: 40%;
+        height: 315px;
+    }
 
-#stats-table {
-  width: 100%;
-  border-collapse: collapse;
-}
+    #stats-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
 
-#stats-table th {
-  border-style: solid;
-  border-width: 0px 0px 1px 0px;
-}
+    #stats-table th {
+        border-style: solid;
+        border-width: 0px 0px 1px 0px;
+    }
 
-* {
-    -webkit-touch-callout:none;
-    -webkit-user-select:none;
-    -moz-user-select:none;
-    -ms-user-select:none;
-    user-select:none;
-}
+    * {
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
 
 </style>
 
 
 <div class="overview-main-container">
-  <div class="overview-main-container-row">
-  
-    <div class="overview-main-container-cell" id="chart-column">
+    <div class="overview-main-container-row">
+
+        <div class="overview-main-container-cell" id="chart-column">
+        </div>
+
+        <div class="overview-main-container-cell" style="width: 30%;">
+            <div style="margin-bottom: 30px;">
+                Encounters created:&nbsp;<span id="encounter-date"></span>
+            </div>
+            <table id="stats-table">
+                <tr>
+                    <th>&nbsp;</th>
+                    <th class="numbers">Female</th>
+                    <th class="numbers">Male</th>
+                    <th class="numbers"><span id="username">Me</span></th>
+                    <th class="numbers">Facility</th>
+                </tr>
+                <tbody id="stats-table-body">
+                </tbody>
+            </table>
+        </div>
+
+
     </div>
-
-    <div class="overview-main-container-cell" style="width: 30%;">
-      <div style="margin-bottom: 30px;">
-       Encounters created:&nbsp;<span id="encounter-date"></span>
-      </div>
-      <table id="stats-table">
-        <tr>
-          <th>&nbsp;</th>
-          <th class="numbers">Female</th>
-          <th class="numbers">Male</th>
-          <th class="numbers">Total</th>
-        </tr>
-        <tbody id="stats-table-body">
-        </tbody>
-      </table>
-    </div>
-
-
-  </div>
 </div>
-
-
 
 
 <script type="text/javascript">
 
-function buildChart(complete, incomplete, days) {
+    function buildChart(complete, incomplete, days) {
 // Build the chart
-  Highcharts.chart('chart-column', {
-     chart: {
-       type: 'column'
-     },
-      title: {
-        text: 'Complete/Incomplete visits: last five days'
-      },
-      credits: {
-          enabled: false
-      },
-      exporting: {
-          enabled: false
-      },
-      xAxis: {
-          categories: days 
-      },
+        Highcharts.chart('chart-column', {
+            chart: {
+                type: 'column'
+            },
+            title: {
+                text: 'Complete/Incomplete visits: last five days'
+            },
+            credits: {
+                enabled: false
+            },
+            exporting: {
+                enabled: false
+            },
+            xAxis: {
+                categories: days
+            },
 
-      series: [{
-          name: 'Total visits',
-          data: complete
-      }, {
-          name: 'Total incomplete visits',
-          data: incomplete,
-          lineWidth: 2
-      }]
-  });
+            series: [{
+                name: 'Total visits',
+                data: complete
+            }, {
+                name: 'Total incomplete visits',
+                data: incomplete,
+                lineWidth: 2
+            }]
+        });
 
-}
-
-
-//var stats = {all: true, date: dsdsd, encounter_types: [1,3,4,]
-var stats = {all: true, encounter_types: [6, 7, 51, 52, 53, 68]};
-var apiProtocol = sessionStorage.apiProtocol;
-var apiURL = sessionStorage.apiURL;
-var apiPort = sessionStorage.apiPort;
-
-var encounter_types = {}
-encounter_types[6]  = "Vitals"; 
-encounter_types[7]  = "Appointments"; 
-encounter_types[51] = "HIV reception"; 
-encounter_types[52] = "HIV Staging"; 
-encounter_types[53] = "HIV clinic consultation"; 
-encounter_types[68] = "ART Adherence"; 
-var end_date = moment().subtract(1, "days").format("YYYY-MM-DD");
-var start_date = moment().subtract(5, "days").format("YYYY-MM-DD");
-function getVisits(){
-  var url = 'http://'+apiURL+':'+apiPort+'/api/v1/programs/1/reports/visits?name=visits&start_date='+start_date+'&end_date='+end_date;
-  var req = new XMLHttpRequest();
-  req.onreadystatechange = function(){
-
-  if (this.readyState == 4) {
-  if (this.status == 200) {
-  var results = JSON.parse(this.responseText);
-  var complete = new Array;
-  var incomplete = new Array;
-  var days = new Array;
-  var keys = Object.keys(results);
-    for(var x = 0; x < keys.length; x ++){
-      complete.push(results[keys[x]].complete + results[keys[x]].incomplete);  
-      incomplete.push(results[keys[x]].incomplete);  
-      days.push(moment(keys[x]).format("ddd"));
-    }
-      buildChart(complete, incomplete, days);
-  }
-  }
-  };
-  try {
-  req.open('GET', url, true);
-  req.setRequestHeader('Authorization',sessionStorage.getItem('authorization'));
-  req.send(null);
-  } catch (e) {
-}
-}
-
-getVisits();
-var encounter_date = moment(new Date()).format("YYYY-MM-DD");
-submitParameters(stats, "/reports/encounters?date=" + encounter_date, "renderStats");
-
-try {
-  var cover = document.getElementById('submit-cover');
-  cover.style = 'display: none;';
-}catch(e) {}
-
-var encounters_created = [];
-var counter = 1;
-
-function renderStats(stats) {
-  var encounter_date = document.getElementById("encounter-date");
-  encounter_date.innerHTML = moment(new Date()).format("DD/MMM/YYYY");
-
-  var tby = document.getElementById("stats-table-body");
-  for(var encounter_type_id in stats){
-    var tr = document.createElement("tr");
-    var td = document.createElement("td");
-    td.setAttribute("class","encounter-types");
-    td.innerHTML = encounter_types[encounter_type_id];
-    tr.appendChild(td);
-
-    var td = document.createElement("td");
-    td.setAttribute("class","numbers");
-    td.innerHTML = stats[encounter_type_id].F.toLocaleString();
-    tr.appendChild(td);
-
-    var td = document.createElement("td");
-    td.innerHTML = stats[encounter_type_id].M.toLocaleString();
-    td.setAttribute("class","numbers");
-    tr.appendChild(td);
-    
-    var td = document.createElement("td");
-    td.innerHTML = parseInt(stats[encounter_type_id].M.toLocaleString()) + parseInt(stats[encounter_type_id].F.toLocaleString());
-    td.style.fontWeight = "bold";
-    td.setAttribute("class","numbers");
-    tr.appendChild(td);
-    tby.appendChild(tr);
-  
-    if(counter == 1) {
-      encounters_created.push({
-        name: encounter_types[encounter_type_id],
-        y: (stats[encounter_type_id].F + stats[encounter_type_id].M),
-        sliced: true,   selected: true
-      });
-    }else{
-      encounters_created.push({
-        name: encounter_types[encounter_type_id],
-        y: (stats[encounter_type_id].F + stats[encounter_type_id].M)
-      });
     }
 
-    counter++;
-  }
 
-  buildChart(stats);
-}
+    //var stats = {all: true, date: dsdsd, encounter_types: [1,3,4,]
+    var stats = {all: true, encounter_types: [6, 7, 51, 52, 53, 68]};
+    var apiProtocol = sessionStorage.apiProtocol;
+    var apiURL = sessionStorage.apiURL;
+    var apiPort = sessionStorage.apiPort;
 
+    var encounter_types = {}
+    encounter_types[6] = "Vitals";
+    encounter_types[7] = "Appointments";
+    encounter_types[51] = "HIV reception";
+    encounter_types[52] = "HIV Staging";
+    encounter_types[53] = "HIV clinic consultation";
+    encounter_types[68] = "ART Adherence";
+    var end_date = moment().subtract(1, "days").format("YYYY-MM-DD");
+    var start_date = moment().subtract(5, "days").format("YYYY-MM-DD");
+
+    function getVisits() {
+        var url = 'http://' + apiURL + ':' + apiPort + '/api/v1/programs/1/reports/visits?name=visits&start_date=' + start_date + '&end_date=' + end_date;
+        var req = new XMLHttpRequest();
+        req.onreadystatechange = function () {
+
+            if (this.readyState == 4) {
+                if (this.status == 200) {
+                    var results = JSON.parse(this.responseText);
+                    var complete = new Array;
+                    var incomplete = new Array;
+                    var days = new Array;
+                    var keys = Object.keys(results);
+                    for (var x = 0; x < keys.length; x++) {
+                        complete.push(results[keys[x]].complete + results[keys[x]].incomplete);
+                        incomplete.push(results[keys[x]].incomplete);
+                        days.push(moment(keys[x]).format("ddd"));
+                    }
+                    buildChart(complete, incomplete, days);
+                }
+            }
+        };
+        try {
+            req.open('GET', url, true);
+            req.setRequestHeader('Authorization', sessionStorage.getItem('authorization'));
+            req.send(null);
+        } catch (e) {
+        }
+    }
+
+    getVisits();
+    var encounter_date = moment(new Date()).format("YYYY-MM-DD");
+    submitParameters(stats, "/reports/encounters?date=" + encounter_date, "renderStats");
+
+    try {
+        var cover = document.getElementById('submit-cover');
+        cover.style = 'display: none;';
+    } catch (e) {
+    }
+
+    var encounters_created = [];
+    var counter = 1;
+
+    function renderStats(stats) {
+        var encounter_date = document.getElementById("encounter-date");
+        encounter_date.innerHTML = moment(new Date()).format("DD/MMM/YYYY");
+
+        var tby = document.getElementById("stats-table-body");
+        for (var encounter_type_id in stats) {
+            var tr = document.createElement("tr");
+            var td = document.createElement("td");
+            td.setAttribute("class", "encounter-types");
+            td.innerHTML = encounter_types[encounter_type_id];
+            tr.appendChild(td);
+
+            var td = document.createElement("td");
+            td.setAttribute("class", "numbers");
+            td.innerHTML = stats[encounter_type_id].F.toLocaleString();
+            tr.appendChild(td);
+
+            var td = document.createElement("td");
+            td.innerHTML = stats[encounter_type_id].M.toLocaleString();
+            td.setAttribute("class", "numbers");
+            tr.appendChild(td);
+
+            var td = document.createElement("td");
+            td.innerHTML = "&nbsp";
+            td.id = "encounter_" + encounter_type_id;
+            td.setAttribute("class", "numbers");
+            tr.appendChild(td);
+
+            var td = document.createElement("td");
+            td.innerHTML = parseInt(stats[encounter_type_id].M.toLocaleString()) + parseInt(stats[encounter_type_id].F.toLocaleString());
+            td.style.fontWeight = "bold";
+            td.setAttribute("class", "numbers");
+            tr.appendChild(td);
+            tby.appendChild(tr);
+
+            if (counter == 1) {
+                encounters_created.push({
+                    name: encounter_types[encounter_type_id],
+                    y: (stats[encounter_type_id].F + stats[encounter_type_id].M),
+                    sliced: true, selected: true
+                });
+            } else {
+                encounters_created.push({
+                    name: encounter_types[encounter_type_id],
+                    y: (stats[encounter_type_id].F + stats[encounter_type_id].M)
+                });
+            }
+
+            counter++;
+        }
+
+        buildChart(stats);
+        getUserStats();
+    }
+
+    function getUserStats() {
+        var stats = {encounter_types: [6, 7, 51, 52, 53, 68]};
+        var session_stats_url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1/reports/encounters?date=" + encounter_date;
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                var user_stats = JSON.parse(this.responseText);
+                for (var encounter_type in user_stats) {
+                    var males = user_stats[encounter_type]["M"];
+                    var females = user_stats[encounter_type]["F"];
+                    var element = document.getElementById("encounter_" + encounter_type);
+                    if (element) {
+                        var total = parseInt(males) + parseInt(females);
+                        element.innerHTML = "<b>" + total + "</b>";
+                    }
+                }
+            }
+        };
+        xhttp.open("POST", session_stats_url, true);
+        xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+        xhttp.setRequestHeader('Content-type', "application/json");
+        xhttp.send(JSON.stringify(stats));
+    }
+
+    var usernameField = document.getElementById("username");
+    if (usernameField){
+        usernameField.innerHTML = sessionStorage.username;
+    }
 </script>
