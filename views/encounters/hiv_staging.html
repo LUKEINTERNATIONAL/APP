@@ -1375,6 +1375,17 @@ bottom: 0px;
               answers_hash["cd4_location"] = cd4_location;
             }
 
+            function updatePregnancyBreastFeedingInputs(){
+                try {
+                    var pregnant_value = yesNo_Hash["Pregnant-Breastfeeding"]["Pregnant?"];
+                    var breast_feeding_value = yesNo_Hash["Pregnant-Breastfeeding"]["Breastfeeding?"];
+                    __$("pregnant").value = pregnant_value.toUpperCase();
+                    __$("breast_feeding").value = breast_feeding_value.toUpperCase();
+                } catch (e) {
+
+                }
+            }
+
         </script>
 
         <form>
@@ -1387,8 +1398,12 @@ bottom: 0px;
                    validationCode="checkPregnancyAndAge() == 'false'"
                    validationMessage="Patient (Viral Load) is 25 years old. Is she pregnant / Breastfeeding?"
                    tt_onLoad="__$('keyboard').style.display = 'none';addPregBreastFeedingYesNo(); showCategory2('Clinic consultation');"
+                   tt_onUnLoad="updatePregnancyBreastFeedingInputs();"
                    tt_pageStyleClass="NoControls"
                    helpText="Pregnant / Breastfeeding" optional="true"/>
+
+            <input id="pregnant" type="hidden" value="" />
+            <input id="breast_feeding" type="hidden" value="" />
 
             <input type="text" name="weight-summary" condition="sessionStorage.showWeightChart === 'true';"
                    tt_onLoad="__$('keyboard').style.display = 'none';buildWeightHistory(); updateBreastFeedingPregnancyAnswers();"
