@@ -454,7 +454,7 @@ function continueShowSelectedMeds() {
         tr.appendChild(td);
 
         var td = document.createElement("td");
-        td.innerHTML = "N/A";
+        td.innerHTML = "0";
         td.setAttribute("class", "numbers");
         tr.appendChild(td);
 
@@ -491,7 +491,7 @@ function continueShowSelectedMeds() {
         tr.appendChild(td);
 
         var td = document.createElement("td");
-        td.innerHTML = "N/A";
+        td.innerHTML = "0";
         td.setAttribute("class", "numbers");
         tr.appendChild(td);
 
@@ -707,7 +707,7 @@ function getRegimens() {
                         units: obj[key][i].units,
                         pack_size: pack_size,
                         am: obj[key][i].am,
-                        noon: 'N/A',
+                        noon: '0',
                         pm: obj[key][i].pm,
                         alternative_drug_name: obj[key][i].alternative_drug_name
                     }
@@ -1261,7 +1261,7 @@ function getMedication() {
 
                 custom_regimen_ingredients.push({
                     name: drug_name, drug_id: objs[i].drug_id,
-                    units: (objs[i].units.length < 1 ? 'N/A' : objs[i].units)
+                    units: (objs[i].units.length < 1 ? '0' : objs[i].units)
                 });
             }
         }
@@ -2164,7 +2164,7 @@ function buildFastTrackMedicationTable(){
         tr.appendChild(td);
 
         var td = document.createElement("td");
-        td.innerHTML = "N/A";
+        td.innerHTML = "0";
         td.setAttribute("class", "numbers");
         tr.appendChild(td);
 
