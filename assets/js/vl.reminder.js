@@ -2,9 +2,11 @@
 var arv_earliest_start_dates;
 
 function dateDiffInMonths(dt2, dt1) {
-  var diff =(dt2.getTime() - dt1.getTime()) / 1000;
-  diff /= (60 * 60 * 24 * 7 * 4);
-  return Math.abs(Math.round(diff));
+  var months;
+  months = (dt2.getFullYear() - dt1.getFullYear()) * 12;
+  months -= dt1.getMonth() + 1;
+  months += dt2.getMonth();
+  return months <= 0 ? 0 : months;
 }
 
 function getARTstartedDate() {
@@ -48,7 +50,7 @@ function checkIFwithVLBounds() {
   for(var i = 0 ; i < rows.length ; i++){
     var test = rows[i].children[0];
     if(test.innerHTML.match(/viral/i)){
-      var vlD = (rows[i].children[1].innerHTML);
+      var vlD = (rows[i].children[3].innerHTML);
       if(VLdate == undefined)
         VLdate = moment(vlD).format('YYYY-MM-DD');
 
@@ -75,12 +77,30 @@ function checkIFwithVLBounds() {
     i++
   }
 
-  for(var i = 0 ; i < time_bounds.length ; i++){
-    if(period_on_art >= time_bounds[i].start && period_on_art <= time_bounds[i].end){
-      vlAlert(period_on_art);
-      break;
+  
+  if(VLdate == undefined) {
+    for(var i = 0 ; i < time_bounds.length ; i++){
+      if(period_on_art >= time_bounds[i].start && period_on_art <= time_bounds[i].end){
+        vlAlert(period_on_art);
+        break;
+      }
+    }
+  }else{
+    var date1 = new Date(sessionStorage.sessionDate);
+    var date2 = new Date(VLdate);
+    var months_since_last_VL = dateDiffInMonths(date1, date2);
+    for(var i = 0 ; i < time_bounds.length ; i++){
+      if(period_on_art >= time_bounds[i].start && period_on_art <= time_bounds[i].end){
+        var within_12_months = (months_since_last_VL >= 0 && months_since_last_VL <= 12);
+        if(within_12_months == false){
+          vlAlert(period_on_art);
+          break;
+        }
+      }
     }
   }
+
+
 }
 
 function vlAlert(period_on_art){
