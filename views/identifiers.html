@@ -50,7 +50,7 @@
             if (this.status == 200) {
               var results = JSON.parse(this.responseText);
               document.getElementById("art-start-date").innerHTML = ((results.art_start_date !== "N/A") ? results.art_start_date + "/" : "No Start Date Available");
-              document.getElementById("art-duration").innerHTML = ((results.art_duration !== "N/A") ? "("+ Math.floor(results.art_duration) + " month(s))" : "")  
+              document.getElementById("art-duration").innerHTML = ((results.art_duration !== "N/A") ? "("+ calculateMonthsOnART(results.art_start_date) + " month(s))" : "")  
               document.getElementById("filing-number").innerHTML = ((results.filing_number.number !== "N/A") ? results.filing_number.number : "No Filing Number Available");
               document.getElementById("arv-number").innerHTML = ((results.arv_number !== "N/A") ? "("+results.arv_number+")" : "No ARV Number Available");
               document.getElementById("current-outcome").innerHTML =  ((results.current_outcome !== "N/A") ? results.current_outcome : "No Outcome Available");
@@ -66,6 +66,28 @@
       }
 
       ajaxRequest();
+
+function calculateMonthsOnART(art_start_date) {
+  var year = art_start_date.split('/')[2];
+  var month = art_start_date.split('/')[1];
+  var day = art_start_date.split('/')[0];
+  art_start_date = (year + '-' + month + '-' + day);
+
+  var date1 = new Date(sessionStorage.sessionDate);
+  var date2 = new Date(moment(art_start_date).format('YYYY-MM-DD'));
+  console.log(moment(art_start_date).format('YYYY-MM-DD'))
+  console.log(art_start_date)
+  return dateDiffInMonths(date1, date2);
+}
+
+function dateDiffInMonths(dt2, dt1) {
+  var months;
+  months = (dt2.getFullYear() - dt1.getFullYear()) * 12;
+  months -= dt1.getMonth() + 1;
+  months += dt2.getMonth();
+  return months <= 0 ? 0 : months;
+}
+
       </script>
 </body>
 </html>
