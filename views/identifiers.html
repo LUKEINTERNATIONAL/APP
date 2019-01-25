@@ -75,8 +75,6 @@ function calculateMonthsOnART(art_start_date) {
 
   var date1 = new Date(sessionStorage.sessionDate);
   var date2 = new Date(moment(art_start_date).format('YYYY-MM-DD'));
-  console.log(moment(art_start_date).format('YYYY-MM-DD'))
-  console.log(art_start_date)
   return dateDiffInMonths(date1, date2);
 }
 
