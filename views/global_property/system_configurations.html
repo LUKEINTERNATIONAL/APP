@@ -42,12 +42,9 @@
         "activate.htn.enhancement",
         "activate.vl.routine.check",
         "ask.pills.remaining.at.home",
-        "confirm.before.creating",
-        "enter.lab.results",
-        "export.cohort.data", //TODO
-        "appointment.limit", //TODO
-        "clinic.days", //TODO
-        "clinic.holidays", //TODO
+        "clinic.appointment.limit",
+        "clinic.days",
+        "clinic.holidays",
         "hypertension.threshholds", //TODO
         "hypertension.screening.age", //TODO
         "site.code", //TODO
@@ -88,6 +85,9 @@
 
         var ask_pills_at_home_property_url = apiProtocol + "://" + apiURL + ":" + apiPort;
         ask_pills_at_home_property_url += "/api/v1/global_properties?property=ask.pills.remaining.at.home";
+
+        var clinic_appointment_limit_property_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+        clinic_appointment_limit_property_url += "/api/v1/global_properties?property=clinic.appointment.limit";
 
         var count = 0
         var xhttp1 = new XMLHttpRequest();
@@ -193,9 +193,30 @@
                                                     html += "<td>Not set</td>";
                                                 }
                                                 html += "</tr>";
-                                                html += "</tbody>";
-                                                html += "<table>";
-                                                jQuery(".inputFrameClass").append(html)
+
+                                                var xhttp6 = new XMLHttpRequest();
+                                                xhttp6.onreadystatechange = function () {
+                                                    if (this.readyState == 4 && (this.status == 201 || this.status == 200 || this.status == 404)) {
+                                                        var property = JSON.parse(this.responseText);
+                                                        html += "<tr>";
+                                                        html += "<td>" + (count = count + 1) + "</td>";
+                                                        html += "<td>Appointment limit</td>";
+                                                        try {
+                                                            property = property["clinic.appointment.limit"];
+                                                            html += "<td>" + property + "</td>";
+                                                        } catch (e) {
+                                                            html += "<td>Not set</td>";
+                                                        }
+                                                        html += "</tr>";
+                                                        html += "</tbody>";
+                                                        html += "<table>";
+                                                        jQuery(".inputFrameClass").append(html)
+                                                    }
+                                                };
+                                                xhttp6.open("GET", clinic_appointment_limit_property_url, true);
+                                                xhttp6.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                                                xhttp6.setRequestHeader('Content-type', "application/json");
+                                                xhttp6.send();
                                             }
                                         };
                                         xhttp5.open("GET", ask_pills_at_home_property_url, true);
@@ -230,7 +251,7 @@
     }
 
     function gotoHome() {
-        window.location = "/views/patient_dashboard.html?patient_id=" + sessionStorage.patientID;
+        window.location = "/";
     }
 
 </script>
