@@ -45,16 +45,12 @@
         "clinic.appointment.limit",
         "clinic.days",
         "clinic.holidays",
-        "hypertension.threshholds", //TODO
-        "hypertension.screening.age", //TODO
-        "site.code", //TODO
-        "filing.limit", //TODO
-        "show.lab.results", //TODO
-        "use.extended.staging.questions",
+        "htn.systolic.threshold",
+        "htn.diastolic.threshold",
+        "htn.screening.age.threshold",
+        "filing.number.limit",
         "use.filing.number",
         "enable.fast.track",
-        "show.swap.button",
-        "military.site"
     ]
 
     function showSystemConfigurations() {
@@ -88,6 +84,31 @@
 
         var clinic_appointment_limit_property_url = apiProtocol + "://" + apiURL + ":" + apiPort;
         clinic_appointment_limit_property_url += "/api/v1/global_properties?property=clinic.appointment.limit";
+
+        var clinic_days_property_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+        clinic_days_property_url += "/api/v1/global_properties?property=clinic.days";
+
+        var clinic_holidays_property_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+        clinic_holidays_property_url += "/api/v1/global_properties?property=clinic.holidays";
+
+        var htn_systolic_property_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+        htn_systolic_property_url += "/api/v1/global_properties?property=htn.systolic.threshold";
+
+        var htn_diastolic_property_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+        htn_diastolic_property_url += "/api/v1/global_properties?property=htn.diastolic.threshold";
+
+        var htn_age_property_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+        htn_age_property_url += "/api/v1/global_properties?property=htn.screening.age.threshold";
+
+        var filing_number_limit_property_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+        filing_number_limit_property_url += "/api/v1/global_properties?property=filing.number.limit";
+
+        var use_filing_number_property_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+        use_filing_number_property_url += "/api/v1/global_properties?property=use.filing.number";
+
+        var activate_fast_track_property_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+        activate_fast_track_property_url += "/api/v1/global_properties?property=enable.fast.track";
+
 
         var count = 0
         var xhttp1 = new XMLHttpRequest();
@@ -208,9 +229,203 @@
                                                             html += "<td>Not set</td>";
                                                         }
                                                         html += "</tr>";
-                                                        html += "</tbody>";
-                                                        html += "<table>";
-                                                        jQuery(".inputFrameClass").append(html)
+
+                                                        var xhttp7 = new XMLHttpRequest();
+                                                        xhttp7.onreadystatechange = function () {
+                                                            if (this.readyState == 4 && (this.status == 201 || this.status == 200 || this.status == 404)) {
+                                                                var property = JSON.parse(this.responseText);
+                                                                html += "<tr>";
+                                                                html += "<td>" + (count = count + 1) + "</td>";
+                                                                html += "<td>Clinic days</td>";
+                                                                property = property["clinic.days"];
+                                                                if (property) {
+                                                                    html += "<td>" + property + "</td>";
+                                                                } else {
+                                                                    html += "<td>Not set</td>";
+                                                                }
+
+                                                                html += "</tr>";
+
+                                                                var xhttp8 = new XMLHttpRequest();
+                                                                xhttp8.onreadystatechange = function () {
+                                                                    +3
+                                                                    if (this.readyState == 4 && (this.status == 201 || this.status == 200 || this.status == 404)) {
+                                                                        var property = JSON.parse(this.responseText);
+                                                                        html += "<tr>";
+                                                                        html += "<td>" + (count = count + 1) + "</td>";
+                                                                        html += "<td>Clinic holidays</td>";
+                                                                        property = property["clinic.holidays"];
+                                                                        if (property) {
+                                                                            html += "<td>" + property + "</td>";
+                                                                        } else {
+                                                                            html += "<td>Not set</td>";
+                                                                        }
+
+                                                                        html += "</tr>";
+
+                                                                        var xhttp9 = new XMLHttpRequest();
+                                                                        xhttp9.onreadystatechange = function () {
+                                                                            if (this.readyState == 4 && (this.status == 201 || this.status == 200 || this.status == 404)) {
+                                                                                var property = JSON.parse(this.responseText);
+                                                                                html += "<tr>";
+                                                                                html += "<td>" + (count = count + 1) + "</td>";
+                                                                                html += "<td>Systolic blood pressure</td>";
+                                                                                property = property["htn.systolic.threshold"];
+                                                                                if (property) {
+                                                                                    html += "<td>" + property + "</td>";
+                                                                                } else {
+                                                                                    html += "<td>Not set</td>";
+                                                                                }
+
+                                                                                html += "</tr>";
+
+                                                                                var xhttp10 = new XMLHttpRequest();
+                                                                                xhttp10.onreadystatechange = function () {
+                                                                                    if (this.readyState == 4 && (this.status == 201 || this.status == 200 || this.status == 404)) {
+                                                                                        var property = JSON.parse(this.responseText);
+                                                                                        html += "<tr>";
+                                                                                        html += "<td>" + (count = count + 1) + "</td>";
+                                                                                        html += "<td>Diastolic blood pressure</td>";
+                                                                                        property = property["htn.diastolic.threshold"];
+                                                                                        if (property) {
+                                                                                            html += "<td>" + property + "</td>";
+                                                                                        } else {
+                                                                                            html += "<td>Not set</td>";
+                                                                                        }
+
+                                                                                        html += "</tr>";
+
+                                                                                        var xhttp11 = new XMLHttpRequest();
+                                                                                        xhttp11.onreadystatechange = function () {
+                                                                                            if (this.readyState == 4 && (this.status == 201 || this.status == 200 || this.status == 404)) {
+                                                                                                var property = JSON.parse(this.responseText);
+                                                                                                html += "<tr>";
+                                                                                                html += "<td>" + (count = count + 1) + "</td>";
+                                                                                                html += "<td>HTN screening age</td>";
+                                                                                                property = property["htn.screening.age.threshold"];
+                                                                                                if (property) {
+                                                                                                    html += "<td>" + property + "</td>";
+                                                                                                } else {
+                                                                                                    html += "<td>Not set</td>";
+                                                                                                }
+
+                                                                                                html += "</tr>";
+
+                                                                                                var xhttp12 = new XMLHttpRequest();
+                                                                                                xhttp12.onreadystatechange = function () {
+                                                                                                    if (this.readyState == 4 && (this.status == 201 || this.status == 200 || this.status == 404)) {
+                                                                                                        var property = JSON.parse(this.responseText);
+                                                                                                        html += "<tr>";
+                                                                                                        html += "<td>" + (count = count + 1) + "</td>";
+                                                                                                        html += "<td>Filing number limit</td>";
+                                                                                                        property = property["filing.number.limit"];
+                                                                                                        if (property) {
+                                                                                                            html += "<td>" + property + "</td>";
+                                                                                                        } else {
+                                                                                                            html += "<td>Not set</td>";
+                                                                                                        }
+
+                                                                                                        html += "</tr>";
+
+                                                                                                        var xhttp13 = new XMLHttpRequest();
+                                                                                                        xhttp13.onreadystatechange = function () {
+                                                                                                            if (this.readyState == 4 && (this.status == 201 || this.status == 200 || this.status == 404)) {
+                                                                                                                var property = JSON.parse(this.responseText);
+                                                                                                                html += "<tr>";
+                                                                                                                html += "<td>" + (count = count + 1) + "</td>";
+                                                                                                                html += "<td>Use filing number</td>";
+                                                                                                                property = property["use.filing.number"];
+                                                                                                                if (property) {
+                                                                                                                    if (property == "true") {
+                                                                                                                        html += "<td>Yes</td>";
+                                                                                                                    } else {
+                                                                                                                        html += "<td>No</td>";
+                                                                                                                    }
+                                                                                                                } else {
+                                                                                                                    html += "<td>Not set</td>";
+                                                                                                                }
+
+                                                                                                                html += "</tr>";
+
+                                                                                                                var xhttp14 = new XMLHttpRequest();
+                                                                                                                xhttp14.onreadystatechange = function () {
+                                                                                                                    if (this.readyState == 4 && (this.status == 201 || this.status == 200 || this.status == 404)) {
+                                                                                                                        var property = JSON.parse(this.responseText);
+                                                                                                                        html += "<tr>";
+                                                                                                                        html += "<td>" + (count = count + 1) + "</td>";
+                                                                                                                        html += "<td>Activate fast track</td>";
+                                                                                                                        property = property["enable.fast.track"];
+                                                                                                                        if (property) {
+                                                                                                                            if (property == "true") {
+                                                                                                                                html += "<td>Yes</td>";
+                                                                                                                            } else {
+                                                                                                                                html += "<td>No</td>";
+                                                                                                                            }
+                                                                                                                        } else {
+                                                                                                                            html += "<td>Not set</td>";
+                                                                                                                        }
+
+                                                                                                                        html += "</tr>";
+                                                                                                                        html += "</tbody>";
+                                                                                                                        html += "<table>";
+                                                                                                                        jQuery(".inputFrameClass").append(html)
+                                                                                                                    }
+                                                                                                                }
+                                                                                                                xhttp14.open("GET", activate_fast_track_property_url, true);
+                                                                                                                xhttp14.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                                                                                                                xhttp14.setRequestHeader('Content-type', "application/json");
+                                                                                                                xhttp14.send();
+
+                                                                                                            }
+                                                                                                        };
+
+                                                                                                        xhttp13.open("GET", use_filing_number_property_url, true);
+                                                                                                        xhttp13.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                                                                                                        xhttp13.setRequestHeader('Content-type', "application/json");
+                                                                                                        xhttp13.send();
+
+                                                                                                    }
+                                                                                                };
+
+                                                                                                xhttp12.open("GET", filing_number_limit_property_url, true);
+                                                                                                xhttp12.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                                                                                                xhttp12.setRequestHeader('Content-type', "application/json");
+                                                                                                xhttp12.send();
+                                                                                            }
+                                                                                        };
+
+                                                                                        xhttp11.open("GET", htn_age_property_url, true);
+                                                                                        xhttp11.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                                                                                        xhttp11.setRequestHeader('Content-type', "application/json");
+                                                                                        xhttp11.send();
+
+                                                                                    }
+                                                                                };
+
+                                                                                xhttp10.open("GET", htn_diastolic_property_url, true);
+                                                                                xhttp10.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                                                                                xhttp10.setRequestHeader('Content-type', "application/json");
+                                                                                xhttp10.send();
+                                                                            }
+                                                                        };
+                                                                        xhttp9.open("GET", htn_systolic_property_url, true);
+                                                                        xhttp9.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                                                                        xhttp9.setRequestHeader('Content-type', "application/json");
+                                                                        xhttp9.send();
+                                                                    }
+                                                                };
+                                                                xhttp8.open("GET", clinic_holidays_property_url, true);
+                                                                xhttp8.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                                                                xhttp8.setRequestHeader('Content-type', "application/json");
+                                                                xhttp8.send();
+                                                            }
+                                                        };
+
+                                                        xhttp7.open("GET", clinic_days_property_url, true);
+                                                        xhttp7.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                                                        xhttp7.setRequestHeader('Content-type', "application/json");
+                                                        xhttp7.send();
+
                                                     }
                                                 };
                                                 xhttp6.open("GET", clinic_appointment_limit_property_url, true);
