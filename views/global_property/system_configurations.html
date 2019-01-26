@@ -1,0 +1,253 @@
+<script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js"
+        defer="true"></script>
+<!-- <script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/standard.js" defer="true"></script> -->
+<script type="text/javascript" src="/assets/js/jquery.min.js"></script>
+
+<script type="text/javascript" src="/assets/js/post_parameters.js"></script>
+<script type="text/javascript" src="/assets/js/generic_ajaxrequest.js"></script>
+<script type="text/javascript" src="/assets/js/alertifyjs/alertify.js"></script>
+<script type="text/javascript" src="/assets/js/does_connection_exist.js"></script>
+
+<link rel="stylesheet" href="/assets/css/alertifyjs/css/alertify.css" type="text/css">
+
+<script src="/assets/js/moment.js"></script>
+<link rel="stylesheet" href="/assets/css/lab.min.css" type="text/css">
+
+<style>
+    #properties {
+        width: 100%;
+    }
+
+    #properties th {
+        background-color: teal;
+        color: white;
+        text-align: center;
+        line-height: 2em;
+    }
+
+    #properties tbody {
+        text-align: center;
+        line-height: 2em;
+        letter-spacing: 1;
+    }
+
+</style>
+
+<script type="text/javascript">
+    var tt_cancel_destination = "/";
+
+    var properties = [
+        "activate.cervical.cancer.screening",
+        "activate.drug.management",
+        "activate.htn.enhancement",
+        "activate.vl.routine.check",
+        "ask.pills.remaining.at.home",
+        "confirm.before.creating",
+        "enter.lab.results",
+        "export.cohort.data", //TODO
+        "appointment.limit", //TODO
+        "clinic.days", //TODO
+        "clinic.holidays", //TODO
+        "hypertension.threshholds", //TODO
+        "hypertension.screening.age", //TODO
+        "site.code", //TODO
+        "filing.limit", //TODO
+        "show.lab.results", //TODO
+        "use.extended.staging.questions",
+        "use.filing.number",
+        "enable.fast.track",
+        "show.swap.button",
+        "military.site"
+    ]
+
+    function showSystemConfigurations() {
+        html = "<table>";
+        html += "</html>";
+        jQuery("#nextButton").hide();
+        jQuery("#keyboard").hide();
+        jQuery("#clearButton").hide();
+        jQuery("#cancelButton").hide();
+
+        jQuery(".inputFrameClass").css("width", "96%");
+        jQuery(".inputFrameClass").css("height", "80%");
+
+        finishButtonHtml = '<button class="button navButton green"  onmousedown="gotoHome();"><span>Finish</span></button>'
+        jQuery("#buttons").append(finishButtonHtml);
+
+        var cervical_cancer_property_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+        cervical_cancer_property_url += "/api/v1/global_properties?property=activate.cervical.cancer.screening";
+
+        var drug_management_property_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+        drug_management_property_url += "/api/v1/global_properties?property=activate.drug.management";
+
+        var activate_htn_property_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+        activate_htn_property_url += "/api/v1/global_properties?property=activate.htn.enhancement";
+
+        var activate_vl_property_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+        activate_vl_property_url += "/api/v1/global_properties?property=activate.vl.routine.check";
+
+        var ask_pills_at_home_property_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+        ask_pills_at_home_property_url += "/api/v1/global_properties?property=ask.pills.remaining.at.home";
+
+        var count = 0
+        var xhttp1 = new XMLHttpRequest();
+
+        var html = "<table id='properties'>";
+        html += "<thead>";
+        html += "<th>&nbsp;</th>";
+        html += "<th>Property</th>";
+        html += "<th>Value</th>";
+        html += "</thead>";
+        html += "<tbody>";
+
+        xhttp1.onreadystatechange = function () {
+            if (this.readyState == 4 && (this.status == 201 || this.status == 200 || this.status == 404)) {
+                var property = JSON.parse(this.responseText);
+                html += "<tr>";
+                html += "<td>" + (count = count + 1) + "</td>";
+                html += "<td>Activate cervical cancer screening</td>";
+                try {
+                    property = property["activate.cervical.cancer.screening"];
+                    if (property == "true") {
+                        html += "<td>Yes</td>";
+                    } else {
+                        html += "<td>No</td>";
+                    }
+                } catch (e) {
+                    html += "<td>Not set</td>";
+                }
+                html += "</tr>";
+
+                var xhttp2 = new XMLHttpRequest();
+                xhttp2.onreadystatechange = function () {
+                    if (this.readyState == 4 && (this.status == 201 || this.status == 200 || this.status == 404)) {
+                        var property = JSON.parse(this.responseText);
+                        html += "<tr>";
+                        html += "<td>" + (count = count + 1) + "</td>";
+                        html += "<td>Activate drug management</td>";
+                        try {
+                            property = property["activate.drug.management"];
+                            if (property == "true") {
+                                html += "<td>Yes</td>";
+                            } else {
+                                html += "<td>No</td>";
+                            }
+                        } catch (e) {
+                            html += "<td>Not set</td>";
+                        }
+                        html += "</tr>";
+                        var xhttp3 = new XMLHttpRequest();
+                        xhttp3.onreadystatechange = function () {
+                            if (this.readyState == 4 && (this.status == 201 || this.status == 200 || this.status == 404)) {
+                                var property = JSON.parse(this.responseText);
+                                html += "<tr>";
+                                html += "<td>" + (count = count + 1) + "</td>";
+                                html += "<td>Activate hypertension screening</td>";
+                                try {
+                                    property = property["activate.htn.enhancement"];
+                                    if (property == "true") {
+                                        html += "<td>Yes</td>";
+                                    } else {
+                                        html += "<td>No</td>";
+                                    }
+                                } catch (e) {
+                                    html += "<td>Not set</td>";
+                                }
+                                html += "</tr>";
+
+                                var xhttp4 = new XMLHttpRequest();
+                                xhttp4.onreadystatechange = function () {
+                                    if (this.readyState == 4 && (this.status == 201 || this.status == 200 || this.status == 404)) {
+                                        var property = JSON.parse(this.responseText);
+                                        html += "<tr>";
+                                        html += "<td>" + (count = count + 1) + "</td>";
+                                        html += "<td>Activate viral load</td>";
+                                        try {
+                                            property = property["activate.vl.routine.check"];
+                                            if (property == "true") {
+                                                html += "<td>Yes</td>";
+                                            } else {
+                                                html += "<td>No</td>";
+                                            }
+                                        } catch (e) {
+                                            html += "<td>Not set</td>";
+                                        }
+                                        html += "</tr>";
+
+
+                                        var xhttp5 = new XMLHttpRequest();
+                                        xhttp5.onreadystatechange = function () {
+                                            if (this.readyState == 4 && (this.status == 201 || this.status == 200 || this.status == 404)) {
+                                                var property = JSON.parse(this.responseText);
+                                                html += "<tr>";
+                                                html += "<td>" + (count = count + 1) + "</td>";
+                                                html += "<td>Ask pills at home</td>";
+                                                try {
+                                                    property = property["ask.pills.remaining.at.home"];
+                                                    if (property == "true") {
+                                                        html += "<td>Yes</td>";
+                                                    } else {
+                                                        html += "<td>No</td>";
+                                                    }
+                                                } catch (e) {
+                                                    html += "<td>Not set</td>";
+                                                }
+                                                html += "</tr>";
+                                                html += "</tbody>";
+                                                html += "<table>";
+                                                jQuery(".inputFrameClass").append(html)
+                                            }
+                                        };
+                                        xhttp5.open("GET", ask_pills_at_home_property_url, true);
+                                        xhttp5.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                                        xhttp5.setRequestHeader('Content-type', "application/json");
+                                        xhttp5.send();
+                                    }
+                                };
+                                xhttp4.open("GET", activate_vl_property_url, true);
+                                xhttp4.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                                xhttp4.setRequestHeader('Content-type', "application/json");
+                                xhttp4.send();
+                            }
+                        };
+                        xhttp3.open("GET", activate_htn_property_url, true);
+                        xhttp3.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                        xhttp3.setRequestHeader('Content-type', "application/json");
+                        xhttp3.send();
+                    }
+                }
+                xhttp2.open("GET", drug_management_property_url, true);
+                xhttp2.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                xhttp2.setRequestHeader('Content-type', "application/json");
+                xhttp2.send();
+            }
+        };
+
+        xhttp1.open("GET", cervical_cancer_property_url, true);
+        xhttp1.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+        xhttp1.setRequestHeader('Content-type', "application/json");
+        xhttp1.send();
+    }
+
+    function gotoHome() {
+        window.location = "/views/patient_dashboard.html?patient_id=" + sessionStorage.patientID;
+    }
+
+</script>
+
+<body id="mateme">
+<div id="container">
+    <div id="content">
+        <form>
+
+            <input type="text" name="summary"
+                   tt_onLoad="showSystemConfigurations();"
+                   tt_pageStyleClass="NoControls" helpText="System settings" optional="true"/>
+
+
+        </form>
+
+    </div>
+</div>
+</body>
+
