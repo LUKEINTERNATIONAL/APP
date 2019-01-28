@@ -47,23 +47,27 @@
 <script>
 
   var reports = [
-    ["Set clinic days","/views/global_property/clinic_days.html"],                          
-    ["View clinic holidays","../../views/clinic_holidays.html"],                 
-    ["Ask pills remaining at home","views/global_property/global_property_yes_no.html?value=ask_pills_remaining_at_home"],
-    ["Set site code", "views/global_property/site_code.html"],                             
-    ["Filing numbers (activate)", "views/global_property/global_property_yes_no.html?value=use_filing_numbers"],
-    ["Filing numbers (limit)", "views/global_property/limit.html?value=filing.number.limit"],
-    ["Set appointment limit", "views/global_property/limit.html?value=clinic.appointment.limit"],         
-    ["Extended family planning","views/global_property/global_property_yes_no.html?value=extended_family_planning"],
-    ["Activate VL routine check", "views/global_property/global_property_yes_no.html?value=activate_vl_routine_check"],
-    ["Activate drug management","../../index.html"],
-    ["Activate Hypertension screening","views/global_property/activate_hypertension_enhancement.html"],
-    ["Cervical Cancer module", "../../index.html"],
-    ["Activate Fast Track", "views/global_property/global_property_yes_no.html?value=enable_fast_track"],
-    ["DDE Properties", "views/global_property/dde.html"],                                   
-    ["Is this a military site?", "views/global_property/global_property_yes_no.html?value=military_site"]
+    ["Encounters after Death","#"],                          
+    ["Enrolled on ART before birth","#"],                 
+    ["Male patients with female observation","#"],
+    ["Earliest start less than date enrolled", "#"],                             
+    ["Patients with incomplete  (activate)", "#"],
+   // ["Filing numbers (limit)", "views/global_property/limit.html?value=filing.number.limit"],
+    //["Set appointment limit", "views/global_property/limit.html?value=clinic.appointment.limit"],         
+  //  ["Extended family planning","views/global_property/global_property_yes_no.html?value=extended_family_planning"],
+   // ["Activate VL routine check", "views/global_property/global_property_yes_no.html?value=activate_vl_routine_check"],
+   // ["Activate drug management","../../index.html"],
+   // ["Activate Hypertension screening","views/global_property/activate_hypertension_enhancement.html"],
+   // ["Cervical Cancer module", "../../index.html"],
+   // ["Activate Fast Track", "views/global_property/global_property_yes_no.html?value=enable_fast_track"],
+   // ["DDE Properties", "views/global_property/dde.html"],                                   
+   // ["Is this a military site?", "views/global_property/global_property_yes_no.html?value=military_site"]
   ];
-
+ // ["encounters after Death","/views/global_property/clinic_days.html"],                          
+   // ["Enrolled on ART befoore birth","../../views/clinic_holidays.html"],                 
+   // ["Male patients with female observation","views/global_property/global_property_yes_no.html?value=ask_pills_remaining_at_home"],
+   // ["Earliest start less than date enrolled", "views/global_property/site_code.html"],                             
+   // ["Patients with incomplete  (activate)", "views/global_property/global_property_yes_no.html?value=use_filing_numbers"],
 
 function buildReportLinks() {
   var counter = 0;
