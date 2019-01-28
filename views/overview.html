@@ -77,7 +77,9 @@
                     <th>&nbsp;</th>
                     <th class="numbers">Female</th>
                     <th class="numbers">Male</th>
-                    <th class="numbers"><span id="username">Me</span></th>
+                    <th class="numbers" style="border-style: solid; border-width: 0px 0px 1px 3px;">
+                      <span id="username">Me</span>
+                    </th>
                     <th class="numbers">Facility</th>
                 </tr>
                 <tbody id="stats-table-body">
@@ -208,6 +210,7 @@
             td.innerHTML = "&nbsp";
             td.id = "encounter_" + encounter_type_id;
             td.setAttribute("class", "numbers");
+            td.setAttribute('style','border-style: solid; border-width: 0px 0px 1px 3px;')
             tr.appendChild(td);
 
             var td = document.createElement("td");
