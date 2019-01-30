@@ -706,23 +706,23 @@
                         if (showARTstartDate() && $("year_started_art").value.toUpperCase() == "UNKNOWN") {
                             ARTstartDateEstimate = $("art_start_date_estimation").value;
 
-                            if (ARTstartDateEstimate == "6 months ago") {
+                            if (ARTstartDateEstimate == "6 months") {
                                 startDate = new Date(sessionStorage.sessionDate);
                                 startDate.setDate(todays_date.getDate() - 6 );
                                 startDate.setFullYear(todays_date.getFullYear() - 1);
-                            } else if (ARTstartDateEstimate == "12 months ago") {
+                            } else if (ARTstartDateEstimate == "12 months") {
                                 startDate = new Date(sessionStorage.sessionDate)
                                 startDate.setDate(todays_date.getDate() - 12 );
                                 startDate.setFullYear(todays_date.getFullYear() - 1);
-                            } else if (ARTstartDateEstimate == "18 months ago") {
+                            } else if (ARTstartDateEstimate == "18 months") {
                                 startDate = new Date(sessionStorage.sessionDate)
                                 startDate.setDate(todays_date.getDate() - 18);
                                 startDate.setFullYear(todays_date.getFullYear() - 1);
-                            } else if (ARTstartDateEstimate == "24 months ago") {
+                            } else if (ARTstartDateEstimate == "24 months") {
                                 startDate = new Date(sessionStorage.sessionDate)
                                 startDate.setDate(todays_date.getDate() - 24 );
                                 startDate.setFullYear(todays_date.getFullYear() - 1);
-                            } else if (ARTstartDateEstimate == "Over 2 years ago") {
+                            } else if (ARTstartDateEstimate == "Over 2 years") {
                                 startDate = new Date(sessionStorage.sessionDate)
                                 startDate.setDate(todays_date.getDate() - 30);
                                 startDate.setFullYear(todays_date.getFullYear() - 1);
