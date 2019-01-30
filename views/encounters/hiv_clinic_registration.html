@@ -707,27 +707,22 @@
                             ARTstartDateEstimate = $("art_start_date_estimation").value;
 
                             if (ARTstartDateEstimate == "6 months") {
-                                startDate = new Date(sessionStorage.sessionDate);
-                                startDate.setDate(todays_date.getDate() - 6 );
-                                startDate.setFullYear(todays_date.getFullYear() - 1);
+                              startDate = new Date(sessionStorage.sessionDate);
+                              startDate.setDate(todays_date.getDate() - (28 * 6) );
                             } else if (ARTstartDateEstimate == "12 months") {
-                                startDate = new Date(sessionStorage.sessionDate)
-                                startDate.setDate(todays_date.getDate() - 12 );
-                                startDate.setFullYear(todays_date.getFullYear() - 1);
+                              startDate = new Date(sessionStorage.sessionDate)
+                              startDate.setDate(todays_date.getDate() - (28 * 12) );
                             } else if (ARTstartDateEstimate == "18 months") {
-                                startDate = new Date(sessionStorage.sessionDate)
-                                startDate.setDate(todays_date.getDate() - 18);
-                                startDate.setFullYear(todays_date.getFullYear() - 1);
+                              startDate = new Date(sessionStorage.sessionDate)
+                              startDate.setDate(todays_date.getDate() - (28 * 18) );
                             } else if (ARTstartDateEstimate == "24 months") {
-                                startDate = new Date(sessionStorage.sessionDate)
-                                startDate.setDate(todays_date.getDate() - 24 );
-                                startDate.setFullYear(todays_date.getFullYear() - 1);
+                              startDate = new Date(sessionStorage.sessionDate)
+                              startDate.setDate(todays_date.getDate() - (28 * 24) );
                             } else if (ARTstartDateEstimate == "Over 2 years") {
-                                startDate = new Date(sessionStorage.sessionDate)
-                                startDate.setDate(todays_date.getDate() - 30);
-                                startDate.setFullYear(todays_date.getFullYear() - 1);
+                              startDate = new Date(sessionStorage.sessionDate)
+                              startDate.setDate(todays_date.getDate() - (28 * 30));
                             } else {
-                                var startDate = getDateStartedART();
+                              var startDate = getDateStartedART();
                             }
                         }
 
