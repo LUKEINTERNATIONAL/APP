@@ -1664,10 +1664,17 @@
 
                     function setNextButtonToGetInputValue(key){
                         __$('nextButton').onmousedown = function(){
+                            resetFinishButton();
                             value = __$('touchscreenInput' + tstCurrentPage).value;
                             answers_hash[key] = value;
                             gotoNextPage();
                         }
+
+                    }
+
+                    function resetFinishButton() {
+                        var nextButton = document.getElementById('nextButton');
+                        nextButton.setAttribute('onmousedown', 'gotoNextPage();');
                     }
 
                     function setNextButtonToGetDateARTLastTaken(key){
