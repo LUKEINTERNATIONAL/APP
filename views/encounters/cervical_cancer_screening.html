@@ -431,8 +431,12 @@
             "month_via_was_done": "",
             "day_via_was_done": "",
             "via_results_available": "",
-            "via_results": ""
-        }
+            "via_results": "",
+            "year_cryo_was_done": "",
+            "month_cryo_was_done": "",
+            "day_cryo_was_done": "",
+            "cryo_result": ""
+        };
 
         function setNextButtonToGetInputValue(key) {
             __$('nextButton').onmousedown = function () {
@@ -508,8 +512,8 @@
                 ]
             };
 
-            if (answers_hash["via_results"].length > 0){
-                if (answers_hash["via_results"].match(/SUSPECT CANCER/i)){
+            if (answers_hash["via_results"].length > 0) {
+                if (answers_hash["via_results"].match(/SUSPECT CANCER/i)) {
                     obs.observations.push({
                         concept_id: via_results_concept_id,
                         value_text: answers_hash["via_results"]
@@ -522,11 +526,24 @@
                 }
             }
 
+            if (answers_hash["cryo_result"].length > 0) {
+                obs.observations.push({
+                    concept_id: positive_cro_concept_id,
+                    value_text: answers_hash["cryo_result"]
+                });
+
+                var cryo_done_date = answers_hash["year_cryo_was_done"] + "-" + calendar_months[answers_hash["month_cryo_was_done"]] + "-" + answers_hash["day_cryo_was_done"];
+                obs.observations.push({
+                    concept_id: cryo_done_date_concept_id,
+                    value_datetime: cryo_done_date
+                })
+            }
+
             submitParameters(obs, "/observations", "nextPage")
         }
 
-        function getYesNoConceptID(concept_name){
-            if (concept_name){
+        function getYesNoConceptID(concept_name) {
+            if (concept_name) {
                 concept_name = concept_name.toUpperCase();
                 var yes_no_concepts = {
                     "YES": 1065,
@@ -535,12 +552,12 @@
                 };
 
                 return yes_no_concepts[concept_name]
-            } else{
+            } else {
                 return ""
             }
         }
 
-        function getVIAResultsConceptID(concept_name){
+        function getVIAResultsConceptID(concept_name) {
             if (concept_name) {
                 concept_name = concept_name.toUpperCase();
                 var via_results_concepts = {
@@ -550,7 +567,7 @@
                 };
 
                 return via_results_concepts[concept_name]
-            } else{
+            } else {
                 return ""
             }
         }
@@ -567,15 +584,23 @@
             }
         }
 
-        function changeSubmitButtonToSubmitNegativeVIAResults(){
+        function changeSubmitButtonToSubmitNegativeVIAResults() {
             __$('nextButton').onmousedown = function () {
                 var value = __$("touchscreenInput" + tstCurrentPage).value;
                 answers_hash["via_results"] = value;
-                if (value.match(/NEGATIVE/i)){
+                if (value.match(/NEGATIVE/i)) {
                     submitCervicalCancerScreening();
-                } else{
+                } else {
                     gotoNextPage();
                 }
+            }
+        }
+
+        function changeSubmitButtonToSubmitCryoResults() {
+            __$('nextButton').onmousedown = function () {
+                var value = __$("touchscreenInput" + tstCurrentPage).value;
+                answers_hash["day_cryo_was_done"] = value;
+                submitCervicalCancerScreening();
             }
         }
 
@@ -690,7 +715,8 @@
             <select allowFreeText="false"
                     condition="__$('via_results').value.match(/Positive/i) || cryoDelayed == 'true'"
                     helpText="Record Cryo Result" id="positive_cryo" name="positive_cryo"
-                    tt_onLoad="setCervicalCancerDelayedReminder();" tt_pageStyleClass="NoKeyboard">
+                    tt_onLoad="setCervicalCancerDelayedReminder(); setNextButtonToGetInputValue('cryo_result')"
+                    tt_pageStyleClass="NoKeyboard">
                 <option value=''></option>
                 <option value=""></option>
                 <option value="Cryo Done">Cryo Done</option>
@@ -699,11 +725,13 @@
             </select>
 
             <input condition="__$('positive_cryo').value.match(/Cryo Done/i)" field_type="number"
+                   tt_onLoad="setNextButtonToGetInputValue('year_cryo_was_done')"
                    helpText="Year Cryo Was Done" id="cryo_year" name="cryo_year" tt_pageStyleClass="Numeric NumbersOnly"
                    type="text"/>
 
             <select condition="__$('cryo_year').value.length > 0" helpText="Month Cryo Was Done" id="cryo_month"
-                    name="cryo_month" tt_onLoad="__$('keyboard').style.display = 'none'">
+                    tt_onLoad="setNextButtonToGetInputValue('month_cryo_was_done'); __$('keyboard').style.display = 'none'"
+                    name="cryo_month">
                 <option value=""></option>
                 <option value="1">Jan</option>
                 <option value="2">Feb</option>
@@ -720,7 +748,7 @@
             </select>
 
             <input condition="__$('cryo_month').value.length > 0" field_type="number" helpText="Day Cryo Was Done"
-                   id="cryo_day" name="cryo_day" tt_onUnLoad="updateCryptoDate();" type="text"/>
+                   id="cryo_day" name="cryo_day" tt_onLoad="changeSubmitButtonToSubmitCryoResults();" type="text"/>
 
             <select condition="__$('via_results').value.match(/Suspect Cancer/i) || __$('positive_cryo').value.match(/Lesion Size too big/i) || __$('lesion_size_too_big').value.match(/TRUE/i)"
                     helpText="Do you want to capture Referral outcomes today?" id="referral_outcome"
