@@ -429,7 +429,9 @@
             "ever_had_via": "",
             "year_via_was_done": "",
             "month_via_was_done": "",
-            "day_via_was_done": ""
+            "day_via_was_done": "",
+            "via_results_available": "",
+            "via_results": ""
         }
 
         function setNextButtonToGetInputValue(key) {
@@ -487,22 +489,70 @@
                 observations: [
                     {
                         concept_id: ever_had_via_concept_id,
-                        value_coded: answers_hash["ever_had_via"].trim().toUpperCase() == "YES" ? 1065 : 1066
+                        value_coded: getYesNoConceptID(answers_hash["ever_had_via"])
                     },
 
                     {
                         concept_id: via_referral_concept_id,
-                        value_coded: patient_eligible_for_via.trim().toUpperCase() == "YES" ? 1065 : 1066
+                        value_coded: getYesNoConceptID(patient_eligible_for_via)
                     },
 
                     {
                         concept_id: via_done_date_concept_id,
                         value_datetime: via_done_date
+                    },
+                    {
+                        concept_id: via_results_available,
+                        value_coded: getYesNoConceptID(answers_hash["via_results_available"])
                     }
                 ]
             };
 
+            if (answers_hash["via_results"].length > 0){
+                if (answers_hash["via_results"].match(/SUSPECT CANCER/i)){
+                    obs.observations.push({
+                        concept_id: via_results_concept_id,
+                        value_text: answers_hash["via_results"]
+                    })
+                } else {
+                    obs.observations.push({
+                        concept_id: via_results_concept_id,
+                        value_coded: getVIAResultsConceptID(answers_hash["via_results"])
+                    })
+                }
+            }
+
             submitParameters(obs, "/observations", "nextPage")
+        }
+
+        function getYesNoConceptID(concept_name){
+            if (concept_name){
+                concept_name = concept_name.toUpperCase();
+                var yes_no_concepts = {
+                    "YES": 1065,
+                    "NO": 1066,
+                    "": ""
+                };
+
+                return yes_no_concepts[concept_name]
+            } else{
+                return ""
+            }
+        }
+
+        function getVIAResultsConceptID(concept_name){
+            if (concept_name) {
+                concept_name = concept_name.toUpperCase();
+                var via_results_concepts = {
+                    "NEGATIVE": 664,
+                    "POSITIVE": 703,
+                    "": ""
+                };
+
+                return via_results_concepts[concept_name]
+            } else{
+                return ""
+            }
         }
 
         function nextPage() {
@@ -514,6 +564,18 @@
             __$('nextButton').onmousedown = function () {
                 patient_eligible_for_via = __$("touchscreenInput" + tstCurrentPage).value;
                 submitCervicalCancerScreening();
+            }
+        }
+
+        function changeSubmitButtonToSubmitNegativeVIAResults(){
+            __$('nextButton').onmousedown = function () {
+                var value = __$("touchscreenInput" + tstCurrentPage).value;
+                answers_hash["via_results"] = value;
+                if (value.match(/NEGATIVE/i)){
+                    submitCervicalCancerScreening();
+                } else{
+                    gotoNextPage();
+                }
             }
         }
 
@@ -580,7 +642,7 @@
             </select>
 
             <input type="hidden" value="VIA RESULTS AVAILABLE?"/>
-            <select allowFreeText="false"
+            <select allowFreeText="false" tt_onLoad="setNextButtonToGetInputValue('via_results_available')"
                     condition="patientReferredAndHasNoresults() == true && cryoDelayed == 'false';"
                     helpText="Are the VIA results available?" id="results_available?"
                     name="via_results_available" tt_pageStyleClass="NoKeyboard">
@@ -614,6 +676,7 @@
             <input type="hidden" value="VIA RESULTS"/>
 
             <select allowFreeText="false" condition="__$('results_available?').value == 'Yes'" helpText="Record Results"
+                    tt_onLoad="changeSubmitButtonToSubmitNegativeVIAResults();"
                     id="via_results" name="via_results" tt_pageStyleClass="NoKeyboard">
                 <option value=''></option>
                 <option value=""></option>
