@@ -435,7 +435,8 @@
             "year_cryo_was_done": "",
             "month_cryo_was_done": "",
             "day_cryo_was_done": "",
-            "cryo_result": ""
+            "cryo_result": "",
+            "referral_outcome": ""
         };
 
         function setNextButtonToGetInputValue(key) {
@@ -533,9 +534,9 @@
                 });
 
                 var cryo_done_date = "";
-                if (answers_hash["year_cryo_was_done"].length > 0){
-                    if (answers_hash["month_cryo_was_done"].length > 0){
-                        if (answers_hash["day_cryo_was_done"].length > 0){
+                if (answers_hash["year_cryo_was_done"].length > 0) {
+                    if (answers_hash["month_cryo_was_done"].length > 0) {
+                        if (answers_hash["day_cryo_was_done"].length > 0) {
                             cryo_done_date = answers_hash["year_cryo_was_done"] + "-" + calendar_months[answers_hash["month_cryo_was_done"]] + "-" + answers_hash["day_cryo_was_done"];
 
                         }
@@ -545,6 +546,13 @@
                     concept_id: cryo_done_date_concept_id,
                     value_datetime: cryo_done_date
                 })
+            }
+
+            if (answers_hash["referral_outcome"].length > 0) {
+                obs.observations.push({
+                    concept_id: via_referral_outcome_concept_id,
+                    value_text: answers_hash["referral_outcome"]
+                });
             }
 
             submitParameters(obs, "/observations", "nextPage")
@@ -621,6 +629,29 @@
                 } else {
                     gotoNextPage();
                 }
+            }
+        }
+
+        function changeSubmitButtonToSubmitIfNoReferralsToday() {
+            __$('nextButton').onmousedown = function () {
+                var value = __$("touchscreenInput" + tstCurrentPage).value;
+                if (value.match(/NO/i)) {
+                    submitCervicalCancerScreening();
+                } else {
+                    gotoNextPage();
+                }
+            }
+        }
+
+        function changeSubmitButtonToSubmitReferralOutcomes() {
+            __$('nextButton').onmousedown = function () {
+                var value = __$("touchscreenInput" + tstCurrentPage).value;
+                if (value.length <= 0){
+                    showMessage("Select value to continue");
+                    return;
+                }
+                answers_hash["referral_outcome"] = value;
+                submitCervicalCancerScreening();
             }
         }
 
@@ -772,6 +803,7 @@
 
             <select condition="__$('via_results').value.match(/Suspect Cancer/i) || __$('positive_cryo').value.match(/Lesion Size too big/i) || __$('lesion_size_too_big').value.match(/TRUE/i)"
                     helpText="Do you want to capture Referral outcomes today?" id="referral_outcome"
+                    tt_onLoad="changeSubmitButtonToSubmitIfNoReferralsToday();"
                     name="referral_outcome">
                 <option value=""></option>
                 <option value="Yes">Yes</option>
@@ -780,10 +812,9 @@
 
             <input type="hidden" value="VIA REFERRAL OUTCOME"/>
 
-            <select allowFreeText="false" condition="__$('referral_outcome').value.match(/YES/i)"
+            <select allowFreeText="false" condition="__$('referral_outcome').value.match(/YES/i)" tt_onLoad="changeSubmitButtonToSubmitReferralOutcomes();"
                     helpText="Select Referral Outcome" id="via_referral_outcome"
                     name="via_referral_outcome" tt_pageStyleClass="NoKeyboard">
-                <option value=''></option>
                 <option value=""></option>
                 <option value="Pre/Cancer Treated">Pre/Cancer Treated</option>
                 <option value="Cancer Untreatable">Cancer Untreatable</option>
