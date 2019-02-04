@@ -532,7 +532,15 @@
                     value_text: answers_hash["cryo_result"]
                 });
 
-                var cryo_done_date = answers_hash["year_cryo_was_done"] + "-" + calendar_months[answers_hash["month_cryo_was_done"]] + "-" + answers_hash["day_cryo_was_done"];
+                var cryo_done_date = "";
+                if (answers_hash["year_cryo_was_done"].length > 0){
+                    if (answers_hash["month_cryo_was_done"].length > 0){
+                        if (answers_hash["day_cryo_was_done"].length > 0){
+                            cryo_done_date = answers_hash["year_cryo_was_done"] + "-" + calendar_months[answers_hash["month_cryo_was_done"]] + "-" + answers_hash["day_cryo_was_done"];
+
+                        }
+                    }
+                }
                 obs.observations.push({
                     concept_id: cryo_done_date_concept_id,
                     value_datetime: cryo_done_date
@@ -601,6 +609,18 @@
                 var value = __$("touchscreenInput" + tstCurrentPage).value;
                 answers_hash["day_cryo_was_done"] = value;
                 submitCervicalCancerScreening();
+            }
+        }
+
+        function changeSubmitButtonToSubmitIfCryoIsDelayed() {
+            __$('nextButton').onmousedown = function () {
+                var value = __$("touchscreenInput" + tstCurrentPage).value;
+                answers_hash["cryo_result"] = value;
+                if (value.match(/CRYO DELAYED/i)) {
+                    submitCervicalCancerScreening();
+                } else {
+                    gotoNextPage();
+                }
             }
         }
 
@@ -715,7 +735,7 @@
             <select allowFreeText="false"
                     condition="__$('via_results').value.match(/Positive/i) || cryoDelayed == 'true'"
                     helpText="Record Cryo Result" id="positive_cryo" name="positive_cryo"
-                    tt_onLoad="setCervicalCancerDelayedReminder(); setNextButtonToGetInputValue('cryo_result')"
+                    tt_onLoad="setCervicalCancerDelayedReminder(); changeSubmitButtonToSubmitIfCryoIsDelayed();"
                     tt_pageStyleClass="NoKeyboard">
                 <option value=''></option>
                 <option value=""></option>
