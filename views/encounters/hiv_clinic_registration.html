@@ -1246,14 +1246,6 @@
                         document.getElementById('category').style = 'display: none;'
                     }
 
-                    var patientAge = parseInt(sessionStorage.patientAge);
-                    var patientGender = "";
-                    if (sessionStorage.patientGender == "F"){
-                        patientGender = "FEMALE";
-                    } else{
-                        patientGender = "MALE";
-                    }
-
                     function checkPregnancyAndAge() {
                         if ((patientAge >= 55)) {
                             return "true";

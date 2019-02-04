@@ -18,14 +18,6 @@
     <link rel="stylesheet" href="/assets/css/alertifyjs/css/alertify.css" type="text/css">
 
     <script type="text/javascript">
-        var tt_cancel_destination = "/views/patient_dashboard.html?patient_id=" + sessionStorage.patientID;
-        var viaReferred = 'false';
-        var patientHasviaResults = 'false';
-        var lesionSizeTooBig = 'false';
-        var cervicalCancerFirstVisitPatient = 'true';
-        var patientWentForVIA = 'false';
-        var cryoDelayed = 'false';
-
         function patientReferredAndHasNoresults() {
             if (viaReferred == 'true' && patientHasviaResults == 'false') {
                 return true;
@@ -176,6 +168,155 @@
             }
         }
 
+        var tt_cancel_destination = "/views/patient_dashboard.html?patient_id=" + sessionStorage.patientID;
+        var viaReferred = "false";
+        var patientHasviaResults = "false";
+        var lesionSizeTooBig = "false";
+        var cervicalCancerFirstVisitPatient = "true";
+        var patientWentForVIA = "false";
+        var cryoDelayed = "false";
+        var latest_cervical_cancer_result
+
+        function initializeVariables() {
+            jQuery(".loader").show();
+            jQuery('#keyboard').hide();
+            jQuery("#buttons").hide(); //inputFrame0
+            jQuery("#inputFrame" + tstCurrentPage).hide();
+
+
+            var ever_had_via_concept_id = 9510;
+            var via_referral_concept_id = 9503;
+            var via_results_available = 9505;
+            var patient_went_for_via = 9512;
+            var via_results_concept_id = 9504;
+            var positive_cro_concept_id = 9506;
+            var via_referral_outcome_concept_id = 9508;
+            var cryo_done_date_concept_id = 9509;
+            var via_done_date_concept_id = 9511;
+
+            var yes_concept_id = 1065;
+            var no_concept_id = 1066;
+
+
+            var patient_went_for_via_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+            patient_went_for_via_url += "/api/v1/observations?person_id=" + sessionStorage.patientID;
+            patient_went_for_via_url += "&concept_id=" + ever_had_via_concept_id;
+            patient_went_for_via_url += "&value_coded=" + yes_concept_id;
+
+            var via_referral_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+            via_referral_url += "/api/v1/observations?person_id=" + sessionStorage.patientID;
+            via_referral_url += "&concept_id=" + via_referral_concept_id;
+            via_referral_url += "&value_coded=" + yes_concept_id;
+
+            var ever_had_via_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+            ever_had_via_url += "/api/v1/observations?person_id=" + sessionStorage.patientID;
+            ever_had_via_url += "&concept_id=" + ever_had_via_concept_id;
+
+            var via_results_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+            via_results_url += "/api/v1/observations?person_id=" + sessionStorage.patientID;
+            via_results_url += "&concept_id=" + via_results_concept_id;
+
+            var via_result_obs_datetime_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+            via_result_obs_datetime_url += "/api/v1/observations?person_id=" + sessionStorage.patientID;
+            via_result_obs_datetime_url += "&concept_id=" + via_results_concept_id;
+
+            var xhttp1 = new XMLHttpRequest();
+            xhttp1.onreadystatechange = function () {
+                if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                    var patient_weight_for_via_observations = JSON.parse(this.responseText);
+                    if (patient_weight_for_via_observations.length > 0) {
+                        patientWentForVIA = "true";
+                    }
+
+                    var xhttp2 = new XMLHttpRequest();
+                    xhttp2.onreadystatechange = function () {
+                        if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                            var patient_via_referral_observations = JSON.parse(this.responseText);
+                            if (patient_via_referral_observations.length > 0) {
+                                viaReferred = "true";
+                            }
+
+                            var xhttp3 = new XMLHttpRequest();
+                            xhttp3.onreadystatechange = function () {
+                                if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                                    var ever_had_via_observations = JSON.parse(this.responseText);
+                                    if (ever_had_via_observations.length > 0) {
+                                        cervicalCancerFirstVisitPatient = "false";
+                                    }
+
+                                    var xhttp4 = new XMLHttpRequest();
+                                    xhttp4.onreadystatechange = function () {
+                                        if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                                            var via_results_observations_records = JSON.parse(this.responseText);
+                                            if (via_results_observations_records.length > 0) {
+                                                var latest_via_results_obs_date = via_results_observations_records[0]["obs_datetime"];
+                                                latest_via_results_obs_date = moment(latest_via_results_obs_date).format("YYYY-MM-DD");
+
+                                                var xhttp5 = new XMLHttpRequest();
+                                                xhttp5.onreadystatechange = function () {
+                                                    if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                                                        var via_results_observations = JSON.parse(this.responseText);
+                                                        if (via_results_observations.length > 0) {
+                                                            for (var key in via_results_observations) {
+                                                                var obs_datetime = via_results_observations[key]["obs_datetime"];
+                                                                obs_datetime = moment(obs_datetime).format("YYYY-MM-DD");
+                                                                if (obs_datetime >= latest_via_results_obs_date) {
+                                                                    var cervical_cancer_result_obs = via_results_observations[key];
+                                                                    patientHasviaResults = "true";
+                                                                    latest_cervical_cancer_result = cervical_cancer_result_obs["value_text"]; //TODO
+                                                                    break;
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                };
+                                                xhttp5.open("GET", via_results_url, true);
+                                                xhttp5.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                                                xhttp5.setRequestHeader('Content-type', "application/json");
+                                                xhttp5.send();
+
+                                            }
+                                            else {
+                                                gotoNextPage();
+                                            }
+                                        }
+                                    };
+                                    xhttp4.open("GET", via_result_obs_datetime_url, true);
+                                    xhttp4.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                                    xhttp4.setRequestHeader('Content-type', "application/json");
+                                    xhttp4.send();
+
+                                }
+                            };
+                            xhttp3.open("GET", ever_had_via_url, true);
+                            xhttp3.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                            xhttp3.setRequestHeader('Content-type', "application/json");
+                            xhttp3.send();
+
+                        }
+                    };
+                    xhttp2.open("GET", via_referral_url, true);
+                    xhttp2.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                    xhttp2.setRequestHeader('Content-type', "application/json");
+                    xhttp2.send();
+
+
+                }
+            };
+
+            xhttp1.open("GET", patient_went_for_via_url, true);
+            xhttp1.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+            xhttp1.setRequestHeader('Content-type', "application/json");
+            xhttp1.send();
+        }
+
+        function resetPage() {
+            jQuery('#keyboard').show();
+            jQuery("#buttons").show();
+            jQuery("#innerPop").show()
+            jQuery("#inputFrame" + tstCurrentPage).show();
+            jQuery(".loader").hide();
+        }
     </script>
 
     <style type="text/css">
@@ -264,6 +405,28 @@
             cursor: pointer;
         }
 
+        .loader {
+            position: absolute;
+            display: none;
+            top: 30%;
+            left: 40%;
+            border: 16px solid #f3f3f3; /* Light grey */
+            border-top: 16px solid #3498db; /* Blue */
+            border-radius: 50%;
+            width: 120px;
+            height: 120px;
+            animation: spin 2s linear infinite;
+            z-index: 9999999999999;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
     </style>
 </head>
 
@@ -272,6 +435,12 @@
     <div id="content">
 
         <form>
+
+            <input type="text" name="variables"
+                   tt_onLoad="initializeVariables();"
+                   tt_onUnLoad="resetPage();"
+                   tt_pageStyleClass="NoControls" optional="true"/>
+
 
             <input type="hidden" value="EVER HAD VIA?"/>
 
@@ -453,6 +622,7 @@
 
         </div>
 
+        <div class="loader"></div>
     </div>
 </div>
 </body>
