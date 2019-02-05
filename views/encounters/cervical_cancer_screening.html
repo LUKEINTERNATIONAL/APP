@@ -286,6 +286,12 @@
         var cryoDelayed = "false";
         var no_cancer = "false";
         var lesion_size_too_big = "false";
+        var viaResultsExpired = "true";
+        var cryo_delayed = "false";
+        var terminal = "false";
+        var terminal_referral_outcomes = ["PRE/CANCER TREATED", "CANCER UNTREATABLE"];
+
+
         var remaining_days;
         var latest_cervical_cancer_result;
         var latest_via_referral_outcome;
@@ -302,6 +308,9 @@
 
         var yes_concept_id = 1065;
         var no_concept_id = 1066;
+
+        var one_year = 365;
+        var three_years = (365 * 3);
 
         function initializeVariables() {
             jQuery(".loader").show();
@@ -334,8 +343,8 @@
             var xhttp1 = new XMLHttpRequest();
             xhttp1.onreadystatechange = function () {
                 if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
-                    var patient_weight_for_via_observations = JSON.parse(this.responseText);
-                    if (patient_weight_for_via_observations.length > 0) {
+                    var patient_went_for_via_observations = JSON.parse(this.responseText);
+                    if (patient_went_for_via_observations.length > 0) {
                         patientWentForVIA = "true";
                     }
 
@@ -374,7 +383,6 @@
                                                                 if (obs_datetime >= latest_via_results_obs_date) {
                                                                     var cervical_cancer_result_obs = via_results_observations[key];
                                                                     patientHasviaResults = "true";
-                                                                    console.log(cervical_cancer_result_obs)
                                                                     latest_cervical_cancer_result = cervical_cancer_result_obs["value_text"]; //TODO
                                                                     if (!latest_cervical_cancer_result) {
                                                                         var concept_name_url = apiProtocol + "://" + apiURL + ":" + apiPort;
@@ -392,8 +400,6 @@
                                                                                         }
                                                                                     }
                                                                                     var date_gone_in_days = diffinDays(sessionStorage.sessionDate, obs_datetime);
-                                                                                    var one_year = 365;
-                                                                                    var three_years = (365 * 3);
 
                                                                                     if (latest_cervical_cancer_result.match(/NEGATIVE/i)) {
                                                                                         var next_via_date = new Date(obs_datetime).addDays(three_years);
@@ -457,7 +463,6 @@
                                                                                     var cro_done_cancer_result_url = apiProtocol + "://" + apiURL + ":" + apiPort;
                                                                                     cro_done_cancer_result_url += "/api/v1/observations?person_id=" + sessionStorage.patientID;
                                                                                     cro_done_cancer_result_url += "&concept_id=" + cryo_done_date_concept_id;
-
 
                                                                                     var xhttp9 = new XMLHttpRequest();
                                                                                     xhttp9.onreadystatechange = function () {
@@ -676,6 +681,60 @@
                                                                     break;
                                                                 }
                                                             }
+
+                                                            /*********/
+                                                            var via_done_date_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+                                                            via_done_date_url += "/api/v1/observations?person_id=" + sessionStorage.patientID;
+                                                            via_done_date_url += "&concept_id=" + via_done_date_concept_id;
+
+                                                            var xhttp15 = new XMLHttpRequest();
+                                                            xhttp15.onreadystatechange = function () {
+                                                                if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                                                                    var via_done_date_observations = JSON.parse(this.responseText);
+                                                                    if (via_done_date_observations.length > 0){
+                                                                        var value_datetime = via_done_date_observations[0]["value_datetime"]
+                                                                        var via_done_date_answer_string = new Date(value_datetime)
+                                                                        var days_gone_after_via_done = diffinDays(sessionStorage.sessionDate, via_done_date_answer_string);
+                                                                        if (days_gone_after_via_done < three_years){
+                                                                            viaReferred = "true";
+                                                                            patientHasviaResults = "false";
+                                                                            viaResultsExpired = "false";
+                                                                            remaining_days = three_years - days_gone_after_via_done;
+                                                                        }
+                                                                    }
+
+                                                                    var via_outcomes_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+                                                                    via_outcomes_url += "/api/v1/observations?person_id=" + sessionStorage.patientID;
+                                                                    via_outcomes_url += "&concept_id=" + via_referral_outcome_concept_id;
+
+                                                                    var xhttp16 = new XMLHttpRequest();
+                                                                    xhttp16.onreadystatechange = function () {
+                                                                        if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                                                                            var via_outcomes_observations = JSON.parse(this.responseText);
+                                                                            for (var i=0; i<= via_outcomes_observations.length - 1; i++){
+                                                                                var referral_outcome = via_outcomes_observations[i]["value_text"].toUpperCase();
+                                                                                if (terminal_referral_outcomes.includes(referral_outcome)){
+                                                                                    lesion_size_too_big = "false";
+                                                                                    terminal = "true"
+                                                                                }
+                                                                            }
+
+
+                                                                        }
+                                                                    };
+                                                                    xhttp16.open("GET", via_outcomes_url, true);
+                                                                    xhttp16.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                                                                    xhttp16.setRequestHeader('Content-type', "application/json");
+                                                                    xhttp16.send()
+                                                                }
+                                                            };
+
+                                                            xhttp15.open("GET", via_done_date_url, true);
+                                                            xhttp15.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                                                            xhttp15.setRequestHeader('Content-type', "application/json");
+                                                            xhttp15.send()
+                                                            /*********/
+
                                                         }
                                                     }
                                                 };
@@ -685,6 +744,36 @@
                                                 xhttp5.send();
 
                                             }
+
+                                            var positive_cryo_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+                                            positive_cryo_url += "/api/v1/observations?person_id=" + sessionStorage.patientID;
+                                            positive_cryo_url += "&concept_id=" + positive_cro_concept_id;
+
+                                            var xhttp17 = new XMLHttpRequest();
+                                            xhttp17.onreadystatechange = function () {
+                                                if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                                                    var positive_cryo_observations = JSON.parse(this.responseText);
+                                                    for (var i = 0; i <= positive_cryo_observations.length - 1; i++) {
+                                                        var obs_datetime = positive_cryo_observations[i]["obs_datetime"];
+                                                        obs_datetime = new Date(obs_datetime);
+                                                        if (obs_datetime >= latest_via_results_obs_date) {
+                                                            var cryo_result_answer = positive_cryo_observations[i]["value_text"];
+                                                            if (cryo_result_answer == "CRYO DELAYED"){
+                                                                cryo_delayed = "true";
+                                                                patientHasviaResults = "false";
+                                                                break;
+                                                            }
+
+                                                        }
+                                                    }
+                                                }
+                                            };
+                                            xhttp17.open("GET", positive_cryo_url, true);
+                                            xhttp17.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                                            xhttp17.setRequestHeader('Content-type', "application/json");
+                                            xhttp17.send();
+
+
                                             else {
                                                 gotoNextPage();
                                             }
