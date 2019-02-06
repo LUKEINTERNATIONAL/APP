@@ -1,74 +1,64 @@
 <style>
 
-#reports-container {
-  display: table;
-  width: 100%;
-  border-collapse: separate;
-  border-spacing: 10px;
-}
-
-.reports-container-row {
-  display: table-row;
-}
-
-.reports-container-cell {
-  display: table-cell;
-  border-style: solid;
-  
-  border: 1px solid #5ca6c4;
-  cursor: pointer;
-  box-shadow: inset 2px -4px 2px 0px;
-  background-color: #5480a8;
-  border-radius: 7px;
-  border: solid black 3px;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-  -moz-box-shadow: inset 0 0 10px #000000;
-  -webkit-box-shadow: inset 0 0 10px #5ca6c4;
-  box-shadow: inset 0 0 10px #000000;
- 
-  width: 300px; 
-  color: white;
-}
-
-.report-icons {
-  height: 30px;
-  width:  30px;
-}
-
-.info-table {
-  padding: 8px;
-  color: #fff;
-}
-
-</style>
+    #reports-container {
+      display: table;
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 10px;
+    }
+    
+    .reports-container-row {
+      display: table-row;
+    }
+    
+    .reports-container-cell {
+      display: table-cell;
+      border-style: solid;
+      
+      border: 1px solid #5ca6c4;
+      cursor: pointer;
+      box-shadow: inset 2px -4px 2px 0px;
+      background-color: #5480a8;
+      border-radius: 7px;
+      border: solid black 3px;
+      -webkit-box-sizing: border-box;
+      -moz-box-sizing: border-box;
+      box-sizing: border-box;
+      -moz-box-shadow: inset 0 0 10px #000000;
+      -webkit-box-shadow: inset 0 0 10px #5ca6c4;
+      box-shadow: inset 0 0 10px #000000;
+     
+      width: 300px; 
+      color: white;
+    }
+    
+    .report-icons {
+      height: 30px;
+      width:  30px;
+    }
+    
+    .info-table {
+      padding: 8px;
+      color: #fff;
+    }
+    
+    </style>
 
 <script>
 
   var reports = [
-    ["Encounters after Death","#"],                          
-    ["Enrolled on ART before birth","#"],                 
-    ["Male patients with female observation","#"],
-    ["Earliest start less than date enrolled", "#"],                             
-    ["Patients with incomplete  (activate)", "#"],
-   // ["Filing numbers (limit)", "views/global_property/limit.html?value=filing.number.limit"],
-    //["Set appointment limit", "views/global_property/limit.html?value=clinic.appointment.limit"],         
-  //  ["Extended family planning","views/global_property/global_property_yes_no.html?value=extended_family_planning"],
-   // ["Activate VL routine check", "views/global_property/global_property_yes_no.html?value=activate_vl_routine_check"],
-   // ["Activate drug management","../../index.html"],
-   // ["Activate Hypertension screening","views/global_property/activate_hypertension_enhancement.html"],
-   // ["Cervical Cancer module", "../../index.html"],
-   // ["Activate Fast Track", "views/global_property/global_property_yes_no.html?value=enable_fast_track"],
-   // ["DDE Properties", "views/global_property/dde.html"],                                   
-   // ["Is this a military site?", "views/global_property/global_property_yes_no.html?value=military_site"]
+    ["Filing numbers (limit)", "views/global_property/limit.html?value=filing.number.limit"],
+    ["Set appointment limit", "views/global_property/limit.html?value=clinic.appointment.limit"],         
+    ["Extended family planning","views/global_property/global_property_yes_no.html?value=extended_family_planning"],
+    ["Activate VL routine check", "views/global_property/global_property_yes_no.html?value=activate_vl_routine_check"],
+    ["Activate drug management","../../index.html"],
+    ["Activate Hypertension screening","views/global_property/activate_hypertension_enhancement.html"],
+    ["Cervical Cancer module", "../../index.html"],
+    ["Activate Fast Track", "views/global_property/global_property_yes_no.html?value=enable_fast_track"],
+    ["DDE Properties", "views/global_property/dde.html"],                                   
+    ["Is this a military site?", "views/global_property/global_property_yes_no.html?value=military_site"]
   ];
- // ["encounters after Death","/views/global_property/clinic_days.html"],                          
-   // ["Enrolled on ART befoore birth","../../views/clinic_holidays.html"],                 
-   // ["Male patients with female observation","views/global_property/global_property_yes_no.html?value=ask_pills_remaining_at_home"],
-   // ["Earliest start less than date enrolled", "views/global_property/site_code.html"],                             
-   // ["Patients with incomplete  (activate)", "views/global_property/global_property_yes_no.html?value=use_filing_numbers"],
-
+ 
 function buildReportLinks() {
   var counter = 0;
   var row = null;
