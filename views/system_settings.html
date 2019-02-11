@@ -86,6 +86,8 @@ function reportGrouping(group) {
       ["Incomplete visits","","#",'link']
     ];
   }else if(group == 'data management'){
+    sessionStorage.mergeClientParametersLeft = null;
+    sessionStorage.mergeClientParametersRight = null;
     return [
       ['Merge clients','','/views/data_management/merge_clients.html', 'link']
     ];
