@@ -1246,14 +1246,6 @@
                         document.getElementById('category').style = 'display: none;'
                     }
 
-                    var patientAge = parseInt(sessionStorage.patientAge);
-                    var patientGender = "";
-                    if (sessionStorage.patientGender == "F"){
-                        patientGender = "FEMALE";
-                    } else{
-                        patientGender = "MALE";
-                    }
-
                     function checkPregnancyAndAge() {
                         if ((patientAge >= 55)) {
                             return "true";
@@ -1659,10 +1651,17 @@
 
                     function setNextButtonToGetInputValue(key){
                         __$('nextButton').onmousedown = function(){
+                            resetFinishButton();
                             value = __$('touchscreenInput' + tstCurrentPage).value;
                             answers_hash[key] = value;
                             gotoNextPage();
                         }
+
+                    }
+
+                    function resetFinishButton() {
+                        var nextButton = document.getElementById('nextButton');
+                        nextButton.setAttribute('onmousedown', 'gotoNextPage();');
                     }
 
                     function setNextButtonToGetDateARTLastTaken(key){
