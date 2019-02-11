@@ -1,3 +1,4 @@
+
 <style>
 
 #reports-container {
@@ -46,33 +47,61 @@
 
 <script>
 
-  var reports = [
-    ["Set clinic days","/views/global_property/clinic_days.html"],                          
-    ["View clinic holidays","../../views/clinic_holidays.html"],                 
-    ["Ask pills remaining at home","views/global_property/global_property_yes_no.html?value=ask_pills_remaining_at_home"],
-    ["Set site code", "views/global_property/site_code.html"],
-    ["Set site location", "views/global_property/set_location.html"],                             
-    ["Filing numbers (activate)", "views/global_property/global_property_yes_no.html?value=use_filing_numbers"],
-    ["Filing numbers (limit)", "views/global_property/limit.html?value=filing.number.limit"],
-    ["Set appointment limit", "views/global_property/limit.html?value=clinic.appointment.limit"],         
-    ["Extended family planning","views/global_property/global_property_yes_no.html?value=extended_family_planning"],
-    ["Activate VL routine check", "views/global_property/global_property_yes_no.html?value=activate_vl_routine_check"],
-    ["Activate drug management","../../index.html"],
-    ["Activate Hypertension screening","views/global_property/activate_hypertension_enhancement.html"],
-    ["Cervical Cancer module", "../../index.html"],
-    ["Activate Fast Track", "views/global_property/global_property_yes_no.html?value=enable_fast_track"],
-    ["DDE Properties", "views/global_property/dde.html"],                                   
-    ["Is this a military site?", "views/global_property/global_property_yes_no.html?value=military_site"],
-      ["View system configurations", "views/global_property/system_configurations.html"]
-  ];
+function reportGrouping(group) {
+  if(group == 'main'){
+    return [
+      ["Set clinic days",'',"global_property/clinic_days.html",'link'],                          
+      ["View clinic holidays",'',"../../views/clinic_holidays.html",'link'],                 
+      ["Ask pills remaining at home",'',"global_property/global_property_yes_no.html?value=ask_pills_remaining_at_home",'link'],
+      ["Set site code",'',"global_property/site_code.html",'link'],
+      ["Set site location",'',"global_property/set_location.html",'link'],                             
+      ["Filing numbers (activate)",'',"global_property/global_property_yes_no.html?value=use_filing_numbers",'link'],
+      ["Filing numbers (limit)",'',"global_property/limit.html?value=filing.number.limit",'link'],
+      ["Set appointment limit",'',"global_property/limit.html?value=clinic.appointment.limit",'link'],         
+      ["Extended family planning",'',"global_property/global_property_yes_no.html?value=extended_family_planning",'link'],
+      ["Activate VL routine check",'',"global_property/global_property_yes_no.html?value=activate_vl_routine_check",'link'],
+      ["Activate drug management",'',"../../index.html",'link'],
+      ["Activate Hypertension screening",'',"global_property/activate_hypertension_enhancement.html",'link'],
+      ["Cervical Cancer module",'', "../../index.html",'link'],
+      ["Activate Fast Track",'', "global_property/global_property_yes_no.html?value=enable_fast_track",'link'],
+      ["Is this a military site?",'',"global_property/global_property_yes_no.html?value=military_site",'link'],
+      ["DDE Properties",'',"global_property/dde.html",'link'],
+      ["Drug management", '',"drug management",'function'],
+      ["Data management", '',"data management",'function'],
+      ["View system configurations", '',"global_property/system_configurations.html",'link']
+    ];
+  }else if(group == 'drug management'){
+    return [
+      ['Print drug barcode','','#', 'link'],
+      ["Receipts", "","#",'link'],
+      ["Dispose", "","#",'link'],
+      ["Stock report", "","#",'link'],
+      ["Stock report (Quick view)", "","stock_management/quick_view.html",'link'],
+      ["Reallocate","","#",'link']
+    ];
+  }else if(group == 'Clinic'){
+    return [
+      ['Appointments','','/apps/ART/views/reports/clinic/appointments.html', 'link'],
+      ["Defaulter list","","/apps/ART/views/reports/clinic/report_dates.html?report=defaulter_list",'link'],
+      ["Incomplete visits","","#",'link']
+    ];
+  }else if(group == 'data management'){
+    return [
+      ['Merge clients','','/views/data_management/merge_clients.html', 'link']
+    ];
+  }else{
+  }  
+}	
 
-
-function buildReportLinks() {
+function buildReportLinks(group) {
   var counter = 0;
   var row = null;
   var reportContainer = document.getElementById("reports-container");
+  reportContainer.innerHTML = null;
 
-  for(var i = 0 ; i < reports.sort().length ; i++){
+  var reports = reportGrouping(group);
+
+  for(var i = 0 ; i < reports.length ; i++){
     if(counter == 0) {
       row = document.createElement("div");
       row.setAttribute("class","reports-container-row");
@@ -88,14 +117,22 @@ function buildReportLinks() {
     var td = document.createElement("td");
     
     var img = document.createElement("img");
-    img.setAttribute("src","/apps/ART/assets/images/reports.png");
+    var imgSRC = reports[i][1];
+    imgSRC = imgSRC.length < 1 ? "/apps/ART/assets/images/reports.png" : imgSRC;
+    img.setAttribute("src", imgSRC);
     img.setAttribute("class","report-icons");
     td.appendChild(img);
     tr.appendChild(td);
 
     var td = document.createElement("td");
     td.setAttribute("id", i.toString());
-    cell.setAttribute("onmousedown", "javascript:window.top.location='/apps/ART/" +  reports[i][1] + "'");
+    if(reports[i][3] == 'link'){
+      if(reports[i][2] != '#')
+        cell.setAttribute("onmousedown", "window.top.location='" + reports[i][2] + "'");
+    
+    }else{
+      cell.setAttribute("onmousedown", "buildReportLinks('" + reports[i][2] + "');");
+    }
     td.innerHTML = reports[i][0];
     tr.appendChild(td);
 
@@ -119,4 +156,4 @@ function _testFunc(){
 
 <div id="reports-container"></div>
 
-<script>buildReportLinks();</script>
+<script>buildReportLinks('main');</script>
