@@ -1355,7 +1355,7 @@ function postRegimenOrders(encounter) {
     }
 
     var drug_orders_params = {encounter_id: encounter_id, drug_orders: []}
-    var start_date = new Date();
+    var start_date = new Date(sessionStorage.sessionDate);
 
     var start_date = sessionDate;
     var start_date_formated = getFormattedDate(start_date);

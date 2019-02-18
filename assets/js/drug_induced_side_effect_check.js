@@ -502,8 +502,8 @@ function selectedDI() {
 
 function possibleCausedMedicationOfSideEffects() {
   var session_date = moment(new Date(sessionStorage.sessionDate)).format('YYYY-MM-DD');
-  var url = 'http://' + apiURL + ':' + apiPort + '/api/v1/programs/1/patients/';
-  url += sessionStorage.patientID + "/last_drugs_received?date=" + session_date;
+  var url = 'http://' + apiURL + ':' + apiPort + '/api/v1/patients/';
+  url += sessionStorage.patientID + '/drugs_received?date=' + session_date;
 
   var req = new XMLHttpRequest();
     req.onreadystatechange = function () {
