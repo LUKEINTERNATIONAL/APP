@@ -66,6 +66,7 @@ padding-left: 45px;\
   margin-top: 0% !important;\
   height: 87%;\
   width: 100%;\
+  overflow-x: auto;\
 }\
 </style>"
 
