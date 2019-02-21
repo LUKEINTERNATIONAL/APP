@@ -29,7 +29,7 @@
 
 var patientID = sessionStorage.getItem("patientID");
 var programID = sessionStorage.getItem("programID");
-var tt_cancel_destination = "/";
+var tt_cancel_destination = document.referrer;
 var apiProtocol = sessionStorage.apiProtocol;
 var apiURL = sessionStorage.apiURL;
 var apiPort = sessionStorage.apiPort;
@@ -123,7 +123,7 @@ function setActivities() {
 
 function redirectTo(obj) {
   sessionStorage.setItem("userActivities", obj.property_value);
-  document.location = "/";
+  document.location = document.referrer;
 }
 
 function isEmpty(str){
