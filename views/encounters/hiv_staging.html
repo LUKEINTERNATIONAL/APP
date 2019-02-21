@@ -1682,7 +1682,7 @@ bottom: 0px;
             <input id="new_lymphocyte_count_available" name="new_lymphocyte_count_available" type="hidden" value=""/>
 
             <select objectType="location" ajaxURL="/locations?name=" allowFreeText="true"
-                    tt_onLoad="setNextButtonToGetInputValue('cd4_location');"
+                    tt_onLoad="setNextButtonToGetInputValue('cd4_location');setCurrentLocation();"
                     tt_onUnLoad="getCDLocation();"
                     condition="$('new_cd4_percent_available').value == 'YES' || $('new_lymphocyte_count_available').value == 'YES' || ($('new_cd4_count_available').value == 'YES' && transferInPatient() == false)"
                     field_type="alpha" helpText="CD4 count location" id="cd4_percent_location"

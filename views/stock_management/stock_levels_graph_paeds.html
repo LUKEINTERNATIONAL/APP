@@ -1,0 +1,41 @@
+<script src="/assets/js/HighCharts/highcharts.js"></script>
+<script src="/assets/js/HighCharts/highcharts-3d.js"></script>
+<script src="/assets/js/HighCharts/exporting.js"></script>
+<script src="/assets/js/HighCharts/export-data.js"></script>
+<script src="/assets/js/moment.js"></script>
+
+<script>
+var drugs = []
+var data_list = {}
+
+
+function fetchStockLevels() {
+  var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1";
+  url += "/stock_levels";
+   
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+      var obj = JSON.parse(this.responseText);
+    }
+  };
+  xhttp.open("GET", url, true);
+  xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+  xhttp.setRequestHeader('Content-type', "application/json");
+  xhttp.send();
+}
+
+function processFetchedStockLevels(data) {
+  for(@list || []) {
+    drugs.push('<%= drug %>')
+    data_list['<%= drug %>'] = { month_of_stock: <%= values['month_of_stock'] %>,
+      stock_level:<%= values['stock_level'] %> ,
+      consumption_rate: <%= values['consumption_rate'] %>,
+      stocked_out: <%= values['stocked_out'] %>,
+      expiry_stock: <%= values['expiry_stock'] %>,
+      active: <%= values['active'] %>
+    };
+  }
+
+
+}

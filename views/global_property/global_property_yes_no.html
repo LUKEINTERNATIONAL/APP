@@ -17,7 +17,11 @@ function addYesNo() {
   var property = searchParams.get('value');
   
   var title = property.split('_').join(' ').toUpperCase();
-  var attr = property.split('_').join('.');
+  if (property !== "dde_enabled") {
+    var attr = property.split('_').join('.');
+  }else {
+    var attr = property;
+  }
   
   var tar = document.getElementById("inputFrame" + tstCurrentPage);
   buildYesNoUI(attr,title, tar);

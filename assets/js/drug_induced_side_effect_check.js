@@ -66,6 +66,7 @@ padding-left: 45px;\
   margin-top: 0% !important;\
   height: 87%;\
   width: 100%;\
+  overflow-x: auto;\
 }\
 </style>"
 
@@ -502,14 +503,23 @@ function selectedDI() {
 
 function possibleCausedMedicationOfSideEffects() {
   var session_date = moment(new Date(sessionStorage.sessionDate)).format('YYYY-MM-DD');
-  var url = 'http://' + apiURL + ':' + apiPort + '/api/v1/programs/1/patients/';
-  url += sessionStorage.patientID + "/last_drugs_received?date=" + session_date;
+  var url = 'http://' + apiURL + ':' + apiPort + '/api/v1/patients/';
+  url += sessionStorage.patientID + '/drugs_received';
 
   var req = new XMLHttpRequest();
     req.onreadystatechange = function () {
       if (this.readyState == 4) {
         if (this.status == 200) {
-           previousMedsGivens = JSON.parse(this.responseText);
+          var previousDrugs = {};
+          var drugs = JSON.parse(this.responseText);
+          
+          for(var i = 0 ; i < drugs.length ; i++) {
+           previousDrugs[drugs[i]['drug'].drug_id] = drugs[i]
+          }
+          
+          for(drug_id in previousDrugs) { 
+            previousMedsGivens.push(previousDrugs[drug_id]);
+          }
         }
       }
     };
