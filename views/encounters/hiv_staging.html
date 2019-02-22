@@ -1375,6 +1375,17 @@ bottom: 0px;
               answers_hash["cd4_location"] = cd4_location;
             }
 
+            function updatePregnancyBreastFeedingInputs(){
+                try {
+                    var pregnant_value = yesNo_Hash["Pregnant-Breastfeeding"]["Pregnant?"];
+                    var breast_feeding_value = yesNo_Hash["Pregnant-Breastfeeding"]["Breastfeeding?"];
+                    __$("pregnant").value = pregnant_value.toUpperCase();
+                    __$("breast_feeding").value = breast_feeding_value.toUpperCase();
+                } catch (e) {
+
+                }
+            }
+
         </script>
 
         <form>
@@ -1387,8 +1398,12 @@ bottom: 0px;
                    validationCode="checkPregnancyAndAge() == 'false'"
                    validationMessage="Patient (Viral Load) is 25 years old. Is she pregnant / Breastfeeding?"
                    tt_onLoad="__$('keyboard').style.display = 'none';addPregBreastFeedingYesNo(); showCategory2('Clinic consultation');"
+                   tt_onUnLoad="updatePregnancyBreastFeedingInputs();"
                    tt_pageStyleClass="NoControls"
                    helpText="Pregnant / Breastfeeding" optional="true"/>
+
+            <input id="pregnant" type="hidden" value="" />
+            <input id="breast_feeding" type="hidden" value="" />
 
             <input type="text" name="weight-summary" condition="sessionStorage.showWeightChart === 'true';"
                    tt_onLoad="__$('keyboard').style.display = 'none';buildWeightHistory(); updateBreastFeedingPregnancyAnswers();"
@@ -1667,7 +1682,7 @@ bottom: 0px;
             <input id="new_lymphocyte_count_available" name="new_lymphocyte_count_available" type="hidden" value=""/>
 
             <select objectType="location" ajaxURL="/locations?name=" allowFreeText="true"
-                    tt_onLoad="setNextButtonToGetInputValue('cd4_location');"
+                    tt_onLoad="setNextButtonToGetInputValue('cd4_location');setCurrentLocation();"
                     tt_onUnLoad="getCDLocation();"
                     condition="$('new_cd4_percent_available').value == 'YES' || $('new_lymphocyte_count_available').value == 'YES' || ($('new_cd4_count_available').value == 'YES' && transferInPatient() == false)"
                     field_type="alpha" helpText="CD4 count location" id="cd4_percent_location"

@@ -706,28 +706,23 @@
                         if (showARTstartDate() && $("year_started_art").value.toUpperCase() == "UNKNOWN") {
                             ARTstartDateEstimate = $("art_start_date_estimation").value;
 
-                            if (ARTstartDateEstimate == "6 months ago") {
-                                startDate = new Date(sessionStorage.sessionDate);
-                                startDate.setDate(todays_date.getDate() - 6 );
-                                startDate.setFullYear(todays_date.getFullYear() - 1);
-                            } else if (ARTstartDateEstimate == "12 months ago") {
-                                startDate = new Date(sessionStorage.sessionDate)
-                                startDate.setDate(todays_date.getDate() - 12 );
-                                startDate.setFullYear(todays_date.getFullYear() - 1);
-                            } else if (ARTstartDateEstimate == "18 months ago") {
-                                startDate = new Date(sessionStorage.sessionDate)
-                                startDate.setDate(todays_date.getDate() - 18);
-                                startDate.setFullYear(todays_date.getFullYear() - 1);
-                            } else if (ARTstartDateEstimate == "24 months ago") {
-                                startDate = new Date(sessionStorage.sessionDate)
-                                startDate.setDate(todays_date.getDate() - 24 );
-                                startDate.setFullYear(todays_date.getFullYear() - 1);
-                            } else if (ARTstartDateEstimate == "Over 2 years ago") {
-                                startDate = new Date(sessionStorage.sessionDate)
-                                startDate.setDate(todays_date.getDate() - 30);
-                                startDate.setFullYear(todays_date.getFullYear() - 1);
+                            if (ARTstartDateEstimate == "6 months") {
+                              startDate = new Date(sessionStorage.sessionDate);
+                              startDate.setDate(todays_date.getDate() - (28 * 6) );
+                            } else if (ARTstartDateEstimate == "12 months") {
+                              startDate = new Date(sessionStorage.sessionDate)
+                              startDate.setDate(todays_date.getDate() - (28 * 12) );
+                            } else if (ARTstartDateEstimate == "18 months") {
+                              startDate = new Date(sessionStorage.sessionDate)
+                              startDate.setDate(todays_date.getDate() - (28 * 18) );
+                            } else if (ARTstartDateEstimate == "24 months") {
+                              startDate = new Date(sessionStorage.sessionDate)
+                              startDate.setDate(todays_date.getDate() - (28 * 24) );
+                            } else if (ARTstartDateEstimate == "Over 2 years") {
+                              startDate = new Date(sessionStorage.sessionDate)
+                              startDate.setDate(todays_date.getDate() - (28 * 30));
                             } else {
-                                var startDate = getDateStartedART();
+                              var startDate = getDateStartedART();
                             }
                         }
 
@@ -1251,14 +1246,6 @@
                         document.getElementById('category').style = 'display: none;'
                     }
 
-                    var patientAge = parseInt(sessionStorage.patientAge);
-                    var patientGender = "";
-                    if (sessionStorage.patientGender == "F"){
-                        patientGender = "FEMALE";
-                    } else{
-                        patientGender = "MALE";
-                    }
-
                     function checkPregnancyAndAge() {
                         if ((patientAge >= 55)) {
                             return "true";
@@ -1664,10 +1651,17 @@
 
                     function setNextButtonToGetInputValue(key){
                         __$('nextButton').onmousedown = function(){
+                            resetFinishButton();
                             value = __$('touchscreenInput' + tstCurrentPage).value;
                             answers_hash[key] = value;
                             gotoNextPage();
                         }
+
+                    }
+
+                    function resetFinishButton() {
+                        var nextButton = document.getElementById('nextButton');
+                        nextButton.setAttribute('onmousedown', 'gotoNextPage();');
                     }
 
                     function setNextButtonToGetDateARTLastTaken(key){
@@ -1927,6 +1921,12 @@
                         element.setAttribute("absoluteMin", (new Date().getFullYear() - 120)); 
                     }
 
+                    function setCurrentLocation() {
+                        $('touchscreenInput' + tstCurrentPage).setAttribute('ajaxURL', "/locations?name=" + sessionStorage.currentLocation);
+                        listSuggestions(tstCurrentPage);
+                        $('touchscreenInput' + tstCurrentPage).setAttribute('ajaxURL', "/locations?name=");
+                    }
+
                 </script>
 
                 <form  onsubmit="submitParameters();">
@@ -1995,7 +1995,7 @@
                         <option value="NO">No</option>
                     </select>
 
-                    <select objectType="location" ajaxURL="/locations?name=" allowFreeText="true" condition="$('ever_registered_at_ART_clinic').value == 'YES' && $('ever_received_art').value == 'YES'" field_type="alpha" helpText="Location of ART initiation" id="location_of_art_initialization" name="observations[][value_coded_or_text]" tt_onLoad="showCategory2('when starting ART'); setNextButtonToGetInputValue('location_of_art_initiation')" tt_onUnLoad="hideCategory()"></select>
+                    <select objectType="location" ajaxURL="/locations?name=" allowFreeText="true" condition="$('ever_registered_at_ART_clinic').value == 'YES' && $('ever_received_art').value == 'YES'" field_type="alpha" helpText="Location of ART initiation" id="location_of_art_initialization" name="observations[][value_coded_or_text]" tt_onLoad="setCurrentLocation(); showCategory2('when starting ART'); setNextButtonToGetInputValue('location_of_art_initiation')" tt_onUnLoad="hideCategory()"></select>
 
                     <input absoluteMin="1890" condition="$('ever_received_art').value == 'YES' && $('ever_registered_at_ART_clinic').value == 'YES'" field_type="number" helpText="Year started ART" id="year_started_art" min="1940" name="year_started_art" tt_onLoad="jQuery('#Unknown').show(); showCategory2('when starting ART'); setAbsoluteMaxYearStartedART();" tt_onUnLoad="hideCategory()" tt_pageStyleClass="Numeric NumbersOnly" type="text" />
 
@@ -2196,7 +2196,7 @@
                         <option value="NO">No</option>
                     </select>
 
-                    <select objectType="location" ajaxURL="/locations?name=" allowFreeText="true" condition="$('new_cd4_count_available').value == 'YES' && showConditions()" field_type="alpha" helpText="CD4 Count Location" id="cd4_count_location" name="observations[][value_coded_or_text]" tt_onLoad="showCategory2('when starting ART'); setNextButtonToGetInputValue('cd4_location');" tt_onUnLoad="hideCategory();"></select>
+                    <select objectType="location" ajaxURL="/locations?name=" allowFreeText="true" condition="$('new_cd4_count_available').value == 'YES' && showConditions()" field_type="alpha" helpText="CD4 Count Location" id="cd4_count_location" name="observations[][value_coded_or_text]" tt_onLoad="showCategory2('when starting ART'); setNextButtonToGetInputValue('cd4_location');setCurrentLocation();" tt_onUnLoad="hideCategory();"></select>
 
                     <input absoluteMin="1890" condition="$('new_cd4_count_available').value == 'YES' && showConditions()" field_type="number" helpText="Year of CD4 count" id="year_of_cd4" min="1940" name="year_of_cd4" tt_onLoad="showCategory2('when starting ART'); setAbsoluteMaxCD4Year();" tt_onUnLoad="hideCategory();" tt_pageStyleClass="Numeric NumbersOnly" type="text" />
 
@@ -2256,7 +2256,7 @@
                         <option value="UNKNOWN">Unknown</option>
                     </select>-->
 
-                    <select objectType="location" tt_onLoad="setNextButtonToGetInputValue('confirmatory_hiv_test_location');" ajaxURL="/locations?name=" allowFreeText="true" condition="$('type_of_confirmatory_hiv_test').value != 'NOT DONE'" field_type="alpha" helpText="Location of confirmatory HIV test" id="confirmatory_hiv_test_location" name="observations[][value_coded_or_text]"></select>
+                    <select objectType="location" tt_onLoad="setNextButtonToGetInputValue('confirmatory_hiv_test_location');setCurrentLocation();" ajaxURL="/locations?name=" allowFreeText="true" condition="$('type_of_confirmatory_hiv_test').value != 'NOT DONE'" field_type="alpha" helpText="Location of confirmatory HIV test" id="confirmatory_hiv_test_location" name="observations[][value_coded_or_text]"></select>
 
                     <input condition="$('type_of_confirmatory_hiv_test').value != 'NOT DONE'" field_type="number" helpText="Confirmatory HIV test year" id="confirmatory_hiv_test_year" name="year_confirmatory_hiv_test" tt_onLoad="changeNextButtonForConfirmatoryYear(); changeAbsoluteMinForConfirmatoryYear(); __$('Unknown').style.display = 'inline'; submitParametersOnUnknownConfirmatoryDate();setAbsoluteMaxYear();" tt_pageStyleClass="Numeric NumbersOnly" type="text" />
 
