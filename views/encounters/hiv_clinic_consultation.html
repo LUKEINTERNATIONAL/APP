@@ -1875,6 +1875,74 @@
                             }
                           }
                         }
+
+                        session_fpm_used = $('session_fpm_used').value;  
+                        if(extended_fpm_assessment == true && session_fpm_used == 'NONE') {
+                          reason_for_not_using_fpm = $('reason_for_not_using_fpm').value;
+                          var reasons_for_not_using = {};
+                          reasons_for_not_using['Patient wants to get pregnant'] = 9186;
+                          reasons_for_not_using['Not sexually active'] = 3211;
+                          reasons_for_not_using['Not needed for medical reasons'] = 9187;
+                          reasons_for_not_using['At risk of unplanned pregnancy'] = 9188;
+                        
+                          obs.observations.push({
+                            concept_id: 6195, 
+                            value_coded: reasons_for_not_using[reason_for_not_using_fpm]
+                          });  
+
+                          if(reason_for_not_using_fpm == 'At risk of unplanned pregnancy') {
+                            var specific_reason_for_not_using_fpm = $('specific_reason_for_not_using_fpm').value;
+                            reasons_for_not_using = {};
+                            reasons_for_not_using['Following wishes of spouse'] = 9189;
+                            reasons_for_not_using['Religious reasons'] = 9190;
+                            reasons_for_not_using['Afraid of side effects'] = 9191;
+                            reasons_for_not_using['Never thought about it'] = 9192;
+                            reasons_for_not_using['Indifferent (does not mind getting pregnant)'] = 5265;
+                            
+                            obs.observations.push({
+                              concept_id: 9185, 
+                              value_coded: reasons_for_not_using[specific_reason_for_not_using_fpm]
+                            });  
+                         
+                            var offer_contraceptive = $('offer_contraceptive').value; 
+                            reasons_for_not_using = {};
+                            reasons_for_not_using['Accepted'] = 1065;
+                            reasons_for_not_using['Declined'] = 1066;
+                            reasons_for_not_using['Discuss with spouse'] = 9195;
+                          
+                            obs.observations.push({
+                              concept_id: 9193, 
+                              value_coded: reasons_for_not_using[offer_contraceptive]
+                            });  
+                         
+                          
+                            interventions = {};
+                            interventions['Oral contraceptive pills'] = 780; 
+                            interventions['Depo-Provera'] = 907;
+                            interventions['IUD-Intrauterine device/loop'] = 8759;
+                            interventions['Contraceptive implant'] = 7857;
+                            interventions['Female condoms'] = 7859;
+                            interventions['Male condoms'] = 7858;
+                            interventions['Tubal ligation'] = 1719;
+
+                            reasons_for_not_using['Accepted'] = 1065;
+                            var answers = document.getElementById('offered_intervention');
+                            for (i = 0 ; i < answers.options.length ; i++) {
+                              if (answers.options[i].selected){
+                                var selected_intervention = interventions[answers.options[i].value];
+                                obs.observations.push({
+                                  concept_id: 1618, 
+                                  value_coded: selected_intervention,
+                                  value_text: 'After counselling of patient'
+                                });  
+                              }
+                            } 
+                         
+
+
+                          }
+                        }
+
                         submitParameters(obs, "/observations", "nextPage")
                     }
 
@@ -2221,7 +2289,7 @@
                         <option value="TUBAL LIGATION">Tubal ligation</option>
                         <option value="NONE">None of the above</option></select>
 
-                    <select allowFreeText="false" condition="patientGender == 'F' && $('pregnant').value != 'YES' && parseInt(sessionStorage.patientAge) >= 9 && parseInt(sessionStorage.patientAge) <= 55" helpText="What method are you providing today?" id="fpm_used" multiple="multiple" name="observations[][value_coded_or_text_multiple][]" tt_onLoad="setNextButtonToGetInputValue('todays_fpm'); showCategory2('Clinic consultation'); fpm_used=false; startFamilyPlanningTimer(); window.setTimeout('controlNoneSelectionForFamilyPlanning(); setOptionsForSafeFamilyPlanningMethodsPopup();', 300)" tt_onUnLoad="stopFamilyPlanningTimer();" tt_pageStyleClass="NoKeyboard"><option value=''></option><option value=""></option>
+                    <select allowFreeText="false" condition="patientGender == 'F' && $('pregnant').value != 'YES' && parseInt(sessionStorage.patientAge) >= 9 && parseInt(sessionStorage.patientAge) <= 55" helpText="What method are you providing today?" id="session_fpm_used" multiple="multiple" name="observations[][value_coded_or_text_multiple][]" tt_onLoad="setNextButtonToGetInputValue('todays_fpm'); showCategory2('Clinic consultation'); fpm_used=false; startFamilyPlanningTimer(); window.setTimeout('controlNoneSelectionForFamilyPlanning(); setOptionsForSafeFamilyPlanningMethodsPopup();', 300)" tt_onUnLoad="stopFamilyPlanningTimer();" tt_pageStyleClass="NoKeyboard"><option value=''></option><option value=""></option>
                         <option value="ORAL CONTRACEPTIVE PILLS">Oral contraceptive pills</option>
                         <option value="DEPO-PROVERA">Depo-Provera</option>
                         <option value="INTRAUTERINE CONTRACEPTION">Intrauterine device/loop</option>
@@ -2230,6 +2298,67 @@
                         <option value="FEMALE CONDOMS">Female condoms</option>
                         <option value="TUBAL LIGATION">Tubal ligation</option>
                         <option value="NONE">None of the above</option></select>
+
+                  <!-- Extended family assessment -->
+
+                    <select allowFreeText="false" condition="patientGender == 'F' && $('pregnant').value != 'YES' && parseInt(sessionStorage.patientAge) >= 9 && parseInt(sessionStorage.patientAge) <= 55 && $('session_fpm_used').value == 'NONE'" 
+                    helpText="Main reason for not using family planning methods" 
+                    id="reason_for_not_using_fpm"
+                    name="observations[][value_coded_or_text_multiple][]" 
+                    tt_onLoad="showCategory2('Clinic consultation');" 
+                    tt_pageStyleClass="NoKeyboard">
+                      <option value=''></option><option value=""></option>
+                        <option value="Not sexually active">Not sexually active</option>
+                        <option value="Patient wants to get pregnant">Patient wants to get pregnant</option>
+                        <option value="Not needed for medical reasons">Not needed for medical reasons</option>
+                        <option value="At risk of unplanned pregnancy">At risk of unplanned pregnancy</option>
+                      </select>
+
+
+                    <select allowFreeText="false" condition="patientGender == 'F' && $('pregnant').value != 'YES' && parseInt(sessionStorage.patientAge) >= 9 && parseInt(sessionStorage.patientAge) <= 55 && $('reason_for_not_using_fpm').value.toLowerCase() == 'at risk of unplanned pregnancy'" 
+                    helpText="Specific reason for not using family planning methods" 
+                    id="specific_reason_for_not_using_fpm"
+                    name="observations[][value_coded_or_text_multiple][]" 
+                    tt_onLoad="showCategory2('Clinic consultation');" 
+                    tt_pageStyleClass="NoKeyboard">
+                      <option value=''></option><option value=""></option>
+                        <option value="Following wishes of spouse">Following wishes of spouse</option>
+                        <option value="Religious reasons">Religious reasons</option>
+                        <option value="Afraid of side effects">Afraid of side effects</option>
+                        <option value="Never thought about it">Never thought about it</option>
+                        <option value="Indifferent (does not mind getting pregnant)">Indifferent (does not mind getting pregnant)</option>
+                      </select>
+
+                    <select allowFreeText="false" condition="patientGender == 'F' && $('pregnant').value != 'YES' && parseInt(sessionStorage.patientAge) >= 9 && parseInt(sessionStorage.patientAge) <= 55 && $('specific_reason_for_not_using_fpm').value.length > 0" 
+                    helpText="Offer contraceptive" 
+                    id="offer_contraceptive"
+                    name="observations[][value_coded_or_text_multiple][]" 
+                    tt_onLoad="showCategory2('Clinic consultation');" 
+                    tt_pageStyleClass="NoKeyboard">
+                      <option value=''></option><option value=""></option>
+                        <option value="Accepted">Accepted</option>
+                        <option value="Declined">Declined</option>
+                        <option value="Discuss with spouse">Discuss with spouse</option>
+                      </select>
+
+                    <select allowFreeText="false" condition="patientGender == 'F' && $('pregnant').value != 'YES' && parseInt(sessionStorage.patientAge) >= 9 && parseInt(sessionStorage.patientAge) <= 55 && $('offer_contraceptive').value == 'Accepted'" 
+                    helpText="Offered intervention" 
+                    multiple = "multiple"
+                    id="offered_intervention"
+                    name="observations[][value_coded_or_text_multiple][]" 
+                    tt_onLoad="showCategory2('Clinic consultation');" 
+                    tt_pageStyleClass="NoKeyboard">
+                      <option value=''></option><option value=""></option>
+                        <option value="Oral contraceptive pills">Oral contraceptive pills</option>
+                        <option value="Depo-Provera">Depo-Provera</option>
+                        <option value="IUD-Intrauterine device/loop">IUD-Intrauterine device/loop</option>
+                        <option value="Contraceptive implant">Contraceptive implant</option>
+                        <option value="Female condoms">Female condoms</option>
+                        <option value="Male condoms">Male condoms</option>
+                        <option value="Tubal ligation">Tubal ligation</option>
+                      </select>
+
+                  <!-- Extended family assessment end -->
 
 
                     <input allowFreeText="false" id="on_fpm" name="observations[][value_coded_or_text]" type="hidden" value="" />
@@ -3340,7 +3469,29 @@
                         });
                         return this;
                     }
-  
+ 
+ 
+ 
+                  var extended_fpm_assessment = false; 
+                  
+                  function useExtendedFPMassessment() {
+                    var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1";
+                    url += '/global_properties?property=extended.family.planning'
+
+                    var xhttp = new XMLHttpRequest();
+                    xhttp.onreadystatechange = function() {
+                      if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                        var obj = JSON.parse(this.responseText);
+                        extended_fpm_assessment = (obj['extended.family.planning'] == 'true' ? true : false);
+                      }
+                    };
+                    xhttp.open("GET", url, true);
+                    xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                    xhttp.setRequestHeader('Content-type', "application/json");
+                    xhttp.send();
+                  }
+
+                  useExtendedFPMassessment();
                 </script>
 
             </div>
