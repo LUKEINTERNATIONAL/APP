@@ -1,5 +1,5 @@
-
-<script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js" defer="true"></script>
+<script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js"
+        defer="true"></script>
 <!-- <script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/standard.js" defer="true"></script> -->
 <script type="text/javascript" src="/assets/js/jquery.min.js"></script>
 
@@ -15,158 +15,200 @@
 <link rel="stylesheet" href="/assets/css/alertifyjs/css/alertify.css" type="text/css">
 
 <script>
-var guardianAvailable = false;
-var apiProtocol = sessionStorage.apiProtocol;
-var apiURL = sessionStorage.apiURL;
-var apiPort = sessionStorage.apiPort;
-var patientID = sessionStorage.patientID;
-function getGuardian(){
-  var url = 'http://'+apiURL+':'+apiPort+'/api/v1/people/'+patientID+'/relationships' ;
-  var req = new XMLHttpRequest();
-  req.onreadystatechange = function(){
-  
-  if (this.readyState == 4) {
-  if (this.status == 200) {
-  var results = JSON.parse(this.responseText);
-    if(results.length > 0) {
-      guardianAvailable = true;
+    var guardianAvailable = false;
+    var apiProtocol = sessionStorage.apiProtocol;
+    var apiURL = sessionStorage.apiURL;
+    var apiPort = sessionStorage.apiPort;
+    var patientID = sessionStorage.patientID;
+
+    function getGuardian() {
+        var url = 'http://' + apiURL + ':' + apiPort + '/api/v1/people/' + patientID + '/relationships';
+        var req = new XMLHttpRequest();
+        req.onreadystatechange = function () {
+
+            if (this.readyState == 4) {
+                if (this.status == 200) {
+                    var results = JSON.parse(this.responseText);
+                    if (results.length > 0) {
+                        guardianAvailable = true;
+                    }
+                }
+            }
+        };
+        try {
+            req.open('GET', url, true);
+            req.setRequestHeader('Authorization', sessionStorage.getItem('authorization'));
+            req.send(null);
+        } catch (e) {
+        }
     }
-  }
-  }
-  };
-  try {
-  req.open('GET', url, true);
-  req.setRequestHeader('Authorization',sessionStorage.getItem('authorization'));
-  req.send(null);
-  } catch (e) {
-  }
-}
 
-getGuardian();
+    getGuardian();
 
-var patientID = sessionStorage.getItem("patientID");
-var programID = sessionStorage.getItem("programID");
-var tt_cancel_destination = "/views/patient_dashboard.html?patient_id=" + patientID;
+    var patientID = sessionStorage.getItem("patientID");
+    var programID = sessionStorage.getItem("programID");
+    var tt_cancel_destination = "/views/patient_dashboard.html?patient_id=" + patientID;
 
-YesNoConcepts = {};
-YesNoConcepts["Yes"] = 1065;
-YesNoConcepts["No"] = 1066;
+    YesNoConcepts = {};
+    YesNoConcepts["Yes"] = 1065;
+    YesNoConcepts["No"] = 1066;
 
-function autoSelectGuardian(clickedBtn) {
-  if(clickedBtn.id.match(/No/i)) {
-    var e = document.getElementById('2122_yes');
-    buttonClicked(e,'HIV Reception','Guardian present?');
-  }
-}
-
-function autoSelectPatient(clickedBtn) {
-  if(clickedBtn.id.match(/No/i)) {
-    var e = document.getElementById('1805_yes');
-    buttonClicked(e,'HIV Reception','Patient present?');
-  }
-}
-
-function submitHIVreception() {
-  var currentTime = moment().format(' HH:mm:ss');
-  var encounter_datetime = moment(sessionStorage.sessionDate).format('YYYY-MM-DD'); 
-  encounter_datetime += currentTime;
-                        	
-  var encounter = {
-    encounter_type_name: 'HIV RECEPTION',
-    encounter_type_id:  51,
-    patient_id: patientID,
-    encounter_datetime: encounter_datetime
-  }
-
-  submitParameters(encounter, "/encounters", "postVitalsObs");
-
-  if (!patient_has_art_number){
-      postARVNumber()
-  }
-}
-
-function postVitalsObs(encounter) {
-
-  var obs = {
-    encounter_id: encounter["encounter_id"],
-    observations: [
-      { concept_id: 1805, value_coded: YesNoConcepts[yesNo_Hash['HIV Reception']['Patient present?']] },
-      { concept_id: 2122, value_coded: YesNoConcepts[yesNo_Hash['HIV Reception']['Guardian present?']] }
-    ]
-  }; 
-
-  submitParameters(obs, "/observations", "nextPage")  
-}
-
-function postARVNumber(){
-
-    var identifier_type = 4
-    var value = __$('touchscreenInput' + tstCurrentPage).value;
-    var arv_number = site_prefix + "-ARV-" + value;
-
-    var identifier_data = {
-        identifier: arv_number,
-        identifier_type: identifier_type,
-        patient_id: patientID
-       }
-    var url = "/patient_identifiers/";
-    submitParameters(identifier_data, url, "afterIdentifierCreation")
-}
-
-function afterIdentifierCreation(){
-    //Do something here. For now I don't have. This is crazy
-}
-
-function nextPage(obs){
-
-  if(guardianAvailable == true && yesNo_Hash["HIV Reception"]["Guardian present?"] === "Yes") {
-    nextEncounter(sessionStorage.patientID, 1);
-  }else if (guardianAvailable == false && yesNo_Hash["HIV Reception"]["Guardian present?"] === "Yes"){
-    window.location.href = "/views/patient/relationships/guardian_search.html?patient_id="+patientID;
-  }else if (guardianAvailable == false && yesNo_Hash["HIV Reception"]["Guardian present?"] === "Yes" && yesNo_Hash["HIV Reception"]["Patient present?"] === "No") {
-    window.location.href = "/views/patient/relationships/guardian_search.html?patient_id="+patientID;
-  }
-  else {
-    nextEncounter(sessionStorage.patientID, 1);
-  }
-}
-
-function changeNextButton() {
-    var nextButton =  document.getElementById('nextButton');
-    nextButton.setAttribute("onmousedown","checkIfPatientHasARTNumber();")
-}
-
-function checkIfPatientHasARTNumber(){
-    if (patient_has_art_number){
-        submitHIVreception();
-    } else{
-        gotoNextPage();
+    function autoSelectGuardian(clickedBtn) {
+        if (clickedBtn.id.match(/No/i)) {
+            var e = document.getElementById('2122_yes');
+            buttonClicked(e, 'HIV Reception', 'Guardian present?');
+        }
     }
-}
 
-function addYesNo() {
-  var tar = document.getElementById("inputFrame" + tstCurrentPage);
-  var attr = 'Patient present?,1805,autoSelectGuardian#Guardian present?,2122,autoSelectPatient'
-  buildYesNoUI('HIV Reception', attr, tar);
-}
+    function autoSelectPatient(clickedBtn) {
+        if (clickedBtn.id.match(/No/i)) {
+            var e = document.getElementById('1805_yes');
+            buttonClicked(e, 'HIV Reception', 'Patient present?');
+        }
+    }
+
+    function submitHIVreception() {
+        var currentTime = moment().format(' HH:mm:ss');
+        var encounter_datetime = moment(sessionStorage.sessionDate).format('YYYY-MM-DD');
+        encounter_datetime += currentTime;
+
+        var encounter = {
+            encounter_type_name: 'HIV RECEPTION',
+            encounter_type_id: 51,
+            patient_id: patientID,
+            encounter_datetime: encounter_datetime
+        }
+
+        submitParameters(encounter, "/encounters", "postVitalsObs");
+
+        if (!patient_has_art_number) {
+            if (captureARTNumber) {
+                postARVNumber()
+            }
+        }
+    }
+
+    function postVitalsObs(encounter) {
+
+        var obs = {
+            encounter_id: encounter["encounter_id"],
+            observations: [
+                {concept_id: 1805, value_coded: YesNoConcepts[yesNo_Hash['HIV Reception']['Patient present?']]},
+                {concept_id: 2122, value_coded: YesNoConcepts[yesNo_Hash['HIV Reception']['Guardian present?']]}
+            ]
+        };
+
+        submitParameters(obs, "/observations", "nextPage")
+    }
+
+    function postARVNumber() {
+
+        var identifier_type = 4
+        var value = __$('touchscreenInput' + tstCurrentPage).value;
+        var arv_number = site_prefix + "-ARV-" + value;
+
+        var identifier_data = {
+            identifier: arv_number,
+            identifier_type: identifier_type,
+            patient_id: patientID
+        }
+        var url = "/patient_identifiers/";
+        submitParameters(identifier_data, url, "afterIdentifierCreation")
+    }
+
+    function afterIdentifierCreation() {
+        //Do something here. For now I don't have. This is crazy
+    }
+
+    function nextPage(obs) {
+
+        if (guardianAvailable == true && yesNo_Hash["HIV Reception"]["Guardian present?"] === "Yes") {
+            nextEncounter(sessionStorage.patientID, 1);
+        } else if (guardianAvailable == false && yesNo_Hash["HIV Reception"]["Guardian present?"] === "Yes") {
+            window.location.href = "/views/patient/relationships/guardian_search.html?patient_id=" + patientID;
+        } else if (guardianAvailable == false && yesNo_Hash["HIV Reception"]["Guardian present?"] === "Yes" && yesNo_Hash["HIV Reception"]["Patient present?"] === "No") {
+            window.location.href = "/views/patient/relationships/guardian_search.html?patient_id=" + patientID;
+        }
+        else {
+            nextEncounter(sessionStorage.patientID, 1);
+        }
+    }
+
+    function changeNextButton() {
+        var nextButton = document.getElementById('nextButton');
+        nextButton.setAttribute("onmousedown", "checkIfPatientHasARTNumber();")
+    }
+
+    function checkIfPatientHasARTNumber() {
+        if (patient_has_art_number) {
+            submitHIVreception();
+        } else {
+            gotoNextPage();
+        }
+    }
+
+    function addYesNo() {
+        var tar = document.getElementById("inputFrame" + tstCurrentPage);
+        var attr = 'Patient present?,1805,autoSelectGuardian#Guardian present?,2122,autoSelectPatient'
+        buildYesNoUI('HIV Reception', attr, tar);
+    }
+
+    var captureARTNumber = true;
+
+    function submitIfNoARTNumberCaptureIsSelected() {
+        var liElements = jQuery("li");
+        for (var i = 0; i <= liElements.length - 1; i++) {
+            var inner_html = liElements[i].innerHTML;
+            if (inner_html.match(/YES/i)) {
+                liElements[i].removeAttribute("onclick");
+                liElements[i].onmousedown = function () {
+                    updateTouchscreenInputForSelect(this);
+                    __$("nextButton").innerHTML = "<span>Next</span>";
+                    __$("nextButton").onmousedown = function(){
+                        gotoNextPage();
+                    }
+                }
+
+            } else {
+                liElements[i].removeAttribute("onclick");
+                liElements[i].onmousedown = function () {
+                    updateTouchscreenInputForSelect(this);
+                    captureARTNumber = false;
+                    __$("nextButton").innerHTML = "<span>Finish</span>";
+                    __$("nextButton").onmousedown = function(){
+                        submitHIVreception();
+                    }
+                }
+            }
+        }
+    }
 
 </script>
 
 <body id="mateme">
-  <div id="container">
+<div id="container">
     <div id="content">
 
-      <form>
-        <input type="text" name="summary"
-          tt_onLoad="__$('keyboard').style.display = 'none';changeNextButton();addYesNo();"
-          tt_pageStyleClass= "NoControls" helpText="HIV reception" optional = "true"/>
+        <form>
+            <input type="text" name="summary"
+                   tt_onLoad="__$('keyboard').style.display = 'none';changeNextButton();addYesNo();"
+                   tt_pageStyleClass="NoControls" helpText="HIV reception" optional="true"/>
 
-          <input allowFreeText="true" field_type="alpha" helpText="ART number" id="art_number" name="arv_number"
-                 condition="patient_has_art_number == false" tt_onLoad="press('num'); getSuggestedARVNumber(); changeNextButtonToValidateARVNumber();"
-                 tt_pageStyleClass="Numeric NumbersOnly" type="text" />
-      </form>
+            <select allowFreeText="false" id="art_optional_question" name="capture_art"
+                    helpText="Do you want to capture ARV number?"
+                    condition="patient_has_art_number == false" tt_onLoad="submitIfNoARTNumberCaptureIsSelected()">
+                <option value=''></option>
+                <option value="YES">Yes</option>
+                <option value="NO">No</option>
+            </select>
 
-   </div>
- </div>
+            <input allowFreeText="true" field_type="alpha" helpText="ART number" id="art_number" name="arv_number"
+                   condition="patient_has_art_number == false && captureARTNumber == true"
+                   tt_onLoad="press('num'); getSuggestedARVNumber(); changeNextButtonToValidateARVNumber();"
+                   tt_pageStyleClass="Numeric NumbersOnly" type="text"/>
+        </form>
+
+    </div>
+</div>
 </body>
 
