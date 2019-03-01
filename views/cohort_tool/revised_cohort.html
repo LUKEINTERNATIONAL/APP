@@ -2888,7 +2888,6 @@ function validateReport() {
     total_gender += parseInt(gender1[i].innerHTML);
 
   }
-  console.log(total_gender);
 
   for(var i = 0; i < cum_gender.length; i++){
 
@@ -3336,7 +3335,6 @@ function getTotal(app){
         jQuery.ajax({
             url: '/concepts/' + app,
             success: function(result){
-                console.log(result)
                 document.getElementById('total_app_concepts').innerHTML = result;
             },
             error: function(error){
@@ -3436,7 +3434,6 @@ function renderResults() {
       indicator.innerHTML = cohortValues[i].contents;
       print_pdf_attr[id] = cohortValues[i].contents;
     }catch(e){
-      console.log(cohortValues[i].name + ">>>>>>>>>>>>>>>>>>>> " + e);
       continue;
     }
   }
