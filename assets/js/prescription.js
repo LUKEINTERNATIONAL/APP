@@ -372,11 +372,16 @@ function continueShowSelectedMeds() {
             var tr = document.createElement("tr");
             tbody.appendChild(tr);
 
-            if (selectedRegimens.split(" ")[0].match(/A/i)) {
-                tr.setAttribute("class", "adult-category");
-            } else if (selectedRegimens.split(" ")[0].match(/P/i)) {
-                tr.setAttribute("class", "peads-category");
-            }
+            //console.log(rows[i])
+
+            try {
+              var category = rows[i].category;
+              if (category.match(/A/i)) {
+                  tr.setAttribute("class", "adult-category");
+              } else if (category.match(/P/i)) {
+                  tr.setAttribute("class", "peads-category");
+              }
+            }catch(q) {}
 
             var td = document.createElement("td");
             td.innerHTML = rows[i].drug_name;
@@ -699,7 +704,7 @@ function getRegimens() {
                     var drug_name = obj[key][i].drug_name
                     var alternative_drug_name = obj[key][i].alternative_drug_name
                     drug_name = alternative_drug_name == null ? drug_name : alternative_drug_name;
-
+                      
                     var drug = {
                         drug_name: drug_name,
                         concept_name: obj[key][i].concept_name,
@@ -709,8 +714,10 @@ function getRegimens() {
                         am: obj[key][i].am,
                         noon: '0',
                         pm: obj[key][i].pm,
+                        category: (obj[key][i].regimen_category != undefined ? obj[key][i].regimen_category : ''),
                         alternative_drug_name: obj[key][i].alternative_drug_name
                     }
+
                     passedRegimens[key].push(drug);
                 }
             }
