@@ -617,6 +617,12 @@
             }
         }
 
+        function submitWhenPatientWentForViaWithYesViaResults(){
+            __$('nextButton').onmousedown = function () {
+                submitCervicalCancerScreening();
+            }
+        }
+
         function setHelpTextForExpiredResults() {
             var helptext = "Patient has retrospective results from less than three years ago.";
             helptext += "Therefore she can only be referred to VIA after <b>" + remainingDays + "</b> days";
@@ -756,7 +762,7 @@
             </select>
 
             <input condition="__$('patient_went_for_via').value == 'No'" helpText="Refer this patient to VIA"
-                   id="no_via" name="no_via" optional="true" tt_onLoad="modifyAttributes();"
+                   id="no_via" name="no_via" optional="true" tt_onLoad="modifyAttributes(); submitWhenPatientWentForViaWithYesViaResults()"
                    tt_pageStyleClass="NoControls" type="text"/>
 
             <input condition="__$('patient_went_for_via').value == 'Yes' || (__$('results_available?').value == 'No' && patientWentForVIA == 'true')"
