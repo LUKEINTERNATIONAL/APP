@@ -327,6 +327,15 @@
                     latest_cervical_cancer_result = cervical_cancer_observations["latest_cervical_cancer_result"];
                     latest_via_referral_outcome = cervical_cancer_observations["latest_via_referral_outcome"];
                     lesionSizeTooBig = cervical_cancer_observations["lesion_size_too_big"].toString();
+                    if (lesionSizeTooBig.match(/true/i)){
+                        __$("lesion_size_too_big").value = "true";
+                    }
+
+                    if (lesionSizeTooBig.match(/false/i)){
+                        __$("lesion_size_too_big").value = "false";
+                    }
+
+
                     no_cancer = cervical_cancer_observations["no_cancer"].toString();
                     patientWentForVIA = cervical_cancer_observations["patient_went_for_via"].toString();
                     remainingDays = cervical_cancer_observations["remaining_days"];
@@ -846,7 +855,7 @@
                    value=""/>
             <input type="hidden" value="VIA DONE DATE"/>
 
-            <input id="lesion_size_too_big" name="lesion_size_too_big" type="hidden" value="false"/>
+            <input id="lesion_size_too_big" name="lesion_size_too_big" type="hidden" value=""/>
 
         </form>
 
