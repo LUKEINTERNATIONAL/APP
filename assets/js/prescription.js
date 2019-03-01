@@ -314,7 +314,25 @@ function showSelectedMeds() {
     xhttp.onreadystatechange = function () {
         if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
             var obj = JSON.parse(this.responseText);
-            givenRegimens[selectedRegimens] = obj;
+            var drugs = [];
+            
+            for(var i = 0 ; i < obj.length ; i++) {        
+              var drug = {
+                drug_name: obj[i].drug_name,
+                concept_name: obj[i].concept_name,
+                drug_id: obj[i].drug_id,
+                units: obj[i].units,
+                pack_size: (obj[i].pack_size == null ? 1 : obj[i].pack_size),
+                am: obj[i].am,
+                noon: '0',
+                pm: obj[i].pm,
+                category: (obj[i].regimen_category != undefined ? obj[i].regimen_category : ''),
+                alternative_drug_name: obj[i].alternative_drug_name
+              }
+              drugs.push(drug);
+            }
+
+            givenRegimens[selectedRegimens] = drugs;
             continueShowSelectedMeds();
         }
     };
