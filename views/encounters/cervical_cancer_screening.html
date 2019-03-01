@@ -371,6 +371,7 @@
             jQuery("#inputFrame" + tstCurrentPage).show();
             jQuery(".loader").hide();
         }
+        //__$('patient_went_for_via').value
 
         var answers_hash = {
             "ever_had_via": "",
@@ -383,7 +384,8 @@
             "month_cryo_was_done": "",
             "day_cryo_was_done": "",
             "cryo_result": "",
-            "referral_outcome": ""
+            "referral_outcome": "",
+            "patient_went_for_via": ""
         };
 
         function setNextButtonToGetInputValue(key) {
@@ -459,6 +461,13 @@
                     }
                 ]
             };
+
+            if (answers_hash["patient_went_for_via"].length > 0) {
+                obs.observations.push({
+                    concept_id: patient_went_for_via,
+                    value_coded: getYesNoConceptID(answers_hash["patient_went_for_via"])
+                })
+            }
 
             if (answers_hash["via_results"].length > 0) {
                 if (answers_hash["via_results"].match(/SUSPECT CANCER/i)) {
@@ -602,6 +611,12 @@
             }
         }
 
+        function submitWhenPatientWentForViaWithNoViaResults(){
+            __$('nextButton').onmousedown = function () {
+                submitCervicalCancerScreening();
+            }
+        }
+
         function setHelpTextForExpiredResults() {
             var helptext = "Patient has retrospective results from less than three years ago.";
             helptext += "Therefore she can only be referred to VIA after <b>" + remainingDays + "</b> days";
@@ -732,9 +747,9 @@
 
             <select allowFreeText="false"
                     condition="__$('results_available?').value == 'No' && patientWentForVIA == 'false'"
+                    tt_onLoad="setNextButtonToGetInputValue('patient_went_for_via')"
                     helpText="Did patient go for VIA?" id="patient_went_for_via"
                     name="patient_went_for_via" tt_pageStyleClass="NoKeyboard">
-                <option value=''></option>
                 <option value=""></option>
                 <option value="Yes">Yes</option>
                 <option value="No">No</option>
@@ -746,7 +761,7 @@
 
             <input condition="__$('patient_went_for_via').value == 'Yes' || (__$('results_available?').value == 'No' && patientWentForVIA == 'true')"
                    helpText="Remind the patient to bring results on next visit!" id="yes_via" name="yes_via"
-                   optional="true" tt_onLoad="modifyAttributes()" tt_pageStyleClass="NoControls" type="text"/>
+                   optional="true" tt_onLoad="modifyAttributes(); submitWhenPatientWentForViaWithNoViaResults();" tt_pageStyleClass="NoControls" type="text"/>
 
 
             <input type="hidden" value="VIA RESULTS"/>
