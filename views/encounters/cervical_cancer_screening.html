@@ -167,7 +167,7 @@
             __$('clearButton').style.display = 'none';
             __$('cancelButton').style.display = 'none';
             __$('keyboard').style.display = 'none';
-            __$('inputFrame0').style.display = 'none';
+            __$('inputFrame' + tstCurrentPage).style.display = 'none';
         }
 
         function modifyAttributes() {
@@ -183,14 +183,8 @@
         }
 
         function ContinueWorkFlow() {
-            jQuery.ajax({
-                type: "POST",
-                url: "/patients/set_cervical_cancer_session_variable",
-                data: "patient_id=" + patientID,
-                success: function (nextUrl) {
-                    window.location = nextUrl;
-                }
-            });
+            //set_cervical_cancer_session_variable
+            nextEncounter(sessionStorage.patientID, 1);
         }
 
         function cervicalFirstVisitPatient() {
@@ -202,7 +196,7 @@
         }
 
         function patientVIAwithinThreeYears() {
-            if (cervicalFirstVisitPatient() == true) {
+            if (cervicalFirstVisitPatient() == 'true') {
                 viaYear = parseInt(__$('via_year').value);
                 viaMonth = parseInt(__$('via_month').value);
                 dateString = viaYear + ', ' + viaMonth + ', ' + 1;
@@ -339,7 +333,7 @@
                     terminal = cervical_cancer_observations["terminal"].toString();
                     todaysReferralCount = cervical_cancer_observations["todays_refferals_count"]
                     viaReferred = cervical_cancer_observations["via_referred"].toString();
-
+                    viaResultsExpired = cervical_cancer_observations["via_results_expired"].toString();
                     gotoNextPage();
                 }
             };
