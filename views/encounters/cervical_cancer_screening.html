@@ -167,7 +167,7 @@
             __$('clearButton').style.display = 'none';
             __$('cancelButton').style.display = 'none';
             __$('keyboard').style.display = 'none';
-            __$('inputFrame0').style.display = 'none';
+            __$('inputFrame' + tstCurrentPage).style.display = 'none';
         }
 
         function modifyAttributes() {
@@ -183,14 +183,8 @@
         }
 
         function ContinueWorkFlow() {
-            jQuery.ajax({
-                type: "POST",
-                url: "/patients/set_cervical_cancer_session_variable",
-                data: "patient_id=" + patientID,
-                success: function (nextUrl) {
-                    window.location = nextUrl;
-                }
-            });
+            //set_cervical_cancer_session_variable
+            nextEncounter(sessionStorage.patientID, 1);
         }
 
         function cervicalFirstVisitPatient() {
@@ -202,7 +196,7 @@
         }
 
         function patientVIAwithinThreeYears() {
-            if (cervicalFirstVisitPatient() == true) {
+            if (cervicalFirstVisitPatient() == 'true') {
                 viaYear = parseInt(__$('via_year').value);
                 viaMonth = parseInt(__$('via_month').value);
                 dateString = viaYear + ', ' + viaMonth + ', ' + 1;
@@ -333,13 +327,22 @@
                     latest_cervical_cancer_result = cervical_cancer_observations["latest_cervical_cancer_result"];
                     latest_via_referral_outcome = cervical_cancer_observations["latest_via_referral_outcome"];
                     lesionSizeTooBig = cervical_cancer_observations["lesion_size_too_big"].toString();
+                    if (lesionSizeTooBig.match(/true/i)){
+                        __$("lesion_size_too_big").value = "true";
+                    }
+
+                    if (lesionSizeTooBig.match(/false/i)){
+                        __$("lesion_size_too_big").value = "false";
+                    }
+
+
                     no_cancer = cervical_cancer_observations["no_cancer"].toString();
                     patientWentForVIA = cervical_cancer_observations["patient_went_for_via"].toString();
                     remainingDays = cervical_cancer_observations["remaining_days"];
                     terminal = cervical_cancer_observations["terminal"].toString();
                     todaysReferralCount = cervical_cancer_observations["todays_refferals_count"]
                     viaReferred = cervical_cancer_observations["via_referred"].toString();
-
+                    viaResultsExpired = cervical_cancer_observations["via_results_expired"].toString();
                     gotoNextPage();
                 }
             };
@@ -371,6 +374,7 @@
             jQuery("#inputFrame" + tstCurrentPage).show();
             jQuery(".loader").hide();
         }
+        //__$('patient_went_for_via').value
 
         var answers_hash = {
             "ever_had_via": "",
@@ -383,7 +387,8 @@
             "month_cryo_was_done": "",
             "day_cryo_was_done": "",
             "cryo_result": "",
-            "referral_outcome": ""
+            "referral_outcome": "",
+            "patient_went_for_via": ""
         };
 
         function setNextButtonToGetInputValue(key) {
@@ -459,6 +464,13 @@
                     }
                 ]
             };
+
+            if (answers_hash["patient_went_for_via"].length > 0) {
+                obs.observations.push({
+                    concept_id: patient_went_for_via,
+                    value_coded: getYesNoConceptID(answers_hash["patient_went_for_via"])
+                })
+            }
 
             if (answers_hash["via_results"].length > 0) {
                 if (answers_hash["via_results"].match(/SUSPECT CANCER/i)) {
@@ -602,6 +614,18 @@
             }
         }
 
+        function submitWhenPatientWentForViaWithNoViaResults(){
+            __$('nextButton').onmousedown = function () {
+                submitCervicalCancerScreening();
+            }
+        }
+
+        function submitWhenPatientWentForViaWithYesViaResults(){
+            __$('nextButton').onmousedown = function () {
+                submitCervicalCancerScreening();
+            }
+        }
+
         function setHelpTextForExpiredResults() {
             var helptext = "Patient has retrospective results from less than three years ago.";
             helptext += "Therefore she can only be referred to VIA after <b>" + remainingDays + "</b> days";
@@ -732,21 +756,21 @@
 
             <select allowFreeText="false"
                     condition="__$('results_available?').value == 'No' && patientWentForVIA == 'false'"
+                    tt_onLoad="setNextButtonToGetInputValue('patient_went_for_via')"
                     helpText="Did patient go for VIA?" id="patient_went_for_via"
                     name="patient_went_for_via" tt_pageStyleClass="NoKeyboard">
-                <option value=''></option>
                 <option value=""></option>
                 <option value="Yes">Yes</option>
                 <option value="No">No</option>
             </select>
 
             <input condition="__$('patient_went_for_via').value == 'No'" helpText="Refer this patient to VIA"
-                   id="no_via" name="no_via" optional="true" tt_onLoad="modifyAttributes();"
+                   id="no_via" name="no_via" optional="true" tt_onLoad="modifyAttributes(); submitWhenPatientWentForViaWithYesViaResults()"
                    tt_pageStyleClass="NoControls" type="text"/>
 
             <input condition="__$('patient_went_for_via').value == 'Yes' || (__$('results_available?').value == 'No' && patientWentForVIA == 'true')"
                    helpText="Remind the patient to bring results on next visit!" id="yes_via" name="yes_via"
-                   optional="true" tt_onLoad="modifyAttributes()" tt_pageStyleClass="NoControls" type="text"/>
+                   optional="true" tt_onLoad="modifyAttributes(); submitWhenPatientWentForViaWithNoViaResults();" tt_pageStyleClass="NoControls" type="text"/>
 
 
             <input type="hidden" value="VIA RESULTS"/>
@@ -831,7 +855,7 @@
                    value=""/>
             <input type="hidden" value="VIA DONE DATE"/>
 
-            <input id="lesion_size_too_big" name="lesion_size_too_big" type="hidden" value="false"/>
+            <input id="lesion_size_too_big" name="lesion_size_too_big" type="hidden" value=""/>
 
         </form>
 
