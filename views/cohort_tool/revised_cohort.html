@@ -4,6 +4,24 @@
 <link rel="stylesheet" href="/assets/css/custom.css">
 
 <style type="text/css" xmlns="http://www.w3.org/1999/html">
+
+#spinner {
+    position: absolute;
+    top: 15%;
+    left: 40%;
+  }
+
+#report-cover {
+    position: absolute;
+    background-color: black;
+    width: 100%;
+    height: 102%;
+    left: 0%;
+    top: 0%;
+    z-index: 990;
+    opacity: 0.65;
+  }
+
     td {
         padding: 12px;
     }
@@ -2775,6 +2793,9 @@ function showDisaggregatedReport(){
   <input id='indicator' type='hidden' name = 'indicator' />
 </form>
 
+<img src="/apps/ART/assets/images/formloader.gif" id="spinner" />
+<div id="report-cover"></div>
+
 <script type="text/javascript">
 
 function validateReport() {  
@@ -3391,6 +3412,9 @@ function getIndicators() {
   if(!runningReport)
     return;
 
+  document.getElementById('spinner').style = 'display: inline;';
+  document.getElementById('report-cover').style = 'display: inline;';
+  
   var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1/programs/1/reports/cohort?name=";
   url += Quarter + " " + Year;
 
@@ -3401,6 +3425,8 @@ function getIndicators() {
       cohortResults = JSON.parse(this.responseText);
       myStopFunction();
       renderResults();
+      document.getElementById('spinner').style = 'display: none;';
+      document.getElementById('report-cover').style = 'display: none;';
     }else{
       runningReport = true;
       checkIfReportReady();
