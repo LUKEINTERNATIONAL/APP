@@ -4,6 +4,24 @@
 <link rel="stylesheet" href="/assets/css/custom.css">
 
 <style type="text/css" xmlns="http://www.w3.org/1999/html">
+
+#spinner {
+    position: absolute;
+    top: 15%;
+    left: 40%;
+  }
+
+#report-cover {
+    position: absolute;
+    background-color: black;
+    width: 100%;
+    height: 102%;
+    left: 0%;
+    top: 0%;
+    z-index: 990;
+    opacity: 0.65;
+  }
+
     td {
         padding: 12px;
     }
@@ -1906,7 +1924,7 @@ function showDisaggregatedReport(){
           </a>
       </td>
       <td class="number regimen_class">
-          <a href="javascript:drillDown('zero_p');" class="regimen" id="zero_a">
+          <a href="javascript:drillDown('zero_a');" class="regimen" id="zero_a">
               0
           </a>
       </td>
@@ -1929,7 +1947,7 @@ function showDisaggregatedReport(){
           </a>
       </td>
       <td class="number regimen_class">
-          <a href="javascript:drillDown('two_p');" class="regimen" id="two_a">
+          <a href="javascript:drillDown('two_a');" class="regimen" id="two_a">
               0
           </a>
       </td>
@@ -1947,7 +1965,7 @@ function showDisaggregatedReport(){
           </a>
       </td>
       <td class="number regimen_class">
-          <a href="javascript:drillDown('four_p');" class="regimen" id="four_a">
+          <a href="javascript:drillDown('four_a');" class="regimen" id="four_a">
               0
           </a>
       </td>
@@ -1963,7 +1981,7 @@ function showDisaggregatedReport(){
         &nbsp;
       </td>
       <td class="number regimen_class">
-          <a href="javascript:drillDown('nine_p');" class="regimen" id="five_a">
+          <a href="javascript:drillDown('five_a');" class="regimen" id="five_a">
               0
           </a>
       </td>
@@ -2045,7 +2063,7 @@ function showDisaggregatedReport(){
         &nbsp;
       </td>
       <td class="number regimen_class">
-          <a href="javascript:drillDown('zero_a');" class="regimen" id="zero_a">
+          <a href="javascript:drillDown('seven_a');" class="regimen" id="seven_a">
               0
           </a>
       </td>
@@ -2064,7 +2082,7 @@ function showDisaggregatedReport(){
         &nbsp;
       </td>
       <td class="number regimen_class">
-          <a href="javascript:drillDown('two_a');" class="regimen" id="two_a">
+          <a href="javascript:drillDown('eight_a');" class="regimen" id="eight_a">
               0
           </a>
       </td>
@@ -2080,12 +2098,12 @@ function showDisaggregatedReport(){
           Regimen <b>9</b>
       </td>
       <td class="number regimen_class">
-          <a href="javascript:drillDown('four_a');" class="regimen" id="four_a">
+          <a href="javascript:drillDown('nine_p');" class="regimen" id="nine_p">
               0
           </a>
       </td>
       <td class="number regimen_class">
-          <a href="javascript:drillDown('four_a');" class="regimen" id="four_a">
+          <a href="javascript:drillDown('nine_a');" class="regimen" id="nine_a">
               0
           </a>
       </td>
@@ -2104,7 +2122,7 @@ function showDisaggregatedReport(){
         &nbsp;
       </td>
       <td class="number regimen_class">
-          <a href="javascript:drillDown('five_a');" class="regimen" id="five_a">
+          <a href="javascript:drillDown('ten_a');" class="regimen" id="ten_a">
               0
           </a>
       </td>
@@ -2120,12 +2138,12 @@ function showDisaggregatedReport(){
           Regimen <b>11</b>
       </td>
       <td class="number regimen_class">
-          <a href="javascript:drillDown('six_a');" class="regimen" id="eleven_a">
+          <a href="javascript:drillDown('eleven_p');" class="regimen" id="eleven_p">
               0
           </a>
       </td>
       <td class="number regimen_class">
-          <a href="javascript:drillDown('six_a');" class="regimen" id="eleven_a">
+          <a href="javascript:drillDown('eleven_a');" class="regimen" id="eleven_a">
               0
           </a>
       </td>
@@ -2144,7 +2162,7 @@ function showDisaggregatedReport(){
         &nbsp;
       </td>
       <td class="number regimen_class">
-          <a href="javascript:drillDown('seven_a');" class="regimen" id="twelve_a">
+          <a href="javascript:drillDown('twelve_a');" class="regimen" id="twelve_a">
               0
           </a>
       </td>
@@ -2163,7 +2181,7 @@ function showDisaggregatedReport(){
         &nbsp;
       </td>
       <td class="number regimen_class">
-          <a href="javascript:drillDown('eight_a');" class="regimen" id="thirteen_a">
+          <a href="javascript:drillDown('thirteen_a');" class="regimen" id="thirteen_a">
               0
           </a>
       </td>
@@ -2182,7 +2200,7 @@ function showDisaggregatedReport(){
         &nbsp;
       </td>
       <td class="number regimen_class">
-          <a href="javascript:drillDown('nine_a');" class="regimen" id="fourteen_a">
+          <a href="javascript:drillDown('fourteen_a');" class="regimen" id="fourteen_a">
               0
           </a>
       </td>
@@ -2201,7 +2219,7 @@ function showDisaggregatedReport(){
         &nbsp;
       </td>
       <td class="number regimen_class">
-          <a href="javascript:drillDown('ten_a');" class="regimen" id="fifteen_a">
+          <a href="javascript:drillDown('fifteen_a');" class="regimen" id="fifteen_a">
               0
           </a>
       </td>
@@ -2774,6 +2792,9 @@ function showDisaggregatedReport(){
   <input id='patient_ids' type='hidden' name = 'patient_ids' />
   <input id='indicator' type='hidden' name = 'indicator' />
 </form>
+
+<img src="/apps/ART/assets/images/formloader.gif" id="spinner" />
+<div id="report-cover"></div>
 
 <script type="text/javascript">
 
@@ -3391,6 +3412,9 @@ function getIndicators() {
   if(!runningReport)
     return;
 
+  document.getElementById('spinner').style = 'display: inline;';
+  document.getElementById('report-cover').style = 'display: inline;';
+  
   var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1/programs/1/reports/cohort?name=";
   url += Quarter + " " + Year;
 
@@ -3401,6 +3425,8 @@ function getIndicators() {
       cohortResults = JSON.parse(this.responseText);
       myStopFunction();
       renderResults();
+      document.getElementById('spinner').style = 'display: none;';
+      document.getElementById('report-cover').style = 'display: none;';
     }else{
       runningReport = true;
       checkIfReportReady();

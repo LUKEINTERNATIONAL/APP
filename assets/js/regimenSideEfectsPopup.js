@@ -668,7 +668,23 @@ function getStaterPackBreakDown() {
     if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
        var data = JSON.parse(this.responseText);
        if(data.length > 0) {
-         givenRegimens[selectedRegimens] = data;
+         var drugs = [];
+         for(var i = 0 ; i < data.length ; i++){
+           var drug = {
+              drug_name: data[i].drug_name,
+              concept_name: data[i].concept_name,
+              drug_id: data[i].drug_id,
+              units: data[i].units,
+              pack_size: (data[i].pack_size == null ? 1 : data[i].pack_size),
+              am: data[i].am,
+              noon: '0',
+              pm: data[i].pm,
+              category: (data[i].regimen_category != undefined ? data[i].regimen_category : ''),
+              alternative_drug_name: data[i].alternative_drug_name
+          }
+          drugs.push(drug);
+         }
+         givenRegimens[selectedRegimens] = drugs;
        }
        starterPackSelected = true;
        closePopUp();
