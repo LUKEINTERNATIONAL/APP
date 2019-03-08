@@ -32,30 +32,18 @@
 
         var tstCurrentDate = moment(tstCurrentDate).format("YYYY-MM-DD");
 
+        var receipts;
+
         function selectedDrugs() {
-            return
-            drugs = document.getElementById("select_drugs");
-            drugs = getSelectedOptions(drugs);
-            drugLength = drugs.length;
-            //var drugArray = [];
-            var myForm = document.getElementById("create_stoke");
-            for (i = 0; i < drugLength; i++) {
-                //drugArray.push(drugs[i].value)
-                var newOption = document.createElement("input");
-
-                newOption.type = "hidden"
-                newOption.name = 'observations[][concept_name]';
-                newOption.value = drugs[i].value;
-                myForm.appendChild(newOption);
-
-                var newOption = document.createElement("input");
-                newOption.type = "hidden"
-                newOption.id = "observations__obs_value_numeric";
-                newOption.name = "observations[][value_numeric]";
-                newOption.value = drugs[i].value;
-                myForm.appendChild(newOption);
+            var drugs_hash = [];
+            var drugs = document.getElementById("select_drugs");
+            var selectedDrugsLiOptions = getSelectedOptions(drugs);
+            for (var i = 0; i <= selectedDrugsLiOptions.length - 1; i++) {
+                var drug_id = selectedDrugsLiOptions[i].value;
+                var drug_name = selectedDrugsLiOptions[i].innerHTML;
+                drugs_hash.push({drug_name: drug_name, drug_id: drug_id});
             }
-
+            receipts = drugs_hash;
         }
 
         function getSelectedOptions(select) {
@@ -376,6 +364,27 @@
             }
         }
 
+        function customizeFinishButton() {
+            __$("nextButton").onmousedown = function () {
+                var delivery_date = __$('touchscreenInput' + tstCurrentPage).value;
+                var barcode_value = __$("barcode").value;
+                var data = {drugs: receipts, identifier: barcode_value, delivery_date: delivery_date};
+                data = JSON.stringify(data);
+                sessionStorage.receipts = data;
+                if (!delivery_date) {
+                    showMessage("Enter value to continue");
+                    return;
+                }
+                window.location = "/apps/ART/views/stock_management/set_receipts.html"
+            }
+        }
+
+        function resetNextButton() {
+            __$('nextButton').onmousedown = function () {
+                gotoNextPage();
+            }
+        }
+
     </script>
 
     <style>
@@ -569,7 +578,7 @@
 
             <select field_type="alpha" helpText="Select products received" id="select_drugs" multiple="multiple"
                     name="drug_name[]" optional="true" selectAll="true"
-                    tt_onLoad="returning = true; hidePreviousDrugs();" tt_onUnLoad="selectedDrugs()"
+                    tt_onLoad="returning = true; hidePreviousDrugs(); resetNextButton();" tt_onUnLoad="selectedDrugs()"
                     tt_pageStyleClass="longSelectList">
                 <option></option>
                 <option value='733'>Abacavir / Lamivudine 60 / 30mg, tin of 60 tablets</option>
@@ -602,7 +611,8 @@
             </select>
 
             <input field_type="date" helpText="Delivery Date" id="delivery_date" maxDate="2049-03-06"
-                   name="observations[][value_datetime]" tt_pageStyleClass="Date DatesOnly" type="text"/>
+                   name="delivery_date" tt_onLoad="customizeFinishButton();" tt_pageStyleClass="Date DatesOnly"
+                   type="text"/>
 
             <input name="observations[][concept_name]" type="hidden" value="delivery_date"/>
 
