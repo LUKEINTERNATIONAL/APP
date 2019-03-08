@@ -24,13 +24,144 @@
         var tstCurrentDate = moment(tstCurrentDate).format("YYYY-MM-DD");
         var target;
         var delivery_date = "2019-03-07";
-        var drugs = ["ABC/3TC (Abacavir and Lamivudine 60/30mg tablet)","ABC/3TC (Abacavir and Lamivudine 600/300mg tablet)","ATV/r (Atazanavir 300mg/Ritonavir 100mg)","TMP/SMX (Cotrimoxazole 120mg tablet)","Cotrimoxazole (480mg tablet)","Cotrimoxazole (960mg)","EFV (Efavirenz 200mg tablet)","EFV (Efavirenz 600mg tablet)","INH or H (Isoniazid 100mg tablet)","INH or H (Isoniazid 300mg tablet)","d4T/3TC/NVP (30/150/200mg tablet)","TDF/3TC (Tenofavir and Lamivudine 300/300mg tablet","LPV/r (Lopinavir and Ritonavir 100/25mg tablet)","LPV/r (Lopinavir and Ritonavir 200/50mg tablet)","NVP (Nevirapine syrup 1mL/dose in 100mL bottle)","NVP (Nevirapine syrup 1.5mL/dose in 25mL bottle)","NVP (Nevirapine 200 mg tablet)","NVP (Nevirapine 50 mg tablet)","Pyridoxine (50mg)","d4T/3TC (Stavudine Lamivudine 30/150 tablet)","TDF/3TC/EFV (300/300/600mg tablet)","AZT/3TC/NVP (60/30/50mg tablet)","AZT/3TC/NVP (300/150/200mg tablet)","AZT/3TC (Zidovudine and Lamivudine 300/150mg)","AZT/3TC (Zidovudine and Lamivudine 60/30 tablet)"];
-        var formatted_drugs = ["EFV (Efavirenz 600mg tablet)","NVP (Nevirapine syrup 1.5mL/dose in 25mL bottle)","NVP (Nevirapine 200 mg tablet)","INH or H (Isoniazid 100mg tablet)","EFV (Efavirenz 200mg tablet)","AZT/3TC (Zidovudine and Lamivudine 300/150mg)","LPV/r (Lopinavir and Ritonavir 200/50mg tablet)","LPV/r (Lopinavir and Ritonavir 100/25mg tablet)","Pyridoxine (50mg)","Cotrimoxazole (480mg tablet)","Cotrimoxazole (960mg)","d4T/3TC/NVP (30/150/200mg tablet)","AZT/3TC/NVP (300/150/200mg tablet)","AZT/3TC/NVP (60/30/50mg tablet)","ABC/3TC (Abacavir and Lamivudine 60/30mg tablet)","TDF/3TC (Tenofavir and Lamivudine 300/300mg tablet","TDF/3TC/EFV (300/300/600mg tablet)","AZT/3TC (Zidovudine and Lamivudine 60/30 tablet)","d4T/3TC (Stavudine Lamivudine 30/150 tablet)","INH or H (Isoniazid 300mg tablet)","ATV/r (Atazanavir 300mg/Ritonavir 100mg)","TMP/SMX (Cotrimoxazole 120mg tablet)","NVP (Nevirapine 50 mg tablet)","ABC/3TC (Abacavir and Lamivudine 600/300mg tablet)","NVP (Nevirapine syrup 1mL/dose in 100mL bottle)"];
-        var drug_short_names = {"ABC/3TC (Abacavir and Lamivudine 600/300mg tablet)":"ABC / 3TC 600 / 300mg 30 tabs","NVP (Nevirapine 50 mg tablet)":"NVP 50mg 60 tabs","LPV/r (Lopinavir and Ritonavir 200/50mg tablet)":"LPV / r  200 / 50mg 120 tabs","ATV/r (Atazanavir 300mg/Ritonavir 100mg)":"ATV / r  300 / 100mg 30 tabs","INH or H (Isoniazid 300mg tablet)":"Isoniazid (H)  300mg 1000 tabs","AZT/3TC (Zidovudine and Lamivudine 60/30 tablet)":"AZT / 3TC 60 / 30mg 60 tabs","d4T/3TC/NVP (30/150/200mg tablet)":"d4T/3TC/NVP 30 / 150 / 200mg 60 tabs","Pyridoxine (50mg)":"Pyridoxine 50mg 1000 tabs","EFV (Efavirenz 200mg tablet)":"EFV 200mg 90 tabs","d4T/3TC (Stavudine Lamivudine 30/150 tablet)":"d4T/3TC 30 / 150mg 60 tabs","AZT/3TC/NVP (300/150/200mg tablet)":"AZT / 3TC / NVP 300 / 150 / 200mg 60 tabs","Cotrimoxazole (480mg tablet)":"Cotrimoxazole 400 / 80mg 1000 tabs","INH or H (Isoniazid 100mg tablet)":"Isoniazid (H)  100mg 100 tabs","LPV/r (Lopinavir and Ritonavir 100/25mg tablet)":"LPV / r  100 / 25mg 60 tabs","NVP (Nevirapine 200 mg tablet)":"NVP 200mg 60 tabs","NVP (Nevirapine syrup 1mL/dose in 100mL bottle)":"NVP 10mg/ml 100ml","TDF/3TC (Tenofavir and Lamivudine 300/300mg tablet":"TDF / 3TC  300 / 300mg 30 tabs","NVP (Nevirapine syrup 1.5mL/dose in 25mL bottle)":"NVP 10mg/ml 25ml","EFV (Efavirenz 600mg tablet)":"EFV 600mg 30 tabs","Cotrimoxazole (960mg)":"Cotrimoxazole 960mg 1000 tabs","TMP/SMX (Cotrimoxazole 120mg tablet)":"Cotrimoxazole 100 / 20mg 1000 tabs","TDF/3TC/EFV (300/300/600mg tablet)":"TDF / 3TC / EFV  300 / 300 / 600mg 30 tabs","AZT/3TC/NVP (60/30/50mg tablet)":"AZT / 3TC / NVP 60 / 30 /50mg 60 tabs","AZT/3TC (Zidovudine and Lamivudine 300/150mg)":"AZT / 3TC 300 / 150mg 60 tabs","ABC/3TC (Abacavir and Lamivudine 60/30mg tablet)":"ABC / 3TC 60 / 30mg 60 tabs"};
-        var drug_cms_names = {"ABC/3TC (Abacavir and Lamivudine 600/300mg tablet)":"Abacavir sulfate 600mg / Lamivudine 300mg, tin of 30 tablets","NVP (Nevirapine 50 mg tablet)":"Nevirapine 50mg, tin of 60 tablets","LPV/r (Lopinavir and Ritonavir 200/50mg tablet)":"Lopinavir / Ritonavir 200 / 50mg, tin of 120 tablets","ATV/r (Atazanavir 300mg/Ritonavir 100mg)":"Atazanavir / Ritonavir 300 / 100mg, tin of 30 tablets","INH or H (Isoniazid 300mg tablet)":"Isoniazid 300mg, tin of 1000 tablets","AZT/3TC (Zidovudine and Lamivudine 60/30 tablet)":"Zidovudine / lamivudine 60 / 30mg, tin of 60 tablets","d4T/3TC/NVP (30/150/200mg tablet)":"Lamivudine / Stavudine / Nevirapine 150 / 30 / 200mg, tin of 60 tablets","Pyridoxine (50mg)":"Pyridoxine 50mg tab, 1000 tablets","EFV (Efavirenz 200mg tablet)":"Efavirenz 200mg, tin of 90 tablets","d4T/3TC (Stavudine Lamivudine 30/150 tablet)":"Stavudine / lamivudine 30 / 150mg, tin of 60 tablets","AZT/3TC/NVP (300/150/200mg tablet)":"Zidovudine / lamivudine /Nevirapine 300 / 150 / 200mg, tin of 60 tablets","Cotrimoxazole (480mg tablet)":"Cotrimoxazole 480mg, tin of 1000 tablets","INH or H (Isoniazid 100mg tablet)":"Isoniazid 100mg, tin of 100 tablets","LPV/r (Lopinavir and Ritonavir 100/25mg tablet)":"Lopinavir / Ritonavir 100 / 25mg, tin of 60 tablets","NVP (Nevirapine 200 mg tablet)":"Nevirapine 200mg, tin of 60 tablets","NVP (Nevirapine syrup 1mL/dose in 100mL bottle)":"Nevirapine 10mg/ml, 100ml","TDF/3TC (Tenofavir and Lamivudine 300/300mg tablet":"Lamivudine / Tenofovir disoproxil fumarate 300 / 300mg, tin of 30 tablets","NVP (Nevirapine syrup 1.5mL/dose in 25mL bottle)":"Nevirapine 10mg/ml, 25ml","EFV (Efavirenz 600mg tablet)":"Efavirenz 600mg, tin of 30 tablets","Cotrimoxazole (960mg)":"Cotrimoxazole 960mg, blister pack of 1000 tablets","TMP/SMX (Cotrimoxazole 120mg tablet)":"Cotrimoxazole 120mg, blister pack of 1000 dispersible tablets","TDF/3TC/EFV (300/300/600mg tablet)":"Tenofovir disoproxil fumarate / Lamivudine / Efavirenz 300 / 300 / 600mg, tin of 30 tablets","AZT/3TC/NVP (60/30/50mg tablet)":"Zidovudine / lamivudine /Nevirapine 30 / 60 / 50mg, tin of 60 tablets","AZT/3TC (Zidovudine and Lamivudine 300/150mg)":"Zidovudine / lamivudine 300 / 150mg, tin of 60 tablets","ABC/3TC (Abacavir and Lamivudine 60/30mg tablet)":"Abacavir / Lamivudine 60 / 30mg, tin of 60 tablets"};
-        var drug_cms_packsizes = {"ABC/3TC (Abacavir and Lamivudine 600/300mg tablet)":30,"NVP (Nevirapine 50 mg tablet)":60,"LPV/r (Lopinavir and Ritonavir 200/50mg tablet)":120,"ATV/r (Atazanavir 300mg/Ritonavir 100mg)":30,"INH or H (Isoniazid 300mg tablet)":1000,"AZT/3TC (Zidovudine and Lamivudine 60/30 tablet)":60,"d4T/3TC/NVP (30/150/200mg tablet)":60,"Pyridoxine (50mg)":1000,"EFV (Efavirenz 200mg tablet)":90,"d4T/3TC (Stavudine Lamivudine 30/150 tablet)":60,"AZT/3TC/NVP (300/150/200mg tablet)":60,"Cotrimoxazole (480mg tablet)":1000,"INH or H (Isoniazid 100mg tablet)":100,"LPV/r (Lopinavir and Ritonavir 100/25mg tablet)":60,"NVP (Nevirapine 200 mg tablet)":60,"NVP (Nevirapine syrup 1mL/dose in 100mL bottle)":100,"TDF/3TC (Tenofavir and Lamivudine 300/300mg tablet":30,"NVP (Nevirapine syrup 1.5mL/dose in 25mL bottle)":25,"EFV (Efavirenz 600mg tablet)":30,"Cotrimoxazole (960mg)":1000,"TMP/SMX (Cotrimoxazole 120mg tablet)":1000,"TDF/3TC/EFV (300/300/600mg tablet)":30,"AZT/3TC/NVP (60/30/50mg tablet)":60,"AZT/3TC (Zidovudine and Lamivudine 300/150mg)":60,"ABC/3TC (Abacavir and Lamivudine 60/30mg tablet)":60};
+        var drugs = ["ABC/3TC (Abacavir and Lamivudine 60/30mg tablet)",
+            "ABC/3TC (Abacavir and Lamivudine 600/300mg tablet)",
+            "ATV/r (Atazanavir 300mg/Ritonavir 100mg)",
+            "TMP/SMX (Cotrimoxazole 120mg tablet)",
+            "Cotrimoxazole (480mg tablet)",
+            "Cotrimoxazole (960mg)",
+            "EFV (Efavirenz 200mg tablet)",
+            "EFV (Efavirenz 600mg tablet)",
+            "INH or H (Isoniazid 100mg tablet)",
+            "INH or H (Isoniazid 300mg tablet)",
+            "d4T/3TC/NVP (30/150/200mg tablet)",
+            "TDF/3TC (Tenofavir and Lamivudine 300/300mg tablet",
+            "LPV/r (Lopinavir and Ritonavir 100/25mg tablet)",
+            "LPV/r (Lopinavir and Ritonavir 200/50mg tablet)",
+            "NVP (Nevirapine syrup 1mL/dose in 100mL bottle)",
+            "NVP (Nevirapine syrup 1.5mL/dose in 25mL bottle)",
+            "NVP (Nevirapine 200 mg tablet)",
+            "NVP (Nevirapine 50 mg tablet)",
+            "Pyridoxine (50mg)",
+            "d4T/3TC (Stavudine Lamivudine 30/150 tablet)",
+            "TDF/3TC/EFV (300/300/600mg tablet)",
+            "AZT/3TC/NVP (60/30/50mg tablet)",
+            "AZT/3TC/NVP (300/150/200mg tablet)",
+            "AZT/3TC (Zidovudine and Lamivudine 300/150mg)",
+            "AZT/3TC (Zidovudine and Lamivudine 60/30 tablet)"];
 
-        var selected = ["ABC/3TC (Abacavir and Lamivudine 60/30mg tablet)","ABC/3TC (Abacavir and Lamivudine 600/300mg tablet)","ATV/r (Atazanavir 300mg/Ritonavir 100mg)","TMP/SMX (Cotrimoxazole 120mg tablet)","Cotrimoxazole (480mg tablet)","Cotrimoxazole (960mg)","EFV (Efavirenz 200mg tablet)","EFV (Efavirenz 600mg tablet)","INH or H (Isoniazid 100mg tablet)","INH or H (Isoniazid 300mg tablet)","d4T/3TC/NVP (30/150/200mg tablet)","TDF/3TC (Tenofavir and Lamivudine 300/300mg tablet","LPV/r (Lopinavir and Ritonavir 100/25mg tablet)","LPV/r (Lopinavir and Ritonavir 200/50mg tablet)","NVP (Nevirapine syrup 1mL/dose in 100mL bottle)","NVP (Nevirapine syrup 1.5mL/dose in 25mL bottle)","NVP (Nevirapine 200 mg tablet)","NVP (Nevirapine 50 mg tablet)","Pyridoxine (50mg)","d4T/3TC (Stavudine Lamivudine 30/150 tablet)","TDF/3TC/EFV (300/300/600mg tablet)","AZT/3TC/NVP (60/30/50mg tablet)","AZT/3TC/NVP (300/150/200mg tablet)","AZT/3TC (Zidovudine and Lamivudine 300/150mg)","AZT/3TC (Zidovudine and Lamivudine 60/30 tablet)"]
+        var formatted_drugs = ["EFV (Efavirenz 600mg tablet)",
+            "NVP (Nevirapine syrup 1.5mL/dose in 25mL bottle)",
+            "NVP (Nevirapine 200 mg tablet)",
+            "INH or H (Isoniazid 100mg tablet)",
+            "EFV (Efavirenz 200mg tablet)",
+            "AZT/3TC (Zidovudine and Lamivudine 300/150mg)",
+            "LPV/r (Lopinavir and Ritonavir 200/50mg tablet)",
+            "LPV/r (Lopinavir and Ritonavir 100/25mg tablet)",
+            "Pyridoxine (50mg)","Cotrimoxazole (480mg tablet)",
+            "Cotrimoxazole (960mg)","d4T/3TC/NVP (30/150/200mg tablet)",
+            "AZT/3TC/NVP (300/150/200mg tablet)",
+            "AZT/3TC/NVP (60/30/50mg tablet)",
+            "ABC/3TC (Abacavir and Lamivudine 60/30mg tablet)",
+            "TDF/3TC (Tenofavir and Lamivudine 300/300mg tablet",
+            "TDF/3TC/EFV (300/300/600mg tablet)",
+            "AZT/3TC (Zidovudine and Lamivudine 60/30 tablet)",
+            "d4T/3TC (Stavudine Lamivudine 30/150 tablet)",
+            "INH or H (Isoniazid 300mg tablet)",
+            "ATV/r (Atazanavir 300mg/Ritonavir 100mg)",
+            "TMP/SMX (Cotrimoxazole 120mg tablet)",
+            "NVP (Nevirapine 50 mg tablet)",
+            "ABC/3TC (Abacavir and Lamivudine 600/300mg tablet)",
+            "NVP (Nevirapine syrup 1mL/dose in 100mL bottle)"];
+
+        var drug_short_names = {"ABC/3TC (Abacavir and Lamivudine 600/300mg tablet)":"ABC / 3TC 600 / 300mg 30 tabs",
+            "NVP (Nevirapine 50 mg tablet)":"NVP 50mg 60 tabs",
+            "LPV/r (Lopinavir and Ritonavir 200/50mg tablet)":"LPV / r  200 / 50mg 120 tabs",
+            "ATV/r (Atazanavir 300mg/Ritonavir 100mg)":"ATV / r  300 / 100mg 30 tabs",
+            "INH or H (Isoniazid 300mg tablet)":"Isoniazid (H)  300mg 1000 tabs",
+            "AZT/3TC (Zidovudine and Lamivudine 60/30 tablet)":"AZT / 3TC 60 / 30mg 60 tabs",
+            "d4T/3TC/NVP (30/150/200mg tablet)":"d4T/3TC/NVP 30 / 150 / 200mg 60 tabs",
+            "Pyridoxine (50mg)":"Pyridoxine 50mg 1000 tabs",
+            "EFV (Efavirenz 200mg tablet)":"EFV 200mg 90 tabs",
+            "d4T/3TC (Stavudine Lamivudine 30/150 tablet)":"d4T/3TC 30 / 150mg 60 tabs",
+            "AZT/3TC/NVP (300/150/200mg tablet)":"AZT / 3TC / NVP 300 / 150 / 200mg 60 tabs",
+            "Cotrimoxazole (480mg tablet)":"Cotrimoxazole 400 / 80mg 1000 tabs",
+            "INH or H (Isoniazid 100mg tablet)":"Isoniazid (H)  100mg 100 tabs",
+            "LPV/r (Lopinavir and Ritonavir 100/25mg tablet)":"LPV / r  100 / 25mg 60 tabs",
+            "NVP (Nevirapine 200 mg tablet)":"NVP 200mg 60 tabs",
+            "NVP (Nevirapine syrup 1mL/dose in 100mL bottle)":"NVP 10mg/ml 100ml",
+            "TDF/3TC (Tenofavir and Lamivudine 300/300mg tablet":"TDF / 3TC  300 / 300mg 30 tabs",
+            "NVP (Nevirapine syrup 1.5mL/dose in 25mL bottle)":"NVP 10mg/ml 25ml",
+            "EFV (Efavirenz 600mg tablet)":"EFV 600mg 30 tabs",
+            "Cotrimoxazole (960mg)":"Cotrimoxazole 960mg 1000 tabs",
+            "TMP/SMX (Cotrimoxazole 120mg tablet)":"Cotrimoxazole 100 / 20mg 1000 tabs",
+            "TDF/3TC/EFV (300/300/600mg tablet)":"TDF / 3TC / EFV  300 / 300 / 600mg 30 tabs",
+            "AZT/3TC/NVP (60/30/50mg tablet)":"AZT / 3TC / NVP 60 / 30 /50mg 60 tabs",
+            "AZT/3TC (Zidovudine and Lamivudine 300/150mg)":"AZT / 3TC 300 / 150mg 60 tabs",
+            "ABC/3TC (Abacavir and Lamivudine 60/30mg tablet)":"ABC / 3TC 60 / 30mg 60 tabs"};
+
+        var drug_cms_names = {"ABC/3TC (Abacavir and Lamivudine 600/300mg tablet)":"Abacavir sulfate 600mg / Lamivudine 300mg, tin of 30 tablets",
+            "NVP (Nevirapine 50 mg tablet)":"Nevirapine 50mg, tin of 60 tablets",
+            "LPV/r (Lopinavir and Ritonavir 200/50mg tablet)":"Lopinavir / Ritonavir 200 / 50mg, tin of 120 tablets",
+            "ATV/r (Atazanavir 300mg/Ritonavir 100mg)":"Atazanavir / Ritonavir 300 / 100mg, tin of 30 tablets",
+            "INH or H (Isoniazid 300mg tablet)":"Isoniazid 300mg, tin of 1000 tablets",
+            "AZT/3TC (Zidovudine and Lamivudine 60/30 tablet)":"Zidovudine / lamivudine 60 / 30mg, tin of 60 tablets",
+            "d4T/3TC/NVP (30/150/200mg tablet)":"Lamivudine / Stavudine / Nevirapine 150 / 30 / 200mg, tin of 60 tablets",
+            "Pyridoxine (50mg)":"Pyridoxine 50mg tab, 1000 tablets",
+            "EFV (Efavirenz 200mg tablet)":"Efavirenz 200mg, tin of 90 tablets",
+            "d4T/3TC (Stavudine Lamivudine 30/150 tablet)":"Stavudine / lamivudine 30 / 150mg, tin of 60 tablets",
+            "AZT/3TC/NVP (300/150/200mg tablet)":"Zidovudine / lamivudine /Nevirapine 300 / 150 / 200mg, tin of 60 tablets",
+            "Cotrimoxazole (480mg tablet)":"Cotrimoxazole 480mg, tin of 1000 tablets",
+            "INH or H (Isoniazid 100mg tablet)":"Isoniazid 100mg, tin of 100 tablets",
+            "LPV/r (Lopinavir and Ritonavir 100/25mg tablet)":"Lopinavir / Ritonavir 100 / 25mg, tin of 60 tablets",
+            "NVP (Nevirapine 200 mg tablet)":"Nevirapine 200mg, tin of 60 tablets",
+            "NVP (Nevirapine syrup 1mL/dose in 100mL bottle)":"Nevirapine 10mg/ml, 100ml",
+            "TDF/3TC (Tenofavir and Lamivudine 300/300mg tablet":"Lamivudine / Tenofovir disoproxil fumarate 300 / 300mg, tin of 30 tablets",
+            "NVP (Nevirapine syrup 1.5mL/dose in 25mL bottle)":"Nevirapine 10mg/ml, 25ml",
+            "EFV (Efavirenz 600mg tablet)":"Efavirenz 600mg, tin of 30 tablets",
+            "Cotrimoxazole (960mg)":"Cotrimoxazole 960mg, blister pack of 1000 tablets",
+            "TMP/SMX (Cotrimoxazole 120mg tablet)":"Cotrimoxazole 120mg, blister pack of 1000 dispersible tablets",
+            "TDF/3TC/EFV (300/300/600mg tablet)":"Tenofovir disoproxil fumarate / Lamivudine / Efavirenz 300 / 300 / 600mg, tin of 30 tablets",
+            "AZT/3TC/NVP (60/30/50mg tablet)":"Zidovudine / lamivudine /Nevirapine 30 / 60 / 50mg, tin of 60 tablets",
+            "AZT/3TC (Zidovudine and Lamivudine 300/150mg)":"Zidovudine / lamivudine 300 / 150mg, tin of 60 tablets",
+            "ABC/3TC (Abacavir and Lamivudine 60/30mg tablet)":"Abacavir / Lamivudine 60 / 30mg, tin of 60 tablets"};
+
+        var drug_cms_packsizes = {"ABC/3TC (Abacavir and Lamivudine 600/300mg tablet)":30,
+            "NVP (Nevirapine 50 mg tablet)":60,
+            "LPV/r (Lopinavir and Ritonavir 200/50mg tablet)":120,
+            "ATV/r (Atazanavir 300mg/Ritonavir 100mg)":30,
+            "INH or H (Isoniazid 300mg tablet)":1000,
+            "AZT/3TC (Zidovudine and Lamivudine 60/30 tablet)":60,
+            "d4T/3TC/NVP (30/150/200mg tablet)":60,
+            "Pyridoxine (50mg)":1000,
+            "EFV (Efavirenz 200mg tablet)":90,
+            "d4T/3TC (Stavudine Lamivudine 30/150 tablet)":60,
+            "AZT/3TC/NVP (300/150/200mg tablet)":60,
+            "Cotrimoxazole (480mg tablet)":1000,
+            "INH or H (Isoniazid 100mg tablet)":100,
+            "LPV/r (Lopinavir and Ritonavir 100/25mg tablet)":60,
+            "NVP (Nevirapine 200 mg tablet)":60,
+            "NVP (Nevirapine syrup 1mL/dose in 100mL bottle)":100,
+            "TDF/3TC (Tenofavir and Lamivudine 300/300mg tablet":30,
+            "NVP (Nevirapine syrup 1.5mL/dose in 25mL bottle)":25,
+            "EFV (Efavirenz 600mg tablet)":30,"Cotrimoxazole (960mg)":1000,
+            "TMP/SMX (Cotrimoxazole 120mg tablet)":1000,
+            "TDF/3TC/EFV (300/300/600mg tablet)":30,
+            "AZT/3TC/NVP (60/30/50mg tablet)":60,
+            "AZT/3TC (Zidovudine and Lamivudine 300/150mg)":60,
+            "ABC/3TC (Abacavir and Lamivudine 60/30mg tablet)":60};
+
+        var selected = [];
+
+        var selected_drugs_hash = drugs = JSON.parse(sessionStorage.receipts)["drugs"];
+        for (var key in selected_drugs_hash){
+            var short_name = selected_drugs_hash[key]["short_name"];
+            var full_name = selected_drugs_hash[key]["full_name"];
+            var drug_id = selected_drugs_hash[key]["drug_id"];
+            selected.push(short_name)
+        }
+
+
         var unfinished_drugs = [];
         var sieved = [];
         var sievable = [];

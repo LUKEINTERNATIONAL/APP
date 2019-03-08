@@ -38,11 +38,14 @@
             var drugs_hash = [];
             var drugs = document.getElementById("select_drugs");
             var selectedDrugsLiOptions = getSelectedOptions(drugs);
+
             for (var i = 0; i <= selectedDrugsLiOptions.length - 1; i++) {
-                var drug_id = selectedDrugsLiOptions[i].value;
-                var drug_name = selectedDrugsLiOptions[i].innerHTML;
-                drugs_hash.push({drug_name: drug_name, drug_id: drug_id});
+                var short_name = selectedDrugsLiOptions[i].value;
+                var full_name = selectedDrugsLiOptions[i].innerHTML;
+                var drug_id = selectedDrugsLiOptions[i].getAttribute("drug_id");
+                drugs_hash.push({short_name: short_name, full_name: full_name, drug_id: drug_id});
             }
+
             receipts = drugs_hash;
         }
 
@@ -581,43 +584,78 @@
                     tt_onLoad="returning = true; hidePreviousDrugs(); resetNextButton();" tt_onUnLoad="selectedDrugs()"
                     tt_pageStyleClass="longSelectList">
                 <option></option>
-                <option value='733'>Abacavir / Lamivudine 60 / 30mg, tin of 60 tablets</option>
-                <option value='969'>Abacavir sulfate 600mg / Lamivudine 300mg, tin of 30 tablets</option>
-                <option value='932'>Atazanavir / Ritonavir 300 / 100mg, tin of 30 tablets</option>
-                <option value='963'>Cotrimoxazole 120mg, blister pack of 1000 dispersible tablets</option>
-                <option value='297'>Cotrimoxazole 480mg, tin of 1000 tablets</option>
-                <option value='576'>Cotrimoxazole 960mg, blister pack of 1000 tablets</option>
-                <option value='30'>Efavirenz 200mg, tin of 90 tablets</option>
-                <option value='11'>Efavirenz 600mg, tin of 30 tablets</option>
-                <option value='24'>Isoniazid 100mg, tin of 100 tablets</option>
-                <option value='931'>Isoniazid 300mg, tin of 1000 tablets</option>
-                <option value='613'>Lamivudine / Stavudine / Nevirapine 150 / 30 / 200mg, tin of 60 tablets</option>
-                <option value='734'>Lamivudine / Tenofovir disoproxil fumarate 300 / 300mg, tin of 30 tablets</option>
-                <option value='74'>Lopinavir / Ritonavir 100 / 25mg, tin of 60 tablets</option>
-                <option value='73'>Lopinavir / Ritonavir 200 / 50mg, tin of 120 tablets</option>
-                <option value='971'>Nevirapine 10mg/ml, 100ml</option>
-                <option value='21'>Nevirapine 10mg/ml, 25ml</option>
-                <option value='22'>Nevirapine 200mg, tin of 60 tablets</option>
-                <option value='968'>Nevirapine 50mg, tin of 60 tablets</option>
-                <option value='76'>Pyridoxine 50mg tab, 1000 tablets</option>
-                <option value='738'>Stavudine / lamivudine 30 / 150mg, tin of 60 tablets</option>
-                <option value='735'>Tenofovir disoproxil fumarate / Lamivudine / Efavirenz 300 / 300 / 600mg, tin of 30
-                    tablets
+                <option value='ABC/3TC (Abacavir and Lamivudine 60/30mg tablet)' drug_id="733">Abacavir / Lamivudine 60
+                    / 30mg, tin of 60 tablets
                 </option>
-                <option value='732'>Zidovudine / lamivudine /Nevirapine 30 / 60 / 50mg, tin of 60 tablets</option>
-                <option value='731'>Zidovudine / lamivudine /Nevirapine 300 / 150 / 200mg, tin of 60 tablets</option>
-                <option value='39'>Zidovudine / lamivudine 300 / 150mg, tin of 60 tablets</option>
-                <option value='736'>Zidovudine / lamivudine 60 / 30mg, tin of 60 tablets</option>
+                <option value='ABC/3TC (Abacavir and Lamivudine 600/300mg tablet)' drug_id="969">Abacavir sulfate 600mg
+                    / Lamivudine 300mg, tin of 30 tablets
+                </option>
+                <option value='ATV/r (Atazanavir 300mg/Ritonavir 100mg)' drug_id="932">Atazanavir / Ritonavir 300 /
+                    100mg, tin of 30 tablets
+                </option>
+                <option value='TMP/SMX (Cotrimoxazole 120mg tablet)' drug_id="963">Cotrimoxazole 120mg, blister pack of
+                    1000 dispersible tablets
+                </option>
+                <option value='Cotrimoxazole (480mg tablet)' drug_id="297">Cotrimoxazole 480mg, tin of 1000 tablets
+                </option>
+                <option value='Cotrimoxazole (960mg)' drug_id="576">Cotrimoxazole 960mg, blister pack of 1000 tablets
+                </option>
+                <option value='EFV (Efavirenz 200mg tablet)' drug_id="30">Efavirenz 200mg, tin of 90 tablets</option>
+                <option value='EFV (Efavirenz 600mg tablet)' drug_id="11">Efavirenz 600mg, tin of 30 tablets</option>
+                <option value='INH or H (Isoniazid 100mg tablet)' drug_id="24">Isoniazid 100mg, tin of 100 tablets
+                </option>
+                <option value='INH or H (Isoniazid 300mg tablet)' drug_id="931">Isoniazid 300mg, tin of 1000 tablets
+                </option>
+                <option value='d4T/3TC/NVP (30/150/200mg tablet)' drug_id="613">Lamivudine / Stavudine / Nevirapine 150
+                    / 30 / 200mg, tin of 60 tablets
+                </option>
+                <option value='TDF/3TC (Tenofavir and Lamivudine 300/300mg tablet' drug_id="734">Lamivudine / Tenofovir
+                    disoproxil fumarate 300 / 300mg, tin of 30 tablets
+                </option>
+                <option value='LPV/r (Lopinavir and Ritonavir 100/25mg tablet)' drug_id="74">Lopinavir / Ritonavir 100 /
+                    25mg, tin of 60 tablets
+                </option>
+                <option value='LPV/r (Lopinavir and Ritonavir 200/50mg tablet)' id="73">Lopinavir / Ritonavir 200 /
+                    50mg, tin of 120 tablets
+                </option>
+                <option value='NVP (Nevirapine syrup 1mL/dose in 100mL bottle)' drug_id="971">Nevirapine 10mg/ml,
+                    100ml
+                </option>
+                <option value='NVP (Nevirapine syrup 1.5mL/dose in 25mL bottle)' drug_id="21">Nevirapine 10mg/ml, 25ml
+                </option>
+                <option value='NVP (Nevirapine 200 mg tablet)' drug_id="22">Nevirapine 200mg, tin of 60 tablets</option>
+                <option value='NVP (Nevirapine 50 mg tablet)' drug_id="968">Nevirapine 50mg, tin of 60 tablets</option>
+                <option value='Pyridoxine (50mg)' drug_id="76">Pyridoxine 50mg tab, 1000 tablets</option>
+                <option value='d4T/3TC (Stavudine Lamivudine 30/150 tablet)' drug_id="738">Stavudine / lamivudine 30 /
+                    150mg, tin of 60 tablets
+                </option>
+                <option value='TDF/3TC/EFV (300/300/600mg tablet)' drug_id="735">Tenofovir disoproxil fumarate /
+                    Lamivudine / Efavirenz 300 / 300 / 600mg, tin of 30 tablets
+                </option>
+                <option value='AZT/3TC/NVP (60/30/50mg tablet)' drug_id="732">Zidovudine / lamivudine /Nevirapine 30 /
+                    60 / 50mg, tin of 60 tablets
+                </option>
+                <option value='AZT/3TC/NVP (300/150/200mg tablet)' drug_id="731">Zidovudine / lamivudine /Nevirapine 300
+                    / 150 / 200mg, tin of 60 tablets
+                </option>
+                <option value='AZT/3TC (Zidovudine and Lamivudine 300/150mg)' drug_id="39">Zidovudine / lamivudine 300 /
+                    150mg, tin of 60 tablets
+                </option>
+                <option value='AZT/3TC (Zidovudine and Lamivudine 60/30 tablet)' drug_id="736">Zidovudine / lamivudine
+                    60 / 30mg, tin of 60 tablets
+                </option>
             </select>
 
             <input field_type="date" helpText="Delivery Date" id="delivery_date" maxDate="2049-03-06"
                    name="delivery_date" tt_onLoad="customizeFinishButton();" tt_pageStyleClass="Date DatesOnly"
                    type="text"/>
 
-            <input name="observations[][concept_name]" type="hidden" value="delivery_date"/>
 
         </form>
 
+
+        <div id="footer">
+        </div>
     </div>
 </div>
 
@@ -639,6 +677,5 @@
         });
     });
 </script>
-
 </body>
 </html>
