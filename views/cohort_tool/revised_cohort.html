@@ -7,7 +7,7 @@
 
 #spinner {
     position: absolute;
-    top: 15%;
+    top: 150px;
     left: 40%;
   }
 
@@ -2785,6 +2785,9 @@ function showDisaggregatedReport(){
         <button id="tasks" class="btn btn-success buttons blue" style="margin-right: 5px;"  onmousedown="showDisaggregatedReport();">
             <span>&nbsp; &nbsp; &nbsp; Cohort disaggregated report &nbsp; &nbsp; &nbsp;</span>
         </button>
+        <button id="btnNext" class="red right" style="margin: 5px 0px 0px; padding: 0px; float: left;" onmousedown="regenerateReport();">
+            <span>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Regenerate &nbsp; &nbsp;&nbsp;</span>
+        </button>
     </div>
 </footer>
 
@@ -3418,6 +3421,11 @@ function getIndicators() {
   var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1/programs/1/reports/cohort?name=";
   url += Quarter + " " + Year;
 
+  if(regenerate_report === true) {
+    url += "&regenerate=true";
+    regenerate_report = false;
+  }
+
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
     if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
@@ -3466,6 +3474,14 @@ function renderResults() {
 
   runningReport = false;
   validateReport();
+}
+
+var regenerate_report = false;
+
+function regenerateReport() {
+  regenerate_report = true;
+  runningReport = true;
+  getIndicators();
 }
 
 var Year    = getUrlVars()["quarter"].split("+")[1];
