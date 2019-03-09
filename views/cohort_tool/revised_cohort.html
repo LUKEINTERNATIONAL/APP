@@ -2786,7 +2786,7 @@ function showDisaggregatedReport(){
             <span>&nbsp; Disaggregated report &nbsp;</span>
         </button>
         <button id="btnNext" class="green right" style="margin: 5px 10px 0px; padding: 0px; float: right;" 
-          onclick="location='raw_data.html';">
+          onclick="viewRawData();">
             <span>&nbsp; Raw data &nbsp;</span>
         </button>
         <button id="btnNext" class="red right" style="margin: 5px 0px 0px; padding: 0px; float: left;" onmousedown="regenerateReport();">
@@ -2804,6 +2804,12 @@ function showDisaggregatedReport(){
 <div id="report-cover"></div>
 
 <script type="text/javascript">
+
+function viewRawData() {
+  var url = window.location.href;
+  sessionStorage.cohort_url = url; 
+  location = 'raw_data.html';
+}
 
 function validateReport() {  
   
