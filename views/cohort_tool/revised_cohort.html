@@ -216,6 +216,10 @@ function drillDown(indicator) {
 
 
 function showDisaggregatedReport(){
+  var url = window.location.href;
+  url = new URL(url);
+  var quarter = url.searchParams.get("quarter");
+  location = 'disaggregated.html?quarter=' + quarter; 
 }
 
 

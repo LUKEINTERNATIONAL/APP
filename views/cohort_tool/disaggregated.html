@@ -1,0 +1,348 @@
+
+<link rel="stylesheet" href="/public/touchscreentoolkit/lib/stylesheets/touch-fancy.css" type="text/css">
+
+<script type="text/javascript" src="/assets/js/jquery.min.js"></script>
+
+<link rel="stylesheet" href="/apps/ART/assets/css/datatable/jquery.dataTables.min.css" type="text/css">
+<link rel="stylesheet" href="/apps/ART/assets/css/datatable/scroller.dataTables.min.css" type="text/css">
+
+<script type="text/javascript" src="/assets/js/datatables/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="/assets/js/datatables/dataTables.fixedHeader.min.js"></script>
+
+
+<script type="text/javascript" src="/assets/js/moment.js"></script>
+<script type="text/javascript" src="/assets/js/core.js"></script>
+
+<style>
+.disaggregated-numbers {
+  text-align: right;
+  padding-right: 10px;
+}
+
+#spinner {
+  position: absolute;
+  top: 15%;
+  left: 40%;
+  display: none;
+}
+
+#report-cover {
+  position: absolute;
+  background-color: black;
+  width: 100%;
+  height: 102%;
+  left: 0%;
+  top: 0%;
+  z-index: 990;
+  opacity: 0.65;
+  display: none;
+}
+
+.title-table {
+  display: table;
+  width: 100%;
+}
+
+.title-row {
+  display: table-row;
+}
+
+.title-cell {
+  display: table-cell;
+  height: 30px;
+  vertical-align: top;
+  border-style: solid;
+  border-width: 0px 0px 1px 0px;
+}
+
+
+#title-cell-left {
+  vertical-align: middle;
+  width: 100px;
+}
+
+#title-cell-left img {
+  height: 95px;
+  width: 95px;
+  margin: 5px;
+}
+
+#title-cell-right {
+  margin-left: 5px;
+}
+
+#data-cell {
+  display: table-cell;
+  width: 100%;
+}
+
+#report {
+  width: 100%;
+}
+
+th {
+  text-align: left;
+}
+
+</style>
+
+<script>
+var url = window.location.href;
+url = new URL(url);
+var quarter = url.searchParams.get("quarter");
+
+var dataSet = [];
+var data_table;
+
+function initializeTable() {
+  data_table = $('#example').DataTable({
+    fixedHeader: true,
+    searching: false,
+    paging: false,
+    scrollY: 400,
+    Processing: true,
+    ServerSide: true,
+    scroller: {
+      loadingIndicator: true
+    }
+  });
+
+}
+
+
+</script>
+
+
+
+
+
+<div class="title-table">
+  <div class='title-row'>
+    <div class='title-cell' id='title-cell-left'>
+      <img src="/assets/images/login-logos/Malawi-Coat_of_arms_of_arms.png" />
+    </div>
+    <div class='title-cell' id='title-cell-right'>
+      <table style="width: 100%; text-align: left; margin-left: 10px;">
+        <tr>
+          <th>Title:</th><td colspan="2" id="report-title">ART disaggregated report<td>
+        </tr>
+        <!--tr>
+          <th>Period:</th>
+          <td id="start-date"><td>
+          <td id="end-date"><td>
+        </tr-->
+      </table>
+    </div>
+  </div>
+</div>
+  
+
+<div>
+  <table id="example" class="display" width="100%">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Age group</th>
+        <th>Gender</th>
+        <th class="disaggregated-numbers">Tx new (new on ART)</th>
+        <th class="disaggregated-numbers">TX curr (receiving ART)</th>
+        <th class="disaggregated-numbers">TX curr (received IPT)</th>
+        <th class="disaggregated-numbers">TX curr (screened for TB)</th>
+      </tr>
+    </thead>
+    <tbody id="table-body">
+    </tbody>
+  </table>
+</div>
+
+<div id="buttons" class="buttonsDiv">
+  <button class="button blue navButton" onmousedown="javascript:window.history.back();"><span>Finish</span></button>
+</div>
+
+<img src="/apps/OPD/assets/images/formloader.gif" id="spinner" />
+<div id="report-cover"></div>
+
+
+<script>
+
+//initializeTable();
+
+function getData(age_group) {
+
+  var url = sessionStorage.apiProtocol + "://" + sessionStorage.apiURL + ":" + sessionStorage.apiPort + "/api/v1";
+  url += '/cohort_disaggregated';
+  url += "?date=" + sessionStorage.sessionDate;
+  url += "&quarter=" + quarter;
+  url += "&age_group=" + age_group;
+  url += '&program_id=' + sessionStorage.programID;
+
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+      document.getElementById('spinner').style = 'display: none;';
+      document.getElementById('report-cover').style = 'display: none;';
+      var obj = JSON.parse(this.responseText);
+      age_groups.shift();
+      loadData(obj, age_group);
+    }
+  };
+  xhttp.open("GET", url, true);
+  xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+  xhttp.setRequestHeader('Content-type', "application/json");
+  xhttp.send();
+}
+
+function loadData(data, age_group) {
+    console.log(data)
+  for(age in data) {
+    var gender = data[age];
+    for(sex in gender) {
+      assignNum(age, sex, data[age][sex]);
+    }
+  }
+
+  if(age_groups.length > 0) {
+    getData(age_groups[0]);
+  }else{
+    addMales();
+  }
+}
+
+function addMales() {
+  var cells = document.getElementsByClassName('Male_row');
+  var tx_new = 0, tx_curr = 0, tx_screened_for_tb = 0, tx_given_ipt = 0;
+
+  for(var i = 0 ; i < cells.length; i++){
+    var tds = cells[i].getElementsByTagName('td');
+    tx_new += parseInt(tds[3].innerHTML);
+    tx_curr += parseInt(tds[4].innerHTML);
+    tx_screened_for_tb += parseInt(tds[5].innerHTML);
+    tx_given_ipt += parseInt(tds[6].innerHTML);
+  }
+
+  data_table.row.add([31,'All', 'Male', tx_new, tx_curr, 
+    tx_screened_for_tb, tx_given_ipt]).node().id = 'all-males'; 
+  data_table.draw();
+  addClass('all-males');
+  //getAllFemale('Pregnant');
+}
+
+function addClass(id) {
+  var tr = document.getElementById(id);
+  tr.style = 'background-color: lightyellow;';
+  var cells = tr.getElementsByTagName('td');
+
+  for(var i = 0 ; i < cells.length; i++){
+    if(i >= 3 )
+      cells[i].setAttribute('class','disaggregated-numbers');
+  
+  }
+}
+
+function assignNum(age, gender, num) {
+  var gender = (gender == 'F' ? 'Female' : 'Male');
+  var cells = document.getElementsByClassName(gender + '_row');
+
+  for(var i = 0 ; i < cells.length; i++){
+    var tds = cells[i].getElementsByTagName('td');
+    if(tds[1].innerHTML == age){
+      assignTD(tds, num);
+    }
+  }
+}
+
+function assignTD(tds, num) {
+  tds[3].innerHTML = num.tx_new;
+  tds[4].innerHTML = num.tx_curr;
+  tds[5].innerHTML = num.tx_screened_for_tb;
+  tds[6].innerHTML = num.tx_given_ipt;
+}
+
+function addTableBody() {
+  var columns = [
+    '0-5 months', '6-11 months','12-23 months',
+    '2-4 years', '5-9 years',
+    '10-14 years', '15-17 years',
+    '18-19 years', '20-24 years',
+    '25-29 years', '30-34 years',
+    '35-39 years', '40-44 years',
+    '45-49 years', '50+ years'
+  ];
+
+  var table_body = document.getElementById('table-body');
+  var row_count = 1;
+  var gender = ['Female', 'Male'];
+
+  for(var s = 0 ; s < gender.length; s++){
+    for(var i = 0 ; i < columns.length; i++){
+      var tr = document.createElement('tr');
+      tr.setAttribute('class', gender[s] + '_row');
+      table_body.appendChild(tr);
+      var td_count = 0;
+
+      while (td_count < 7) {
+        var td = document.createElement('td');
+        tr.appendChild(td);
+        if(td_count == 0)
+          td.innerHTML = (row_count++);
+        
+        if(td_count == 1)
+          td.innerHTML = columns[i];
+           
+        if(td_count == 2)
+          td.innerHTML = gender[s];
+           
+        if(td_count > 2){
+          td.innerHTML = 0;
+          td.setAttribute('class','disaggregated-numbers');
+        }   
+        tr.appendChild(td);
+        td_count++;
+      }
+
+    }
+  }
+}
+
+function getAllFemale(age_group) {
+
+  var url = sessionStorage.apiProtocol + "://" + sessionStorage.apiURL + ":" + sessionStorage.apiPort + "/api/v1";
+  url += '/cohort_disaggregated';
+  url += "?date=" + sessionStorage.sessionDate;
+  url += "&quarter=" + quarter;
+  url += "&age_group=" + age_group;
+  url += '&program_id=' + sessionStorage.programID;
+
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+      document.getElementById('spinner').style = 'display: none;';
+      document.getElementById('report-cover').style = 'display: none;';
+      var obj = JSON.parse(this.responseText);
+      //loadAllFemale(obj, age_group);
+    }
+  };
+  xhttp.open("GET", url, true);
+  xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+  xhttp.setRequestHeader('Content-type', "application/json");
+  xhttp.send();
+}
+
+var age_groups = [
+  '0-5 months', '6-11 months','12-23 months',
+  '2-4 years', '5-9 years',
+  '10-14 years', '15-17 years',
+  '18-19 years', '20-24 years',
+  '25-29 years', '30-34 years',
+  '35-39 years', '40-44 years',
+  '45-49 years', '>= 50 years'
+];
+
+function initializeGet() {
+  getData(age_groups[0]);
+}
+
+addTableBody();
+initializeTable();
+initializeGet();
+</script>
