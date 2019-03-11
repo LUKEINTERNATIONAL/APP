@@ -23,32 +23,6 @@
 
         var tstCurrentDate = moment(tstCurrentDate).format("YYYY-MM-DD");
         var target;
-        var delivery_date = "2019-03-07";
-        var drugs = ["ABC/3TC (Abacavir and Lamivudine 60/30mg tablet)",
-            "ABC/3TC (Abacavir and Lamivudine 600/300mg tablet)",
-            "ATV/r (Atazanavir 300mg/Ritonavir 100mg)",
-            "TMP/SMX (Cotrimoxazole 120mg tablet)",
-            "Cotrimoxazole (480mg tablet)",
-            "Cotrimoxazole (960mg)",
-            "EFV (Efavirenz 200mg tablet)",
-            "EFV (Efavirenz 600mg tablet)",
-            "INH or H (Isoniazid 100mg tablet)",
-            "INH or H (Isoniazid 300mg tablet)",
-            "d4T/3TC/NVP (30/150/200mg tablet)",
-            "TDF/3TC (Tenofavir and Lamivudine 300/300mg tablet",
-            "LPV/r (Lopinavir and Ritonavir 100/25mg tablet)",
-            "LPV/r (Lopinavir and Ritonavir 200/50mg tablet)",
-            "NVP (Nevirapine syrup 1mL/dose in 100mL bottle)",
-            "NVP (Nevirapine syrup 1.5mL/dose in 25mL bottle)",
-            "NVP (Nevirapine 200 mg tablet)",
-            "NVP (Nevirapine 50 mg tablet)",
-            "Pyridoxine (50mg)",
-            "d4T/3TC (Stavudine Lamivudine 30/150 tablet)",
-            "TDF/3TC/EFV (300/300/600mg tablet)",
-            "AZT/3TC/NVP (60/30/50mg tablet)",
-            "AZT/3TC/NVP (300/150/200mg tablet)",
-            "AZT/3TC (Zidovudine and Lamivudine 300/150mg)",
-            "AZT/3TC (Zidovudine and Lamivudine 60/30 tablet)"];
 
         var formatted_drugs = ["EFV (Efavirenz 600mg tablet)",
             "NVP (Nevirapine syrup 1.5mL/dose in 25mL bottle)",
@@ -58,8 +32,8 @@
             "AZT/3TC (Zidovudine and Lamivudine 300/150mg)",
             "LPV/r (Lopinavir and Ritonavir 200/50mg tablet)",
             "LPV/r (Lopinavir and Ritonavir 100/25mg tablet)",
-            "Pyridoxine (50mg)","Cotrimoxazole (480mg tablet)",
-            "Cotrimoxazole (960mg)","d4T/3TC/NVP (30/150/200mg tablet)",
+            "Pyridoxine (50mg)", "Cotrimoxazole (480mg tablet)",
+            "Cotrimoxazole (960mg)", "d4T/3TC/NVP (30/150/200mg tablet)",
             "AZT/3TC/NVP (300/150/200mg tablet)",
             "AZT/3TC/NVP (60/30/50mg tablet)",
             "ABC/3TC (Abacavir and Lamivudine 60/30mg tablet)",
@@ -74,94 +48,101 @@
             "ABC/3TC (Abacavir and Lamivudine 600/300mg tablet)",
             "NVP (Nevirapine syrup 1mL/dose in 100mL bottle)"];
 
-        var drug_short_names = {"ABC/3TC (Abacavir and Lamivudine 600/300mg tablet)":"ABC / 3TC 600 / 300mg 30 tabs",
-            "NVP (Nevirapine 50 mg tablet)":"NVP 50mg 60 tabs",
-            "LPV/r (Lopinavir and Ritonavir 200/50mg tablet)":"LPV / r  200 / 50mg 120 tabs",
-            "ATV/r (Atazanavir 300mg/Ritonavir 100mg)":"ATV / r  300 / 100mg 30 tabs",
-            "INH or H (Isoniazid 300mg tablet)":"Isoniazid (H)  300mg 1000 tabs",
-            "AZT/3TC (Zidovudine and Lamivudine 60/30 tablet)":"AZT / 3TC 60 / 30mg 60 tabs",
-            "d4T/3TC/NVP (30/150/200mg tablet)":"d4T/3TC/NVP 30 / 150 / 200mg 60 tabs",
-            "Pyridoxine (50mg)":"Pyridoxine 50mg 1000 tabs",
-            "EFV (Efavirenz 200mg tablet)":"EFV 200mg 90 tabs",
-            "d4T/3TC (Stavudine Lamivudine 30/150 tablet)":"d4T/3TC 30 / 150mg 60 tabs",
-            "AZT/3TC/NVP (300/150/200mg tablet)":"AZT / 3TC / NVP 300 / 150 / 200mg 60 tabs",
-            "Cotrimoxazole (480mg tablet)":"Cotrimoxazole 400 / 80mg 1000 tabs",
-            "INH or H (Isoniazid 100mg tablet)":"Isoniazid (H)  100mg 100 tabs",
-            "LPV/r (Lopinavir and Ritonavir 100/25mg tablet)":"LPV / r  100 / 25mg 60 tabs",
-            "NVP (Nevirapine 200 mg tablet)":"NVP 200mg 60 tabs",
-            "NVP (Nevirapine syrup 1mL/dose in 100mL bottle)":"NVP 10mg/ml 100ml",
-            "TDF/3TC (Tenofavir and Lamivudine 300/300mg tablet":"TDF / 3TC  300 / 300mg 30 tabs",
-            "NVP (Nevirapine syrup 1.5mL/dose in 25mL bottle)":"NVP 10mg/ml 25ml",
-            "EFV (Efavirenz 600mg tablet)":"EFV 600mg 30 tabs",
-            "Cotrimoxazole (960mg)":"Cotrimoxazole 960mg 1000 tabs",
-            "TMP/SMX (Cotrimoxazole 120mg tablet)":"Cotrimoxazole 100 / 20mg 1000 tabs",
-            "TDF/3TC/EFV (300/300/600mg tablet)":"TDF / 3TC / EFV  300 / 300 / 600mg 30 tabs",
-            "AZT/3TC/NVP (60/30/50mg tablet)":"AZT / 3TC / NVP 60 / 30 /50mg 60 tabs",
-            "AZT/3TC (Zidovudine and Lamivudine 300/150mg)":"AZT / 3TC 300 / 150mg 60 tabs",
-            "ABC/3TC (Abacavir and Lamivudine 60/30mg tablet)":"ABC / 3TC 60 / 30mg 60 tabs"};
+        var drug_short_names = {
+            "ABC/3TC (Abacavir and Lamivudine 600/300mg tablet)": "ABC / 3TC 600 / 300mg 30 tabs",
+            "NVP (Nevirapine 50 mg tablet)": "NVP 50mg 60 tabs",
+            "LPV/r (Lopinavir and Ritonavir 200/50mg tablet)": "LPV / r  200 / 50mg 120 tabs",
+            "ATV/r (Atazanavir 300mg/Ritonavir 100mg)": "ATV / r  300 / 100mg 30 tabs",
+            "INH or H (Isoniazid 300mg tablet)": "Isoniazid (H)  300mg 1000 tabs",
+            "AZT/3TC (Zidovudine and Lamivudine 60/30 tablet)": "AZT / 3TC 60 / 30mg 60 tabs",
+            "d4T/3TC/NVP (30/150/200mg tablet)": "d4T/3TC/NVP 30 / 150 / 200mg 60 tabs",
+            "Pyridoxine (50mg)": "Pyridoxine 50mg 1000 tabs",
+            "EFV (Efavirenz 200mg tablet)": "EFV 200mg 90 tabs",
+            "d4T/3TC (Stavudine Lamivudine 30/150 tablet)": "d4T/3TC 30 / 150mg 60 tabs",
+            "AZT/3TC/NVP (300/150/200mg tablet)": "AZT / 3TC / NVP 300 / 150 / 200mg 60 tabs",
+            "Cotrimoxazole (480mg tablet)": "Cotrimoxazole 400 / 80mg 1000 tabs",
+            "INH or H (Isoniazid 100mg tablet)": "Isoniazid (H)  100mg 100 tabs",
+            "LPV/r (Lopinavir and Ritonavir 100/25mg tablet)": "LPV / r  100 / 25mg 60 tabs",
+            "NVP (Nevirapine 200 mg tablet)": "NVP 200mg 60 tabs",
+            "NVP (Nevirapine syrup 1mL/dose in 100mL bottle)": "NVP 10mg/ml 100ml",
+            "TDF/3TC (Tenofavir and Lamivudine 300/300mg tablet": "TDF / 3TC  300 / 300mg 30 tabs",
+            "NVP (Nevirapine syrup 1.5mL/dose in 25mL bottle)": "NVP 10mg/ml 25ml",
+            "EFV (Efavirenz 600mg tablet)": "EFV 600mg 30 tabs",
+            "Cotrimoxazole (960mg)": "Cotrimoxazole 960mg 1000 tabs",
+            "TMP/SMX (Cotrimoxazole 120mg tablet)": "Cotrimoxazole 100 / 20mg 1000 tabs",
+            "TDF/3TC/EFV (300/300/600mg tablet)": "TDF / 3TC / EFV  300 / 300 / 600mg 30 tabs",
+            "AZT/3TC/NVP (60/30/50mg tablet)": "AZT / 3TC / NVP 60 / 30 /50mg 60 tabs",
+            "AZT/3TC (Zidovudine and Lamivudine 300/150mg)": "AZT / 3TC 300 / 150mg 60 tabs",
+            "ABC/3TC (Abacavir and Lamivudine 60/30mg tablet)": "ABC / 3TC 60 / 30mg 60 tabs"
+        };
 
-        var drug_cms_names = {"ABC/3TC (Abacavir and Lamivudine 600/300mg tablet)":"Abacavir sulfate 600mg / Lamivudine 300mg, tin of 30 tablets",
-            "NVP (Nevirapine 50 mg tablet)":"Nevirapine 50mg, tin of 60 tablets",
-            "LPV/r (Lopinavir and Ritonavir 200/50mg tablet)":"Lopinavir / Ritonavir 200 / 50mg, tin of 120 tablets",
-            "ATV/r (Atazanavir 300mg/Ritonavir 100mg)":"Atazanavir / Ritonavir 300 / 100mg, tin of 30 tablets",
-            "INH or H (Isoniazid 300mg tablet)":"Isoniazid 300mg, tin of 1000 tablets",
-            "AZT/3TC (Zidovudine and Lamivudine 60/30 tablet)":"Zidovudine / lamivudine 60 / 30mg, tin of 60 tablets",
-            "d4T/3TC/NVP (30/150/200mg tablet)":"Lamivudine / Stavudine / Nevirapine 150 / 30 / 200mg, tin of 60 tablets",
-            "Pyridoxine (50mg)":"Pyridoxine 50mg tab, 1000 tablets",
-            "EFV (Efavirenz 200mg tablet)":"Efavirenz 200mg, tin of 90 tablets",
-            "d4T/3TC (Stavudine Lamivudine 30/150 tablet)":"Stavudine / lamivudine 30 / 150mg, tin of 60 tablets",
-            "AZT/3TC/NVP (300/150/200mg tablet)":"Zidovudine / lamivudine /Nevirapine 300 / 150 / 200mg, tin of 60 tablets",
-            "Cotrimoxazole (480mg tablet)":"Cotrimoxazole 480mg, tin of 1000 tablets",
-            "INH or H (Isoniazid 100mg tablet)":"Isoniazid 100mg, tin of 100 tablets",
-            "LPV/r (Lopinavir and Ritonavir 100/25mg tablet)":"Lopinavir / Ritonavir 100 / 25mg, tin of 60 tablets",
-            "NVP (Nevirapine 200 mg tablet)":"Nevirapine 200mg, tin of 60 tablets",
-            "NVP (Nevirapine syrup 1mL/dose in 100mL bottle)":"Nevirapine 10mg/ml, 100ml",
-            "TDF/3TC (Tenofavir and Lamivudine 300/300mg tablet":"Lamivudine / Tenofovir disoproxil fumarate 300 / 300mg, tin of 30 tablets",
-            "NVP (Nevirapine syrup 1.5mL/dose in 25mL bottle)":"Nevirapine 10mg/ml, 25ml",
-            "EFV (Efavirenz 600mg tablet)":"Efavirenz 600mg, tin of 30 tablets",
-            "Cotrimoxazole (960mg)":"Cotrimoxazole 960mg, blister pack of 1000 tablets",
-            "TMP/SMX (Cotrimoxazole 120mg tablet)":"Cotrimoxazole 120mg, blister pack of 1000 dispersible tablets",
-            "TDF/3TC/EFV (300/300/600mg tablet)":"Tenofovir disoproxil fumarate / Lamivudine / Efavirenz 300 / 300 / 600mg, tin of 30 tablets",
-            "AZT/3TC/NVP (60/30/50mg tablet)":"Zidovudine / lamivudine /Nevirapine 30 / 60 / 50mg, tin of 60 tablets",
-            "AZT/3TC (Zidovudine and Lamivudine 300/150mg)":"Zidovudine / lamivudine 300 / 150mg, tin of 60 tablets",
-            "ABC/3TC (Abacavir and Lamivudine 60/30mg tablet)":"Abacavir / Lamivudine 60 / 30mg, tin of 60 tablets"};
+        var drug_cms_names = {
+            "ABC/3TC (Abacavir and Lamivudine 600/300mg tablet)": "Abacavir sulfate 600mg / Lamivudine 300mg, tin of 30 tablets",
+            "NVP (Nevirapine 50 mg tablet)": "Nevirapine 50mg, tin of 60 tablets",
+            "LPV/r (Lopinavir and Ritonavir 200/50mg tablet)": "Lopinavir / Ritonavir 200 / 50mg, tin of 120 tablets",
+            "ATV/r (Atazanavir 300mg/Ritonavir 100mg)": "Atazanavir / Ritonavir 300 / 100mg, tin of 30 tablets",
+            "INH or H (Isoniazid 300mg tablet)": "Isoniazid 300mg, tin of 1000 tablets",
+            "AZT/3TC (Zidovudine and Lamivudine 60/30 tablet)": "Zidovudine / lamivudine 60 / 30mg, tin of 60 tablets",
+            "d4T/3TC/NVP (30/150/200mg tablet)": "Lamivudine / Stavudine / Nevirapine 150 / 30 / 200mg, tin of 60 tablets",
+            "Pyridoxine (50mg)": "Pyridoxine 50mg tab, 1000 tablets",
+            "EFV (Efavirenz 200mg tablet)": "Efavirenz 200mg, tin of 90 tablets",
+            "d4T/3TC (Stavudine Lamivudine 30/150 tablet)": "Stavudine / lamivudine 30 / 150mg, tin of 60 tablets",
+            "AZT/3TC/NVP (300/150/200mg tablet)": "Zidovudine / lamivudine /Nevirapine 300 / 150 / 200mg, tin of 60 tablets",
+            "Cotrimoxazole (480mg tablet)": "Cotrimoxazole 480mg, tin of 1000 tablets",
+            "INH or H (Isoniazid 100mg tablet)": "Isoniazid 100mg, tin of 100 tablets",
+            "LPV/r (Lopinavir and Ritonavir 100/25mg tablet)": "Lopinavir / Ritonavir 100 / 25mg, tin of 60 tablets",
+            "NVP (Nevirapine 200 mg tablet)": "Nevirapine 200mg, tin of 60 tablets",
+            "NVP (Nevirapine syrup 1mL/dose in 100mL bottle)": "Nevirapine 10mg/ml, 100ml",
+            "TDF/3TC (Tenofavir and Lamivudine 300/300mg tablet": "Lamivudine / Tenofovir disoproxil fumarate 300 / 300mg, tin of 30 tablets",
+            "NVP (Nevirapine syrup 1.5mL/dose in 25mL bottle)": "Nevirapine 10mg/ml, 25ml",
+            "EFV (Efavirenz 600mg tablet)": "Efavirenz 600mg, tin of 30 tablets",
+            "Cotrimoxazole (960mg)": "Cotrimoxazole 960mg, blister pack of 1000 tablets",
+            "TMP/SMX (Cotrimoxazole 120mg tablet)": "Cotrimoxazole 120mg, blister pack of 1000 dispersible tablets",
+            "TDF/3TC/EFV (300/300/600mg tablet)": "Tenofovir disoproxil fumarate / Lamivudine / Efavirenz 300 / 300 / 600mg, tin of 30 tablets",
+            "AZT/3TC/NVP (60/30/50mg tablet)": "Zidovudine / lamivudine /Nevirapine 30 / 60 / 50mg, tin of 60 tablets",
+            "AZT/3TC (Zidovudine and Lamivudine 300/150mg)": "Zidovudine / lamivudine 300 / 150mg, tin of 60 tablets",
+            "ABC/3TC (Abacavir and Lamivudine 60/30mg tablet)": "Abacavir / Lamivudine 60 / 30mg, tin of 60 tablets"
+        };
 
-        var drug_cms_packsizes = {"ABC/3TC (Abacavir and Lamivudine 600/300mg tablet)":30,
-            "NVP (Nevirapine 50 mg tablet)":60,
-            "LPV/r (Lopinavir and Ritonavir 200/50mg tablet)":120,
-            "ATV/r (Atazanavir 300mg/Ritonavir 100mg)":30,
-            "INH or H (Isoniazid 300mg tablet)":1000,
-            "AZT/3TC (Zidovudine and Lamivudine 60/30 tablet)":60,
-            "d4T/3TC/NVP (30/150/200mg tablet)":60,
-            "Pyridoxine (50mg)":1000,
-            "EFV (Efavirenz 200mg tablet)":90,
-            "d4T/3TC (Stavudine Lamivudine 30/150 tablet)":60,
-            "AZT/3TC/NVP (300/150/200mg tablet)":60,
-            "Cotrimoxazole (480mg tablet)":1000,
-            "INH or H (Isoniazid 100mg tablet)":100,
-            "LPV/r (Lopinavir and Ritonavir 100/25mg tablet)":60,
-            "NVP (Nevirapine 200 mg tablet)":60,
-            "NVP (Nevirapine syrup 1mL/dose in 100mL bottle)":100,
-            "TDF/3TC (Tenofavir and Lamivudine 300/300mg tablet":30,
-            "NVP (Nevirapine syrup 1.5mL/dose in 25mL bottle)":25,
-            "EFV (Efavirenz 600mg tablet)":30,"Cotrimoxazole (960mg)":1000,
-            "TMP/SMX (Cotrimoxazole 120mg tablet)":1000,
-            "TDF/3TC/EFV (300/300/600mg tablet)":30,
-            "AZT/3TC/NVP (60/30/50mg tablet)":60,
-            "AZT/3TC (Zidovudine and Lamivudine 300/150mg)":60,
-            "ABC/3TC (Abacavir and Lamivudine 60/30mg tablet)":60};
+        var drug_cms_packsizes = {
+            "ABC/3TC (Abacavir and Lamivudine 600/300mg tablet)": 30,
+            "NVP (Nevirapine 50 mg tablet)": 60,
+            "LPV/r (Lopinavir and Ritonavir 200/50mg tablet)": 120,
+            "ATV/r (Atazanavir 300mg/Ritonavir 100mg)": 30,
+            "INH or H (Isoniazid 300mg tablet)": 1000,
+            "AZT/3TC (Zidovudine and Lamivudine 60/30 tablet)": 60,
+            "d4T/3TC/NVP (30/150/200mg tablet)": 60,
+            "Pyridoxine (50mg)": 1000,
+            "EFV (Efavirenz 200mg tablet)": 90,
+            "d4T/3TC (Stavudine Lamivudine 30/150 tablet)": 60,
+            "AZT/3TC/NVP (300/150/200mg tablet)": 60,
+            "Cotrimoxazole (480mg tablet)": 1000,
+            "INH or H (Isoniazid 100mg tablet)": 100,
+            "LPV/r (Lopinavir and Ritonavir 100/25mg tablet)": 60,
+            "NVP (Nevirapine 200 mg tablet)": 60,
+            "NVP (Nevirapine syrup 1mL/dose in 100mL bottle)": 100,
+            "TDF/3TC (Tenofavir and Lamivudine 300/300mg tablet": 30,
+            "NVP (Nevirapine syrup 1.5mL/dose in 25mL bottle)": 25,
+            "EFV (Efavirenz 600mg tablet)": 30, "Cotrimoxazole (960mg)": 1000,
+            "TMP/SMX (Cotrimoxazole 120mg tablet)": 1000,
+            "TDF/3TC/EFV (300/300/600mg tablet)": 30,
+            "AZT/3TC/NVP (60/30/50mg tablet)": 60,
+            "AZT/3TC (Zidovudine and Lamivudine 300/150mg)": 60,
+            "ABC/3TC (Abacavir and Lamivudine 60/30mg tablet)": 60
+        };
 
+        var delivery_date = JSON.parse(sessionStorage.receipts)["delivery_date"];
         var selected = [];
-
         var selected_drugs_hash = drugs = JSON.parse(sessionStorage.receipts)["drugs"];
-        for (var key in selected_drugs_hash){
+        for (var key in selected_drugs_hash) {
             var short_name = selected_drugs_hash[key]["short_name"];
             var full_name = selected_drugs_hash[key]["full_name"];
             var drug_id = selected_drugs_hash[key]["drug_id"];
             selected.push(short_name)
+
         }
 
-
+        var drugs = selected;
         var unfinished_drugs = [];
         var sieved = [];
         var sievable = [];
@@ -182,7 +163,7 @@
         var addedRowsHash = {}
         var mappedData = {
             "delivery_date": delivery_date,
-            "drugs": drugs,
+            "drugs": selected,
             "formatted_drugs": formatted_drugs,
             "drug_short_names": drug_short_names,
             "drug_cms_names": drug_cms_names,
@@ -254,7 +235,6 @@
         }
 
         var Entries = (function (jQ, data) {
-
             function guiSetup() {
 
                 var style = document.createElement("style");
@@ -363,9 +343,7 @@
                 var all_drugs = data["selected_drugs"];
                 var short_names = data["drug_short_names"];
                 var cms_names = data["drug_cms_names"];
-
                 all_drugs = filter_drugs(all_drugs);
-
                 __$("drug-list").style.display = "table";
 
                 for (var k in all_drugs) {
@@ -429,7 +407,7 @@
                 scrollable_div.style.height = "250px";
                 scrollable_div.style.paddingTop = "15px";
 
-                var tbl     = document.createElement("table");
+                var tbl = document.createElement("table");
                 tbl.id = "batch-table"
                 //tbl.style.position = "absolute";
                 tbl.style.border = "1.5px solid #5ca6c4";
@@ -446,11 +424,11 @@
                 var th_row = document.createElement("tr");
                 drg = item.getAttribute("value");
                 rows_count = 2;
-                if ( typeof addedRowsHash[drg] != "undefined"){
+                if (typeof addedRowsHash[drg] != "undefined") {
                     rows_count = rows_count + parseInt(addedRowsHash[drg]);
                 }
 
-                for (var i=0; i<=2; i++){
+                for (var i = 0; i <= 2; i++) {
                     var th = document.createElement("th");
                     th.style.width = '10%';
                     var thText = document.createTextNode(table_headers[i]);
@@ -468,7 +446,7 @@
                         cell.style.width = '80px';
                         cell.style.textAlign = 'center';
                         var textField = document.createElement("input");
-                        if (j == 0){
+                        if (j == 0) {
                             //var inputID = "Number of tins";
                             var inputID = item.getAttribute("value") + "_" + i + "_number_of_tins";
 
@@ -481,7 +459,7 @@
                             var field_type = "tabs_per_tin";
                         }
 
-                        if (j == 1){
+                        if (j == 1) {
                             //var inputID = "Number of expiring tins";
                             var inputID = item.getAttribute("value") + "_" + i + "_total_tins";
 
@@ -489,7 +467,7 @@
                             var field_type = "total_tins"
                         }
 
-                        if (j == 2){
+                        if (j == 2) {
                             //var inputID = "Date of expiry";
                             var inputID = item.getAttribute("value") + "_" + i + "_date_of_expiry";
 
@@ -509,10 +487,10 @@
                         textField.style.marginLeft = '10px';
                         textField.style.textAlign = 'center';
 
-                        if (i + j == 0){
+                        if (i + j == 0) {
                             textField.disabled = true;
                         }
-                        if (j != 2){
+                        if (j != 2) {
                             textField.onmousedown = function () {
                                 jQ(".input-field").attr("class", "input-field");
                                 this.className += " input-field-active";
@@ -520,7 +498,7 @@
                                     __$('data-pane').removeChild(__$('popupkeyboard'));
                                 showKeyboard(this);
                             }
-                        }else{
+                        } else {
                             textField.onmousedown = function () {
                                 jQ(".input-field").attr("class", "input-field");
                                 this.className += " input-field-active";
@@ -799,6 +777,7 @@
                     } else {
                         var p = 1;
                         var dg = node.getAttribute("value");
+
                         for (var v = 1; v <= counts[dg]; v++) {
                             var sd = (sieved.indexOf(dg) >= 0);
                             var am = __$(dg + "_amount_" + v).value;
@@ -1191,7 +1170,7 @@
             function showKeyboard(ctrl) {
 
                 target = ctrl;
-                if (target.disabled){
+                if (target.disabled) {
                     return;
                 }
 
@@ -1264,7 +1243,7 @@
 
                         button.onmousedown = function () {
 
-                            if (!this.className.match(/gray/)  && target.disabled != true) {
+                            if (!this.className.match(/gray/) && target.disabled != true) {
                                 if (this.innerHTML.trim().charCodeAt(0) == 8592) {
                                     if (target) {
                                         target.value = target.value.trim().substring(0, (target.value.trim().length - 1));
@@ -1283,7 +1262,7 @@
 
             }
 
-            return{
+            return {
                 initialize: function () {
 
                     guiSetup();
@@ -1501,13 +1480,13 @@
 
             var ii = -1;
             var i = 0
-            for (var drug_name in drugs_hash){
+            for (var drug_name in drugs_hash) {
                 var drug = drug_name.split("_")[0];
                 var date_of_expiry = drugs_hash[drug_name]["date_of_expiry"];
                 var tabs_per_tin = drugs_hash[drug_name]["tabs_per_tin"];
                 var total_tins = drugs_hash[drug_name]["total_tins"];
 
-                if (date_of_expiry.length > 0 && tabs_per_tin.length > 0 && total_tins.length > 0){
+                if (date_of_expiry.length > 0 && tabs_per_tin.length > 0 && total_tins.length > 0) {
 
                     ii += 1;
                     var row = document.createElement("div");
@@ -1530,7 +1509,7 @@
                     amount.setAttribute("drug", drug);
                     //amount.setAttribute("pos", c);
                     var input_id = drug_name + "_number_of_tins";
-                    console.log(console.log(input_id))
+
                     amount.onmousedown = function () {
                         navigate(this.getAttribute("drug"), this.getAttribute("pos"), input_id);
                     }
@@ -1566,7 +1545,6 @@
                     row.appendChild(expire_date);
 
 
-
                     var input = document.createElement("input");
 
                     input.className = 'stock-input';
@@ -1589,8 +1567,6 @@
                     form.appendChild(input3);
 
 
-
-
                 }
                 i += 1
             }
@@ -1600,17 +1576,18 @@
             __$("nextButton").innerHTML = "<span>Save</span>";
         }
 
-        function enableSaveDialogBox(){
-            __$('nextButton').onmousedown = function(){
+        function enableSaveDialogBox() {
+            __$('nextButton').onmousedown = function () {
                 dispatchMessage("Are you sure you want to save these drugs", tstMessageBoxType.YesNo)
             }
         }
 
-        function disableSaveDialogBox(){
-            __$('nextButton').onmousedown = function(){
+        function disableSaveDialogBox() {
+            __$('nextButton').onmousedown = function () {
                 gotoNextPage();
             }
         }
+
         function navigate(drug, pos, field) {
 
             if (__$("backButton"))
@@ -1804,7 +1781,8 @@
             background: white;
             border-radius: 10px;
             border-left: 2px solid black;
-            border-right: 2px solid black box-shadow : inset 0 0 10 px black, 0 0 15 px black;
+            border-right: 2px solid black
+            box-shadow: inset 0 0 10px black, 0 0 15px black;
         }
 
         .even-small, .odd-small {
@@ -1843,7 +1821,8 @@
             font-size: 0.7em;
             margin: 5px;
         }
-        .editable{
+
+        .editable {
             border-style: outset;
             border-left: 1px solid gray;
             border-top: 1px solid gray;
@@ -1851,7 +1830,7 @@
             border-radius: 3px;
         }
 
-        #popupkeyboard{
+        #popupkeyboard {
             position: absolute;
             left: 30%;
             bottom: 20px;
@@ -1877,9 +1856,13 @@
                 <input type="hidden" name="delivery_date" value="2019-03-07">
                 <input type="hidden" name="identifier" value="678">
 
-                <input helpText="Batch details" id="input" name="information" optional="true" tt_onLoad="$('clearButton').style.display = 'none'; checkContainer(); updateNextButton(); validator = setInterval('validateInputFields();', 350); " tt_onUnload="clearInterval(validator)" tt_pageStyleClass="NoKeyboard" type="text" />
+                <input helpText="Batch details" id="input" name="information" optional="true"
+                       tt_onLoad="$('clearButton').style.display = 'none'; checkContainer(); updateNextButton(); validator = setInterval('validateInputFields();', 350); "
+                       tt_onUnload="clearInterval(validator)" tt_pageStyleClass="NoKeyboard" type="text"/>
 
-                <input helpText="&lt;span style='color: red;background: white;'&gt;Confirm Entry (Touch row to change) &lt;/span&gt;" id="summary" name="showSummary" optional="true" tt_onLoad="showSummary();enableSaveDialogBox();" tt_pageStyleClass="NoKeyboard" type="text" />
+                <input helpText="&lt;span style='color: red;background: white;'&gt;Confirm Entry (Touch row to change) &lt;/span&gt;"
+                       id="summary" name="showSummary" optional="true" tt_onLoad="showSummary();enableSaveDialogBox();"
+                       tt_pageStyleClass="NoKeyboard" type="text"/>
             </form>
         </div>
         </html>
@@ -1890,42 +1873,42 @@
                 field = document.getElementById('Date of expiry');
                 try {
                     date_of_expiry_inputs = jQuery("input[field_type=date_of_expiry]");
-                    for (var i=0; i<=date_of_expiry_inputs.length - 1; i++){
-                        if(date_of_expiry_inputs[i].value.length > 8) {
-                            date_of_expiry_inputs[i].value = date_of_expiry_inputs[i].value.slice(3,11);
+                    for (var i = 0; i <= date_of_expiry_inputs.length - 1; i++) {
+                        if (date_of_expiry_inputs[i].value.length > 8) {
+                            date_of_expiry_inputs[i].value = date_of_expiry_inputs[i].value.slice(3, 11);
                         }
                     }
 
-                }catch(e){
+                } catch (e) {
                     console.log(e)
                 }
             }
 
-            setInterval("trimDate();",10);
-
+            setInterval("trimDate();", 10);
             for (var j in drugs) {
-                for (var i=0; i<=total_rows; i++){
+
+                for (var i = 0; i <= total_rows; i++) {
                     drug_name = drugs[j] + "_" + i;
-                    drugs_hash[drug_name] = {"tabs_per_tin":"", "total_tins":"", "date_of_expiry":""}
+                    drugs_hash[drug_name] = {"tabs_per_tin": "", "total_tins": "", "date_of_expiry": ""}
                 }
             }
 
-            function updateDrugsHash(){
+            function updateDrugsHash() {
                 input_fields = document.getElementsByClassName("input-field");
-                if (input_fields.length > 0){
+                if (input_fields.length > 0) {
                     drug = document.getElementById("input-header").getAttribute('drug');
-                    for (var i=0; i<=input_fields.length - 1; i++){
+                    for (var i = 0; i <= input_fields.length - 1; i++) {
                         value = input_fields[i].value;
                         row = input_fields[i].getAttribute("row");
                         field = input_fields[i].getAttribute("field_type");
                         drug_name = drug + "_" + row;
-                        if (field == 'tabs_per_tin'){
+                        if (field == 'tabs_per_tin') {
                             drugs_hash[drug_name]["tabs_per_tin"] = value;
                         }
-                        if (field == 'total_tins'){
+                        if (field == 'total_tins') {
                             drugs_hash[drug_name]["total_tins"] = value;
                         }
-                        if (field == 'date_of_expiry'){
+                        if (field == 'date_of_expiry') {
                             drugs_hash[drug_name]["date_of_expiry"] = value;
                         }
                     }
@@ -1935,22 +1918,22 @@
 
             update_drugs_hash = window.setInterval("updateDrugsHash()", 1000);
 
-            function disableBatchInputs(){
+            function disableBatchInputs() {
                 incomplete_rows = []
-                for (var i=0; i<=total_rows.length; i++){
+                for (var i = 0; i <= total_rows.length; i++) {
                     row_inputs = jQuery("[row=" + i + "]");
 
                 }
             }
 
-            function enableBatchInputs(){
+            function enableBatchInputs() {
 
             }
 
-            function validateInputFields(){
+            function validateInputFields() {
                 incomplete_rows = [];
 
-                for (var key in drugs_hash){
+                for (var key in drugs_hash) {
                     drugName = key.split("_")[0];
                     row_number = (parseInt(key.split("_")[1]) + 1);
 
@@ -1958,66 +1941,66 @@
                     total_tins = drugs_hash[key]["total_tins"];
                     date_of_expiry = drugs_hash[key]["date_of_expiry"];
 
-                    if (!row_complete(tabs_per_tin, total_tins, date_of_expiry)){
+                    if (!row_complete(tabs_per_tin, total_tins, date_of_expiry)) {
                         incomplete_rows.push([drugName, row_number]);
                     }
 
-                    if (parseInt(key.split("_")[1]) == 0){
-                        if (drugs_hash[key]["tabs_per_tin"].length == 0){
+                    if (parseInt(key.split("_")[1]) == 0) {
+                        if (drugs_hash[key]["tabs_per_tin"].length == 0) {
                             incomplete_rows.push([drugName, row_number]); //The drug has not been clicked yet.
                         }
                     }
 
                 }
 
-                if (incomplete_rows.length > 0){
+                if (incomplete_rows.length > 0) {
                     error_message = "<u>Incomplete Entries for the following drugs</u> <br />"
-                    for (var i=0; i<=incomplete_rows.length - 1; i++){
+                    for (var i = 0; i <= incomplete_rows.length - 1; i++) {
                         drugName = incomplete_rows[i][0];
                         row_number = incomplete_rows[i][1];
                         error_message += "&nbsp;&nbsp;&nbsp;" + drugName + " on row # " + row_number + '<br />';
                     }
 
-                    __$('nextButton').onmousedown = function(){
+                    __$('nextButton').onmousedown = function () {
                         showMessage(error_message);
                     }
-                }else{
-                    __$('nextButton').onmousedown = function(){
+                } else {
+                    __$('nextButton').onmousedown = function () {
                         gotoNextPage();
                     }
                 }
             }
 
-            function row_complete(tabs_per_tin, total_tins, date_of_expiry){
+            function row_complete(tabs_per_tin, total_tins, date_of_expiry) {
                 //if (tabs_per_tin.length > 0 || total_tins.length > 0 || date_of_expiry.length > 0){
-                if (total_tins.length > 0 || date_of_expiry.length > 0){
-                    if (total_tins.length > 0 && date_of_expiry.length > 0){
+                if (total_tins.length > 0 || date_of_expiry.length > 0) {
+                    if (total_tins.length > 0 && date_of_expiry.length > 0) {
                         return true
-                    }else{
+                    } else {
                         return false
                     }
-                }else{
+                } else {
                     return true
                 }
 
             }
 
-            function addNewRow(){
+            function addNewRow() {
                 input_fields = jQuery('.input-field');
                 var complete = true
-                for (var i=0; i<=input_fields.length - 1; i++){
-                    if (input_fields[i].value.length == 0){
+                for (var i = 0; i <= input_fields.length - 1; i++) {
+                    if (input_fields[i].value.length == 0) {
                         complete = false;
                         break;
                     }
                 }
-                if (complete){
+                if (complete) {
                     var batch_table = jQuery("#batch-table")[0];
-                    var i = parseInt(jQuery( "table input:last" ).attr("row")) + 1;
+                    var i = parseInt(jQuery("table input:last").attr("row")) + 1;
                     var drug = __$('data-pane').getAttribute("drug");
 
                     var drug_name = drug + "_" + i;
-                    drugs_hash[drug_name] = {"tabs_per_tin":"", "total_tins":"", "date_of_expiry":""};
+                    drugs_hash[drug_name] = {"tabs_per_tin": "", "total_tins": "", "date_of_expiry": ""};
 
                     var row = document.createElement("tr");
 
@@ -2026,7 +2009,7 @@
                         cell.style.width = '80px';
                         cell.style.textAlign = "center";
                         var textField = document.createElement("input");
-                        if (j == 0){
+                        if (j == 0) {
                             //var inputID = "Number of tins";
                             var inputValue = drug_cms_packsizes[drug];
                             textField.value = inputValue;
@@ -2034,14 +2017,14 @@
                             var field_type = "tabs_per_tin"
                         }
 
-                        if (j == 1){
+                        if (j == 1) {
                             //var inputID = "Number of expiring tins";
                             var inputID = drug + "_" + i + "_total_tins";
                             var inputValue = drugs_hash[drug_name]["total_tins"];
                             var field_type = "total_tins"
                         }
 
-                        if (j == 2){
+                        if (j == 2) {
                             //var inputID = "Date of expiry";
                             var inputID = drug + "_" + i + "_date_of_expiry";
                             var inputValue = drugs_hash[drug_name]["date_of_expiry"];
@@ -2060,11 +2043,11 @@
                         textField.style.marginLeft = '10px';
                         textField.style.textAlign = 'center';
 
-                        if (i + j == 0){
+                        if (i + j == 0) {
                             //textField.disabled = true;
                         }
 
-                        if (j != 2){
+                        if (j != 2) {
                             textField.onmousedown = function () {
                                 jQuery(".input-field").attr("class", "input-field");
                                 this.className += " input-field-active";
@@ -2072,7 +2055,7 @@
                                     __$('data-pane').removeChild(__$('popupkeyboard'));
                                 showKeyboardCustom(this);
                             }
-                        }else{
+                        } else {
                             textField.onmousedown = function () {
                                 jQuery(".input-field").attr("class", "input-field");
                                 this.className += " input-field-active";
@@ -2085,9 +2068,9 @@
                         cell.appendChild(textField);
                         row.appendChild(cell);
                     }
-                    if ( typeof addedRowsHash[drug] != "undefined"){
+                    if (typeof addedRowsHash[drug] != "undefined") {
                         addedRowsHash[drug] += 1;
-                    }else{
+                    } else {
                         addedRowsHash[drug] = 1;
                     }
                     batch_table.appendChild(row);
@@ -2247,7 +2230,7 @@
             function showKeyboardCustom(ctrl) {
 
                 target = ctrl;
-                if (target.disabled){
+                if (target.disabled) {
                     return;
                 }
 
@@ -2320,7 +2303,7 @@
 
                         button.onmousedown = function () {
 
-                            if (!this.className.match(/gray/)  && target.disabled != true) {
+                            if (!this.className.match(/gray/) && target.disabled != true) {
                                 if (this.innerHTML.trim().charCodeAt(0) == 8592) {
                                     if (target) {
                                         target.value = target.value.trim().substring(0, (target.value.trim().length - 1));
