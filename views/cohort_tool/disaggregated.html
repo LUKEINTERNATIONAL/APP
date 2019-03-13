@@ -9,6 +9,16 @@
 <script type="text/javascript" src="/assets/js/datatables/jquery.dataTables.min.js"></script>
 <script type="text/javascript" src="/assets/js/datatables/dataTables.fixedHeader.min.js"></script>
 
+<!-- pring report start .......................................................................... -->
+<script type="text/javascript" src="/assets/js/datatables/dataTables.buttons.min.js"></script>
+<script type="text/javascript" src="/assets/js/datatables/buttons.flash.min.js"></script>
+<script type="text/javascript" src="/assets/js/datatables/jszip.min.js"></script>
+<script type="text/javascript" src="/assets/js/datatables/pdfmake.min.js"></script>
+<script type="text/javascript" src="/assets/js/datatables/vfs_fonts.js"></script>
+<script type="text/javascript" src="/assets/js/datatables/buttons.html5.min.js"></script>
+<script type="text/javascript" src="/assets/js/datatables/buttons.print.min.js"></script>
+<!-- pring report ends .......................................................................... -->
+
 
 <script type="text/javascript" src="/assets/js/moment.js"></script>
 <script type="text/javascript" src="/assets/js/core.js"></script>
@@ -90,6 +100,7 @@ th {
 var url = window.location.href;
 url = new URL(url);
 var quarter = url.searchParams.get("quarter");
+var on_art =  url.searchParams.get('total_alive_and_on_art');
 
 var dataSet = [];
 var data_table;
@@ -104,7 +115,11 @@ function initializeTable() {
     ServerSide: true,
     scroller: {
       loadingIndicator: true
-    }
+    },
+    dom: 'Bfrtip',
+    buttons: [
+      'copy', 'csv', 'excel', 'pdf', 'print'
+    ]
   });
 
 }
@@ -126,11 +141,19 @@ function initializeTable() {
         <tr>
           <th>Title:</th><td colspan="2" id="report-title">ART disaggregated report<td>
         </tr>
-        <!--tr>
+        <tr>
           <th>Period:</th>
-          <td id="start-date"><td>
-          <td id="end-date"><td>
-        </tr-->
+          <td id="quarter-title"><td>
+        </tr>
+        <tr>
+          <th>Total Alive and On ART:</th>
+          <td id="on-art"><td>
+        </tr>
+        <tr>
+          <td colspan="2" id="valid-report"><td>
+        </tr>
+      </table>
+    </div>
       </table>
     </div>
   </div>
@@ -165,8 +188,6 @@ function initializeTable() {
 
 <script>
 
-//initializeTable();
-
 function getData(age_group) {
 
   var url = sessionStorage.apiProtocol + "://" + sessionStorage.apiURL + ":" + sessionStorage.apiPort + "/api/v1";
@@ -193,7 +214,6 @@ function getData(age_group) {
 }
 
 function loadData(data, age_group) {
-    console.log(data)
   for(age in data) {
     var gender = data[age];
     for(sex in gender) {
@@ -224,7 +244,7 @@ function addMales() {
     tx_screened_for_tb, tx_given_ipt]).node().id = 'all-males'; 
   data_table.draw();
   addClass('all-males');
-  //getAllFemale('Pregnant');
+  getAllFemale('Pregnant');
 }
 
 function addClass(id) {
@@ -246,12 +266,12 @@ function assignNum(age, gender, num) {
   for(var i = 0 ; i < cells.length; i++){
     var tds = cells[i].getElementsByTagName('td');
     if(tds[1].innerHTML == age){
-      assignTD(tds, num);
+      assignTD(tds, num, gender);
     }
   }
 }
 
-function assignTD(tds, num) {
+function assignTD(tds, num, gender) {
   tds[3].innerHTML = num.tx_new;
   tds[4].innerHTML = num.tx_curr;
   tds[5].innerHTML = num.tx_screened_for_tb;
@@ -266,7 +286,7 @@ function addTableBody() {
     '18-19 years', '20-24 years',
     '25-29 years', '30-34 years',
     '35-39 years', '40-44 years',
-    '45-49 years', '50+ years'
+    '45-49 years', '50 plus years'
   ];
 
   var table_body = document.getElementById('table-body');
@@ -319,13 +339,93 @@ function getAllFemale(age_group) {
       document.getElementById('spinner').style = 'display: none;';
       document.getElementById('report-cover').style = 'display: none;';
       var obj = JSON.parse(this.responseText);
-      //loadAllFemale(obj, age_group);
+      loadAllFemale(obj, age_group);
     }
   };
   xhttp.open("GET", url, true);
   xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
   xhttp.setRequestHeader('Content-type', "application/json");
   xhttp.send();
+}
+
+function loadAllFemale(data, age_group) {
+  for(age in data) {
+    var gender = data[age];
+    for(sex in gender) {
+      var tx_new = data[age][sex].tx_new;
+      var tx_curr = data[age][sex].tx_curr;
+      var tx_screened_for_tb = data[age][sex].tx_screened_for_tb;
+      var tx_given_ipt = data[age][sex].tx_given_ipt;
+      
+      if(age_group == 'Pregnant'){
+        var count = 32 ; var g = 'FP'; 
+      }else if(age_group == 'Breastfeeding'){
+        var count = 34 ; var g = 'FBf'; 
+      }
+
+      data_table.row.add([count,'All', g, tx_new, tx_curr, 
+        tx_screened_for_tb, tx_given_ipt]).node().id = age_group.toLowerCase();
+      data_table.draw();
+      addClass(age_group.toLowerCase()); 
+    }
+  }
+
+  if(age_group == 'Pregnant') {
+    data_table.row.add([33,'All', 'FNP', 0,0,0,0]).node().id = 'fnp';
+    data_table.draw();
+    addClass('fnp'); 
+    getAllFemale('Breastfeeding');
+  }else if(age_group == 'Breastfeeding') {
+    updateFNProw();
+  }
+}
+
+function updateFNProw() {
+  var fp_row = document.getElementById('pregnant');
+  var fnp_row = document.getElementById('fnp');
+  var bf_row = document.getElementById('breastfeeding');
+
+  var fp_bf_tx_new = 0;
+  var fp_bf_tx_curr = 0;
+  var fp_bf_tx_given_ipt = 0;
+  var fp_bf_tx_screened_for_tb = 0;
+
+  var rows = [fp_row, bf_row];
+  
+  for(var r = 0 ; r < rows.length; r++){
+    var tds = rows[r].getElementsByTagName('td');
+    fp_bf_tx_new += parseInt(tds[3].innerHTML);
+    fp_bf_tx_curr += parseInt(tds[4].innerHTML);
+    fp_bf_tx_given_ipt += parseInt(tds[5].innerHTML);
+    fp_bf_tx_screened_for_tb += parseInt(tds[6].innerHTML);
+  }
+
+  var all_female_tx_new = 0;
+  var all_female_tx_curr = 0;
+  var all_female_tx_given_ipt = 0;
+  var all_female_tx_screened_for_tb = 0;
+  var female_rows = document.getElementsByClassName('Female_row');
+  
+  for(var i = 0 ; i < female_rows.length; i++){
+    var tds = female_rows[i].getElementsByTagName('td');
+    
+    if(tds[1].innerHTML.match(/months/i) || tds[1].innerHTML.match(/years/)) {
+      all_female_tx_new += parseInt(tds[3].innerHTML);
+      all_female_tx_curr += parseInt(tds[4].innerHTML);
+      all_female_tx_given_ipt += parseInt(tds[5].innerHTML);
+      all_female_tx_screened_for_tb += parseInt(tds[6].innerHTML);
+    }
+  }
+  
+  var tds = fnp_row.getElementsByTagName('td');
+  tds[3].innerHTML = (all_female_tx_new - fp_bf_tx_new);  
+  tds[4].innerHTML = (all_female_tx_curr - fp_bf_tx_curr);  
+  tds[5].innerHTML = (all_female_tx_given_ipt - fp_bf_tx_given_ipt);  
+  tds[6].innerHTML = (all_female_tx_screened_for_tb - fp_bf_tx_screened_for_tb);  
+
+  data_table.destroy();
+  initializeTable();
+  validateReport();
 }
 
 var age_groups = [
@@ -335,14 +435,41 @@ var age_groups = [
   '18-19 years', '20-24 years',
   '25-29 years', '30-34 years',
   '35-39 years', '40-44 years',
-  '45-49 years', '>= 50 years'
+  '45-49 years', '50 plus years'
 ];
 
 function initializeGet() {
   getData(age_groups[0]);
 }
 
+document.getElementById('quarter-title').innerHTML = quarter;
+document.getElementById('on-art').innerHTML = on_art;
+
 addTableBody();
 initializeTable();
 initializeGet();
+
+function validateReport() {
+  var report_total = 0;
+  var rows = [];
+  rows.push(document.getElementById('pregnant'));
+  rows.push(document.getElementById('fnp'));
+  rows.push(document.getElementById('breastfeeding'));
+  rows.push(document.getElementById('all-males'));
+
+  for(var i = 0 ; i < rows.length; i++){
+    var tds = rows[i].getElementsByTagName('td');
+    report_total += parseInt(tds[3].innerHTML);
+    report_total += parseInt(tds[4].innerHTML);
+  }
+
+  var valid_report = document.getElementById('valid-report');
+  
+  if(parseInt(on_art) == report_total) {
+    valid_report.innerHTML = "<span style='color: green;'>Report is consistent</span>";
+  }else{
+    valid_report.innerHTML = "<span style='color: red;'>Report is <b>Not</b> consistent</span>";
+  }
+}
+
 </script>

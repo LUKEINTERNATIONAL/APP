@@ -219,7 +219,11 @@ function showDisaggregatedReport(){
   var url = window.location.href;
   url = new URL(url);
   var quarter = url.searchParams.get("quarter");
-  location = 'disaggregated.html?quarter=' + quarter; 
+  url = 'disaggregated.html?quarter=' + quarter; 
+  
+  var on_art = document.getElementById('total_alive_and_on_art').innerHTML;
+  url += '&total_alive_and_on_art=' + on_art;
+  location = url;
 }
 
 
@@ -252,9 +256,8 @@ function showDisaggregatedReport(){
         <td class="border-top-dotted border-left-dotted border-null-bottom text-bold">
             Clinic name
         </td>
-        <td colspan="6" class="bolder">
-            Lighthouse clinic
-             <div style="float:right;font-style:italic;font-size:14;font-weight:bold;">Version 20</div>
+        <td colspan="6" class="bolder"><span id="clinic-name"></span>
+         <div style="float:right;font-style:italic;font-size:14;font-weight:bold;">Version 20</div>
         </td>
     </tr>
     <tr>
@@ -3504,6 +3507,7 @@ var Quarter = getUrlVars()["quarter"].split("+")[0];
 document.getElementById("display-quarter").innerHTML = "Quarter: " + Quarter;
 document.getElementById("display-quarter-year").innerHTML = "Year: " + Year;
 
+document.getElementById('clinic-name').innerHTML = sessionStorage.currentLocation;
 getIndicators();
 </script>
 
