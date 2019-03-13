@@ -222,6 +222,10 @@ function showDisaggregatedReport(){
   location = 'disaggregated.html?quarter=' + quarter; 
 }
 
+function setClinicName() {
+    document.getElementById("clinic-name").innerHTML = sessionStorage.currentLocation;
+}
+
 
 </script>
 
@@ -253,7 +257,8 @@ function showDisaggregatedReport(){
             Clinic name
         </td>
         <td colspan="6" class="bolder">
-            Lighthouse clinic
+            <span id="clinic-name" onload="setClinicName();"></span>
+            
              <div style="float:right;font-style:italic;font-size:14;font-weight:bold;">Version 20</div>
         </td>
     </tr>
@@ -2808,6 +2813,7 @@ function showDisaggregatedReport(){
 <div id="report-cover"></div>
 
 <script type="text/javascript">
+setClinicName();
 
 function viewRawData() {
   var url = window.location.href;
