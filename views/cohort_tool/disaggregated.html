@@ -33,7 +33,6 @@
   position: absolute;
   top: 15%;
   left: 40%;
-  display: none;
 }
 
 #report-cover {
@@ -45,7 +44,6 @@
   top: 0%;
   z-index: 990;
   opacity: 0.65;
-  display: none;
 }
 
 .title-table {
@@ -118,7 +116,14 @@ function initializeTable() {
     },
     dom: 'Bfrtip',
     buttons: [
-      'csv', 'pdf'
+      {
+        extend: 'csv',
+        title: sessionStorage.currentLocation + ': cohort disaggregated report ' + quarter
+      },
+      {
+        extend: 'pdf',
+        title: sessionStorage.currentLocation + ': cohort disaggregated report ' + quarter
+      }
     ]
   });
 
@@ -200,8 +205,6 @@ function getData(age_group) {
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
     if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
-      document.getElementById('spinner').style = 'display: none;';
-      document.getElementById('report-cover').style = 'display: none;';
       var obj = JSON.parse(this.responseText);
       age_groups.shift();
       loadData(obj, age_group);
@@ -470,6 +473,8 @@ function validateReport() {
   }else{
     valid_report.innerHTML = "<span style='color: red;'>Report is <b>Not</b> consistent</span>";
   }
+  document.getElementById('spinner').style = 'display: none;';
+  document.getElementById('report-cover').style = 'display: none;';
 }
 
 </script>
