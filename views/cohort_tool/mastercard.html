@@ -4,6 +4,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
   <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+  <meta charset="UTF-8" http-equiv="encoding">
+
   Patients Mastercard
   <script language="javascript">
    
@@ -290,7 +292,7 @@ a span {
 
 <script>
 
-var patientID = '135942';
+var patientID = sessionStorage.patientID;
 var tt_cancel_destination = "/patients/show/" + patientID;
 var rowBG = '';
 

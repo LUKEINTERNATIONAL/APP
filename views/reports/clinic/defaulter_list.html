@@ -96,7 +96,7 @@ function buildDataTable(e) {
   var tr = document.createElement('tr');
   theader.appendChild(tr);
 
-  var headers = ['NPID','First name','Last name', 'Gender','birthdate','Date defaulted','Address','&nbsp;'];
+  var headers = ['ARV#','First name','Last name', 'Gender','birthdate','Date defaulted','Address','&nbsp;'];
   
   for(var i = 0 ; i < headers.length ; i++){
     var th = document.createElement('th');
@@ -158,14 +158,12 @@ function loadClients(data) {
     var family_name = data[i].family_name;
     var gender = data[i].gender;
     var birthdate = moment(data[i].birthdate).format('DD/MMM/YYYY');
-    var npid = data[i].npid;
+    var arv_num = data[i].arv_number;
     var person_id = data[i].person_id;
     var outcome_date = moment(data[i].defaulter_date).format('DD/MMM/YYYY');
 
-  /*  setDataTable.row.add([npid, given_name, family_name, gender, birthdate, '','']).node().id = 'row-' + person_id;
-    setDataTable.draw();
-    addClassIMGcontainter(person_id); */
-    formatted_data.push([npid, given_name, family_name, gender, birthdate, outcome_date, '',addSelectButton(person_id)]);
+    formatted_data.push([arv_num, given_name, 
+      family_name, gender, birthdate, outcome_date, '',addSelectButton(person_id)]);
   }
   
   jQuery('#clients').DataTable( {
