@@ -388,9 +388,47 @@
             }
         }
 
+        function customizeSelectAllImg() {
+            var interval = setInterval(function () {
+                var selectAllCheckBoxInput = __$("chkSelectAll");
+                if (selectAllCheckBoxInput) {
+                    if (selectAllCheckBoxInput.getAttribute("checked") == "false") {
+                        selectAllCheckBoxInput.src = "/public/touchscreentoolkit/lib/images/unticked.jpg";
+                    } else {
+                        selectAllCheckBoxInput.src = "/public/touchscreentoolkit/lib/images/ticked.jpg";
+                    }
+
+                    selectAllCheckBoxInput.onclick = function () {
+                        if (this.getAttribute("checked") == "false") {
+                            toggleState("uncheck");
+                            this.setAttribute("checked", "true");
+                            this.src = "/public/touchscreentoolkit/lib/images/ticked.jpg";
+                            __$("lblSelectAll").innerHTML = "Deselect All";
+                        } else {
+                            toggleState("check");
+                            this.setAttribute("checked", "false");
+                            this.src = "/public/touchscreentoolkit/lib/images/unticked.jpg";
+                            __$("lblSelectAll").innerHTML = "Select All";
+                        }
+                    };
+
+                    clearInterval(interval);
+                }
+            }, 100);
+        }
+
+        /**/
     </script>
 
     <style>
+        #chkSelectAll[checked="false"] {
+            background-image: url("/public/touchscreentoolkit/lib/images/unticked.jpg") important !
+        }
+
+        #chkSelectAll[checked="true"] {
+            background-image: url("/public/touchscreentoolkit/lib/images/ticked.jpg") important !
+        }
+
         .tt_controls_scan_delivery_barcode .keyboard {
             display: none;
         }
@@ -581,7 +619,8 @@
 
             <select field_type="alpha" helpText="Select products received" id="select_drugs" multiple="multiple"
                     name="drug_name[]" optional="true" selectAll="true"
-                    tt_onLoad="returning = true; hidePreviousDrugs(); resetNextButton();" tt_onUnLoad="selectedDrugs()"
+                    tt_onLoad="returning = true; hidePreviousDrugs(); resetNextButton(); customizeSelectAllImg();"
+                    tt_onUnLoad="selectedDrugs()"
                     tt_pageStyleClass="longSelectList">
                 <option></option>
                 <option value='ABC/3TC (Abacavir and Lamivudine 60/30mg tablet)' drug_id="733">Abacavir / Lamivudine 60
