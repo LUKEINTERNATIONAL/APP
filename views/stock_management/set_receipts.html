@@ -134,10 +134,12 @@
         var delivery_date = JSON.parse(sessionStorage.receipts)["delivery_date"];
         var selected = [];
         var selected_drugs_hash = drugs = JSON.parse(sessionStorage.receipts)["drugs"];
+        var short_name_drug_id = {};
         for (var key in selected_drugs_hash) {
             var short_name = selected_drugs_hash[key]["short_name"];
             var full_name = selected_drugs_hash[key]["full_name"];
             var drug_id = selected_drugs_hash[key]["drug_id"];
+            short_name_drug_id[short_name] = drug_id;
             selected.push(short_name)
 
         }
@@ -1572,8 +1574,6 @@
             }
 
             r.style.width = (table.offsetWidth) + "px";
-
-            __$("nextButton").innerHTML = "<span>Save</span>";
         }
 
         function enableSaveDialogBox() {
@@ -1607,6 +1607,37 @@
                 Entries.initialize();
             } else {
                 setTimeout("checkContainer()", 150);
+            }
+        }
+
+        function customizeFinishButton() {
+            __$("nextButton").innerHTML = "<span>Save</span>";
+            __$("nextButton").onmousedown = function () {
+                var data = [];
+
+                for (var drug_name in drugs_hash) {
+                    var drug = drug_name.split("_")[0];
+                    var date_of_expiry = drugs_hash[drug_name]["date_of_expiry"];
+                    var tabs_per_tin = drugs_hash[drug_name]["tabs_per_tin"];
+                    var total_tins = drugs_hash[drug_name]["total_tins"];
+                    var drug_id = short_name_drug_id[drug];
+                    //amount = tabs_per_tin
+                    //expire_amount = total_tins
+                    //date = date_of_expiry
+
+                    if (date_of_expiry.length > 0 && tabs_per_tin.length > 0 && total_tins.length > 0) {
+                        data.push({
+                            drug: drug,
+                            drug_id: drug_id,
+                            date_of_expiry: date_of_expiry,
+                            tabs_per_tin: tabs_per_tin,
+                            total_tins: total_tins
+                        })
+                    }
+
+                }
+
+                console.log(data)
             }
         }
 
@@ -1851,17 +1882,15 @@
 
         <html lang="en">
         <div id="container">
-            <form action="create_stock" method="post">
-
-                <input type="hidden" name="delivery_date" value="2019-03-07">
-                <input type="hidden" name="identifier" value="678">
+            <form action="#">
 
                 <input helpText="Batch details" id="input" name="information" optional="true"
                        tt_onLoad="$('clearButton').style.display = 'none'; checkContainer(); updateNextButton(); validator = setInterval('validateInputFields();', 350); "
                        tt_onUnload="clearInterval(validator)" tt_pageStyleClass="NoKeyboard" type="text"/>
 
-                <input helpText="&lt;span style='color: red;background: white;'&gt;Confirm Entry (Touch row to change) &lt;/span&gt;"
-                       id="summary" name="showSummary" optional="true" tt_onLoad="showSummary();enableSaveDialogBox();"
+                <input helpText="<span style='color: red;background: white;'>Confirm Entry (Touch row to change) </span>"
+                       id="summary" name="showSummary" optional="true"
+                       tt_onLoad="clearInterval(validator); showSummary(); customizeFinishButton();"
                        tt_pageStyleClass="NoKeyboard" type="text"/>
             </form>
         </div>
