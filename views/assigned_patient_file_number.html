@@ -9,7 +9,7 @@
 
 <style>
   #clearButton { display: none; }
-#cancelButton { display: none; }
+/* #cancelButton { display: none; } */
 
       #fileNumbers {
         width: 90%;
@@ -53,7 +53,11 @@
 </style>
 
 <script>
+  
   function loadNumbers() {
+  patientID = fetchArgumentFromUrlString("patient_id");
+  tt_cancel_destination = "/views/patient_dashboard.html?patient_id=" + sessionStorage.patientID;
+  
   var f = document.getElementById('inputFrame' + tstCurrentPage);
   f.style = 'width: 96%; height: 90%;';
 
