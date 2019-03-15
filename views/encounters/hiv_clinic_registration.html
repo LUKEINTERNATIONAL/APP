@@ -1616,7 +1616,10 @@
                                 { concept_id: 8207, value_text: answers_hash["cd4_less_than_or_equal_to_350"] },
                                 { concept_id: 9389, value_text: answers_hash["cd4_less_than_or_equal_to_500"] },
                                 { concept_id: 7032, value_text: answers_hash["cd4_less_than_25"] },
-                                { concept_id: 7563, value_text: answers_hash["reason_for_art_eligibility"] },
+                                { 
+                                  concept_id: 7563, value_text: answers_hash["reason_for_art_eligibility"],
+                                  value_coded: reasonForART(answers_hash["reason_for_art_eligibility"]) 
+                                },
                                 { concept_id: 6830, value_text: answers_hash["cd4_location"] },
                                 { concept_id: 6831, value_datetime: answers_hash["cd4_datetime"] },
                                 { concept_id: 5497, value_numeric: answers_hash["cd4_count"], value_modifier: cd4_count_modifier_global },
@@ -1926,6 +1929,33 @@
                         $('touchscreenInput' + tstCurrentPage).setAttribute('ajaxURL', "/locations?name=" + sessionStorage.currentLocation);
                         listSuggestions(tstCurrentPage);
                         $('touchscreenInput' + tstCurrentPage).setAttribute('ajaxURL', "/locations?name=");
+                    }
+
+                    function reasonForART(reason_for_art_eligibility) {
+                      var reasons = {};
+                      reasons["PRESUMED SEVERE HIV"] = 8263;
+                      reasons["HIV DNA POLYMERASE CHAIN REACTION"] = 844;
+                      reasons["HIV infected"] = 1169 ;
+                      reasons["CD4 COUNT LESS THAN OR EQUAL TO 750"] = 8208;
+                      reasons["CD4 COUNT LESS THAN OR EQUAL TO 500"] = 9389;
+                      reasons["CD4 COUNT LESS THAN OR EQUAL TO 350"] = 8207;
+                      reasons["CD4 count less than or equal to 250"] = 8262;
+                      reasons["LYMPHOCYTE COUNT BELOW THRESHOLD WITH WHO STAGE 2"] = 7559;
+                      reasons["PATIENT PREGNANT"] = 1755;
+                      reasons["BREASTFEEDING"] = 5632;
+                      reasons["Asymptomatic"] = 5006;
+                      reasons["LYMPHOCYTE COUNT BELOW THRESHOLD WITH WHO STAGE 1"] = 8376;
+                      reasons["WHO STAGE IV ADULT"] = 1207;
+                      reasons["WHO STAGE IV PEDS"] = 1223;
+                      reasons["WHO STAGE III ADULT"] = 1206;
+                      reasons["WHO STAGE III PEDS"] = 1222;
+                      reasons["WHO STAGE II ADULT"] = 1205;
+                      reasons["WHO STAGE II PEDS"] = 1221;
+                      reasons["WHO STAGE I ADULT"] = 1204;
+                      reasons["WHO STAGE I PEDS"] = 1220;
+                        
+
+                      return reasons[reason_for_art_eligibility];
                     }
 
                 </script>

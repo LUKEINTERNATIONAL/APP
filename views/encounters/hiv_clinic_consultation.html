@@ -1760,6 +1760,42 @@
                 "Confirmed TB NOT on treatment": 7456
             }
 
+            function isNumeric(n) {
+                return !isNaN(parseFloat(n)) && isFinite(n);
+            }
+
+            function getTBStatusConceptID(concept_name) {
+                var tb_treatment_answer = __$('tb_treatment_question').value;
+                if (tb_treatment_answer == "Yes") {
+                    concept_name = "Confirmed TB on treatment";
+                }
+
+                if (isNumeric(concept_name) && concept_name > 0) {
+                    return concept_name;
+                }
+
+                var tb_status_concepts = {
+                    "TB NOT suspected": 7454,
+                    "TB suspected": 7455,
+                    "Confirmed TB NOT on treatment": 7456,
+                    "Confirmed TB on treatment": 7458
+                }
+
+                return tb_status_concepts[concept_name]
+            }
+
+            function getSideEffectAnswer(key) {
+                side_effects_answers = yesNo_Hash["MALAWI ART SIDE EFFECTS"];
+                side_effect_answer = side_effects_answers[key];
+                if (side_effect_answer.toUpperCase() == "YES") {
+                    return "1065";
+                }
+                if (side_effect_answer.toUpperCase() == "NO") {
+                    return "1066";
+                }
+                return "";
+            }
+
             function postHIVClinicConsultationObs(encounter) {
                 var malawi_art_side_effects_concept_id = 7755;
                 var routine_tb_screening_concept_id = 8259;
@@ -2445,7 +2481,7 @@
                         if (tubal_ligation_observations.length > 0) {
                             tubal_ligation = true;
                             gotoNextPage();
-                        } else{
+                        } else {
                             gotoNextPage();
                         }
 
