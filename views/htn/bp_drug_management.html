@@ -27,6 +27,8 @@
         var last_bp_drugs_dispensations_url = apiProtocol + "://" + apiURL + ":" + apiPort;
         last_bp_drugs_dispensations_url +=  "/api/v1/patients/" + sessionStorage.patientID + "/last_bp_drugs_dispensation";
 
+        var special_drug = "Hydrochlorothiazide (25mg tablet)";
+
         function loadCurrentBPDrugs() {
 
             var xhttp = new XMLHttpRequest();
@@ -51,6 +53,20 @@
                             var input = "<input id='" + current_bp_drugs[i] + "' onclick=\"showNumber('" + current_bp_drugs[i] + "', 0, 500)\" class=\"butt\" value=\"\"></input>"
 
                             textBoxDrugInput.innerHTML = input;
+                        } else {
+                            if (current_bp_drugs[i] == special_drug){
+                                var new_drug = 'HCZ (25mg tablet)';
+                                var textBoxDrugInput = document.getElementById(new_drug + "-remaining");
+                                var inputID = new_drug + "-current";
+                                var currentDrugInput = document.getElementById(inputID);
+                                if (currentDrugInput) {
+                                    currentDrugInput.innerHTML = html;
+                                }
+
+                                var input = "<input id='" + current_bp_drugs[i] + "' onclick=\"showNumber('" + current_bp_drugs[i] + "', 0, 500)\" class=\"butt\" value=\"\"></input>"
+
+                                textBoxDrugInput.innerHTML = input;
+                            }
                         }
                     }
 
@@ -912,6 +928,7 @@
 
             var drug_map_name_id = {
                 "HCZ (25mg tablet)": 275,
+                "Hydrochlorothiazide (25mg tablet)": 168,
                 "Enalapril (5mg tablet)": 942,
                 "Enalapril (10mg tablet)": 943,
                 "Amlodipine (5mg tablet)": 558,

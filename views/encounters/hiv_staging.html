@@ -1243,8 +1243,10 @@ bottom: 0px;
                         {concept_id: 8262, value_text: answers_hash["cd4_less_than_or_equal_to_250"]},
                         {concept_id: 8207, value_text: answers_hash["cd4_less_than_or_equal_to_350"]},
                         {concept_id: 9389, value_text: answers_hash["cd4_less_than_or_equal_to_500"]},
-                        {concept_id: 7563, value_coded: reasonForART(answers_hash["reason_for_art_eligibility"]), 
-                          value_text: answers_hash["reason_for_art_eligibility"]},
+                        {
+                          concept_id: 7563, value_coded: reasonForART(answers_hash["reason_for_art_eligibility"]), 
+                          value_text: answers_hash["reason_for_art_eligibility"]
+                        },
                         {concept_id: 6830, value_text: answers_hash["cd4_location"]},
                         {concept_id: 6831, value_datetime: answers_hash["cd4_datetime"]},
                         {
@@ -1402,6 +1404,14 @@ bottom: 0px;
             reasons["BREASTFEEDING"] = 5632;
             reasons["Asymptomatic"] = 5006;
             reasons["LYMPHOCYTE COUNT BELOW THRESHOLD WITH WHO STAGE 1"] = 8376;
+            reasons["WHO STAGE IV ADULT"] = 1207;
+            reasons["WHO STAGE IV PEDS"] = 1223;
+            reasons["WHO STAGE III ADULT"] = 1206;
+            reasons["WHO STAGE III PEDS"] = 1222;
+            reasons["WHO STAGE II ADULT"] = 1205;
+            reasons["WHO STAGE II PEDS"] = 1221;
+            reasons["WHO STAGE I ADULT"] = 1204;
+            reasons["WHO STAGE I PEDS"] = 1220;
 
             return reasons[reason_for_art_eligibility];
           }
