@@ -1297,9 +1297,45 @@
             }
         }
 
+        function customizeFinishButton() {
+            __$("nextButton").onmousedown = function () {
+                var data = [];
+
+                for (var drug_name in drugs_hash) {
+                    var drug = drug_name.split("_")[0];
+                    var date_of_expiry = drugs_hash[drug_name]["date_of_expiry"];
+                    var tabs_per_tin = drugs_hash[drug_name]["tabs_per_tin"];
+                    var total_tins = drugs_hash[drug_name]["total_tins"];
+                    var expiring_tins = drugs_hash[drug_name]["expiring_tins"];
+                    var drug_id = short_name_drug_id[drug];
+                    //amount = tabs_per_tin
+                    //expire_amount = total_tins
+                    //date = date_of_expiry
+
+                    if (date_of_expiry.length > 0 && tabs_per_tin.length > 0 && total_tins.length > 0 && expiring_tins.length > 0) {
+                        data.push({
+                            drug: drug,
+                            drug_id: drug_id,
+                            date_of_expiry: date_of_expiry,
+                            tabs_per_tin: tabs_per_tin,
+                            total_tins: total_tins,
+                            expiring_tins: expiring_tins
+                        })
+                    }
+
+                }
+
+                console.log(data);
+                alertify.alert("Waiting for the back end")
+                jQuery(".ajs-primary").hide();
+
+            }
+        }
+
         window.onresize = function () {
             loadCSS();
         }
+
 
     </script>
 
@@ -1466,7 +1502,7 @@
                    tt_pageStyleClass="NoKeyboard" type="text"/>
 
             <input helpText="&lt;span style='color: red;background: white;'&gt;Verify values entered&lt;/span&gt;"
-                   id="summary" name="showSummary" optional="true" tt_onLoad="showSummaryX();enableSaveDialogBox();"
+                   id="summary" name="showSummary" optional="true" tt_onLoad="showSummaryX(); customizeFinishButton();"
                    tt_pageStyleClass="NoKeyboard" type="text"/>
         </form>
 
