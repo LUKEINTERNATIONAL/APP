@@ -1637,8 +1637,6 @@
 
                 __$("heada").style.width = (table.offsetWidth) + "px";
                 r.style.width = (table.offsetWidth) + "px";
-
-                __$("nextButton").innerHTML = "<span>Save</span>";
             }
 
             function enableSaveDialogBox() {
@@ -1675,6 +1673,41 @@
                 }
             }
 
+            function customizeFinishButton() {
+                __$("nextButton").innerHTML = "<span>Save</span>";
+                __$("nextButton").onmousedown = function () {
+                    var data = [];
+
+                    for (var drug_name in drugs_hash) {
+                        var drug = drug_name.split("_")[0];
+                        var date_of_expiry = drugs_hash[drug_name]["date_of_expiry"];
+                        var tabs_per_tin = drugs_hash[drug_name]["tabs_per_tin"];
+                        var total_tins = drugs_hash[drug_name]["total_tins"];
+                        var authorization_code = drugs_hash[drug_name]["authorization_code"];
+                        var drug_id = short_name_drug_id[drug];
+                        //amount = tabs_per_tin
+                        //expire_amount = total_tins
+                        //date = date_of_expiry
+
+                        if (date_of_expiry.length > 0 && tabs_per_tin.length > 0 && total_tins.length > 0 && authorization_code.length > 0) {
+                            data.push({
+                                drug: drug,
+                                drug_id: drug_id,
+                                date_of_expiry: date_of_expiry,
+                                tabs_per_tin: tabs_per_tin,
+                                total_tins: total_tins,
+                                authorization_code: authorization_code
+                            })
+                        }
+
+                    }
+
+                    console.log(data);
+                    alertify.alert("Waiting for the back end");
+                    jQuery(".ajs-primary").hide();
+                }
+            }
+
             window.onresize = function () {
                 loadCSS();
             }
@@ -1686,838 +1719,822 @@
 <body id="mateme">
 <div id="container">
     <div id="content">
-
-
-        <!doctype html>
-
-        <html lang="en">
-
-        <style>
-
-
-            .touchscreenTextInput {
-                display: none;
-            }
-
-            #table, #h-table {
-                display: table;
-                width: 99%;
-                padding-left: 0.7%;
-                border-radius: 3px;
-                border-spacing: 3px;
-                font-size: 26px;
-                border-collapse: separate;
-            }
-
-            .t-data, .h-data {
-                display: table-cell;
-            }
-
-            .t-row {
-                display: table-row;
-            }
-
-            .h-data {
-                border-radius: 5px;
-                height: 56px;
-                color: white;
-                font-size: 30px;
-                font-family: sans-serif;
-                font-weight: bold;
-                text-shadow: 1px 1px black;
-                vertical-align: middle;
-                text-align: center;
-            }
-
-            #ht1 {
-                border-right: 2.25px solid white;
-            }
-
-            #ht2 {
-                border-left: 2.25px solid white;
-                min-width: 350px;
-            }
-
-            #drug-pane, #data-pane {
-                background: white;
-                padding-left: 0px;
-                border-radius: 5px;
-            }
-
-            #drug-pane {
-                padding-left: 0px;
-                overflow: auto;
-                overflow-X: hidden;
-            }
-
-            #drug-list {
-                list-style-type: none;
-                font-size: 16px;
-            }
-
-            .even, .odd {
-                font-size: 24px;
-                padding-left: 10px;
-                cursor: pointer;
-                height: 43px;
-                min-height: 43px !important;
-                vertical-align: middle;
-                font-weight: normal;
-                -moz-user-select: none;
-                border-bottom: 1px dotted;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                -o-text-overflow: ellipsis;
-            }
-
-            .input-field {
-                -webkit-transition: all 0.30s ease-in-out;
-                -moz-transition: all 0.30s ease-in-out;
-                -ms-transition: all 0.30s ease-in-out;
-                -o-transition: all 0.30s ease-in-out;
-                outline: none;
-                padding: 3px 0px 3px 3px;
-                margin: 3px 1px 3px 0px;
-                border: 1px solid #DDDDDD;
-            }
-
-            .input-field-active {
-                box-shadow: 0 0 5px rgba(81, 203, 238, 1);
-                padding: 3px 0px 3px 3px;
-                margin: 5px 1px 3px 0px;
-                border: 1px solid rgba(81, 203, 238, 1);
-            }
-
-            option {
-                background: #E3E4FA;
-                padding-bottom: 10px;
-                border-radius: 4px;
-                margin: 1px;
-                text-shadow: 0 2px 0 rgba(0, 0, 0, 0.4);
-            }
-
-            .scell {
-                height: 35px;
-                font-size: 20px;
-                border-bottom: 0.4px solid gray;
-                border-right: 0.4px solid gray;
-                border-radius: 4px;
-                text-align: center;
-                vertical-align: middle;
-            }
-
-            .drug-label {
-                min-width: 33%;
-                text-align: left;
-                padding-left: 2%;
-                overflow-X: hidden;
-            }
-
-            .drug-value {
-                min-width: 20%;
-                cursor: pointer;
-            }
-
-            .hvalue {
-                border: hidden;
-                background: white;
-                font-size: 22px;
-                font-family: sans-serif;
-                font-weight: bold;
-                cursor: auto;
-                color: gray;
-                text-align: left;
-                padding-left: 9px;
-                text-shadow: 1px 1px black;
-                vertical-align: middle;
-            }
-
-            #add-button {
-                position: absolute;
-                border-radius: 5px;
-                bottom: 100px;
-                right: 25px;
-                font-weight: bold;
-                height: auto;
-                text-align: center;
-                cursor: pointer;
-            }
-
-            .red {
-                background: white;
-                border-radius: 10px;
-                border-left: 2px solid black;
-                border-right: 2px solid black
-                box-shadow: inset 0 0 10px black, 0 0 15px black;
-            }
-
-            .even-small, .odd-small {
-                font-size: 14px;
-                width: 85%;
-                padding-left: 20px;
-                cursor: pointer;
-                height: 28px;
-                min-height: 28px !important;
-                vertical-align: middle;
-                font-weight: normal;
-                -moz-user-select: none;
-                border-bottom: 1px gray dotted;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                -o-text-overflow: ellipsis;
-            }
-
-            .bar {
-                left: 31%;
-                width: 450px;
-                position: absolute;
-                top: 23%;
-                font-size: 1.9em;
-                text-align: center;
-                background-color: tomato;
-                padding: 10px;
-                z-index: 999;
-                border: 5px outset tomato;
-                display: none;
-                border-radius: 15px;
-            }
-
-            .bar button {
-                font-size: 0.7em;
-                margin: 5px;
-            }
-
-            .editable {
-                border-style: outset;
-                border-left: 1px solid gray;
-                border-top: 1px solid gray;
-                background-color: #d3d3d3;
-                border-radius: 3px;
-            }
-        </style>
-        </head>
         <div id="container">
-            <form action="create_relocation" method="post">
-
-                <input type="hidden" name="relocation_date" value="2019-03-18">
-                <input type="hidden" name="relocation_facility" value="Martin Preuss Centre">
-
-                <input type="hidden" name="identifier" value="">
-
+            <form>
                 <input helpText="Relocation Details" id="input" name="information" optional="true"
                        tt_onLoad="$('clearButton').style.display = 'none'; checkContainer(); updateNextButton(); validator = setInterval('validateInputFields();', 350); "
-                       tt_onUnload="clearInterval(validator)" tt_pageStyleClass="NoKeyboard" type="text"/>
+                       tt_pageStyleClass="NoKeyboard" type="text"/>
 
                 <input helpText="&lt;span style='color: red;background: white;'&gt;Confirm Entry (Touch row to change) &lt;/span&gt;"
-                       id="summary" name="showSummary" optional="true" tt_onLoad="showSummary(); enableSaveDialogBox()"
+                       id="summary" name="showSummary" optional="true"
+                       tt_onLoad="clearInterval(validator); showSummary(); customizeFinishButton()"
                        tt_pageStyleClass="NoKeyboard" type="text"/>
             </form>
-        </div>
-        </html>
 
+            <script type="text/javascript">
 
-        <script type="text/javascript">
-
-            function trimDate() {
-                field = document.getElementById('Date of expiry');
-                try {
-                    date_of_expiry_inputs = jQuery("input[field_type=date_of_expiry]");
-                    for (var i = 0; i <= date_of_expiry_inputs.length - 1; i++) {
-                        if (date_of_expiry_inputs[i].value.length > 8) {
-                            date_of_expiry_inputs[i].value = date_of_expiry_inputs[i].value.slice(3, 11);
-                        }
-                    }
-
-                } catch (e) {
-                    console.log(e)
-                }
-
-
-            }
-
-            setInterval("trimDate();", 10);
-
-            for (var j in drugs) {
-                for (var i = 0; i <= total_rows; i++) {
-                    drug_name = drugs[j] + "_" + i;
-                    drugs_hash[drug_name] = {
-                        "tabs_per_tin": "",
-                        "total_tins": "",
-                        "date_of_expiry": "",
-                        "authorization_code": ""
-                    };
-                }
-            }
-
-            function updateDrugsHash() {
-                input_fields = document.getElementsByClassName("input-field");
-                if (input_fields.length > 0) {
-                    drug = document.getElementById("input-header").getAttribute('drug');
-                    for (var i = 0; i <= input_fields.length - 1; i++) {
-                        value = input_fields[i].value;
-                        row = input_fields[i].getAttribute("row");
-                        field = input_fields[i].getAttribute("field_type");
-                        drug_name = drug + "_" + row;
-                        if (field == 'tabs_per_tin') {
-                            drugs_hash[drug_name]["tabs_per_tin"] = value;
-                        }
-                        if (field == 'total_tins') {
-                            drugs_hash[drug_name]["total_tins"] = value;
-                        }
-                        if (field == 'date_of_expiry') {
-                            drugs_hash[drug_name]["date_of_expiry"] = value;
-                        }
-                        if (field == 'authorization_code') {
-                            drugs_hash[drug_name]["authorization_code"] = value;
-                        }
-                    }
-                }
-                return drugs_hash
-            }
-
-            update_drugs_hash = window.setInterval("updateDrugsHash()", 1000);
-
-            function disableBatchInputs() {
-                incomplete_rows = []
-                for (var i = 0; i <= total_rows.length; i++) {
-                    row_inputs = jQuery("[row=" + i + "]");
-
-                }
-            }
-
-            function enableBatchInputs() {
-
-            }
-
-            function validateInputFields() {
-                incomplete_rows = [];
-
-                for (var key in drugs_hash) {
-                    drugName = key.split("_")[0];
-                    row_number = (parseInt(key.split("_")[1]) + 1);
-
-                    tabs_per_tin = drugs_hash[key]["tabs_per_tin"];
-                    total_tins = drugs_hash[key]["total_tins"];
-                    date_of_expiry = drugs_hash[key]["date_of_expiry"]; //authorization_code
-                    authorization_code = drugs_hash[key]["authorization_code"];
-
-                    if (!row_complete(tabs_per_tin, total_tins, date_of_expiry, authorization_code)) {
-                        incomplete_rows.push([drugName, row_number]);
-                    }
-
-                    if (parseInt(key.split("_")[1]) == 0) {
-                        if (drugs_hash[key]["tabs_per_tin"].length == 0) {
-                            incomplete_rows.push([drugName, row_number]); //The drug has not been clicked yet.
-                        }
-                    }
-
-                }
-
-                if (incomplete_rows.length > 0) {
-                    error_message = "<u>Incomplete Entries for the following drugs</u> <br />"
-                    for (var i = 0; i <= incomplete_rows.length - 1; i++) {
-                        drugName = incomplete_rows[i][0];
-                        row_number = incomplete_rows[i][1];
-                        error_message += "&nbsp;&nbsp;&nbsp;" + drugName + " on row # " + row_number + '<br />';
-                    }
-
-                    __$('nextButton').onmousedown = function () {
-                        showMessage(error_message);
-                    }
-                } else {
-                    __$('nextButton').onmousedown = function () {
-                        gotoNextPage();
-                    }
-                }
-            }
-
-            function row_complete(tabs_per_tin, total_tins, date_of_expiry, authorization_code) {
-                if (total_tins.length > 0 || date_of_expiry.length > 0 || authorization_code.length > 0) {
-                    if (total_tins.length > 0 && date_of_expiry.length > 0 && authorization_code.length > 0) {
-                        return true
-                    } else {
-                        return false
-                    }
-                } else {
-                    return true
-                }
-
-            }
-
-            function addNewRow() {
-                input_fields = jQuery('.input-field');
-                var complete = true
-                for (var i = 0; i <= input_fields.length - 1; i++) {
-                    if (input_fields[i].value.length == 0) {
-                        complete = false;
-                        break;
-                    }
-                }
-                if (complete) {
-                    var batch_table = jQuery("#batch-table")[0].getElementsByTagName("tbody")[0];
-                    var i = parseInt(jQuery("table input:last").attr("row")) + 1;
-                    var drug = __$('data-pane').getAttribute("drug");
-
-                    var drug_name = drug + "_" + i;
-                    drugs_hash[drug_name] = {
-                        "tabs_per_tin": "",
-                        "total_tins": "",
-                        "date_of_expiry": "",
-                        "authorization_code": ""
-                    };
-
-                    var row = document.createElement("tr");
-
-                    for (var j = 0; j <= 3; j++) {
-                        var cell = document.createElement("td");
-                        cell.style.width = '20px';
-                        cell.style.textAlign = "center";
-                        var textField = document.createElement("input");
-                        if (j == 0) {
-                            //var inputID = "Number of tins";
-                            var inputID = drug + "_" + i + "_number_of_tins";
-                            var inputValue = drug_cms_packsizes[drug];
-                            textField.value = inputValue;
-                            var field_type = "tabs_per_tin"
-                        }
-
-                        if (j == 1) {
-                            //var inputID = "Number of expiring tins";
-                            var inputID = drug + "_" + i + "_total_tins";
-                            var inputValue = drugs_hash[drug_name]["total_tins"];
-                            var field_type = "total_tins"
-                        }
-
-                        if (j == 2) {
-                            //var inputID = "Date of expiry";
-                            var inputID = drug + "_" + i + "_date_of_expiry";
-                            var inputValue = drugs_hash[drug_name]["date_of_expiry"];
-                            var field_type = "date_of_expiry"
-                        }
-
-                        if (j == 3) {
-                            //var inputID = "Date of expiry";
-                            var inputID = drug + "_" + i + "_authorization_code";
-                            var inputValue = drugs_hash[drug_name]["authorization_code"];
-                            var field_type = "authorization_code"
-                        }
-
-                        textField.className = "input-field";
-                        textField.id = inputID;
-                        //textField.value = inputValue;
-                        textField.setAttribute("field_type", field_type)
-                        textField.setAttribute("row", i);
-                        textField.setAttribute("drug_name", drug + "_" + i);
-                        textField.style.height = '35px';
-                        textField.style.width = '194px';
-                        textField.style.fontSize = '26px';
-                        textField.style.marginLeft = '10px';
-                        textField.style.textAlign = 'center';
-
-                        if (i + j == 0) {
-                            //textField.disabled = true;
-                        }
-
-                        if (j != 2) {
-                            textField.onmousedown = function () {
-                                jQuery(".input-field").attr("class", "input-field");
-                                this.className += " input-field-active";
-                                if (__$('popupkeyboard'))
-                                    __$('data-pane').removeChild(__$('popupkeyboard'));
-                                if (this.getAttribute('field_type') == 'authorization_code') {
-                                    showSpecialKeyBoard(this)
-                                } else {
-                                    showKeyboardCustom(this);
-                                }
+                function trimDate() {
+                    field = document.getElementById('Date of expiry');
+                    try {
+                        date_of_expiry_inputs = jQuery("input[field_type=date_of_expiry]");
+                        for (var i = 0; i <= date_of_expiry_inputs.length - 1; i++) {
+                            if (date_of_expiry_inputs[i].value.length > 8) {
+                                date_of_expiry_inputs[i].value = date_of_expiry_inputs[i].value.slice(3, 11);
                             }
+                        }
+
+                    } catch (e) {
+                        console.log(e)
+                    }
+
+
+                }
+
+                setInterval("trimDate();", 10);
+
+                for (var j in drugs) {
+                    for (var i = 0; i <= total_rows; i++) {
+                        drug_name = drugs[j] + "_" + i;
+                        drugs_hash[drug_name] = {
+                            "tabs_per_tin": "",
+                            "total_tins": "",
+                            "date_of_expiry": "",
+                            "authorization_code": ""
+                        };
+                    }
+                }
+
+                function updateDrugsHash() {
+                    input_fields = document.getElementsByClassName("input-field");
+                    if (input_fields.length > 0) {
+                        drug = document.getElementById("input-header").getAttribute('drug');
+                        for (var i = 0; i <= input_fields.length - 1; i++) {
+                            value = input_fields[i].value;
+                            row = input_fields[i].getAttribute("row");
+                            field = input_fields[i].getAttribute("field_type");
+                            drug_name = drug + "_" + row;
+                            if (field == 'tabs_per_tin') {
+                                drugs_hash[drug_name]["tabs_per_tin"] = value;
+                            }
+                            if (field == 'total_tins') {
+                                drugs_hash[drug_name]["total_tins"] = value;
+                            }
+                            if (field == 'date_of_expiry') {
+                                drugs_hash[drug_name]["date_of_expiry"] = value;
+                            }
+                            if (field == 'authorization_code') {
+                                drugs_hash[drug_name]["authorization_code"] = value;
+                            }
+                        }
+                    }
+                    return drugs_hash
+                }
+
+                update_drugs_hash = window.setInterval("updateDrugsHash()", 1000);
+
+                function disableBatchInputs() {
+                    incomplete_rows = []
+                    for (var i = 0; i <= total_rows.length; i++) {
+                        row_inputs = jQuery("[row=" + i + "]");
+
+                    }
+                }
+
+                function enableBatchInputs() {
+
+                }
+
+                function validateInputFields() {
+                    incomplete_rows = [];
+
+                    for (var key in drugs_hash) {
+                        drugName = key.split("_")[0];
+                        row_number = (parseInt(key.split("_")[1]) + 1);
+
+                        tabs_per_tin = drugs_hash[key]["tabs_per_tin"];
+                        total_tins = drugs_hash[key]["total_tins"];
+                        date_of_expiry = drugs_hash[key]["date_of_expiry"]; //authorization_code
+                        authorization_code = drugs_hash[key]["authorization_code"];
+
+                        if (!row_complete(tabs_per_tin, total_tins, date_of_expiry, authorization_code)) {
+                            incomplete_rows.push([drugName, row_number]);
+                        }
+
+                        if (parseInt(key.split("_")[1]) == 0) {
+                            if (drugs_hash[key]["tabs_per_tin"].length == 0) {
+                                incomplete_rows.push([drugName, row_number]); //The drug has not been clicked yet.
+                            }
+                        }
+
+                    }
+
+                    if (incomplete_rows.length > 0) {
+                        error_message = "<u>Incomplete Entries for the following drugs</u> <br />"
+                        for (var i = 0; i <= incomplete_rows.length - 1; i++) {
+                            drugName = incomplete_rows[i][0];
+                            row_number = incomplete_rows[i][1];
+                            error_message += "&nbsp;&nbsp;&nbsp;" + drugName + " on row # " + row_number + '<br />';
+                        }
+
+                        __$('nextButton').onmousedown = function () {
+                            showMessage(error_message);
+                        }
+                    } else {
+                        __$('nextButton').onmousedown = function () {
+                            gotoNextPage();
+                        }
+                    }
+                }
+
+                function row_complete(tabs_per_tin, total_tins, date_of_expiry, authorization_code) {
+                    if (total_tins.length > 0 || date_of_expiry.length > 0 || authorization_code.length > 0) {
+                        if (total_tins.length > 0 && date_of_expiry.length > 0 && authorization_code.length > 0) {
+                            return true
                         } else {
-                            textField.onmousedown = function () {
-                                jQuery(".input-field").attr("class", "input-field");
-                                this.className += " input-field-active";
-                                if (__$('popupkeyboard'))
-                                    __$('data-pane').removeChild(__$('popupkeyboard'));
-                                showDate(__$('data-pane'), this);
-                            }
+                            return false
                         }
-
-                        cell.appendChild(textField);
-                        row.appendChild(cell);
-                    }
-                    if (typeof addedRowsHash[drug] != "undefined") {
-                        addedRowsHash[drug] += 1;
                     } else {
-                        addedRowsHash[drug] = 1;
+                        return true
                     }
-                    batch_table.appendChild(row);
-                    jQuery("#batch-table td:first-child, #batch-table th:first-child").hide();
-                    //////////////////////////////////
+
                 }
-            }
 
-            function showDate(parent, target) {
-
-                date = new Date();
-                date = new Date(date.getFullYear(), (date.getMonth() + 1), 0);
-
-                months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-
-                monthNames = {
-                    "Jan": 0,
-                    "Feb": 1,
-                    "Mar": 2,
-                    "Apr": 3,
-                    "May": 4,
-                    "Jun": 5,
-                    "Jul": 6,
-                    "Aug": 7,
-                    "Sep": 8,
-                    "Oct": 9,
-                    "Nov": 10,
-                    "Dec": 11
-                };
-
-                var tbl = document.createElement("div");
-                tbl.style.display = "table";
-                tbl.id = "popupkeyboard";
-                tbl.style.marginTop = "270px";
-                tbl.style.marginLeft = "18%";
-                tbl.style.borderSpacing = "5px";
-
-                parent.appendChild(tbl);
-
-                var cells = [
-                    [
-                        {
-                            "type": "button",
-                            "id": "btnAddYearFor" + target.id,
-                            "target": target.id,
-                            "value": "+",
-                            "onmousedown": "incrementYear(this.getAttribute('target'))",
-                            "class": "dbutton bluee",
-                            "style": "height: 60px; margin: auto; width: 100%;"
-                        },
-                        {
-                            "type": "button",
-                            "id": "btnAddMonthFor" + target.id,
-                            "target": target.id,
-                            "value": "+",
-                            "onmousedown": "incrementMonth(this.getAttribute('target'))",
-                            "class": "dbutton bluee",
-                            "style": "height: 60px; margin: auto; width: 100%; margin-left: 20px;"
-                        },
-                        {
-                            "type": "button",
-                            "id": "btnAddDateFor" + target.id,
-                            "target": target.id,
-                            "value": "+",
-                            "onmousedown": "incrementDate(this.getAttribute('target'))",
-                            "class": "dbutton bluee",
-                            "style": "display: none; height: 60px; margin: auto; width: 100%;"
+                function addNewRow() {
+                    input_fields = jQuery('.input-field');
+                    var complete = true
+                    for (var i = 0; i <= input_fields.length - 1; i++) {
+                        if (input_fields[i].value.length == 0) {
+                            complete = false;
+                            break;
                         }
-                    ],
-                    [
-                        {
-                            "type": "input",
-                            "id": "txtYearFor" + target.id,
-                            "target": target.id,
-                            "value": date.getFullYear(),
-                            "onmousedown": "overwriteNumber = true; if(__$('keyboard')){document.body.removeChild(__$('keyboard'));} else {showShield(\"checkDate('\" + this.getAttribute('target') + \"', false)\"); showKeyboard(__$('txtYearFor' + this.getAttribute('target')),{':':':','/':'/','.':'.','abc':'abc'},true);} checkDate(this.getAttribute('target'));",
-                            "class": "input_cell",
-                            "style": "font-size: 24px; text-align: center; width: 100%;"
-                        },
-                        {
-                            "type": "input",
-                            "id": "txtMonthFor" + target.id,
-                            "target": target.id,
-                            "value": months[date.getMonth()],
-                            "onmousedown": "showShield(); addList(__$('txtMonthFor' + this.getAttribute('target')),{'Jan':'January','Feb':'February','Mar':'March','Apr':'April','May':'May','Jun':'June','Jul':'July','Aug':'August','Sep':'September','Oct':'October','Nov':'November','Dec':'December','?':'Unknown'},'single',__$('txtMonthFor' + this.getAttribute('target')),__$('txtMonthFor' + this.getAttribute('target')), 'checkDate(\"' + this.getAttribute('target') + '\")'); checkDate(this.getAttribute('target'));",
-                            "class": "input_cell",
-                            "style": "font-size: 24px; text-align: center; width: 100%; margin-left: 23px; "
-                        },
-                        {
-                            "type": "input",
-                            "id": "txtDateFor" + target.id,
-                            "target": target.id,
-                            "value": date.getDate(),
-                            "onmousedown": "overwriteNumber = true; if(__$('keyboard')){document.body.removeChild(__$('keyboard'));} else {showShield(\"checkDate('\" + this.getAttribute('target') + \"', false)\"); showKeyboard(__$('txtDateFor' + this.getAttribute('target')),{':':':','/':'/','.':'.','abc':'abc'},true);} checkDate(this.getAttribute('target'));",
-                            "class": "input_cell",
-                            "style": "display: none; font-size: 24px; text-align: center; width: 100%;"
-                        }
-                    ],
-                    [
-                        {
-                            "type": "button",
-                            "id": "btnSubtractYearFor" + target.id,
-                            "target": target.id,
-                            "value": "-",
-                            "onmousedown": "decrementYear(this.getAttribute('target'))",
-                            "class": "dbutton bluee",
-                            "style": "height: 60px; margin: auto; width: 100%;"
-                        },
-                        {
-                            "type": "button",
-                            "id": "btnSubtractMonthFor" + target.id,
-                            "target": target.id,
-                            "value": "-",
-                            "onmousedown": "decrementMonth(this.getAttribute('target'))",
-                            "class": "dbutton bluee",
-                            "style": "height: 60px; margin: auto; width: 100%; margin-left: 20px;"
-                        },
-                        {
-                            "type": "button",
-                            "id": "btnSubtractDateFor" + target.id,
-                            "target": target.id,
-                            "value": "-",
-                            "onmousedown": "decrementDate(this.getAttribute('target'))",
-                            "class": "dbutton bluee",
-                            "style": "display: none; height: 60px; margin: auto; width: 100%;"
-                        }
-                    ]
-                ];
-
-                for (var i = 0; i < cells.length; i++) {
-                    var row = document.createElement("div");
-                    row.style.display = "table-row";
-
-                    tbl.appendChild(row);
-
-                    for (var j = 0; j < cells[i].length; j++) {
-                        var cell = document.createElement("div");
-                        cell.style.display = "table-cell";
-                        cell.style.width = "140px";
-                        cell.style.textAlign = "center";
-
-                        row.appendChild(cell);
-
-                        var input = document.createElement("input");
-
-                        for (var key in cells[i][j]) {
-                            input.setAttribute(key, cells[i][j][key]);
-                        }
-
-                        cell.appendChild(input);
                     }
-                }
+                    if (complete) {
+                        var batch_table = jQuery("#batch-table")[0].getElementsByTagName("tbody")[0];
+                        var i = parseInt(jQuery("table input:last").attr("row")) + 1;
+                        var drug = __$('data-pane').getAttribute("drug");
 
-                return tbl;
-            }
+                        var drug_name = drug + "_" + i;
+                        drugs_hash[drug_name] = {
+                            "tabs_per_tin": "",
+                            "total_tins": "",
+                            "date_of_expiry": "",
+                            "authorization_code": ""
+                        };
 
-            function showKeyboardCustom(ctrl) {
+                        var row = document.createElement("tr");
 
-                target = ctrl;
-                if (target.disabled) {
-                    return;
-                }
-
-                if (__$('popupkeyboard'))
-                    __$('popupkeyboard').parentNode.removeChild(__$("popupkeyboard"));
-                var pos;
-                numbers = true;
-                var div = document.createElement('div');
-
-                div.id = 'popupkeyboard';
-
-                div.borderTop = "20px";
-                div.style.zIndex = '1000';
-
-                __$("data-pane").appendChild(div);
-
-                var keys = [
-                    [1, 2, 3, '&larr;'],
-                    [4, 5, 6, 0],
-                    [7, 8, 9, '.']
-                ];
-
-                var table = document.createElement('div');
-                table.style.display = 'table';
-                table.style.margin = 'auto';
-
-                div.appendChild(table);
-
-                var ctrl;
-
-                for (var i = 0; i < keys.length; i++) {
-                    var row = document.createElement('div');
-                    row.style.display = 'table-row';
-
-                    table.appendChild(row);
-
-                    for (var j = 0; j < keys[i].length; j++) {
-                        var cell = document.createElement('div');
-                        cell.style.display = 'table-cell';
-
-                        row.appendChild(cell);
-
-                        if (String(keys[i][j]).trim().length == 0) {
-                            cell.innerHTML = "&nbsp;";
-
-                            continue;
-                        }
-
-                        var button = document.createElement('div');
-                        button.style.width = '65px';
-                        button.style.height = '60px';
-                        button.style.minWidth = '40px';
-                        button.style.minHeight = '40px';
-                        button.style.margin = '2px';
-                        button.style.fontSize = "24px";
-
-                        button.id = keys[i][j];
-
-                        if (target && keys[i][j] == '.') {
-                            if (target.value.trim().match(/\./) || target.value.trim().length == 0) {
-                                button.setAttribute('class', 'butt gray');
-                            } else {
-                                button.setAttribute('class', 'butt bluee');
+                        for (var j = 0; j <= 3; j++) {
+                            var cell = document.createElement("td");
+                            cell.style.width = '20px';
+                            cell.style.textAlign = "center";
+                            var textField = document.createElement("input");
+                            if (j == 0) {
+                                //var inputID = "Number of tins";
+                                var inputID = drug + "_" + i + "_number_of_tins";
+                                var inputValue = drug_cms_packsizes[drug];
+                                textField.value = inputValue;
+                                var field_type = "tabs_per_tin"
                             }
-                        }
 
-                        button.innerHTML = keys[i][j];
+                            if (j == 1) {
+                                //var inputID = "Number of expiring tins";
+                                var inputID = drug + "_" + i + "_total_tins";
+                                var inputValue = drugs_hash[drug_name]["total_tins"];
+                                var field_type = "total_tins"
+                            }
 
-                        button.setAttribute('class', 'butt bluee');
+                            if (j == 2) {
+                                //var inputID = "Date of expiry";
+                                var inputID = drug + "_" + i + "_date_of_expiry";
+                                var inputValue = drugs_hash[drug_name]["date_of_expiry"];
+                                var field_type = "date_of_expiry"
+                            }
 
-                        button.onmousedown = function () {
+                            if (j == 3) {
+                                //var inputID = "Date of expiry";
+                                var inputID = drug + "_" + i + "_authorization_code";
+                                var inputValue = drugs_hash[drug_name]["authorization_code"];
+                                var field_type = "authorization_code"
+                            }
 
-                            if (!this.className.match(/gray/) && target.disabled != true) {
-                                if (this.innerHTML.trim().charCodeAt(0) == 8592) {
-                                    if (target) {
-                                        target.value = target.value.trim().substring(0, (target.value.trim().length - 1));
+                            textField.className = "input-field";
+                            textField.id = inputID;
+                            //textField.value = inputValue;
+                            textField.setAttribute("field_type", field_type)
+                            textField.setAttribute("row", i);
+                            textField.setAttribute("drug_name", drug + "_" + i);
+                            textField.style.height = '35px';
+                            textField.style.width = '194px';
+                            textField.style.fontSize = '26px';
+                            textField.style.marginLeft = '10px';
+                            textField.style.textAlign = 'center';
+
+                            if (i + j == 0) {
+                                //textField.disabled = true;
+                            }
+
+                            if (j != 2) {
+                                textField.onmousedown = function () {
+                                    jQuery(".input-field").attr("class", "input-field");
+                                    this.className += " input-field-active";
+                                    if (__$('popupkeyboard'))
+                                        __$('data-pane').removeChild(__$('popupkeyboard'));
+                                    if (this.getAttribute('field_type') == 'authorization_code') {
+                                        showSpecialKeyBoard(this)
+                                    } else {
+                                        showKeyboardCustom(this);
                                     }
-                                } else {
-
-                                    target.value += this.innerHTML.trim();
-
+                                }
+                            } else {
+                                textField.onmousedown = function () {
+                                    jQuery(".input-field").attr("class", "input-field");
+                                    this.className += " input-field-active";
+                                    if (__$('popupkeyboard'))
+                                        __$('data-pane').removeChild(__$('popupkeyboard'));
+                                    showDate(__$('data-pane'), this);
                                 }
                             }
-                        }
 
-                        cell.appendChild(button);
+                            cell.appendChild(textField);
+                            row.appendChild(cell);
+                        }
+                        if (typeof addedRowsHash[drug] != "undefined") {
+                            addedRowsHash[drug] += 1;
+                        } else {
+                            addedRowsHash[drug] = 1;
+                        }
+                        batch_table.appendChild(row);
+                        jQuery("#batch-table td:first-child, #batch-table th:first-child").hide();
+                        //////////////////////////////////
                     }
                 }
 
-            }
+                function showDate(parent, target) {
 
-            function showSpecialKeyBoard(ctrl) {
+                    date = new Date();
+                    date = new Date(date.getFullYear(), (date.getMonth() + 1), 0);
 
-                target = ctrl;
-                if (target.disabled) {
-                    return;
+                    months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+                    monthNames = {
+                        "Jan": 0,
+                        "Feb": 1,
+                        "Mar": 2,
+                        "Apr": 3,
+                        "May": 4,
+                        "Jun": 5,
+                        "Jul": 6,
+                        "Aug": 7,
+                        "Sep": 8,
+                        "Oct": 9,
+                        "Nov": 10,
+                        "Dec": 11
+                    };
+
+                    var tbl = document.createElement("div");
+                    tbl.style.display = "table";
+                    tbl.id = "popupkeyboard";
+                    tbl.style.marginTop = "270px";
+                    tbl.style.marginLeft = "18%";
+                    tbl.style.borderSpacing = "5px";
+
+                    parent.appendChild(tbl);
+
+                    var cells = [
+                        [
+                            {
+                                "type": "button",
+                                "id": "btnAddYearFor" + target.id,
+                                "target": target.id,
+                                "value": "+",
+                                "onmousedown": "incrementYear(this.getAttribute('target'))",
+                                "class": "dbutton bluee",
+                                "style": "height: 60px; margin: auto; width: 100%;"
+                            },
+                            {
+                                "type": "button",
+                                "id": "btnAddMonthFor" + target.id,
+                                "target": target.id,
+                                "value": "+",
+                                "onmousedown": "incrementMonth(this.getAttribute('target'))",
+                                "class": "dbutton bluee",
+                                "style": "height: 60px; margin: auto; width: 100%; margin-left: 20px;"
+                            },
+                            {
+                                "type": "button",
+                                "id": "btnAddDateFor" + target.id,
+                                "target": target.id,
+                                "value": "+",
+                                "onmousedown": "incrementDate(this.getAttribute('target'))",
+                                "class": "dbutton bluee",
+                                "style": "display: none; height: 60px; margin: auto; width: 100%;"
+                            }
+                        ],
+                        [
+                            {
+                                "type": "input",
+                                "id": "txtYearFor" + target.id,
+                                "target": target.id,
+                                "value": date.getFullYear(),
+                                "onmousedown": "overwriteNumber = true; if(__$('keyboard')){document.body.removeChild(__$('keyboard'));} else {showShield(\"checkDate('\" + this.getAttribute('target') + \"', false)\"); showKeyboard(__$('txtYearFor' + this.getAttribute('target')),{':':':','/':'/','.':'.','abc':'abc'},true);} checkDate(this.getAttribute('target'));",
+                                "class": "input_cell",
+                                "style": "font-size: 24px; text-align: center; width: 100%;"
+                            },
+                            {
+                                "type": "input",
+                                "id": "txtMonthFor" + target.id,
+                                "target": target.id,
+                                "value": months[date.getMonth()],
+                                "onmousedown": "showShield(); addList(__$('txtMonthFor' + this.getAttribute('target')),{'Jan':'January','Feb':'February','Mar':'March','Apr':'April','May':'May','Jun':'June','Jul':'July','Aug':'August','Sep':'September','Oct':'October','Nov':'November','Dec':'December','?':'Unknown'},'single',__$('txtMonthFor' + this.getAttribute('target')),__$('txtMonthFor' + this.getAttribute('target')), 'checkDate(\"' + this.getAttribute('target') + '\")'); checkDate(this.getAttribute('target'));",
+                                "class": "input_cell",
+                                "style": "font-size: 24px; text-align: center; width: 100%; margin-left: 23px; "
+                            },
+                            {
+                                "type": "input",
+                                "id": "txtDateFor" + target.id,
+                                "target": target.id,
+                                "value": date.getDate(),
+                                "onmousedown": "overwriteNumber = true; if(__$('keyboard')){document.body.removeChild(__$('keyboard'));} else {showShield(\"checkDate('\" + this.getAttribute('target') + \"', false)\"); showKeyboard(__$('txtDateFor' + this.getAttribute('target')),{':':':','/':'/','.':'.','abc':'abc'},true);} checkDate(this.getAttribute('target'));",
+                                "class": "input_cell",
+                                "style": "display: none; font-size: 24px; text-align: center; width: 100%;"
+                            }
+                        ],
+                        [
+                            {
+                                "type": "button",
+                                "id": "btnSubtractYearFor" + target.id,
+                                "target": target.id,
+                                "value": "-",
+                                "onmousedown": "decrementYear(this.getAttribute('target'))",
+                                "class": "dbutton bluee",
+                                "style": "height: 60px; margin: auto; width: 100%;"
+                            },
+                            {
+                                "type": "button",
+                                "id": "btnSubtractMonthFor" + target.id,
+                                "target": target.id,
+                                "value": "-",
+                                "onmousedown": "decrementMonth(this.getAttribute('target'))",
+                                "class": "dbutton bluee",
+                                "style": "height: 60px; margin: auto; width: 100%; margin-left: 20px;"
+                            },
+                            {
+                                "type": "button",
+                                "id": "btnSubtractDateFor" + target.id,
+                                "target": target.id,
+                                "value": "-",
+                                "onmousedown": "decrementDate(this.getAttribute('target'))",
+                                "class": "dbutton bluee",
+                                "style": "display: none; height: 60px; margin: auto; width: 100%;"
+                            }
+                        ]
+                    ];
+
+                    for (var i = 0; i < cells.length; i++) {
+                        var row = document.createElement("div");
+                        row.style.display = "table-row";
+
+                        tbl.appendChild(row);
+
+                        for (var j = 0; j < cells[i].length; j++) {
+                            var cell = document.createElement("div");
+                            cell.style.display = "table-cell";
+                            cell.style.width = "140px";
+                            cell.style.textAlign = "center";
+
+                            row.appendChild(cell);
+
+                            var input = document.createElement("input");
+
+                            for (var key in cells[i][j]) {
+                                input.setAttribute(key, cells[i][j][key]);
+                            }
+
+                            cell.appendChild(input);
+                        }
+                    }
+
+                    return tbl;
                 }
 
-                if (__$('popupkeyboard'))
-                    __$('popupkeyboard').parentNode.removeChild(__$("popupkeyboard"));
-                var pos;
+                function showKeyboardCustom(ctrl) {
 
-                numbers = true;
-                var div = document.createElement('div');
+                    target = ctrl;
+                    if (target.disabled) {
+                        return;
+                    }
 
-                div.id = 'popupkeyboard';
-                div.className = 'special-custom-keyboard';
+                    if (__$('popupkeyboard'))
+                        __$('popupkeyboard').parentNode.removeChild(__$("popupkeyboard"));
+                    var pos;
+                    numbers = true;
+                    var div = document.createElement('div');
 
-                div.borderTop = "20px";
-                div.style.zIndex = '1000';
+                    div.id = 'popupkeyboard';
 
-                __$("data-pane").appendChild(div);
+                    div.borderTop = "20px";
+                    div.style.zIndex = '1000';
 
-                var keys = [
-                    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-                    ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
-                    ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'Z'],
-                    ['X', 'C', 'V', 'B', 'N', 'M', '&larr;']
-                ];
+                    __$("data-pane").appendChild(div);
 
-                var table = document.createElement('div');
-                table.style.display = 'table';
-                table.style.margin = 'auto';
+                    var keys = [
+                        [1, 2, 3, '&larr;'],
+                        [4, 5, 6, 0],
+                        [7, 8, 9, '.']
+                    ];
 
-                div.appendChild(table);
+                    var table = document.createElement('div');
+                    table.style.display = 'table';
+                    table.style.margin = 'auto';
 
-                var ctrl;
+                    div.appendChild(table);
 
-                for (var i = 0; i < keys.length; i++) {
-                    var row = document.createElement('div');
-                    row.style.display = 'table-row';
+                    var ctrl;
 
-                    table.appendChild(row);
+                    for (var i = 0; i < keys.length; i++) {
+                        var row = document.createElement('div');
+                        row.style.display = 'table-row';
 
-                    for (var j = 0; j < keys[i].length; j++) {
-                        var cell = document.createElement('div');
-                        cell.style.display = 'table-cell';
+                        table.appendChild(row);
 
-                        row.appendChild(cell);
+                        for (var j = 0; j < keys[i].length; j++) {
+                            var cell = document.createElement('div');
+                            cell.style.display = 'table-cell';
 
-                        if (String(keys[i][j]).trim().length == 0) {
-                            cell.innerHTML = "&nbsp;";
+                            row.appendChild(cell);
 
-                            continue;
-                        }
+                            if (String(keys[i][j]).trim().length == 0) {
+                                cell.innerHTML = "&nbsp;";
 
-                        var button = document.createElement('div');
-                        button.style.width = '65px';
-                        button.style.height = '60px';
-                        button.style.minWidth = '40px';
-                        button.style.minHeight = '40px';
-                        button.style.margin = '2px';
-                        button.style.fontSize = "24px";
-
-                        button.id = keys[i][j];
-
-                        if (target && keys[i][j] == '.') {
-                            if (target.value.trim().match(/\./) || target.value.trim().length == 0) {
-                                button.setAttribute('class', 'butt gray');
-                            } else {
-                                button.setAttribute('class', 'butt bluee');
+                                continue;
                             }
-                        }
 
-                        button.innerHTML = keys[i][j];
+                            var button = document.createElement('div');
+                            button.style.width = '65px';
+                            button.style.height = '60px';
+                            button.style.minWidth = '40px';
+                            button.style.minHeight = '40px';
+                            button.style.margin = '2px';
+                            button.style.fontSize = "24px";
 
-                        button.setAttribute('class', 'butt bluee custom-butt');
+                            button.id = keys[i][j];
 
-                        button.onmousedown = function () {
-
-                            if (!this.className.match(/gray/) && target.disabled != true) {
-                                if (this.innerHTML.trim().charCodeAt(0) == 8592) {
-                                    if (target) {
-                                        target.value = target.value.trim().substring(0, (target.value.trim().length - 1));
-                                    }
+                            if (target && keys[i][j] == '.') {
+                                if (target.value.trim().match(/\./) || target.value.trim().length == 0) {
+                                    button.setAttribute('class', 'butt gray');
                                 } else {
-
-                                    target.value += this.innerHTML.trim();
-
+                                    button.setAttribute('class', 'butt bluee');
                                 }
                             }
-                        }
 
-                        cell.appendChild(button);
+                            button.innerHTML = keys[i][j];
+
+                            button.setAttribute('class', 'butt bluee');
+
+                            button.onmousedown = function () {
+
+                                if (!this.className.match(/gray/) && target.disabled != true) {
+                                    if (this.innerHTML.trim().charCodeAt(0) == 8592) {
+                                        if (target) {
+                                            target.value = target.value.trim().substring(0, (target.value.trim().length - 1));
+                                        }
+                                    } else {
+
+                                        target.value += this.innerHTML.trim();
+
+                                    }
+                                }
+                            }
+
+                            cell.appendChild(button);
+                        }
+                    }
+
+                }
+
+                function showSpecialKeyBoard(ctrl) {
+
+                    target = ctrl;
+                    if (target.disabled) {
+                        return;
+                    }
+
+                    if (__$('popupkeyboard'))
+                        __$('popupkeyboard').parentNode.removeChild(__$("popupkeyboard"));
+                    var pos;
+
+                    numbers = true;
+                    var div = document.createElement('div');
+
+                    div.id = 'popupkeyboard';
+                    div.className = 'special-custom-keyboard';
+
+                    div.borderTop = "20px";
+                    div.style.zIndex = '1000';
+
+                    __$("data-pane").appendChild(div);
+
+                    var keys = [
+                        [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+                        ['Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P'],
+                        ['A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'Z'],
+                        ['X', 'C', 'V', 'B', 'N', 'M', '&larr;']
+                    ];
+
+                    var table = document.createElement('div');
+                    table.style.display = 'table';
+                    table.style.margin = 'auto';
+
+                    div.appendChild(table);
+
+                    var ctrl;
+
+                    for (var i = 0; i < keys.length; i++) {
+                        var row = document.createElement('div');
+                        row.style.display = 'table-row';
+
+                        table.appendChild(row);
+
+                        for (var j = 0; j < keys[i].length; j++) {
+                            var cell = document.createElement('div');
+                            cell.style.display = 'table-cell';
+
+                            row.appendChild(cell);
+
+                            if (String(keys[i][j]).trim().length == 0) {
+                                cell.innerHTML = "&nbsp;";
+
+                                continue;
+                            }
+
+                            var button = document.createElement('div');
+                            button.style.width = '65px';
+                            button.style.height = '60px';
+                            button.style.minWidth = '40px';
+                            button.style.minHeight = '40px';
+                            button.style.margin = '2px';
+                            button.style.fontSize = "24px";
+
+                            button.id = keys[i][j];
+
+                            if (target && keys[i][j] == '.') {
+                                if (target.value.trim().match(/\./) || target.value.trim().length == 0) {
+                                    button.setAttribute('class', 'butt gray');
+                                } else {
+                                    button.setAttribute('class', 'butt bluee');
+                                }
+                            }
+
+                            button.innerHTML = keys[i][j];
+
+                            button.setAttribute('class', 'butt bluee custom-butt');
+
+                            button.onmousedown = function () {
+
+                                if (!this.className.match(/gray/) && target.disabled != true) {
+                                    if (this.innerHTML.trim().charCodeAt(0) == 8592) {
+                                        if (target) {
+                                            target.value = target.value.trim().substring(0, (target.value.trim().length - 1));
+                                        }
+                                    } else {
+
+                                        target.value += this.innerHTML.trim();
+
+                                    }
+                                }
+                            }
+
+                            cell.appendChild(button);
+                        }
                     }
                 }
-            }
-        </script>
-        <style>
-            #popupkeyboard {
-                margin-top: 50px !important;
-                border-spacing: 5px;
+            </script>
 
-            }
+            <style>
 
-            .messageBar {
-                width: 700px;
-            }
 
-            .custom-butt {
-                padding: 7px 4px 0px 0px !important;
-            }
+                .touchscreenTextInput {
+                    display: none;
+                }
 
-            .special-custom-keyboard {
-                margin-left: -29%;
-            }
-        </style>
-        <div id="footer">
+                #table, #h-table {
+                    display: table;
+                    width: 99%;
+                    padding-left: 0.7%;
+                    border-radius: 3px;
+                    border-spacing: 3px;
+                    font-size: 26px;
+                    border-collapse: separate;
+                }
+
+                .t-data, .h-data {
+                    display: table-cell;
+                }
+
+                .t-row {
+                    display: table-row;
+                }
+
+                .h-data {
+                    border-radius: 5px;
+                    height: 56px;
+                    color: white;
+                    font-size: 30px;
+                    font-family: sans-serif;
+                    font-weight: bold;
+                    text-shadow: 1px 1px black;
+                    vertical-align: middle;
+                    text-align: center;
+                }
+
+                #ht1 {
+                    border-right: 2.25px solid white;
+                }
+
+                #ht2 {
+                    border-left: 2.25px solid white;
+                    min-width: 350px;
+                }
+
+                #drug-pane, #data-pane {
+                    background: white;
+                    padding-left: 0px;
+                    border-radius: 5px;
+                }
+
+                #drug-pane {
+                    padding-left: 0px;
+                    overflow: auto;
+                    overflow-X: hidden;
+                }
+
+                #drug-list {
+                    list-style-type: none;
+                    font-size: 16px;
+                }
+
+                .even, .odd {
+                    font-size: 24px;
+                    padding-left: 10px;
+                    cursor: pointer;
+                    height: 43px;
+                    min-height: 43px !important;
+                    vertical-align: middle;
+                    font-weight: normal;
+                    -moz-user-select: none;
+                    border-bottom: 1px dotted;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    -o-text-overflow: ellipsis;
+                }
+
+                .input-field {
+                    -webkit-transition: all 0.30s ease-in-out;
+                    -moz-transition: all 0.30s ease-in-out;
+                    -ms-transition: all 0.30s ease-in-out;
+                    -o-transition: all 0.30s ease-in-out;
+                    outline: none;
+                    padding: 3px 0px 3px 3px;
+                    margin: 3px 1px 3px 0px;
+                    border: 1px solid #DDDDDD;
+                }
+
+                .input-field-active {
+                    box-shadow: 0 0 5px rgba(81, 203, 238, 1);
+                    padding: 3px 0px 3px 3px;
+                    margin: 5px 1px 3px 0px;
+                    border: 1px solid rgba(81, 203, 238, 1);
+                }
+
+                option {
+                    background: #E3E4FA;
+                    padding-bottom: 10px;
+                    border-radius: 4px;
+                    margin: 1px;
+                    text-shadow: 0 2px 0 rgba(0, 0, 0, 0.4);
+                }
+
+                .scell {
+                    height: 35px;
+                    font-size: 20px;
+                    border-bottom: 0.4px solid gray;
+                    border-right: 0.4px solid gray;
+                    border-radius: 4px;
+                    text-align: center;
+                    vertical-align: middle;
+                }
+
+                .drug-label {
+                    min-width: 33%;
+                    text-align: left;
+                    padding-left: 2%;
+                    overflow-X: hidden;
+                }
+
+                .drug-value {
+                    min-width: 20%;
+                    cursor: pointer;
+                }
+
+                .hvalue {
+                    border: hidden;
+                    background: white;
+                    font-size: 22px;
+                    font-family: sans-serif;
+                    font-weight: bold;
+                    cursor: auto;
+                    color: gray;
+                    text-align: left;
+                    padding-left: 9px;
+                    text-shadow: 1px 1px black;
+                    vertical-align: middle;
+                }
+
+                #add-button {
+                    position: absolute;
+                    border-radius: 5px;
+                    bottom: 100px;
+                    right: 25px;
+                    font-weight: bold;
+                    height: auto;
+                    text-align: center;
+                    cursor: pointer;
+                }
+
+                .red {
+                    background: white;
+                    border-radius: 10px;
+                    border-left: 2px solid black;
+                    border-right: 2px solid black
+                    box-shadow: inset 0 0 10px black, 0 0 15px black;
+                }
+
+                .even-small, .odd-small {
+                    font-size: 14px;
+                    width: 85%;
+                    padding-left: 20px;
+                    cursor: pointer;
+                    height: 28px;
+                    min-height: 28px !important;
+                    vertical-align: middle;
+                    font-weight: normal;
+                    -moz-user-select: none;
+                    border-bottom: 1px gray dotted;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    -o-text-overflow: ellipsis;
+                }
+
+                .bar {
+                    left: 31%;
+                    width: 450px;
+                    position: absolute;
+                    top: 23%;
+                    font-size: 1.9em;
+                    text-align: center;
+                    background-color: tomato;
+                    padding: 10px;
+                    z-index: 999;
+                    border: 5px outset tomato;
+                    display: none;
+                    border-radius: 15px;
+                }
+
+                .bar button {
+                    font-size: 0.7em;
+                    margin: 5px;
+                }
+
+                .editable {
+                    border-style: outset;
+                    border-left: 1px solid gray;
+                    border-top: 1px solid gray;
+                    background-color: #d3d3d3;
+                    border-radius: 3px;
+                }
+
+                #popupkeyboard {
+                    margin-top: 50px !important;
+                    border-spacing: 5px;
+
+                }
+
+                .messageBar {
+                    width: 700px;
+                }
+
+                .custom-butt {
+                    padding: 7px 4px 0px 0px !important;
+                }
+
+                .special-custom-keyboard {
+                    margin-left: -29%;
+                }
+            </style>
+
         </div>
     </div>
-</div>
 </body>
 </html>
