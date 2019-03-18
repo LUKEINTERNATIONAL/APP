@@ -18,7 +18,7 @@
 
     <script type="text/javascript">
         var target;
-        var delivery_date = "2019-03-18";
+        var delivery_date = JSON.parse(sessionStorage.verification)["verification_date"];
         var drugs = ["EFV (Efavirenz 600mg tablet)",
             "NVP (Nevirapine syrup 1.5mL/dose in 25mL bottle)",
             "NVP (Nevirapine 200 mg tablet)",
@@ -98,7 +98,17 @@
             "Pyridoxine (50mg)": "Pyridoxine 50mg 1000 tabs"
         };
 
-        var selected = ["EFV (Efavirenz 200mg tablet)", "EFV (Efavirenz 600mg tablet)"];
+        var selected = [];
+
+        var selected_drugs_hash = JSON.parse(sessionStorage.verification)["drugs"];
+        var short_name_drug_id = {};
+        for (var key in selected_drugs_hash) {
+            var short_name = selected_drugs_hash[key]["short_name"];
+            var full_name = selected_drugs_hash[key]["full_name"];
+            var drug_id = selected_drugs_hash[key]["drug_id"];
+            short_name_drug_id[short_name] = drug_id;
+            selected.push(short_name)
+        }
 
         var drug_cms_names = {
             "Cotrimoxazole (960mg)": "Cotrimoxazole 960mg, blister pack of 1000 tablets",
@@ -1527,7 +1537,7 @@
 
                 section_two = 2;
                 min = 18;
-                max = 19
+                max = 19;
                 while (min <= max) {
                     var index = min;
                     var total_usable_tins = "0";
