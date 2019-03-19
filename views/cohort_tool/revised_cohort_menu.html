@@ -103,6 +103,19 @@ function loadQuarters() {
 }
 
 var quarters_set = false;
+var action_set = false;
+
+function survivalAnalysis() {
+  var url = window.location.href;
+  url = new URL(url);
+  var type = url.searchParams.get("type");
+  if(type == 'survival_analysis'){
+    var f = document.getElementById('quarter');
+    f.setAttribute('action', 'survival_analysis.html');
+    action_set = true;
+    //gotoPage(0);
+  }
+}
 
 </script>
 
@@ -127,9 +140,10 @@ var quarters_set = false;
     <div id="content">
       <form id='quarter' action="revised_cohort.html" method="get">
         <select helpText="Select Quarter" id="quarters" 
-          name="quarter" tt_onLoad="__$('keyboard').style.display = 'none';loadQuarters();" 
+          name="quarter" tt_onLoad="__$('keyboard').style.display = 'none';loadQuarters();survivalAnalysis();" 
           tt_onUnLoad="__checkSelected();">
         </select>
+
       </form>
       <div id="footer">
       </div>
