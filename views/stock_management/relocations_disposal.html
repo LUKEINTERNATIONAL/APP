@@ -615,6 +615,11 @@
             jQuery("#today").removeClass("red");
         }
 
+        function resetFinishButton() {
+            var nextButton = document.getElementById('nextButton');
+            nextButton.setAttribute('onmousedown', 'gotoNextPage();');
+        }
+
     </script>
 
 </head>
@@ -651,6 +656,7 @@
 
             <select field_type="alpha" helpText="Select products" id="select_drugs" multiple="multiple"
                     name="drug_name[]" optional="true" selectAll="true" tt_onLoad="customizeFinishButton(); customizeSelectAllImg()"
+                    tt_onUnLoad="resetFinishButton();"
                     tt_pageStyleClass="longSelectList">
                 <option></option>
                 <option value='ABC/3TC (Abacavir and Lamivudine 60/30mg tablet)' drug_id="733">Abacavir / Lamivudine 60
