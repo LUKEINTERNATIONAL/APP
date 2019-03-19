@@ -578,6 +578,35 @@
             }
         }
 
+        function customizeSelectAllImg() {
+            var interval = setInterval(function () {
+                var selectAllCheckBoxInput = __$("chkSelectAll");
+                if (selectAllCheckBoxInput) {
+                    if (selectAllCheckBoxInput.getAttribute("checked") == "false") {
+                        selectAllCheckBoxInput.src = "/public/touchscreentoolkit/lib/images/unticked.jpg";
+                    } else {
+                        selectAllCheckBoxInput.src = "/public/touchscreentoolkit/lib/images/ticked.jpg";
+                    }
+
+                    selectAllCheckBoxInput.onclick = function () {
+                        if (this.getAttribute("checked") == "false") {
+                            toggleState("uncheck");
+                            this.setAttribute("checked", "true");
+                            this.src = "/public/touchscreentoolkit/lib/images/ticked.jpg";
+                            __$("lblSelectAll").innerHTML = "Deselect All";
+                        } else {
+                            toggleState("check");
+                            this.setAttribute("checked", "false");
+                            this.src = "/public/touchscreentoolkit/lib/images/unticked.jpg";
+                            __$("lblSelectAll").innerHTML = "Select All";
+                        }
+                    };
+
+                    clearInterval(interval);
+                }
+            }, 100);
+        }
+
     </script>
 
 </head>
@@ -599,7 +628,7 @@
 
             <select field_type="alpha" helpText="Select products to verify" id="select_drugs" multiple="multiple"
                     name="drug_name[]" optional="true" selectAll="true"
-                    tt_onLoad="customizeFinishButton();"
+                    tt_onLoad="customizeFinishButton(); customizeSelectAllImg();"
                     tt_pageStyleClass="longSelectList">
 
                 <option value='ABC/3TC (Abacavir and Lamivudine 60/30mg tablet)' drug_id="733">Abacavir / Lamivudine 60
