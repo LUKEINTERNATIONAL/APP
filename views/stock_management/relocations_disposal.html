@@ -15,6 +15,179 @@
     <script type="text/javascript" src="/assets/js/does_connection_exist.js"></script>
     <link rel="stylesheet" href="/assets/css/alertifyjs/css/alertify.css" type="text/css">
 
+    <style type="text/css">
+        .tt_controls_scan_delivery_barcode .keyboard {
+            display: none;
+        }
+
+        #tt_page_scan_delivery_barcode .touchscreenTextInput {
+            position: absolute;
+            top: 80px;
+        }
+
+        #Unknown {
+            display: none;
+        }
+
+        #cover {
+            position: absolute;
+            background-color: black;
+            width: 100%;
+            height: 100%;
+            left: 0%;
+            top: 0%;
+            z-index: 500;
+            opacity: 0.5;
+            align: center;
+            display: none;
+        }
+
+        #newText {
+            top: 40%;
+            left: 40%;
+            margin-top: -200px;
+            margin-left: -250px;
+            position: absolute;
+            margin-right: auto;
+            width: 800px;
+            height: 38px;
+            padding-bottom: 10px;
+            font-size: 2em;
+            text-align: left;
+            background-color: white;
+            padding: 10px;
+            z-index: 999;
+            border: 5px outset tomato;
+            border-radius: 15px;
+            z-index: 900;
+            display: none;
+        }
+
+        #alertPage {
+            top: 50%;
+            left: 40%;
+            margin-top: -200px;
+            margin-left: -250px;
+            position: absolute;
+            margin-right: auto;
+            width: 800px;
+            height: 400px;
+            padding-bottom: 10px;
+            font-size: 1em;
+            text-align: center;
+            background-color: white;
+            padding: 10px;
+            z-index: 999;
+            border: 5px outset tomato;
+            border-radius: 15px;
+            z-index: 900;
+        }
+
+        .custom-message {
+            position: absolute;
+            top: 250px;
+            font-size: 32px;
+            padding-left: 32%;
+            font-style: italic;
+        }
+
+        #summary {
+            top: 60px;
+            overflow: auto;
+            height: 450px ! important;
+        }
+
+        .remove {
+            margin-left: 58px;
+            padding: 6px;
+        }
+
+        .img-holder {
+            background: white;
+        }
+
+        .scell {
+            height: 35px;
+            font-size: 20px;
+            border-bottom: 0.4px solid gray;
+            border-right: 0.4px solid gray;
+            border-radius: 4px;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .drug-label {
+            min-width: 25%;
+            text-align: left;
+            padding-left: 2%;
+            overflow-X: hidden;
+        }
+
+        .drug-value {
+            min-width: 25%;
+            cursor: pointer;
+        }
+
+        .hvalue {
+            border: hidden;
+            background: white;
+            font-size: 22px;
+            font-family: sans-serif;
+            font-weight: bold;
+            cursor: auto;
+            color: gray;
+            text-align: left;
+            padding-left: 9px;
+            text-shadow: 1px 1px black;
+            vertical-align: middle;
+        }
+
+        #small {
+            font-size: 19px;
+            margin-left: 15px;
+        }
+
+        .bar {
+            left: 31%;
+            width: 450px;
+            position: absolute;
+            top: 23%;
+            font-size: 1.9em;
+            text-align: center;
+            background-color: tomato;
+            padding: 10px;
+            z-index: 999;
+            border: 5px outset tomato;
+            display: none;
+            border-radius: 15px;
+        }
+
+        .bar button {
+            font-size: 0.7em;
+            margin: 5px;
+        }
+
+        .barcode {
+            position: absolute;
+            left: 26%;
+            width: 5%;
+            top: 24%;
+            width: 100px;
+        }
+
+        #tt_page_select_products_received #viewport {
+            height: 520px;
+        }
+
+        #tt_page_select_products_to_verify #viewport {
+            height: 520px;
+        }
+
+        #tt_page_select_products #viewport {
+            height: 520px;
+        }
+    </style>
+
     <script type="text/javascript">
         var tt_cancel_destination = '/';
         var tstCurrentDate = moment(tstCurrentDate).format("YYYY-MM-DD");
@@ -368,187 +541,53 @@
             }
         }
 
+        function customizeFinishButton() {
+            __$("nextButton").onmousedown = function () {
+                var relocation_or_disposal = __$("relocation_or_disposal").value;
+                var relocation_facility = __$("relocation_facility").value;
+                var relocation_date = __$("relocation_date").value;
+                var disposal_date = __$("disposal_date").value;
+
+                var drugs_hash = [];
+                var drugs = document.getElementById("select_drugs");
+                var selectedDrugsLiOptions = getSelectedOptions(drugs);
+
+                for (var i = 0; i <= selectedDrugsLiOptions.length - 1; i++) {
+                    var short_name = selectedDrugsLiOptions[i].value;
+                    var full_name = selectedDrugsLiOptions[i].innerHTML;
+                    var drug_id = selectedDrugsLiOptions[i].getAttribute("drug_id");
+                    if (drug_id) {
+                        drugs_hash.push({short_name: short_name, full_name: full_name, drug_id: drug_id});
+                    }
+                }
+
+                var data = {
+                    drugs: drugs_hash,
+                    relocation_or_disposal: relocation_or_disposal,
+                    relocation_facility: relocation_facility,
+                    relocation_date: relocation_date,
+                    disposal_date: disposal_date
+                };
+
+                data = JSON.stringify(data);
+                sessionStorage.relocation_or_disposal = data;
+                if (drugs_hash.length == 0) {
+                    showMessage("Select value to continue");
+                    return;
+                }
+
+                window.location = "/apps/ART/views/stock_management/process_relocations_disposal.html"
+            }
+        }
+
     </script>
-
-    <style>
-        .tt_controls_scan_delivery_barcode .keyboard {
-            display: none;
-        }
-
-        #tt_page_scan_delivery_barcode .touchscreenTextInput {
-            position: absolute;
-            top: 80px;
-        }
-
-        #Unknown {
-            display: none;
-        }
-
-        #cover {
-            position: absolute;
-            background-color: black;
-            width: 100%;
-            height: 100%;
-            left: 0%;
-            top: 0%;
-            z-index: 500;
-            opacity: 0.5;
-            align: center;
-            display: none;
-        }
-
-        #newText {
-            top: 40%;
-            left: 40%;
-            margin-top: -200px;
-            margin-left: -250px;
-            position: absolute;
-            margin-right: auto;
-            width: 800px;
-            height: 38px;
-            padding-bottom: 10px;
-            font-size: 2em;
-            text-align: left;
-            background-color: white;
-            padding: 10px;
-            z-index: 999;
-            border: 5px outset tomato;
-            border-radius: 15px;
-            z-index: 900;
-            display: none;
-        }
-
-        #alertPage {
-            top: 50%;
-            left: 40%;
-            margin-top: -200px;
-            margin-left: -250px;
-            position: absolute;
-            margin-right: auto;
-            width: 800px;
-            height: 400px;
-            padding-bottom: 10px;
-            font-size: 1em;
-            text-align: center;
-            background-color: white;
-            padding: 10px;
-            z-index: 999;
-            border: 5px outset tomato;
-            border-radius: 15px;
-            z-index: 900;
-        }
-
-        .custom-message {
-            position: absolute;
-            top: 250px;
-            font-size: 32px;
-            padding-left: 32%;
-            font-style: italic;
-        }
-
-        #summary {
-            top: 60px;
-            overflow: auto;
-            height: 450px ! important;
-        }
-
-        .remove {
-            margin-left: 58px;
-            padding: 6px;
-        }
-
-        .img-holder {
-            background: white;
-        }
-
-        .scell {
-            height: 35px;
-            font-size: 20px;
-            border-bottom: 0.4px solid gray;
-            border-right: 0.4px solid gray;
-            border-radius: 4px;
-            text-align: center;
-            vertical-align: middle;
-        }
-
-        .drug-label {
-            min-width: 25%;
-            text-align: left;
-            padding-left: 2%;
-            overflow-X: hidden;
-        }
-
-        .drug-value {
-            min-width: 25%;
-            cursor: pointer;
-        }
-
-        .hvalue {
-            border: hidden;
-            background: white;
-            font-size: 22px;
-            font-family: sans-serif;
-            font-weight: bold;
-            cursor: auto;
-            color: gray;
-            text-align: left;
-            padding-left: 9px;
-            text-shadow: 1px 1px black;
-            vertical-align: middle;
-        }
-
-        #small {
-            font-size: 19px;
-            margin-left: 15px;
-        }
-
-        .bar {
-            left: 31%;
-            width: 450px;
-            position: absolute;
-            top: 23%;
-            font-size: 1.9em;
-            text-align: center;
-            background-color: tomato;
-            padding: 10px;
-            z-index: 999;
-            border: 5px outset tomato;
-            display: none;
-            border-radius: 15px;
-        }
-
-        .bar button {
-            font-size: 0.7em;
-            margin: 5px;
-        }
-
-        .barcode {
-            position: absolute;
-            left: 26%;
-            width: 5%;
-            top: 24%;
-            width: 100px;
-        }
-
-        #tt_page_select_products_received #viewport {
-            height: 520px;
-        }
-
-        #tt_page_select_products_to_verify #viewport {
-            height: 520px;
-        }
-
-        #tt_page_select_products #viewport {
-            height: 520px;
-        }
-    </style>
 
 </head>
 <body id="mateme">
 <div id="container">
     <div id="content">
 
-        <form id="create_stoke" name="create_stoke" action="edit_stock">
+        <form id="create_stoke">
 
             <select field_type="alpha" helpText="Select Task" id="relocation_or_disposal" name="relocation_or_disposal"
                     tt_pageStyleClass="NoKeyboard">
@@ -559,13 +598,13 @@
 
             <select objectType="location" ajaxURL="/locations?name=" allowFreeText="true"
                     condition="$('relocation_or_disposal').value.toUpperCase() == 'RELOCATIONS'" field_type="alpha"
-                    helpText="Destination" id="location_of_art_initialization"
+                    helpText="Destination"
                     name="relocation_facility"
                     id="relocation_facility">
             </select>
 
             <input condition="$('relocation_or_disposal').value.toUpperCase() == 'RELOCATIONS'" field_type="date"
-                   helpText="Date of Relocation" id="date" max="2019-03-06" name="relocation_date"
+                   helpText="Date of Relocation" id="relocation_date" max="2019-03-06" name="relocation_date"
                    tt_pageStyleClass="Date DatesOnly" type="text" value=""/>
 
 
@@ -574,36 +613,69 @@
                    tt_pageStyleClass="Date DatesOnly" type="text" value=""/>
 
             <select field_type="alpha" helpText="Select products" id="select_drugs" multiple="multiple"
-                    name="drug_name[]" optional="true" selectAll="true" tt_onUnLoad="selectedDrugs()"
+                    name="drug_name[]" optional="true" selectAll="true" tt_onLoad="customizeFinishButton();"
                     tt_pageStyleClass="longSelectList">
                 <option></option>
-                <option value='733'>Abacavir / Lamivudine 60 / 30mg, tin of 60 tablets</option>
-                <option value='969'>Abacavir sulfate 600mg / Lamivudine 300mg, tin of 30 tablets</option>
-                <option value='932'>Atazanavir / Ritonavir 300 / 100mg, tin of 30 tablets</option>
-                <option value='963'>Cotrimoxazole 120mg, blister pack of 1000 dispersible tablets</option>
-                <option value='297'>Cotrimoxazole 480mg, tin of 1000 tablets</option>
-                <option value='576'>Cotrimoxazole 960mg, blister pack of 1000 tablets</option>
-                <option value='30'>Efavirenz 200mg, tin of 90 tablets</option>
-                <option value='11'>Efavirenz 600mg, tin of 30 tablets</option>
-                <option value='24'>Isoniazid 100mg, tin of 100 tablets</option>
-                <option value='931'>Isoniazid 300mg, tin of 1000 tablets</option>
-                <option value='613'>Lamivudine / Stavudine / Nevirapine 150 / 30 / 200mg, tin of 60 tablets</option>
-                <option value='734'>Lamivudine / Tenofovir disoproxil fumarate 300 / 300mg, tin of 30 tablets</option>
-                <option value='74'>Lopinavir / Ritonavir 100 / 25mg, tin of 60 tablets</option>
-                <option value='73'>Lopinavir / Ritonavir 200 / 50mg, tin of 120 tablets</option>
-                <option value='971'>Nevirapine 10mg/ml, 100ml</option>
-                <option value='21'>Nevirapine 10mg/ml, 25ml</option>
-                <option value='22'>Nevirapine 200mg, tin of 60 tablets</option>
-                <option value='968'>Nevirapine 50mg, tin of 60 tablets</option>
-                <option value='76'>Pyridoxine 50mg tab, 1000 tablets</option>
-                <option value='738'>Stavudine / lamivudine 30 / 150mg, tin of 60 tablets</option>
-                <option value='735'>Tenofovir disoproxil fumarate / Lamivudine / Efavirenz 300 / 300 / 600mg, tin of 30
-                    tablets
+                <option value='ABC/3TC (Abacavir and Lamivudine 60/30mg tablet)' drug_id="733">Abacavir / Lamivudine 60
+                    / 30mg, tin of 60 tablets
                 </option>
-                <option value='732'>Zidovudine / lamivudine /Nevirapine 30 / 60 / 50mg, tin of 60 tablets</option>
-                <option value='731'>Zidovudine / lamivudine /Nevirapine 300 / 150 / 200mg, tin of 60 tablets</option>
-                <option value='39'>Zidovudine / lamivudine 300 / 150mg, tin of 60 tablets</option>
-                <option value='736'>Zidovudine / lamivudine 60 / 30mg, tin of 60 tablets</option>
+                <option value='ABC/3TC (Abacavir and Lamivudine 600/300mg tablet)' drug_id="969">Abacavir sulfate 600mg
+                    / Lamivudine 300mg, tin of 30 tablets
+                </option>
+                <option value='ATV/r (Atazanavir 300mg/Ritonavir 100mg)' drug_id="932">Atazanavir / Ritonavir 300 /
+                    100mg, tin of 30 tablets
+                </option>
+                <option value='TMP/SMX (Cotrimoxazole 120mg tablet)' drug_id="963">Cotrimoxazole 120mg, blister pack of
+                    1000 dispersible tablets
+                </option>
+                <option value='Cotrimoxazole (480mg tablet)' drug_id="297">Cotrimoxazole 480mg, tin of 1000 tablets
+                </option>
+                <option value='Cotrimoxazole (960mg)' drug_id="576">Cotrimoxazole 960mg, blister pack of 1000 tablets
+                </option>
+                <option value='EFV (Efavirenz 200mg tablet)' drug_id="30">Efavirenz 200mg, tin of 90 tablets</option>
+                <option value='EFV (Efavirenz 600mg tablet)' drug_id="11">Efavirenz 600mg, tin of 30 tablets</option>
+                <option value='INH or H (Isoniazid 100mg tablet)' drug_id="24">Isoniazid 100mg, tin of 100 tablets
+                </option>
+                <option value='INH or H (Isoniazid 300mg tablet)' drug_id="931">Isoniazid 300mg, tin of 1000 tablets
+                </option>
+                <option value='d4T/3TC/NVP (30/150/200mg tablet)' drug_id="613">Lamivudine / Stavudine / Nevirapine 150
+                    / 30 / 200mg, tin of 60 tablets
+                </option>
+                <option value='TDF/3TC (Tenofavir and Lamivudine 300/300mg tablet' drug_id="734">Lamivudine / Tenofovir
+                    disoproxil fumarate 300 / 300mg, tin of 30 tablets
+                </option>
+                <option value='LPV/r (Lopinavir and Ritonavir 100/25mg tablet)' drug_id="74">Lopinavir / Ritonavir 100 /
+                    25mg, tin of 60 tablets
+                </option>
+                <option value='LPV/r (Lopinavir and Ritonavir 200/50mg tablet)' id="73">Lopinavir / Ritonavir 200 /
+                    50mg, tin of 120 tablets
+                </option>
+                <option value='NVP (Nevirapine syrup 1mL/dose in 100mL bottle)' drug_id="971">Nevirapine 10mg/ml,
+                    100ml
+                </option>
+                <option value='NVP (Nevirapine syrup 1.5mL/dose in 25mL bottle)' drug_id="21">Nevirapine 10mg/ml, 25ml
+                </option>
+                <option value='NVP (Nevirapine 200 mg tablet)' drug_id="22">Nevirapine 200mg, tin of 60 tablets</option>
+                <option value='NVP (Nevirapine 50 mg tablet)' drug_id="968">Nevirapine 50mg, tin of 60 tablets</option>
+                <option value='Pyridoxine (50mg)' drug_id="76">Pyridoxine 50mg tab, 1000 tablets</option>
+                <option value='d4T/3TC (Stavudine Lamivudine 30/150 tablet)' drug_id="738">Stavudine / lamivudine 30 /
+                    150mg, tin of 60 tablets
+                </option>
+                <option value='TDF/3TC/EFV (300/300/600mg tablet)' drug_id="735">Tenofovir disoproxil fumarate /
+                    Lamivudine / Efavirenz 300 / 300 / 600mg, tin of 30 tablets
+                </option>
+                <option value='AZT/3TC/NVP (60/30/50mg tablet)' drug_id="732">Zidovudine / lamivudine /Nevirapine 30 /
+                    60 / 50mg, tin of 60 tablets
+                </option>
+                <option value='AZT/3TC/NVP (300/150/200mg tablet)' drug_id="731">Zidovudine / lamivudine /Nevirapine 300
+                    / 150 / 200mg, tin of 60 tablets
+                </option>
+                <option value='AZT/3TC (Zidovudine and Lamivudine 300/150mg)' drug_id="39">Zidovudine / lamivudine 300 /
+                    150mg, tin of 60 tablets
+                </option>
+                <option value='AZT/3TC (Zidovudine and Lamivudine 60/30 tablet)' drug_id="736">Zidovudine / lamivudine
+                    60 / 30mg, tin of 60 tablets
+                </option>
             </select>
 
         </form>
