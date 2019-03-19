@@ -609,6 +609,12 @@
             }, 100);
         }
 
+        function setMaxDate() {
+            __$('touchscreenInput' + tstCurrentPage).setAttribute("max", tstCurrentDate);
+            getDatePicker(); // Call date picker again to make sure max is detected
+            jQuery("#today").removeClass("red");
+        }
+
     </script>
 
 </head>
@@ -633,12 +639,14 @@
             </select>
 
             <input condition="$('relocation_or_disposal').value.toUpperCase() == 'RELOCATIONS'" field_type="date"
-                   helpText="Date of Relocation" id="relocation_date" max="2019-03-06" name="relocation_date"
+                   helpText="Date of Relocation" id="relocation_date" name="relocation_date"
+                   tt_onLoad="setMaxDate();"
                    tt_pageStyleClass="Date DatesOnly" type="text" value=""/>
 
 
             <input condition="$('relocation_or_disposal').value.toUpperCase() == 'DISPOSAL'" field_type="date"
-                   helpText="Date of Disposal" id="disposal_date" max="2019-03-06" name="disposal_date"
+                   helpText="Date of Disposal" id="disposal_date" name="disposal_date"
+                   tt_onLoad="setMaxDate();"
                    tt_pageStyleClass="Date DatesOnly" type="text" value=""/>
 
             <select field_type="alpha" helpText="Select products" id="select_drugs" multiple="multiple"

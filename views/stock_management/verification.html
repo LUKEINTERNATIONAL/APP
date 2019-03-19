@@ -607,6 +607,21 @@
             }, 100);
         }
 
+        function setMaxDate() {
+            var max_date = new Date(tstCurrentDate);
+            max_date = max_date.addDays(365 * 30); //30 years
+            max_date = moment(max_date).format("YYYY-MM-DD");
+            __$('touchscreenInput' + tstCurrentPage).setAttribute("maxDate", max_date);
+            getDatePicker(); // Call date picker again to make sure maxDate is detected
+            jQuery("#today").removeClass("red");
+        }
+
+        Date.prototype.addDays = function (days) {
+            var date = new Date(this.valueOf());
+            date.setDate(date.getDate() + days);
+            return date;
+        };
+
     </script>
 
 </head>
@@ -617,7 +632,8 @@
 
         <form id="create_stoke">
 
-            <input field_type="date" helpText="Verification date" id="verification_date" maxDate="2049-03-06"
+            <input field_type="date" helpText="Verification date" id="verification_date"
+                   tt_onLoad="setMaxDate();"
                    name="verification_date" tt_pageStyleClass="Date DatesOnly" type="text"/>
 
             <select id='verification_type' name='verification type' helpText='Verification Type' pos='2'>

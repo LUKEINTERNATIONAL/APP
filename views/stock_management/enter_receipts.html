@@ -417,17 +417,25 @@
             }, 100);
         }
 
+        function setMaxDate() {
+            var max_date = new Date(tstCurrentDate);
+            max_date = max_date.addDays(365 * 30); //30 years
+            max_date = moment(max_date).format("YYYY-MM-DD");
+            __$('touchscreenInput' + tstCurrentPage).setAttribute("maxDate", max_date);
+            getDatePicker(); // Call date picker again to make sure maxDate is detected
+            jQuery("#today").removeClass("red");
+        }
+
+        Date.prototype.addDays = function (days) {
+            var date = new Date(this.valueOf());
+            date.setDate(date.getDate() + days);
+            return date;
+        };
+
         /**/
     </script>
 
     <style>
-        #chkSelectAll[checked="false"] {
-            background-image: url("/public/touchscreentoolkit/lib/images/unticked.jpg") important !
-        }
-
-        #chkSelectAll[checked="true"] {
-            background-image: url("/public/touchscreentoolkit/lib/images/ticked.jpg") important !
-        }
 
         .tt_controls_scan_delivery_barcode .keyboard {
             display: none;
@@ -685,8 +693,9 @@
                 </option>
             </select>
 
-            <input field_type="date" helpText="Delivery Date" id="delivery_date" maxDate="2049-03-06"
-                   name="delivery_date" tt_onLoad="customizeFinishButton();" tt_pageStyleClass="Date DatesOnly"
+            <input field_type="date" helpText="Delivery Date" id="delivery_date"
+                   name="delivery_date" tt_onLoad="setMaxDate(); customizeFinishButton(); "
+                   tt_pageStyleClass="Date DatesOnly"
                    type="text"/>
 
 
