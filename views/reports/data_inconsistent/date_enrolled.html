@@ -1,18 +1,11 @@
-<script language="javascript" defer="true">
-  tstUsername = "";
-  tstUserKeyboardPref = "qwerty";
-  var d = new Date();
-  d.toDateString();
-</script>
 
 <link rel="stylesheet" href="/public/touchscreentoolkit/lib/stylesheets/touch-fancy.css" type="text/css">
 
-<link rel="stylesheet" type="text/css" href="/assets/datatables/jquery.dataTables.css">
+<link rel="stylesheet" type="text/css" href="/assets/js/datatables/jquery.dataTables.css">
 <link rel="stylesheet" media="screen" href="/assets/css/extra_buttons.css" />
- <script type="text/javascript" charset="utf8" src="/assets/datatables/js/jquery-1.8.2.min.js"></script>
- <script type="text/javascript" charset="utf8" src="/assets/datatables/js/jquery.dataTables.min.js"></script>
-
-
+ <script type="text/javascript" charset="utf8" src="/assets/js/datatables/jquery-1.8.2.min.js"></script>
+ <script type="text/javascript" charset="utf8" src="/assets/js/datatables/jquery.dataTables.min.js"></script>
+ <script type="text/javascript" charset="utf8" src="/assets/js/virtual.keyboard.js"></script>
 
 
 
@@ -64,15 +57,18 @@
     width: 100%;
     display: inline-flex;
     margin-bottom: 15px;
+    border-width: 0px 0px 1px 0px;
+    border-style: solid;
   }
   .top-cover-wrapper .img {
     height: 100px;
   }
   .top-cover-wrapper .page-title {
-    font-size: 30px;
-    text-align: center;
+    font-size: 20px;
+    text-align: left;
     width: 60%;
     padding: 15px;
+    
   }
   .top-cover-wrapper .search-area {
     padding: 15px;
@@ -93,18 +89,18 @@
   .table-date-enrolled tbody tr:nth-of-type(odd) {
     background-color: rgba(0, 0, 0, 0.05);
   }
-  .table-date-enrolled tbody tr .btn {
-    background: #5b75a0;
-    padding: 0px;
-    margin-left: 15px;
+  
+.button.navButton1 {
+    margin-top: 0px;
+    width: 120px;
     border: 0px;
-    width: 70px;
-    font-size: 13px;
-    text-decoration: none;
-    padding: 6px;
-  }
+    vertical-align: middle !important;
+    padding-bottom: 0px;
+    padding-top: 0px;
+    height: 57px;
+}
   .table-date-enrolled tbody tr td {
-    text-align: left;
+    text-align: center;
     padding: 10px;
     position: relative;
   }
@@ -144,7 +140,7 @@
   </div>  
   
   <div class="page-title">
-    Patients With Date Enrolled On ART Less Than Date Of Birth
+   Patients with date enrolled on ART or earliest start date less than date of birth
   </div>
 
   <div class="search-area" style="display:none;">
@@ -185,6 +181,8 @@
 </div>
 </div>
 </div>
+
+
 <script type="text/javascript"> 
 
    jQuery(document).ready(function($) {
@@ -195,20 +193,17 @@
                 history.go(-1);// /report/data_cleaning';
 
             })
+
+            $('#button').click(function() {
+                window.location = '/views/patient/mastercard.html';
+
+            })
         })
 
   /**
   * Quick search from the returned queries
   */
   var dateEnrolled = [];
-
-  
-  /* Write data to the view
-  */
- 
-  function addRows(){
-    dTable.row.add().draw(["1","2","3","4","5","6","7"]).draw()
-  }
 
   function renderData(data) {
     var table = document.getElementById("date_enrolled").getElementsByTagName("tbody")[0];
@@ -224,6 +219,7 @@
         tr.appendChild(td);
 
         var td = document.createElement("td");
+        td.style.textAlign = 'left'
         td.innerHTML = obj[index].name;
         tr.appendChild(td); 
 
@@ -246,10 +242,10 @@
         var td = document.createElement("td");
         tr.appendChild(td);
         
-        var btn = document.createElement('a');
-        btn.innerHTML = 'View';
-        btn.setAttribute('class', 'btn btn-primary');
-        btn.setAttribute('href', '/views/patient/mastercard.html?patient_id='+obj[index].patient_id);
+        var btn = document.createElement('button');
+        btn.innerHTML = '<span>View</span>';
+        btn.setAttribute('class', 'button blue navButton1');
+        btn.setAttribute('onclick', "redirectToMastercard('"+obj[index].patient_id+"')");
         td.appendChild(btn);
     }
     initTable();
@@ -261,6 +257,11 @@
     getDateEnrolled();
   });
  
+ function redirectToMastercard(patient_id){
+   window.location.href =  '/views/patient/mastercard.html?patient_id='+patient_id;
+
+
+ }
 
   function initTable(){
 
@@ -275,9 +276,12 @@
                     sProcessing: "<img src='/assets/images/loading.gif'>"
                   },
                   "sProcessing":true
-                  
                 });
-  }  
+   
+        lookForTag()
+  }
+
+
 
   function getDateEnrolled() {
     var apiProtocol = sessionStorage.apiProtocol;
@@ -290,7 +294,7 @@
         if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
           var table = document.getElementById("date_enrolled").getElementsByTagName("tbody")[0];
           var obj = JSON.parse(this.responseText);
-          console.log(obj);
+          // console.log(obj);
           document.getElementById("cover-div").style="display:none;";
           document.getElementById("loader").style="display:none;";
           /**
@@ -312,7 +316,126 @@
       xhttp.send(); 
   }         
     
+  var req = null;
+
+function search_func(value)
+{
+    if (req != null) req.abort();
+
+    req = $.ajax({
+        type: "GET",
+        url: "virtual.keyboard",
+        data: {'search_keyword' : value},
+        dataType: "text",
+        success: function(virtualkeyboard){
+                    //Receiving the result of search here
+        }
+    });
+}
  
+
+var targetInput;
+
+function lookForTag() {
+  inputs = document.getElementsByTagName('input');
+  
+  //loop through the inputs to assign virtual-keyboard
+  for(var i = 0 ; i < inputs.length; i++){
+    var keyup = inputs[i].getAttribute('onkeyup');
+    if(keyup == undefined){
+      inputs[i].setAttribute('onfocus', 'popupVK(this);');
+    }else{
+      inputs[i].setAttribute('onfocus', keyup + '; popupVK(this);');
+    }
+  }
+}
+
+function popupVK(e) {
+  var vl = document.getElementById('virtual-keyboard');
+  var w = document.getElementsByTagName('body')[0];
+  if(vl != undefined) {
+    w.removeChild(vl);
+    return;
+  }
+  
+  var div = document.createElement('div');
+  div.setAttribute('id','virtual-keyboard');
+  div.setAttribute('class','keyboard');
+  var divStyle = "background-color: #F4F4F4;border: 2px solid #E0E0E0;"
+  divStyle += "border-radius: 15px;height: 300px;position: absolute;";
+  divStyle += "z-index: 991;width: 820px;";
+
+  var l = e.getBoundingClientRect().left;
+  //var divPos = ((50 / width)*100);
+  var inputPos = e.getBoundingClientRect().top;
+  inputPos = parseInt(inputPos);
+
+  divStyle += "left: " + (l - 680) + "px;top: " + (inputPos + 31) + "px;";
+  div.style = divStyle;
+
+  keyboardKeys(e, div);
+
+
+  w.appendChild(div);
+}
+
+function keyboardKeys(e, table) {
+  var keypress = [
+    ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"],
+    ["q","w","e","r","t","y","u","i","o","p"],
+    ["a","s","d","f","g","h","j","k","l","Del."],
+    ["z","x","c","v","b","n","m", "Hide","Caps"]
+  ];
+
+  //var table = document.createElement("div");
+  //table.setAttribute("class","keyboard");
+
+  for(var i = 0 ; i < keypress.length ; i++){
+    var row = document.createElement("span")
+    row.setAttribute("class","buttonLine");
+    table.appendChild(row);
+
+    for(var x = 0 ; x < keypress[i].length ; x++){
+      var cell = document.createElement("button")
+      cell.setAttribute("class","keyboardButton");
+      row.appendChild(cell);
+
+      cell.setAttribute("onmousedown","keyPressed(this);");
+      cell.innerHTML = "<span>" + keypress[i][x] + "</span>";
+
+
+    }
+  }
+
+  targetInput = e;
+}
+
+function keyPressed(e) {
+  var inputBox = targetInput;
+  var value_string = e.innerHTML.replace('<span>','');
+  value_string = value_string.replace('</span>','');
+
+  try{
+
+    if(value_string.match(/Del/i)){
+      inputBox.value = inputBox.value.substring(0, inputBox.value.length - 1);
+    }else if(e.innerHTML.match(/Caps/i)){
+    }else if(e.innerHTML.match(/Hide/i)){
+      var vl = document.getElementById('virtual-keyboard');
+      var w = document.getElementsByTagName('body')[0];
+      w.removeChild(vl);
+    }else{
+      inputBox.value += value_string;
+    }
+ 
+    try {
+      $('input[type="search"]').val(inputBox.value).keyup();
+    }catch(z) {}
+  }catch(x) { }
+
+}
+
+
   </script>
 
 <img src="/assets/images/loading.gif" id="loader"/>
