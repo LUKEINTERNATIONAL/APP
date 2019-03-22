@@ -1,12 +1,11 @@
 
 <link rel="stylesheet" href="/public/touchscreentoolkit/lib/stylesheets/touch-fancy.css" type="text/css">
 
-<link rel="stylesheet" type="text/css" href="/assets/js/datatables/jquery.dataTables.css">
+<link rel="stylesheet" type="text/css" href="/assets/js/datatables/jquery.dataTables.min.css">
 <link rel="stylesheet" media="screen" href="/assets/css/extra_buttons.css" />
- <script type="text/javascript" charset="utf8" src="/assets/js/datatables/jquery-1.8.2.min.js"></script>
+ <script type="text/javascript" charset="utf8" src="/assets/js/datatables/jquery-3.3.1.js"></script>
  <script type="text/javascript" charset="utf8" src="/assets/js/datatables/jquery.dataTables.min.js"></script>
  <script type="text/javascript" charset="utf8" src="/assets/js/virtual.keyboard.js"></script>
-
 
 
 <style>
@@ -140,7 +139,7 @@
   </div>  
   
   <div class="page-title">
-   Patients with date enrolled on ART or earliest start date less than date of birth
+   <center>Patients with date enrolled on ART or earliest start date less than date of birth</center>
   </div>
 
   <div class="search-area" style="display:none;">
@@ -267,10 +266,11 @@
 
     dTable = jQuery('#date_enrolled');
     dTable.dataTable({
-                  "lengthChange":false,
+                  "lengthChange":true,
                   "pageLength" : 10,
                   "autoWidth": true,
                   "bInfo" : true,
+                  "pagingType": "full_numbers",
                   "sScrollY": "441px",
                   olanguage: {
                     sProcessing: "<img src='/assets/images/loading.gif'>"
