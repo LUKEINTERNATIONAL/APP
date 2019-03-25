@@ -82,7 +82,7 @@ function buildFTalertBox() {
   box.appendChild(textDIV);
 
   textDIV.innerHTML = "Client is on <b>Fast Track</b> visit<br />"
-  textDIV.innerHTML += "Is the the client <b>OK</b> to continue?"
+  textDIV.innerHTML += "Is the client <b>OK</b> to continue?"
   var css = "top: 25%;position: absolute;left: 30%;font-size: 30px;"
   textDIV.style = css;
 

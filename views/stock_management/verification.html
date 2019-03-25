@@ -578,6 +578,55 @@
             }
         }
 
+        function customizeSelectAllImg() {
+            var interval = setInterval(function () {
+                var selectAllCheckBoxInput = __$("chkSelectAll");
+                if (selectAllCheckBoxInput) {
+                    if (selectAllCheckBoxInput.getAttribute("checked") == "false") {
+                        selectAllCheckBoxInput.src = "/public/touchscreentoolkit/lib/images/unticked.jpg";
+                    } else {
+                        selectAllCheckBoxInput.src = "/public/touchscreentoolkit/lib/images/ticked.jpg";
+                    }
+
+                    selectAllCheckBoxInput.onclick = function () {
+                        if (this.getAttribute("checked") == "false") {
+                            toggleState("uncheck");
+                            this.setAttribute("checked", "true");
+                            this.src = "/public/touchscreentoolkit/lib/images/ticked.jpg";
+                            __$("lblSelectAll").innerHTML = "Deselect All";
+                        } else {
+                            toggleState("check");
+                            this.setAttribute("checked", "false");
+                            this.src = "/public/touchscreentoolkit/lib/images/unticked.jpg";
+                            __$("lblSelectAll").innerHTML = "Select All";
+                        }
+                    };
+
+                    clearInterval(interval);
+                }
+            }, 100);
+        }
+
+        function setMaxDate() {
+            var max_date = new Date(tstCurrentDate);
+            max_date = max_date.addDays(365 * 30); //30 years
+            max_date = moment(max_date).format("YYYY-MM-DD");
+            __$('touchscreenInput' + tstCurrentPage).setAttribute("maxDate", max_date);
+            getDatePicker(); // Call date picker again to make sure maxDate is detected
+            jQuery("#today").removeClass("red");
+        }
+
+        Date.prototype.addDays = function (days) {
+            var date = new Date(this.valueOf());
+            date.setDate(date.getDate() + days);
+            return date;
+        };
+
+        function resetFinishButton() {
+            var nextButton = document.getElementById('nextButton');
+            nextButton.setAttribute('onmousedown', 'gotoNextPage();');
+        }
+
     </script>
 
 </head>
@@ -588,7 +637,8 @@
 
         <form id="create_stoke">
 
-            <input field_type="date" helpText="Verification date" id="verification_date" maxDate="2049-03-06"
+            <input field_type="date" helpText="Verification date" id="verification_date"
+                   tt_onLoad="setMaxDate();"
                    name="verification_date" tt_pageStyleClass="Date DatesOnly" type="text"/>
 
             <select id='verification_type' name='verification type' helpText='Verification Type' pos='2'>
@@ -599,7 +649,8 @@
 
             <select field_type="alpha" helpText="Select products to verify" id="select_drugs" multiple="multiple"
                     name="drug_name[]" optional="true" selectAll="true"
-                    tt_onLoad="customizeFinishButton();"
+                    tt_onLoad="customizeFinishButton(); customizeSelectAllImg();"
+                    tt_onUnLoad="resetFinishButton();"
                     tt_pageStyleClass="longSelectList">
 
                 <option value='ABC/3TC (Abacavir and Lamivudine 60/30mg tablet)' drug_id="733">Abacavir / Lamivudine 60

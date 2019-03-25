@@ -1625,19 +1625,35 @@
                     //expire_amount = total_tins
                     //date = date_of_expiry
 
+                    var barcode_value = JSON.parse(sessionStorage.receipts)["identifier"];
                     if (date_of_expiry.length > 0 && tabs_per_tin.length > 0 && total_tins.length > 0) {
                         data.push({
-                            drug: drug,
                             drug_id: drug_id,
-                            date_of_expiry: date_of_expiry,
-                            tabs_per_tin: tabs_per_tin,
-                            total_tins: total_tins
+                            expiry_date: date_of_expiry,
+                            amount: tabs_per_tin,
+                            expire_amount: total_tins,
+                            delivery_date: delivery_date,
+                            identifier: barcode_value
                         })
                     }
 
                 }
 
-                console.log(data)
+                var observations = {obs: data};
+                var create_stock_url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1/stock";
+                var xhttp = new XMLHttpRequest();
+                xhttp.onreadystatechange = function () {
+                    if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                        //var response = JSON.parse(this.responseText);
+                        window.location = "/";
+
+                    }
+                };
+                xhttp.open("POST", create_stock_url, true);
+                xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                xhttp.setRequestHeader('Content-type', "application/json");
+                xhttp.send(JSON.stringify(observations));
+
             }
         }
 

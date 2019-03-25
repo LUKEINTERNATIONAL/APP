@@ -580,6 +580,46 @@
             }
         }
 
+        function customizeSelectAllImg() {
+            var interval = setInterval(function () {
+                var selectAllCheckBoxInput = __$("chkSelectAll");
+                if (selectAllCheckBoxInput) {
+                    if (selectAllCheckBoxInput.getAttribute("checked") == "false") {
+                        selectAllCheckBoxInput.src = "/public/touchscreentoolkit/lib/images/unticked.jpg";
+                    } else {
+                        selectAllCheckBoxInput.src = "/public/touchscreentoolkit/lib/images/ticked.jpg";
+                    }
+
+                    selectAllCheckBoxInput.onclick = function () {
+                        if (this.getAttribute("checked") == "false") {
+                            toggleState("uncheck");
+                            this.setAttribute("checked", "true");
+                            this.src = "/public/touchscreentoolkit/lib/images/ticked.jpg";
+                            __$("lblSelectAll").innerHTML = "Deselect All";
+                        } else {
+                            toggleState("check");
+                            this.setAttribute("checked", "false");
+                            this.src = "/public/touchscreentoolkit/lib/images/unticked.jpg";
+                            __$("lblSelectAll").innerHTML = "Select All";
+                        }
+                    };
+
+                    clearInterval(interval);
+                }
+            }, 100);
+        }
+
+        function setMaxDate() {
+            __$('touchscreenInput' + tstCurrentPage).setAttribute("max", tstCurrentDate);
+            getDatePicker(); // Call date picker again to make sure max is detected
+            jQuery("#today").removeClass("red");
+        }
+
+        function resetFinishButton() {
+            var nextButton = document.getElementById('nextButton');
+            nextButton.setAttribute('onmousedown', 'gotoNextPage();');
+        }
+
     </script>
 
 </head>
@@ -604,16 +644,19 @@
             </select>
 
             <input condition="$('relocation_or_disposal').value.toUpperCase() == 'RELOCATIONS'" field_type="date"
-                   helpText="Date of Relocation" id="relocation_date" max="2019-03-06" name="relocation_date"
+                   helpText="Date of Relocation" id="relocation_date" name="relocation_date"
+                   tt_onLoad="setMaxDate();"
                    tt_pageStyleClass="Date DatesOnly" type="text" value=""/>
 
 
             <input condition="$('relocation_or_disposal').value.toUpperCase() == 'DISPOSAL'" field_type="date"
-                   helpText="Date of Disposal" id="disposal_date" max="2019-03-06" name="disposal_date"
+                   helpText="Date of Disposal" id="disposal_date" name="disposal_date"
+                   tt_onLoad="setMaxDate();"
                    tt_pageStyleClass="Date DatesOnly" type="text" value=""/>
 
             <select field_type="alpha" helpText="Select products" id="select_drugs" multiple="multiple"
-                    name="drug_name[]" optional="true" selectAll="true" tt_onLoad="customizeFinishButton();"
+                    name="drug_name[]" optional="true" selectAll="true" tt_onLoad="customizeFinishButton(); customizeSelectAllImg()"
+                    tt_onUnLoad="resetFinishButton();"
                     tt_pageStyleClass="longSelectList">
                 <option></option>
                 <option value='ABC/3TC (Abacavir and Lamivudine 60/30mg tablet)' drug_id="733">Abacavir / Lamivudine 60
