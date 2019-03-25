@@ -108,6 +108,7 @@ th {
 var url = window.location.href;
 url = new URL(url);
 var quarter = url.searchParams.get("quarter");
+var sub_group = url.searchParams.get('subgroup');
 
 var dataSet = [];
 var data_table;
@@ -123,16 +124,16 @@ function initializeTable() {
     scroller: {
       loadingIndicator: true
     },
-    "order": [[ 0, "desc" ]],
+    "order": [[ 1, "desc" ]],
     dom: 'Bfrtip',
     buttons: [
       {
         extend: 'csv',
-        title: sessionStorage.currentLocation + ': cohort disaggregated report ' + quarter
+        title: sessionStorage.currentLocation + ': cohort survival analysis report (' + sub_group + ') ' + quarter
       },
       {
         extend: 'pdf',
-        title: sessionStorage.currentLocation + ': cohort disaggregated report ' + quarter
+        title: sessionStorage.currentLocation + ': cohort survival analysis report (' + sub_group + ') ' + quarter
       }
     ]
   });
@@ -194,7 +195,11 @@ function initializeTable() {
 </div>
 
 <div id="buttons" class="buttonsDiv">
-  <button class="button blue navButton" onmousedown="javascript:window.history.back();"><span>Finish</span></button>
+  <button class="button blue navButton" onmousedown="javascript:location='/';"><span>Finish</span></button>
+  <button class="button blue navButton" onmousedown="javascript:changeSubGroup();"><span>Change sub-group</span></button>
+  <button class="button red navButton" 
+    onmousedown="javascript:regenerateReport();"
+    style="float: left;"><span>Regenerate</span></button>
 </div>
 
 <img src="/apps/OPD/assets/images/formloader.gif" id="spinner" />
@@ -203,14 +208,36 @@ function initializeTable() {
 
 <script>
 
+var regenerate_report = false;
+
+function regenerateReport() {
+  regenerate_report = true;
+  getData(sub_group);
+}
+
+function changeSubGroup() {
+  location = 'change_sub_group.html?quarter=' + quarter; 
+}
+
 function getData(age_group) {
 
+  age_group = (age_group == null ? 'General' : age_group);
   var url = sessionStorage.apiProtocol + "://" + sessionStorage.apiURL + ":" + sessionStorage.apiPort + "/api/v1";
   url += '/cohort_survival_analysis';
   url += "?date=" + sessionStorage.sessionDate;
   url += "&quarter=" + quarter;
   url += "&age_group=" + age_group;
   url += '&program_id=' + sessionStorage.programID;
+
+  if(regenerate_report == true){
+    regenerate_report = false;
+    url += '&regenerate=true';
+  }else{ 
+    url += '&regenerate=false';
+  }
+      
+  document.getElementById('spinner').style = 'display: inline;';
+  document.getElementById('report-cover').style = 'display: inline;';
 
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
@@ -280,9 +307,8 @@ function addClass(id) {
 
 document.getElementById('quarter-title').innerHTML = quarter;
 
-var age_group = 'General';
 
 initializeTable();
-getData(age_group);
+getData(sub_group);
 
 </script>

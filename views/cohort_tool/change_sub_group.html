@@ -1,0 +1,60 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+
+    <link rel="stylesheet" href="/stylesheets/background.css" type="text/css">
+
+    
+    <script language="javascript" defer="true">
+
+      var tt_cancel_destination = "/clinic";
+
+var url = window.location.href;
+url = new URL(url);
+var quarter = url.searchParams.get("quarter");
+
+function setupQtr() {
+  var i = document.getElementById('current_quarter');
+  i.value = quarter; 
+}
+</script>
+
+<style>
+  .inputFrameClass{
+    height:600px;
+  }
+  #viewport{
+    height:550px ! important;
+  }
+</style>
+
+
+<script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js" defer="true"></script>
+<script language="javascript" type="text/javascript" src="/javascripts/show_category_hack.js" defer="true"></script>
+
+    
+</head>
+
+<body id="mateme">
+  <div id="container">
+    <div id="content">
+      <form id='quarter' action="survival_analysis.html" method="get">
+        <select helpText="Select sub-group" id="subgroup" 
+          name="subgroup" tt_onLoad="__$('keyboard').style.display = 'none';setupQtr();">
+          <option><option>
+          <option value="General">General<option>
+          <option value="Children">Children<option>
+          <option value="Women">Women<option>
+        </select>
+
+        <input type='hidden' name="quarter" id='current_quarter' />
+      </form>
+      <div id="footer">
+      </div>
+    </div>
+  </div>
+</body>
+</html>
