@@ -1,0 +1,314 @@
+
+<link rel="stylesheet" href="/public/touchscreentoolkit/lib/stylesheets/touch-fancy.css" type="text/css">
+
+<script type="text/javascript" src="/assets/js/jquery.min.js"></script>
+
+<link rel="stylesheet" href="/apps/ART/assets/css/datatable/jquery.dataTables.min.css" type="text/css">
+<link rel="stylesheet" href="/apps/ART/assets/css/datatable/scroller.dataTables.min.css" type="text/css">
+
+<script type="text/javascript" src="/assets/js/datatables/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="/assets/js/datatables/dataTables.fixedHeader.min.js"></script>
+
+<!-- pring report start .......................................................................... -->
+<script type="text/javascript" src="/assets/js/datatables/dataTables.buttons.min.js"></script>
+<script type="text/javascript" src="/assets/js/datatables/buttons.flash.min.js"></script>
+<script type="text/javascript" src="/assets/js/datatables/jszip.min.js"></script>
+<script type="text/javascript" src="/assets/js/datatables/pdfmake.min.js"></script>
+<script type="text/javascript" src="/assets/js/datatables/vfs_fonts.js"></script>
+<script type="text/javascript" src="/assets/js/datatables/buttons.html5.min.js"></script>
+<script type="text/javascript" src="/assets/js/datatables/buttons.print.min.js"></script>
+<!-- pring report ends .......................................................................... -->
+
+
+<script type="text/javascript" src="/assets/js/moment.js"></script>
+<script type="text/javascript" src="/assets/js/core.js"></script>
+
+<style>
+
+#example {
+  text-align: center;
+}
+
+.count-separator {
+  border-style: solid;
+  border-width: 0px 0px 0px 5px;
+}
+
+.disaggregated-numbers {
+  text-align: right;
+  padding-right: 10px;
+}
+
+#spinner {
+  position: absolute;
+  top: 15%;
+  left: 40%;
+}
+
+#report-cover {
+  position: absolute;
+  background-color: black;
+  width: 100%;
+  height: 102%;
+  left: 0%;
+  top: 0%;
+  z-index: 990;
+  opacity: 0.65;
+}
+
+.title-table {
+  display: table;
+  width: 100%;
+}
+
+.title-row {
+  display: table-row;
+}
+
+.title-cell {
+  display: table-cell;
+  height: 30px;
+  vertical-align: top;
+  border-style: solid;
+  border-width: 0px 0px 1px 0px;
+}
+
+
+#title-cell-left {
+  vertical-align: middle;
+  width: 100px;
+}
+
+#title-cell-left img {
+  height: 95px;
+  width: 95px;
+  margin: 5px;
+}
+
+#title-cell-right {
+  margin-left: 5px;
+}
+
+#data-cell {
+  display: table-cell;
+  width: 100%;
+}
+
+#report {
+  width: 100%;
+}
+
+th {
+  text-align: left;
+}
+
+</style>
+
+<script>
+var url = window.location.href;
+url = new URL(url);
+var quarter = url.searchParams.get("quarter");
+var sub_group = url.searchParams.get('subgroup');
+
+var dataSet = [];
+var data_table;
+
+function initializeTable() {
+  data_table = $('#example').DataTable({
+    fixedHeader: true,
+    searching: false,
+    paging: false,
+    scrollY: 400,
+    Processing: true,
+    ServerSide: true,
+    scroller: {
+      loadingIndicator: true
+    },
+    "order": [[ 1, "desc" ]],
+    dom: 'Bfrtip',
+    buttons: [
+      {
+        extend: 'csv',
+        title: sessionStorage.currentLocation + ': cohort survival analysis report (' + sub_group + ') ' + quarter
+      },
+      {
+        extend: 'pdf',
+        title: sessionStorage.currentLocation + ': cohort survival analysis report (' + sub_group + ') ' + quarter
+      }
+    ]
+  });
+
+}
+
+
+</script>
+
+
+
+
+
+<div class="title-table">
+  <div class='title-row'>
+    <div class='title-cell' id='title-cell-left'>
+      <img src="/assets/images/login-logos/Malawi-Coat_of_arms_of_arms.png" />
+    </div>
+    <div class='title-cell' id='title-cell-right'>
+      <table style="width: 100%; text-align: left; margin-left: 10px;">
+        <tr>
+          <th>Title:</th><td colspan="2" id="report-title">ART disaggregated report<td>
+        </tr>
+        <tr>
+          <th>Period:</th>
+          <td id="quarter-title"><td>
+        </tr>
+        <tr>
+          <td colspan="2" id="valid-report"><td>
+        </tr>
+      </table>
+    </div>
+      </table>
+    </div>
+  </div>
+</div>
+  
+
+<div>
+  <table id="example" class="display" width="100%">
+    <thead>
+      <tr>
+        <th>Reg cohort</th>
+        <th>Interval (months)</th>
+        <th>Sub group</th>
+        <th class="disaggregated-numbers">Total Reg (database)</th>
+        <th class="disaggregated-numbers">Total Reg (confirmed)</th>
+        <th class="disaggregated-numbers count-separator">Alive</th>
+        <th class="disaggregated-numbers">Died</th>
+        <th class="disaggregated-numbers">Defaulted</th>
+        <th class="disaggregated-numbers">Stopped</th>
+        <th class="disaggregated-numbers">TO</th>
+        <th class="disaggregated-numbers">Unknown</th>
+      </tr>
+    </thead>
+    <tbody id="table-body">
+    </tbody>
+  </table>
+</div>
+
+<div id="buttons" class="buttonsDiv">
+  <button class="button blue navButton" onmousedown="javascript:location='/';"><span>Finish</span></button>
+  <button class="button blue navButton" onmousedown="javascript:changeSubGroup();"><span>Change sub-group</span></button>
+  <button class="button red navButton" 
+    onmousedown="javascript:regenerateReport();"
+    style="float: left;"><span>Regenerate</span></button>
+</div>
+
+<img src="/apps/OPD/assets/images/formloader.gif" id="spinner" />
+<div id="report-cover"></div>
+
+
+<script>
+
+var regenerate_report = false;
+
+function regenerateReport() {
+  regenerate_report = true;
+  getData(sub_group);
+}
+
+function changeSubGroup() {
+  location = 'change_sub_group.html?quarter=' + quarter; 
+}
+
+function getData(age_group) {
+
+  age_group = (age_group == null ? 'General' : age_group);
+  var url = sessionStorage.apiProtocol + "://" + sessionStorage.apiURL + ":" + sessionStorage.apiPort + "/api/v1";
+  url += '/cohort_survival_analysis';
+  url += "?date=" + sessionStorage.sessionDate;
+  url += "&quarter=" + quarter;
+  url += "&age_group=" + age_group;
+  url += '&program_id=' + sessionStorage.programID;
+
+  if(regenerate_report == true){
+    regenerate_report = false;
+    url += '&regenerate=true';
+  }else{ 
+    url += '&regenerate=false';
+  }
+      
+  document.getElementById('spinner').style = 'display: inline;';
+  document.getElementById('report-cover').style = 'display: inline;';
+
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+      var obj = JSON.parse(this.responseText);
+      loadData(obj, age_group);
+      document.getElementById('spinner').style = 'display: none;';
+      document.getElementById('report-cover').style = 'display: none;';
+    }
+  };
+  xhttp.open("GET", url, true);
+  xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+  xhttp.setRequestHeader('Content-type', "application/json");
+  xhttp.send();
+}
+
+function loadData(data, age_group) {
+  for(qtr in data) {
+    var row_id = (qtr.split(' ')[1]);
+    var outcome = data[qtr];
+    var set_quarter = qtr;
+    var qinterval = '';
+    var alive = 0;
+    var died = 0;
+    var defaulted = 0;
+    var stopped = 0;
+    var to = 0;
+    var unknown = 0;
+    var total_reg = 0;
+
+    for(c in outcome) {
+      var interval = outcome[c]
+      for(i in interval) {
+        qinterval = i
+        if(c == 'On antiretrovirals') {
+          alive = outcome[c][i];
+        }else if(c == 'Defaulted'){
+          defaulted = outcome[c][i];
+        }else if(c == 'Patient died'){
+          died = outcome[c][i];
+        }else if(c == 'Stopped'){
+          stopped = outcome[c][i];
+        }else if(c == 'Patient transferred out'){
+          to = outcome[c][i];
+        }else{
+          unknown = outcome[c][i]
+        }
+
+        total_reg += outcome[c][i];
+      }
+    }
+
+    if(total_reg > 0) {
+      data_table.row.add([set_quarter, qinterval, age_group, total_reg,
+        '', alive, died, defaulted, stopped, to, unknown]).node().id = row_id;
+      data_table.draw();
+      addClass(row_id);
+    }
+  }
+}
+
+function addClass(id) {
+  var tr = document.getElementById(id);
+  var cells = tr.getElementsByTagName('td');
+  cells[5].setAttribute('class','count-separator');
+}
+
+document.getElementById('quarter-title').innerHTML = quarter;
+
+
+initializeTable();
+getData(sub_group);
+
+</script>
