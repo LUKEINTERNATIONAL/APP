@@ -145,6 +145,7 @@
       "activitiesIcon": "/assets/images/folder.png",
       "activitiesDescription": "Print Patient Visit Summary",
       "comment": "these are examples, add another application with this template at the end of these curly braces by adding a comma and copying this template"
+<<<<<<< HEAD
     },
     {
       "activitiesName": "Mastercard",
@@ -169,6 +170,8 @@
       "url": "/views/patient/lab/test_without_results.html",
       "activitiesDescription": "Enter Lab Test Result",
       "comment": "these are examples, add another application with this template at the end of these curly braces by adding a comma and copying this template"
+=======
+>>>>>>> data_cleaning_tools
     }
 
   ]

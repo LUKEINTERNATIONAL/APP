@@ -1,0 +1,318 @@
+#clearButton {
+  display: none;
+}
+
+
+
+
+.dispense-button {
+  background-color: green !important;
+}
+
+.delete-container {
+  width: 60px
+}
+
+.delete-icon {
+  height: 55px;
+  width: 55px
+}
+
+.demographics-table {
+  display: table;
+  height: 100px;
+  width: 100%;
+}
+
+.demographics-table-row {
+  display: table-row;
+  border-style: solid;
+  border-width: 0px 0px 1px 0px;
+}
+
+.demographics-table-cell {
+  display: table-cell;
+}
+/* .......................................... */
+
+.demographics-table-data {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+#gender-icon {
+  height: 30px;
+}
+
+#gender-icon-td {
+  width: 31px;
+}
+
+.names {
+  border-style: solid;
+  border-width: 0px 0px 1px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ..................................................... */
+.controls-table {
+  display: table;
+  width: 100%;
+  height: 85%;
+  border-style: solid;
+  border-width: 1px 0px 0px 0px;
+}
+
+.controls-table-row {
+  display: table-row;
+}
+
+.controls-table-cell {
+  display: table-cell;
+  vertical-align: top;
+}
+
+
+#controls-table-cell-left {
+  border-style: solid;
+  border-width: 0px 1px 0px 0px;
+  width: 120px;
+  text-align: center;
+}
+
+#nav-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 15px;
+}
+
+#nav-table td {
+  text-align: center;
+}
+
+.icons {
+  width: 50px;
+  height: 50px;
+}
+
+.nav-buttons {
+  padding: 5% 0px 0px 0px;
+  /*float: left;*/
+  text-align: center;
+  margin-right: auto;
+  margin-left: auto;
+  display: block;
+  /*margin: 5px 5px 0px 10px;*/
+  border: 1px solid #5ca6c4;
+  cursor: pointer;
+  box-shadow: inset 2px -4px 2px 0px;
+  background-color: white;
+  border-radius: 7px;
+  border: solid black 3px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  -moz-box-shadow: inset 0 0 10px #000000;
+  -webkit-box-shadow: inset 0 0 10px #5ca6c4;
+  box-shadow: inset 0 0 10px #000000;
+  text-decoration: none !important;
+  font-weight: bold;
+  font-size: 14px;
+  width: 100px;
+  height: 100px;
+  background-color: #5ca6c4;
+  color: white;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+/* .............................................. */
+
+#barcode-container {
+  position:fixed;
+  bottom: 22%;
+  height: 30px;
+  width: 80%;
+}
+
+#barcode-container img {
+  height: 85px !important;
+}
+
+#barcode-container table {
+  font-family: "Nimbus Sans L","Arial Narrow",sans-serif;
+  font-size: 2.2em !important;
+}
+
+#med-list {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+#med-list th {
+  /*border-style: solid;
+  border-width: 0px 0px 1px 0px; */
+}
+
+#medList-container {
+  height: 83%;
+  overflow: auto;
+  width: 98%;
+}
+
+#med-list_length , #med-list_info {
+  display: none;
+}
+
+
+
+
+/* ...................... modal popup for entring drug quantity ............. */
+/* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 8001; /* Sit on top */
+  padding-top: 20px; /* Location of the box */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content */
+.modal-content {
+  background-color: #fefefe;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+}
+
+/* The Close Button */
+.close {
+  color: #aaaaaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+
+.prescription-keypad {
+  width: auto;
+  -webkit-user-select: none;  /* Chrome all / Safari all */
+  -moz-user-select: none;     /* Firefox all */
+  -ms-user-select: none;      /* IE 10+ */
+  user-select: none;
+  padding-left: 1%;
+}
+
+.keypad-buttons {
+  padding: 20% 0px 0px 0px;
+  float: left;
+  text-align: center;
+  margin-right: auto;
+  margin-left: auto;
+  display: block;
+  margin: 5px;
+  border: 1px solid #5ca6c4;
+  cursor: pointer;
+  box-shadow: inset 2px -4px 2px 0px;
+  background-color: white;
+  border-radius: 7px;
+  border: solid black 3px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  -moz-box-shadow: inset 0 0 10px #000000;
+  -webkit-box-shadow: inset 0 0 10px #5ca6c4;
+  box-shadow: inset 0 0 10px #000000;
+  text-decoration: none;
+
+  font-weight: bold;
+  width: 90px;
+  height: 80px;
+  background-color: #5ca6c4;
+  color: white;
+}
+
+.keypad-buttons-hide {
+  display: none;
+}
+
+#prescription-input {
+  width: 95%;
+  padding: 5px;
+  margin: 5px;
+  display: inline;
+  text-align: center;
+  border-style: solid;
+  border-width: 3px;
+  border-color: black;
+}
+
+/* .......................................... */
+.keypad-container-table {
+  display: table;
+}
+
+.keypad-container-table-row {
+  display: table-row;
+}
+
+.keypad-container-table-cell {
+  display: table-cell;
+}
+
+#popup-table {
+  width: 99%;
+  padding: 5px;
+  border-collapse: collapse;
+}
+
+#popup-table th, #popup-table td {
+  border-style: solid;
+  border-width: 0px 0px 1px 0px;
+}
+
+#popup-table th{
+  text-align: left;
+}
+
+#keypad-container-table-cell-right {
+  vertical-align: top;
+  width: 100%;
+}
+
+
