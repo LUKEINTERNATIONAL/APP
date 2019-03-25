@@ -101,13 +101,18 @@
         var selected = [];
 
         var selected_drugs_hash = JSON.parse(sessionStorage.verification)["drugs"];
+        var all_drugs = JSON.parse(sessionStorage.verification)["all_drugs"];
         var short_name_drug_id = {};
         for (var key in selected_drugs_hash) {
             var short_name = selected_drugs_hash[key]["short_name"];
             var full_name = selected_drugs_hash[key]["full_name"];
             var drug_id = selected_drugs_hash[key]["drug_id"];
-            short_name_drug_id[short_name] = drug_id;
+            //short_name_drug_id[short_name] = drug_id;
             selected.push(short_name)
+        }
+
+        for (var key in all_drugs) {
+            short_name_drug_id[key] = all_drugs[key]
         }
 
         var drug_cms_names = {
@@ -200,7 +205,7 @@
         var activeField = "";
 
         var drugs_hash = {};
-        var total_rows = 2;
+        var total_rows = 0;
         var addedRowsHash = {};
 
         var imgBlank = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAhHpUWHRSYXcgcHJvZmlsZSB0eXBlIGV4aWYAAHjadY7LCYBADAXvW4Ul5Lf5lCOiYAeWb8Kqe3IOyeMRhrT9Oo+2FAjUpJtrqEIiIUFrBocBAyAB1s45eDZjJpp1YxpBww1kHsrTv3RW18PETLtuulHaaWdkz1miskK9EVPyOfinf7+4AUCRLBT7Z5tUAAAKAmlUWHRYTUw6Y29tLmFkb2JlLnhtcAAAAAAAPD94cGFja2V0IGJlZ2luPSLvu78iIGlkPSJXNU0wTXBDZWhpSHpyZVN6TlRjemtjOWQiPz4KPHg6eG1wbWV0YSB4bWxuczp4PSJhZG9iZTpuczptZXRhLyIgeDp4bXB0az0iWE1QIENvcmUgNC40LjAtRXhpdjIiPgogPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4KICA8cmRmOkRlc2NyaXB0aW9uIHJkZjphYm91dD0iIgogICAgeG1sbnM6ZXhpZj0iaHR0cDovL25zLmFkb2JlLmNvbS9leGlmLzEuMC8iCiAgICB4bWxuczp0aWZmPSJodHRwOi8vbnMuYWRvYmUuY29tL3RpZmYvMS4wLyIKICAgZXhpZjpQaXhlbFhEaW1lbnNpb249IjMyIgogICBleGlmOlBpeGVsWURpbWVuc2lvbj0iMzIiCiAgIHRpZmY6SW1hZ2VXaWR0aD0iMzIiCiAgIHRpZmY6SW1hZ2VIZWlnaHQ9IjMyIgogICB0aWZmOk9yaWVudGF0aW9uPSIxIi8+CiA8L3JkZjpSREY+CjwveDp4bXBtZXRhPgogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgCjw/eHBhY2tldCBlbmQ9InciPz4NhXU1AAAABHNCSVQICAgIfAhkiAAAAeZJREFUWMPt1j1rVEEUxvH/3Nddb9ZEC4sIFhpFgiFiULATrCwEC4soamU6Se+XEKz9ABFSWFgIlpZCrCxc1kLzVmQ17EtudvfOnDkWG9nCJsWFFN7TzBQD58fDGWZMwCwnWQEnXBWgAlSAChAd92Dr6w4agAim1+HuqZSHUcx1wI+GbAxGrGcNPqFgFBZuni8XoAE4x/Swz6vFBZ5YQ9I9QL1gzqXcjjzPvzV5Eya8DEPy0hMQIRj2eb24xLPNPczBAFwBzoEXSELSS3O8aDUxWmMV0FJnoNfh3vw1Hv/cg/4hagvUObAWLUZopwfft+DKZVYGOXdKH8LTGU9HSpwPQCxGHMba8d45jLPQ7WO6OWlWZ7l0QFzjVqc3if2oOc6BsyAyXtv7EIYslT4D6gmsm8Qu9gjh0L/NvXj1EkBIWHoCg5yNqRQjbhK7uPG1dBbjxeNFzEwDI8KX0gEjy9ssRkLzb+xePM4J9TTmTAPbz1kvHZCkvNv8wfuLs5BEqDh0jPDqRTSrxczPoTu7rKU1PpY+A3GEyw9Z2d3CXb3Ag98dovY+igZmphFwdhq7vc1a4VlNInzpAKNQS/lVFDxqtrg/VWc5S7iBosWAz802a0nChzTGB+b4b4GpfsUVoAJUgP8e8Ad1/Pn3B4MjXwAAAABJRU5ErkJggg=='
@@ -1312,20 +1317,18 @@
                     //expire_amount = total_tins
                     //date = date_of_expiry
 
-                    if (date_of_expiry.length > 0 && tabs_per_tin.length > 0 && total_tins.length > 0 && expiring_tins.length > 0) {
-                        data.push({
-                            drug: drug,
-                            drug_id: drug_id,
-                            date_of_expiry: date_of_expiry,
-                            tabs_per_tin: tabs_per_tin,
-                            total_tins: total_tins,
-                            expiring_tins: expiring_tins
-                        })
-                    }
+                    data.push({
+                        drug_id: drug_id,
+                        expiry_date: date_of_expiry,
+                        amount: tabs_per_tin,
+                        expire_amount: total_tins,
+                        expiring_tins: expiring_tins
+                    });
 
+                    var observations = {obs: data};
                 }
 
-                console.log(data);
+                console.log(observations);
                 alertify.alert("Waiting for the back end")
                 jQuery(".ajs-primary").hide();
 
@@ -1492,7 +1495,7 @@
 <body id="mateme">
 <div id="container">
     <div id="content">
-        <form action="stock_report_edit" method="post">
+        <form>
 
             <input type="hidden" name="delivery_date" value="2019-03-18">
             <input type="hidden" name="type" value="Supervision">
