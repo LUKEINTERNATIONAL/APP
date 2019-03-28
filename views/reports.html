@@ -71,7 +71,7 @@ function reportGrouping(group) {
     return [
       ['MoH','/assets/images/login-logos/Malawi-Coat_of_arms_of_arms.png','MoH', 'function'],
       ["Clinic", "","Clinic",'function'],
-      ["PEPFAR","/assets/images/login-logos/PEPFAR.png","#",'link']
+      ["PEPFAR","/assets/images/login-logos/PEPFAR.png","PEPFAR",'function']
     ];
   }else if(group == 'MoH'){
     return [
@@ -86,6 +86,10 @@ function reportGrouping(group) {
       ["Defaulter list","","/apps/ART/views/reports/clinic/report_dates.html?report=defaulter_list",'link'],
       ["Incomplete visits","","#",'link']
     ];
+  }else if(group == 'PEPFAR'){
+      return [
+        ["Disaggregated","","/apps/ART/views/reports/pepfar/report_dates.html?report=disaggregated",'link']
+      ];
   }else{
   }  
 }	
@@ -95,7 +99,7 @@ function buildReportLinks(group) {
   var row = null;
   var reportContainer = document.getElementById("reports-container");
   reportContainer.innerHTML = null;
-
+  
   var reports = reportGrouping(group);
 
   for(var i = 0 ; i < reports.length ; i++){

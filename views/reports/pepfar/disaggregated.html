@@ -97,8 +97,9 @@ th {
 <script>
 var url = window.location.href;
 url = new URL(url);
-var quarter = url.searchParams.get("quarter");
-var on_art =  url.searchParams.get('total_alive_and_on_art');
+var start_date = url.searchParams.get("start_date");
+var end_date = url.searchParams.get("end_date");
+var on_art =  null; //10000; //url.searchParams.get('total_alive_and_on_art');
 
 var dataSet = [];
 var data_table;
@@ -118,11 +119,11 @@ function initializeTable() {
     buttons: [
       {
         extend: 'csv',
-        title: sessionStorage.currentLocation + ': cohort disaggregated report ' + quarter
+        title: sessionStorage.currentLocation + ': cohort disaggregated report '
       },
       {
         extend: 'pdf',
-        title: sessionStorage.currentLocation + ': cohort disaggregated report ' + quarter
+        title: sessionStorage.currentLocation + ': cohort disaggregated report '
       }
     ]
   });
@@ -148,7 +149,7 @@ function initializeTable() {
         </tr>
         <tr>
           <th>Period:</th>
-          <td id="quarter-title"><td>
+          <td id="reporting-period"><td>
         </tr>
         <tr>
           <th>Total Alive and On ART:</th>
@@ -184,7 +185,8 @@ function initializeTable() {
 </div>
 
 <div id="buttons" class="buttonsDiv">
-  <button class="button blue navButton" onmousedown="javascript:window.history.back();"><span>Finish</span></button>
+  <button class="button blue navButton" onmousedown="javascript:location='/';"><span>Finish</span></button>
+  <button class="button green navButton" style='float: left;' onmousedown="javascript:renegerateReport();"><span>Rebuild outcomes</span></button>
 </div>
 
 <img src="/apps/OPD/assets/images/formloader.gif" id="spinner" />
@@ -193,15 +195,32 @@ function initializeTable() {
 
 <script>
 
+var rebuild_outcome = false;
+
+function renegerateReport() {
+  data_table.destroy();
+  ageGroups();
+  rebuild_outcome = true;
+  var table_body = document.getElementById('table-body');
+  table_body.innerHTML = null;
+  addTableBody();
+  initializeTable();
+  initializeGet(age_groups[0]);
+}
+
 function getData(age_group) {
 
   var url = sessionStorage.apiProtocol + "://" + sessionStorage.apiURL + ":" + sessionStorage.apiPort + "/api/v1";
   url += '/cohort_disaggregated';
   url += "?date=" + sessionStorage.sessionDate;
-  url += "&quarter=" + quarter;
+  url += "&quarter=pepfar";
+  url += "&start_date=" + start_date;
+  url += "&end_date=" + end_date;
   url += "&age_group=" + age_group;
-  url += "&rebuild_outcome=false";
+  url += "&rebuild_outcome=" + rebuild_outcome;
   url += '&program_id=' + sessionStorage.programID;
+
+  rebuild_outcome = false;
 
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
@@ -333,9 +352,11 @@ function getAllFemale(age_group) {
   var url = sessionStorage.apiProtocol + "://" + sessionStorage.apiURL + ":" + sessionStorage.apiPort + "/api/v1";
   url += '/cohort_disaggregated';
   url += "?date=" + sessionStorage.sessionDate;
-  url += "&quarter=" + quarter;
+  url += "&quarter=pepfar";
+  url += "&start_date=" + start_date;
+  url += "&end_date=" + end_date;
   url += "&age_group=" + age_group;
-  url += "&rebuild_outcome=false";
+  url += "&rebuild_outcome=" + rebuild_outcome;
   url += '&program_id=' + sessionStorage.programID;
 
   var xhttp = new XMLHttpRequest();
@@ -431,21 +452,30 @@ function updateFNProw() {
   validateReport();
 }
 
-var age_groups = [
-  '0-5 months', '6-11 months','12-23 months',
-  '2-4 years', '5-9 years',
-  '10-14 years', '15-17 years',
-  '18-19 years', '20-24 years',
-  '25-29 years', '30-34 years',
-  '35-39 years', '40-44 years',
-  '45-49 years', '50 plus years'
-];
+var age_group;
+
+function ageGroups() {
+  age_groups = [
+    '0-5 months', '6-11 months','12-23 months',
+    '2-4 years', '5-9 years',
+    '10-14 years', '15-17 years',
+    '18-19 years', '20-24 years',
+    '25-29 years', '30-34 years',
+    '35-39 years', '40-44 years',
+    '45-49 years', '50 plus years'
+  ];
+}
+
+ageGroups();
 
 function initializeGet() {
   getData(age_groups[0]);
 }
 
-document.getElementById('quarter-title').innerHTML = quarter;
+var period = moment(start_date).format('DD/MMM/YYYY')
+period += ' - ' + moment(end_date).format('DD/MMM/YYYY')
+
+document.getElementById('reporting-period').innerHTML = period;
 document.getElementById('on-art').innerHTML = on_art;
 
 addTableBody();
@@ -467,12 +497,12 @@ function validateReport() {
   }
 
   var valid_report = document.getElementById('valid-report');
-  
+ /* 
   if(parseInt(on_art) == report_total) {
     valid_report.innerHTML = "<span style='color: green;'>Report is consistent</span>";
   }else{
     valid_report.innerHTML = "<span style='color: red;'>Report is <b>Not</b> consistent</span>";
-  }
+  } */
   document.getElementById('spinner').style = 'display: none;';
   document.getElementById('report-cover').style = 'display: none;';
 }
