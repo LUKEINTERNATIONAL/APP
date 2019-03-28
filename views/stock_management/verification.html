@@ -560,14 +560,25 @@
                     }
                 }
 
+                var all_drugs = {}
+                for (var j=0; j<=drugs.length - 1; j++){
+                    var drug_id = drugs[j].getAttribute("drug_id");
+                    if (drug_id){
+                        var drug_name =  drugs[j].value;
+                        all_drugs[drug_name] = drug_id
+                    }
+                }
+
                 var verification_date = __$("verification_date").value;
                 var verification_type = __$("verification_type").value;
 
                 var data = {
                     drugs: drugs_hash,
                     verification_date: verification_date,
-                    verification_type: verification_type
+                    verification_type: verification_type,
+                    all_drugs: all_drugs
                 };
+
                 data = JSON.stringify(data);
                 sessionStorage.verification = data;
                 if (drugs_hash.length == 0) {
@@ -684,7 +695,7 @@
                 <option value='LPV/r (Lopinavir and Ritonavir 100/25mg tablet)' drug_id="74">Lopinavir / Ritonavir 100 /
                     25mg, tin of 60 tablets
                 </option>
-                <option value='LPV/r (Lopinavir and Ritonavir 200/50mg tablet)' id="73">Lopinavir / Ritonavir 200 /
+                <option value='LPV/r (Lopinavir and Ritonavir 200/50mg tablet)' drug_id="73">Lopinavir / Ritonavir 200 /
                     50mg, tin of 120 tablets
                 </option>
                 <option value='NVP (Nevirapine syrup 1mL/dose in 100mL bottle)' drug_id="971">Nevirapine 10mg/ml,

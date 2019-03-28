@@ -1,0 +1,37 @@
+
+<script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js" defer="true"></script>
+<!-- <script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/standard.js" defer="true"></script> -->
+
+<script type="text/javascript" src="/assets/js/jquery.min.js"></script>
+<script type="text/javascript" src="/assets/js/post_parameters.js"></script>
+<script type="text/javascript" src="/assets/js/generic_ajaxrequest.js"></script>
+<script type="text/javascript" src="/assets/js/moment.js"></script>
+<script type="text/javascript" src="/assets/js/post_parameters.js"></script>
+<script type="text/javascript" src="/assets/js/clinic_holidays.js"></script>
+
+<script>
+var tt_cancel_destination = "/";
+
+function changeFinishButton() {
+  var b = document.getElementById('nextButton');
+  b.setAttribute('onmousedown','submitHolidays();');
+}
+</script>
+
+<body id="mateme">
+  <div id="container">
+    <div id="content">
+
+
+      <form>
+
+        <input type="text" name="summary"
+          tt_onLoad="__$('keyboard').style.display = 'none'; getSuggestedAppointmentDate();changeFinishButton();" 
+          tt_pageStyleClass= "NoControls" helpText="Clinic holiday(s)" optional = "true"/>
+
+
+      </form>
+
+   </div>
+ </div>
+</body>
