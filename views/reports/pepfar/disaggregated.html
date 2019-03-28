@@ -105,6 +105,9 @@ var dataSet = [];
 var data_table;
 
 function initializeTable() {
+  var date_title = moment(start_date).format('DD/MMM/YYYY');
+  date_title += ' - ' + moment(end_date).format('DD/MMM/YYYY');
+
   data_table = $('#example').DataTable({
     fixedHeader: true,
     searching: false,
@@ -119,11 +122,11 @@ function initializeTable() {
     buttons: [
       {
         extend: 'csv',
-        title: sessionStorage.currentLocation + ': cohort disaggregated report '
+        title: sessionStorage.currentLocation + ': cohort disaggregated report: ' + date_title
       },
       {
         extend: 'pdf',
-        title: sessionStorage.currentLocation + ': cohort disaggregated report '
+        title: sessionStorage.currentLocation + ': cohort disaggregated report: ' + date_title
       }
     ]
   });
