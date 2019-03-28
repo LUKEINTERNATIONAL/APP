@@ -201,6 +201,8 @@ function initializeTable() {
 var rebuild_outcome = false;
 
 function renegerateReport() {
+  document.getElementById('spinner').style = 'display: inline;';
+  document.getElementById('report-cover').style = 'display: inline;';
   data_table.destroy();
   ageGroups();
   rebuild_outcome = true;
