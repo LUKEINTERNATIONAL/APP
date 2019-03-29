@@ -249,6 +249,8 @@ function showDisaggregatedReport(){
   <div id="adherence_consistency"></div>
 </div>
 
+<div id="content">
+
 <table class="table-top" border="2px;">
     <tr>
         <td class="index">1.</td>
@@ -2771,6 +2773,9 @@ function showDisaggregatedReport(){
   </tr>
 </table>
 
+</div>
+<div id="editor"></div>
+
 <!-- Controls -->
 <!-- <div class="row-button-print">
   <div class="buttons">
@@ -2785,7 +2790,7 @@ function showDisaggregatedReport(){
         <button id="btnNext" class="green right" style="margin: 5px 0px 0px; padding: 0px; float: right;" onclick="location='/';">
             <span>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Finish &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;</span>
         </button>
-        <button id="activities" class="btn btn-success buttons blue" style="margin-right: 5px;" onmousedown="javascript:printPDF();" >
+        <button id="activities" class="btn btn-success buttons blue" style="margin-right: 5px;" onmousedown="javascript:printPDF();">
             <span>&nbsp; &nbsp; &nbsp; Print &nbsp; &nbsp; &nbsp;</span>
         </button>
         <button id="tasks" class="btn btn-success buttons blue" style="margin-right: 5px;"  onmousedown="showDisaggregatedReport();">
@@ -3512,5 +3517,13 @@ document.getElementById("display-quarter-year").innerHTML = "Year: " + Year;
 
 document.getElementById('clinic-name').innerHTML = sessionStorage.currentLocation;
 getIndicators();
+
+
+
+
+
+
+
+
 </script>
 
