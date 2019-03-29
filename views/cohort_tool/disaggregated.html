@@ -200,6 +200,7 @@ function getData(age_group) {
   url += "?date=" + sessionStorage.sessionDate;
   url += "&quarter=" + quarter;
   url += "&age_group=" + age_group;
+  url += "&rebuild_outcome=false";
   url += '&program_id=' + sessionStorage.programID;
 
   var xhttp = new XMLHttpRequest();
@@ -334,13 +335,12 @@ function getAllFemale(age_group) {
   url += "?date=" + sessionStorage.sessionDate;
   url += "&quarter=" + quarter;
   url += "&age_group=" + age_group;
+  url += "&rebuild_outcome=false";
   url += '&program_id=' + sessionStorage.programID;
 
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
     if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
-      document.getElementById('spinner').style = 'display: none;';
-      document.getElementById('report-cover').style = 'display: none;';
       var obj = JSON.parse(this.responseText);
       loadAllFemale(obj, age_group);
     }

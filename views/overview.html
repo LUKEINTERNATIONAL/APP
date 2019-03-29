@@ -131,7 +131,7 @@
 
 
     //var stats = {all: true, date: dsdsd, encounter_types: [1,3,4,]
-    var stats = {all: true, encounter_types: [6, 7, 51, 52, 53, 68]};
+    var stats = {all: true, encounter_types: [6, 7, 51, 52, 53, 68, 9, 54, 25]};
     var apiProtocol = sessionStorage.apiProtocol;
     var apiURL = sessionStorage.apiURL;
     var apiPort = sessionStorage.apiPort;
@@ -143,6 +143,10 @@
     encounter_types[52] = "HIV Staging";
     encounter_types[53] = "HIV clinic consultation";
     encounter_types[68] = "ART Adherence";
+    encounter_types[9] = "HIV clinic registration";
+    encounter_types[54] = "Dispensing";
+    encounter_types[25] = "Treatment";
+
     var end_date = moment().subtract(1, "days").format("YYYY-MM-DD");
     var start_date = moment().subtract(5, "days").format("YYYY-MM-DD");
 
@@ -245,7 +249,7 @@
     }
 
     function getUserStats() {
-        var stats = {encounter_types: [6, 7, 51, 52, 53, 68]};
+        var stats = {encounter_types: [6, 7, 51, 52, 53, 68, 9, 25, 54]};
         var session_stats_url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1/reports/encounters?date=" + encounter_date;
         var xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function () {

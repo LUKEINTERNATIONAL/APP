@@ -1,0 +1,515 @@
+
+<link rel="stylesheet" href="/public/touchscreentoolkit/lib/stylesheets/touch-fancy.css" type="text/css">
+
+<script type="text/javascript" src="/assets/js/jquery.min.js"></script>
+
+<link rel="stylesheet" href="/apps/ART/assets/css/datatable/jquery.dataTables.min.css" type="text/css">
+<link rel="stylesheet" href="/apps/ART/assets/css/datatable/scroller.dataTables.min.css" type="text/css">
+
+<script type="text/javascript" src="/assets/js/datatables/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="/assets/js/datatables/dataTables.fixedHeader.min.js"></script>
+
+<!-- pring report start .......................................................................... -->
+<script type="text/javascript" src="/assets/js/datatables/dataTables.buttons.min.js"></script>
+<script type="text/javascript" src="/assets/js/datatables/buttons.flash.min.js"></script>
+<script type="text/javascript" src="/assets/js/datatables/jszip.min.js"></script>
+<script type="text/javascript" src="/assets/js/datatables/pdfmake.min.js"></script>
+<script type="text/javascript" src="/assets/js/datatables/vfs_fonts.js"></script>
+<script type="text/javascript" src="/assets/js/datatables/buttons.html5.min.js"></script>
+<script type="text/javascript" src="/assets/js/datatables/buttons.print.min.js"></script>
+<!-- pring report ends .......................................................................... -->
+
+
+<script type="text/javascript" src="/assets/js/moment.js"></script>
+<script type="text/javascript" src="/assets/js/core.js"></script>
+
+<style>
+.disaggregated-numbers {
+  text-align: right;
+  padding-right: 10px;
+}
+
+#spinner {
+  position: absolute;
+  top: 15%;
+  left: 40%;
+}
+
+#report-cover {
+  position: absolute;
+  background-color: black;
+  width: 100%;
+  height: 102%;
+  left: 0%;
+  top: 0%;
+  z-index: 990;
+  opacity: 0.65;
+}
+
+.title-table {
+  display: table;
+  width: 100%;
+}
+
+.title-row {
+  display: table-row;
+}
+
+.title-cell {
+  display: table-cell;
+  height: 30px;
+  vertical-align: top;
+  border-style: solid;
+  border-width: 0px 0px 1px 0px;
+}
+
+
+#title-cell-left {
+  vertical-align: middle;
+  width: 100px;
+}
+
+#title-cell-left img {
+  height: 95px;
+  width: 95px;
+  margin: 5px;
+}
+
+#title-cell-right {
+  margin-left: 5px;
+}
+
+#data-cell {
+  display: table-cell;
+  width: 100%;
+}
+
+#report {
+  width: 100%;
+}
+
+th {
+  text-align: left;
+}
+
+</style>
+
+<script>
+var url = window.location.href;
+url = new URL(url);
+var start_date = url.searchParams.get("start_date");
+var end_date = url.searchParams.get("end_date");
+var on_art =  null; //10000; //url.searchParams.get('total_alive_and_on_art');
+
+var dataSet = [];
+var data_table;
+
+function initializeTable() {
+  var date_title = moment(start_date).format('DD/MMM/YYYY');
+  date_title += ' - ' + moment(end_date).format('DD/MMM/YYYY');
+
+  data_table = $('#example').DataTable({
+    fixedHeader: true,
+    searching: false,
+    paging: false,
+    scrollY: 400,
+    Processing: true,
+    ServerSide: true,
+    scroller: {
+      loadingIndicator: true
+    },
+    dom: 'Bfrtip',
+    buttons: [
+      {
+        extend: 'csv',
+        title: sessionStorage.currentLocation + ': cohort disaggregated report: ' + date_title
+      },
+      {
+        extend: 'pdf',
+        title: sessionStorage.currentLocation + ': cohort disaggregated report: ' + date_title
+      }
+    ]
+  });
+
+}
+
+
+</script>
+
+
+
+
+
+<div class="title-table">
+  <div class='title-row'>
+    <div class='title-cell' id='title-cell-left'>
+      <img src="/assets/images/login-logos/Malawi-Coat_of_arms_of_arms.png" />
+    </div>
+    <div class='title-cell' id='title-cell-right'>
+      <table style="width: 100%; text-align: left; margin-left: 10px;">
+        <tr>
+          <th>Title:</th><td colspan="2" id="report-title">ART disaggregated report<td>
+        </tr>
+        <tr>
+          <th>Period:</th>
+          <td id="reporting-period"><td>
+        </tr>
+        <tr>
+          <th>Total Alive and On ART:</th>
+          <td id="on-art"><td>
+        </tr>
+        <tr>
+          <td colspan="2" id="valid-report"><td>
+        </tr>
+      </table>
+    </div>
+      </table>
+    </div>
+  </div>
+</div>
+  
+
+<div>
+  <table id="example" class="display" width="100%">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Age group</th>
+        <th>Gender</th>
+        <th class="disaggregated-numbers">Tx new (new on ART)</th>
+        <th class="disaggregated-numbers">TX curr (receiving ART)</th>
+        <th class="disaggregated-numbers">TX curr (received IPT)</th>
+        <th class="disaggregated-numbers">TX curr (screened for TB)</th>
+      </tr>
+    </thead>
+    <tbody id="table-body">
+    </tbody>
+  </table>
+</div>
+
+<div id="buttons" class="buttonsDiv">
+  <button class="button blue navButton" onmousedown="javascript:location='/';"><span>Finish</span></button>
+  <button class="button green navButton" style='float: left;' onmousedown="javascript:renegerateReport();"><span>Rebuild outcomes</span></button>
+</div>
+
+<img src="/apps/OPD/assets/images/formloader.gif" id="spinner" />
+<div id="report-cover"></div>
+
+
+<script>
+
+var rebuild_outcome = false;
+
+function renegerateReport() {
+  document.getElementById('spinner').style = 'display: inline;';
+  document.getElementById('report-cover').style = 'display: inline;';
+  data_table.destroy();
+  ageGroups();
+  rebuild_outcome = true;
+  var table_body = document.getElementById('table-body');
+  table_body.innerHTML = null;
+  addTableBody();
+  initializeTable();
+  initializeGet(age_groups[0]);
+}
+
+function getData(age_group) {
+
+  var url = sessionStorage.apiProtocol + "://" + sessionStorage.apiURL + ":" + sessionStorage.apiPort + "/api/v1";
+  url += '/cohort_disaggregated';
+  url += "?date=" + sessionStorage.sessionDate;
+  url += "&quarter=pepfar";
+  url += "&start_date=" + start_date;
+  url += "&end_date=" + end_date;
+  url += "&age_group=" + age_group;
+  url += "&rebuild_outcome=" + rebuild_outcome;
+  url += '&program_id=' + sessionStorage.programID;
+
+  rebuild_outcome = false;
+
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+      var obj = JSON.parse(this.responseText);
+      age_groups.shift();
+      loadData(obj, age_group);
+    }
+  };
+  xhttp.open("GET", url, true);
+  xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+  xhttp.setRequestHeader('Content-type', "application/json");
+  xhttp.send();
+}
+
+function loadData(data, age_group) {
+  for(age in data) {
+    var gender = data[age];
+    for(sex in gender) {
+      assignNum(age, sex, data[age][sex]);
+    }
+  }
+
+  if(age_groups.length > 0) {
+    getData(age_groups[0]);
+  }else{
+    addMales();
+  }
+}
+
+function addMales() {
+  var cells = document.getElementsByClassName('Male_row');
+  var tx_new = 0, tx_curr = 0, tx_screened_for_tb = 0, tx_given_ipt = 0;
+
+  for(var i = 0 ; i < cells.length; i++){
+    var tds = cells[i].getElementsByTagName('td');
+    tx_new += parseInt(tds[3].innerHTML);
+    tx_curr += parseInt(tds[4].innerHTML);
+    tx_screened_for_tb += parseInt(tds[5].innerHTML);
+    tx_given_ipt += parseInt(tds[6].innerHTML);
+  }
+
+  data_table.row.add([31,'All', 'Male', tx_new, tx_curr, 
+    tx_screened_for_tb, tx_given_ipt]).node().id = 'all-males'; 
+  data_table.draw();
+  addClass('all-males');
+  getAllFemale('Pregnant');
+}
+
+function addClass(id) {
+  var tr = document.getElementById(id);
+  tr.style = 'background-color: lightyellow;';
+  var cells = tr.getElementsByTagName('td');
+
+  for(var i = 0 ; i < cells.length; i++){
+    if(i >= 3 )
+      cells[i].setAttribute('class','disaggregated-numbers');
+  
+  }
+}
+
+function assignNum(age, gender, num) {
+  var gender = (gender == 'F' ? 'Female' : 'Male');
+  var cells = document.getElementsByClassName(gender + '_row');
+
+  for(var i = 0 ; i < cells.length; i++){
+    var tds = cells[i].getElementsByTagName('td');
+    if(tds[1].innerHTML == age){
+      assignTD(tds, num, gender);
+    }
+  }
+}
+
+function assignTD(tds, num, gender) {
+  tds[3].innerHTML = num.tx_new;
+  tds[4].innerHTML = num.tx_curr;
+  tds[5].innerHTML = num.tx_screened_for_tb;
+  tds[6].innerHTML = num.tx_given_ipt;
+}
+
+function addTableBody() {
+  var columns = [
+    '0-5 months', '6-11 months','12-23 months',
+    '2-4 years', '5-9 years',
+    '10-14 years', '15-17 years',
+    '18-19 years', '20-24 years',
+    '25-29 years', '30-34 years',
+    '35-39 years', '40-44 years',
+    '45-49 years', '50 plus years'
+  ];
+
+  var table_body = document.getElementById('table-body');
+  var row_count = 1;
+  var gender = ['Female', 'Male'];
+
+  for(var s = 0 ; s < gender.length; s++){
+    for(var i = 0 ; i < columns.length; i++){
+      var tr = document.createElement('tr');
+      tr.setAttribute('class', gender[s] + '_row');
+      table_body.appendChild(tr);
+      var td_count = 0;
+
+      while (td_count < 7) {
+        var td = document.createElement('td');
+        tr.appendChild(td);
+        if(td_count == 0)
+          td.innerHTML = (row_count++);
+        
+        if(td_count == 1)
+          td.innerHTML = columns[i];
+           
+        if(td_count == 2)
+          td.innerHTML = gender[s];
+           
+        if(td_count > 2){
+          td.innerHTML = 0;
+          td.setAttribute('class','disaggregated-numbers');
+        }   
+        tr.appendChild(td);
+        td_count++;
+      }
+
+    }
+  }
+}
+
+function getAllFemale(age_group) {
+
+  var url = sessionStorage.apiProtocol + "://" + sessionStorage.apiURL + ":" + sessionStorage.apiPort + "/api/v1";
+  url += '/cohort_disaggregated';
+  url += "?date=" + sessionStorage.sessionDate;
+  url += "&quarter=pepfar";
+  url += "&start_date=" + start_date;
+  url += "&end_date=" + end_date;
+  url += "&age_group=" + age_group;
+  url += "&rebuild_outcome=" + rebuild_outcome;
+  url += '&program_id=' + sessionStorage.programID;
+
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+      var obj = JSON.parse(this.responseText);
+      loadAllFemale(obj, age_group);
+    }
+  };
+  xhttp.open("GET", url, true);
+  xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+  xhttp.setRequestHeader('Content-type', "application/json");
+  xhttp.send();
+}
+
+function loadAllFemale(data, age_group) {
+  for(age in data) {
+    var gender = data[age];
+    for(sex in gender) {
+      var tx_new = data[age][sex].tx_new;
+      var tx_curr = data[age][sex].tx_curr;
+      var tx_screened_for_tb = data[age][sex].tx_screened_for_tb;
+      var tx_given_ipt = data[age][sex].tx_given_ipt;
+      
+      if(age_group == 'Pregnant'){
+        var count = 32 ; var g = 'FP'; 
+      }else if(age_group == 'Breastfeeding'){
+        var count = 34 ; var g = 'FBf'; 
+      }
+
+      data_table.row.add([count,'All', g, tx_new, tx_curr, 
+        tx_screened_for_tb, tx_given_ipt]).node().id = age_group.toLowerCase();
+      data_table.draw();
+      addClass(age_group.toLowerCase()); 
+    }
+  }
+
+  if(age_group == 'Pregnant') {
+    data_table.row.add([33,'All', 'FNP', 0,0,0,0]).node().id = 'fnp';
+    data_table.draw();
+    addClass('fnp'); 
+    getAllFemale('Breastfeeding');
+  }else if(age_group == 'Breastfeeding') {
+    updateFNProw();
+  }
+}
+
+function updateFNProw() {
+  var fp_row = document.getElementById('pregnant');
+  var fnp_row = document.getElementById('fnp');
+  var bf_row = document.getElementById('breastfeeding');
+
+  var fp_bf_tx_new = 0;
+  var fp_bf_tx_curr = 0;
+  var fp_bf_tx_given_ipt = 0;
+  var fp_bf_tx_screened_for_tb = 0;
+
+  var rows = [fp_row, bf_row];
+  
+  for(var r = 0 ; r < rows.length; r++){
+    var tds = rows[r].getElementsByTagName('td');
+    fp_bf_tx_new += parseInt(tds[3].innerHTML);
+    fp_bf_tx_curr += parseInt(tds[4].innerHTML);
+    fp_bf_tx_given_ipt += parseInt(tds[5].innerHTML);
+    fp_bf_tx_screened_for_tb += parseInt(tds[6].innerHTML);
+  }
+
+  var all_female_tx_new = 0;
+  var all_female_tx_curr = 0;
+  var all_female_tx_given_ipt = 0;
+  var all_female_tx_screened_for_tb = 0;
+  var female_rows = document.getElementsByClassName('Female_row');
+  
+  for(var i = 0 ; i < female_rows.length; i++){
+    var tds = female_rows[i].getElementsByTagName('td');
+    
+    if(tds[1].innerHTML.match(/months/i) || tds[1].innerHTML.match(/years/)) {
+      all_female_tx_new += parseInt(tds[3].innerHTML);
+      all_female_tx_curr += parseInt(tds[4].innerHTML);
+      all_female_tx_given_ipt += parseInt(tds[5].innerHTML);
+      all_female_tx_screened_for_tb += parseInt(tds[6].innerHTML);
+    }
+  }
+  
+  var tds = fnp_row.getElementsByTagName('td');
+  tds[3].innerHTML = (all_female_tx_new - fp_bf_tx_new);  
+  tds[4].innerHTML = (all_female_tx_curr - fp_bf_tx_curr);  
+  tds[5].innerHTML = (all_female_tx_given_ipt - fp_bf_tx_given_ipt);  
+  tds[6].innerHTML = (all_female_tx_screened_for_tb - fp_bf_tx_screened_for_tb);  
+
+  data_table.destroy();
+  initializeTable();
+  validateReport();
+}
+
+var age_group;
+
+function ageGroups() {
+  age_groups = [
+    '0-5 months', '6-11 months','12-23 months',
+    '2-4 years', '5-9 years',
+    '10-14 years', '15-17 years',
+    '18-19 years', '20-24 years',
+    '25-29 years', '30-34 years',
+    '35-39 years', '40-44 years',
+    '45-49 years', '50 plus years'
+  ];
+}
+
+ageGroups();
+
+function initializeGet() {
+  getData(age_groups[0]);
+}
+
+var period = moment(start_date).format('DD/MMM/YYYY')
+period += ' - ' + moment(end_date).format('DD/MMM/YYYY')
+
+document.getElementById('reporting-period').innerHTML = period;
+document.getElementById('on-art').innerHTML = on_art;
+
+addTableBody();
+initializeTable();
+initializeGet();
+
+function validateReport() {
+  var report_total = 0;
+  var rows = [];
+  rows.push(document.getElementById('pregnant'));
+  rows.push(document.getElementById('fnp'));
+  rows.push(document.getElementById('breastfeeding'));
+  rows.push(document.getElementById('all-males'));
+
+  for(var i = 0 ; i < rows.length; i++){
+    var tds = rows[i].getElementsByTagName('td');
+    report_total += parseInt(tds[3].innerHTML);
+    report_total += parseInt(tds[4].innerHTML);
+  }
+
+  var valid_report = document.getElementById('valid-report');
+ /* 
+  if(parseInt(on_art) == report_total) {
+    valid_report.innerHTML = "<span style='color: green;'>Report is consistent</span>";
+  }else{
+    valid_report.innerHTML = "<span style='color: red;'>Report is <b>Not</b> consistent</span>";
+  } */
+  document.getElementById('spinner').style = 'display: none;';
+  document.getElementById('report-cover').style = 'display: none;';
+}
+
+</script>

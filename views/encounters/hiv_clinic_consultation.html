@@ -1766,6 +1766,8 @@
             }
 
             function getTBStatusConceptID(concept_name) {
+                console.log(concept_name);
+
                 var tb_treatment_answer = __$('tb_treatment_question').value;
                 if (tb_treatment_answer == "Yes") {
                     concept_name = "Confirmed TB on treatment";
@@ -1774,6 +1776,11 @@
                 if (isNumeric(concept_name) && concept_name > 0) {
                     return concept_name;
                 }
+
+                if (concept_name.length < 1) {
+                   concept_name = 'TB NOT suspected';
+                }
+
 
                 var tb_status_concepts = {
                     "TB NOT suspected": 7454,
@@ -2275,22 +2282,7 @@
 
                 return allergic_to_cpt_concepts[concept_name]
             }
-
-            function getTBStatusConceptID(concept_name) {
-                var tb_treatment_answer = __$('tb_treatment_question').value;
-                if (tb_treatment_answer == "Yes") {
-                    concept_name = "Confirmed TB on treatment";
-                }
-                var tb_status_concepts = {
-                    "TB NOT suspected": 7454,
-                    "TB suspected": 7455,
-                    "Confirmed TB NOT on treatment": 7456,
-                    "Confirmed TB on treatment": 7458
-                }
-
-                return tb_status_concepts[concept_name]
-            }
-
+            
             function getSideEffectAnswer(key) {
                 side_effects_answers = yesNo_Hash["MALAWI ART SIDE EFFECTS"];
                 side_effect_answer = side_effects_answers[key];
