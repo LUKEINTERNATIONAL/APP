@@ -57,8 +57,8 @@
     <link rel="stylesheet" href="/assets/css/alertifyjs/css/alertify.css" type="text/css">
 
 
-    <link rel="stylesheet" href="/apps/ART/assets/css/consultation.history.css" type="text/css">
-    <script type="text/javascript" src="/apps/ART/assets/js/consultation.history.js"></script>
+    <!-- link rel="stylesheet" href="/apps/ART/assets/css/consultation.history.css" type="text/css">
+    <script type="text/javascript" src="/apps/ART/assets/js/consultation.history.js"></script-->
 
     <script type="text/javascript">
         var patient_id = sessionStorage.patientID;
@@ -4116,6 +4116,8 @@
                     if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
                         var obj = JSON.parse(this.responseText);
                         extended_fpm_assessment = (obj['extended.family.planning'] == 'true' ? true : false);
+
+                        setTimeout(closeCover(), 2000);
                     }
                 };
                 xhttp.open("GET", url, true);
@@ -4124,7 +4126,16 @@
                 xhttp.send();
             }
 
+
+            function closeCover() {
+              document.getElementById('regimen-change-cover').style = 'display: none;';
+            }
+
+            document.getElementById('regimen-change-cover').style = 'display: inline;';
             useExtendedFPMassessment();
+
+
+
         </script>
 
     </div>
