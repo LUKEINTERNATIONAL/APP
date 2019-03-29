@@ -1,0 +1,1272 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html;charset=UTF-8"/>
+    <script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js"
+            defer="true"></script>
+    <script type="text/javascript" src="/assets/js/jquery.min.js"></script>
+    <script type="text/javascript" src="/assets/js/yes_no_ctrls.js"></script>
+    <link rel="stylesheet" href="/assets/css/yes_no_ctrls.css" type="text/css">
+    <script type="text/javascript" src="/assets/js/post_parameters.js"></script>
+    <script type="text/javascript" src="/assets/js/generic_ajaxrequest.js"></script>
+    <script type="text/javascript" src="/apps/ART/assets/js/arv_number.js"></script>
+    <script type="text/javascript" src="/assets/js/moment.js"></script>
+    <script type="text/javascript" src="/assets/js/alertifyjs/alertify.js"></script>
+    <script type="text/javascript" src="/assets/js/does_connection_exist.js"></script>
+
+    <link rel="stylesheet" href="/assets/css/alertifyjs/css/alertify.css" type="text/css">
+    <style type="text/css">
+        #tt_page_month_cryo_was_done .options {
+            height: 515px;
+        }
+
+        #tt_page_month_cryo_was_done .options li {
+            font-size: 30px;
+        }
+
+        .tt_page_day_cryo_was_done #Unknown {
+            display: none;
+        }
+
+        #tt_page_month_via_was_done .options {
+            height: 515px;
+        }
+
+        .referral_count {
+            color: orange;
+            font-weight: bold;
+            font-size: 14pt;
+            font-style: italic;
+            float: right;
+            text-align: center;
+            border-radius: 50%;
+            width: 290px;
+            height: 43px;
+            background: black;
+        }
+
+        .referral_count span {
+            top: 9px;
+            position: relative;
+        }
+
+        #cervical_cancer_reminder_cover {
+            position: absolute;
+            background-color: black;
+            width: 100%;
+            height: 102%;
+            left: 0%;
+            top: 0%;
+            z-index: 990;
+            opacity: 0.3;
+        }
+
+        #cervical_cancer_reminder {
+            position: absolute;
+            width: 60%;
+            height: 40%;
+            top: 10%;
+            z-index: 991;
+            left: 16%;
+            border: 1px solid black;
+            background-color: #CD3333;
+            border-radius: 15px;
+        }
+
+        #cervical_cancer_reminder_header {
+            padding: 10px;
+            background-color: white;
+            color: black;
+            border-radius: 15px 15px 0px 0px;
+        }
+
+        #cervical_cancer_reminder_footer {
+            background-color: #FFD39B;
+            height: 60px;
+            width: 100%;
+            position: absolute;
+            width: 100%;
+            position: absolute;
+            bottom: 0px;
+            border-radius: 0px 0px 15px 15px;
+        }
+
+        #cervical_cancer_reminder_footer span {
+            background-color: goldenrod;
+            position: absolute;
+            padding: 12px 20%;
+            right: 8px;
+            bottom: 8px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .loader {
+            position: absolute;
+            display: none;
+            top: 30%;
+            left: 40%;
+            border: 16px solid #f3f3f3; /* Light grey */
+            border-top: 16px solid #3498db; /* Blue */
+            border-radius: 50%;
+            width: 120px;
+            height: 120px;
+            animation: spin 2s linear infinite;
+            z-index: 9999999999999;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+
+    <script type="text/javascript">
+        function patientReferredAndHasNoresults() {
+            if (viaReferred == 'true' && patientHasviaResults == 'false') {
+                return true;
+            }
+
+            return false;
+        }
+
+        function viaNotReferred() {
+            if (viaReferred != 'true') {
+                return true;
+            }
+            return false;
+        }
+
+        function updateCryptoDate() {
+            year = __$('cryo_year').value;
+            month = __$('cryo_month').value;
+            day = __$("touchscreenInput" + tstCurrentPage).value;
+            if (parseInt(day) < 10) {
+                day = '0' + day;
+            }
+            if (parseInt(month) < 10) {
+                month = '0' + month;
+            }
+
+            cryptoDate = day + '-' + month + '-' + year; // 01/Jan/2014
+
+            __$('cryo_done_date').value = cryptoDate;
+        }
+
+        function changeAttributes() {
+            __$('nextButton').innerHTML = '<span>Continue</span>';
+            __$('nextButton').onmousedown = function () {
+                ContinueWorkFlow();
+            }
+            __$('backButton').style.display = 'none';
+            __$('clearButton').style.display = 'none';
+            __$('cancelButton').style.display = 'none';
+            __$('keyboard').style.display = 'none';
+            __$('inputFrame0').style.display = 'none';
+        }
+
+        function modifyAttributes() {
+            __$('keyboard').style.display = 'none';
+            __$('inputFrame' + tstCurrentPage).style.display = 'none';
+            __$('helpText' + tstCurrentPage).style.position = 'absolute';
+            __$('helpText' + tstCurrentPage).style.fontSize = '2em';
+            __$('helpText' + tstCurrentPage).style.paddingLeft = '0px';
+            __$('helpText' + tstCurrentPage).style.paddingTop = '234px';
+            __$('helpText' + tstCurrentPage).style.width = '90%';
+            __$('helpText' + tstCurrentPage).style.left = '35px';
+            __$('helpText' + tstCurrentPage).style.textAlign = 'center';
+        }
+
+        function ContinueWorkFlow() {
+            jQuery.ajax({
+                type: "POST",
+                url: "/patients/set_cervical_cancer_session_variable",
+                data: "patient_id=" + patientID,
+                success: function (nextUrl) {
+                    window.location = nextUrl;
+                }
+            });
+        }
+
+        function cervicalFirstVisitPatient() {
+            if (cervicalCancerFirstVisitPatient == 'true') {
+                return true;
+            }
+
+            return false
+        }
+
+        function patientVIAwithinThreeYears() {
+            if (cervicalFirstVisitPatient() == true) {
+                viaYear = parseInt(__$('via_year').value);
+                viaMonth = parseInt(__$('via_month').value);
+                dateString = viaYear + ', ' + viaMonth + ', ' + 1;
+                viaDate = new Date(dateString);
+                today = new Date();
+                date_diff_result = dateDiff(today, viaDate);
+                if (date_diff_result[2] < 3) {
+                    return true
+                }
+                else {
+                    return false
+                }
+            }
+            else {
+                return false
+            }
+        }
+
+        function dateDiff(date1, date2) {
+            var diff = Math.floor(date1.getTime() - date2.getTime());
+            var day = 1000 * 60 * 60 * 24;
+
+            var days = Math.floor(diff / day);
+            var months = Math.floor(days / 31);
+            var years = Math.floor(months / 12);
+
+            return [days, months, years]
+        }
+
+        function updateVIAdoneDate() {
+            year = __$('via_year').value;
+            month = __$('via_month').value;
+            day = 1; //We are just setting the day to be 1 coz we are not capturing it;
+
+            if (parseInt(day) < 10) {
+                day = '0' + day;
+            }
+
+            if (parseInt(month) < 10) {
+                month = '0' + month;
+            }
+
+            viaDate = day + '-' + month + '-' + year; // 01/Jan/2014
+
+            if (__$('via_done_date')) {
+                __$('via_done_date').value = viaDate;
+            }
+        }
+
+        function showCervicalCancerWarning() {
+            jQuery("#cervical_cancer_reminder").show();
+            jQuery("#cervical_cancer_reminder_cover").show();
+        }
+
+        function hideCervicalCancerWarning() {
+            jQuery("#cervical_cancer_reminder").hide();
+            jQuery("#cervical_cancer_reminder_cover").hide();
+        }
+
+        function setCervicalCancerDelayedReminder() {
+            jQuery("#cervical_cancer_reminder").hide();
+            jQuery("#cervical_cancer_reminder_cover").hide();
+
+            available_options = document.getElementsByTagName('li');
+            for (i = 0; i < available_options.length; i++) {
+                inputValue = available_options[i].getAttribute("tstvalue");
+                if (inputValue.match(/CRYO DELAYED/i)) {
+                    available_options[i].onmouseup = function () {
+                        showCervicalCancerWarning();
+                    }
+                }
+            }
+        }
+
+        var tt_cancel_destination = "/views/patient_dashboard.html?patient_id=" + sessionStorage.patientID;
+        var viaReferred = "false";
+        var patientHasviaResults = "false";
+        var lesionSizeTooBig = "false";
+        var cervicalCancerFirstVisitPatient = "true";
+        var patientWentForVIA = "false";
+        var cryoDelayed = "false";
+        var no_cancer = "false";
+        var lesion_size_too_big = "false";
+        var viaResultsExpired = "true";
+        var cryo_delayed = "false";
+        var terminal = "false";
+        var terminal_referral_outcomes = ["PRE/CANCER TREATED", "CANCER UNTREATABLE"];
+
+
+        var remaining_days;
+        var latest_cervical_cancer_result;
+        var latest_via_referral_outcome;
+
+        var ever_had_via_concept_id = 9510;
+        var via_referral_concept_id = 9503;
+        var via_results_available = 9505;
+        var patient_went_for_via = 9512;
+        var via_results_concept_id = 9504;
+        var positive_cro_concept_id = 9506;
+        var via_referral_outcome_concept_id = 9508;
+        var cryo_done_date_concept_id = 9509;
+        var via_done_date_concept_id = 9511;
+
+        var yes_concept_id = 1065;
+        var no_concept_id = 1066;
+
+        var one_year = 365;
+        var three_years = (365 * 3);
+
+        function initializeVariables() {
+            jQuery(".loader").show();
+            jQuery('#keyboard').hide();
+            jQuery("#buttons").hide(); //inputFrame0
+            jQuery("#inputFrame" + tstCurrentPage).hide();
+
+            var patient_went_for_via_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+            patient_went_for_via_url += "/api/v1/observations?person_id=" + sessionStorage.patientID;
+            patient_went_for_via_url += "&concept_id=" + ever_had_via_concept_id;
+            patient_went_for_via_url += "&value_coded=" + yes_concept_id;
+
+            var via_referral_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+            via_referral_url += "/api/v1/observations?person_id=" + sessionStorage.patientID;
+            via_referral_url += "&concept_id=" + via_referral_concept_id;
+            via_referral_url += "&value_coded=" + yes_concept_id;
+
+            var ever_had_via_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+            ever_had_via_url += "/api/v1/observations?person_id=" + sessionStorage.patientID;
+            ever_had_via_url += "&concept_id=" + ever_had_via_concept_id;
+
+            var via_results_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+            via_results_url += "/api/v1/observations?person_id=" + sessionStorage.patientID;
+            via_results_url += "&concept_id=" + via_results_concept_id;
+
+            var via_result_obs_datetime_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+            via_result_obs_datetime_url += "/api/v1/observations?person_id=" + sessionStorage.patientID;
+            via_result_obs_datetime_url += "&concept_id=" + via_results_concept_id;
+
+            var xhttp1 = new XMLHttpRequest();
+            xhttp1.onreadystatechange = function () {
+                if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                    var patient_went_for_via_observations = JSON.parse(this.responseText);
+                    if (patient_went_for_via_observations.length > 0) {
+                        patientWentForVIA = "true";
+                    }
+
+                    var xhttp2 = new XMLHttpRequest();
+                    xhttp2.onreadystatechange = function () {
+                        if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                            var patient_via_referral_observations = JSON.parse(this.responseText);
+                            if (patient_via_referral_observations.length > 0) {
+                                viaReferred = "true";
+                            }
+
+                            var xhttp3 = new XMLHttpRequest();
+                            xhttp3.onreadystatechange = function () {
+                                if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                                    var ever_had_via_observations = JSON.parse(this.responseText);
+                                    if (ever_had_via_observations.length > 0) {
+                                        cervicalCancerFirstVisitPatient = "false";
+                                    }
+
+                                    var xhttp4 = new XMLHttpRequest();
+                                    xhttp4.onreadystatechange = function () {
+                                        if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                                            var via_results_observations_records = JSON.parse(this.responseText);
+                                            if (via_results_observations_records.length > 0) {
+                                                var latest_via_results_obs_date = via_results_observations_records[0]["obs_datetime"];
+                                                latest_via_results_obs_date = moment(latest_via_results_obs_date).format("YYYY-MM-DD");
+
+                                                var xhttp5 = new XMLHttpRequest();
+                                                xhttp5.onreadystatechange = function () {
+                                                    if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                                                        var via_results_observations = JSON.parse(this.responseText);
+                                                        if (via_results_observations.length > 0) {
+                                                            for (var key in via_results_observations) {
+                                                                var obs_datetime = via_results_observations[key]["obs_datetime"];
+                                                                obs_datetime = moment(obs_datetime).format("YYYY-MM-DD");
+                                                                if (obs_datetime >= latest_via_results_obs_date) {
+                                                                    var cervical_cancer_result_obs = via_results_observations[key];
+                                                                    patientHasviaResults = "true";
+                                                                    latest_cervical_cancer_result = cervical_cancer_result_obs["value_text"]; //TODO
+                                                                    if (!latest_cervical_cancer_result) {
+                                                                        var concept_name_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+                                                                        concept_name_url += "/api/v1/concepts/" + cervical_cancer_result_obs["value_coded"];
+                                                                        var xhttp6 = new XMLHttpRequest();
+                                                                        xhttp6.onreadystatechange = function () {
+                                                                            if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                                                                                var concept = JSON.parse(this.responseText);
+                                                                                if (concept) {
+                                                                                    var concept_names = concept["concept_names"];
+                                                                                    for (var key in concept_names) {
+                                                                                        if (concept_names[key]["concept_name_type"].match(/FULLY_SPECIFIED/i)) {
+                                                                                            latest_cervical_cancer_result = concept_names[key]["name"];
+                                                                                            break;
+                                                                                        }
+                                                                                    }
+                                                                                    var date_gone_in_days = diffinDays(sessionStorage.sessionDate, obs_datetime);
+
+                                                                                    if (latest_cervical_cancer_result.match(/NEGATIVE/i)) {
+                                                                                        var next_via_date = new Date(obs_datetime).addDays(three_years);
+                                                                                        remaining_days = three_years - date_gone_in_days;
+                                                                                        if (date_gone_in_days >= three_years) {
+                                                                                            viaReferred = "false";
+                                                                                            patientHasviaResults = "false";
+
+                                                                                            var next_via_referral_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+                                                                                            next_via_referral_url += "/api/v1/observations?person_id=" + sessionStorage.patientID;
+                                                                                            next_via_referral_url += "&concept_id=" + via_referral_concept_id;
+
+                                                                                            var xhttp7 = new XMLHttpRequest();
+                                                                                            xhttp7.onreadystatechange = function () {
+                                                                                                if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                                                                                                    var next_via_observations = JSON.parse(this.responseText);
+                                                                                                    for (var i = 0; i <= next_via_observations.length - 1; i++) {
+                                                                                                        var obs_datetime = next_via_observations[i]["obs_datetime"];
+                                                                                                        obs_datetime = new Date(obs_datetime);
+                                                                                                        if (obs_datetime >= next_via_date) {
+                                                                                                            viaReferred = "true";
+                                                                                                            break;
+                                                                                                        }
+                                                                                                    }
+
+                                                                                                    var next_cervical_cancer_result_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+                                                                                                    next_cervical_cancer_result_url += "/api/v1/observations?person_id=" + sessionStorage.patientID;
+                                                                                                    next_cervical_cancer_result_url += "&concept_id=" + via_results_concept_id;
+
+                                                                                                    var xhttp8 = new XMLHttpRequest();
+                                                                                                    xhttp8.onreadystatechange = function () {
+                                                                                                        if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                                                                                                            var next_cervical_cancer_result_observations = JSON.parse(this.responseText);
+                                                                                                            for (var i = 0; i <= next_cervical_cancer_result_observations.length - 1; i++) {
+                                                                                                                var obs_datetime = next_cervical_cancer_result_observations[i]["obs_datetime"];
+                                                                                                                obs_datetime = new Date(obs_datetime);
+                                                                                                                if (obs_datetime >= next_via_date) {
+                                                                                                                    patientHasviaResults = "true";
+                                                                                                                    break;
+                                                                                                                }
+                                                                                                            }
+                                                                                                        }
+                                                                                                    };
+                                                                                                    xhttp8.open("GET", next_cervical_cancer_result_url, true);
+                                                                                                    xhttp8.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                                                                                                    xhttp8.setRequestHeader('Content-type', "application/json");
+                                                                                                    xhttp8.send();
+
+                                                                                                }
+
+                                                                                            };
+
+                                                                                            xhttp7.open("GET", next_via_referral_url, true);
+                                                                                            xhttp7.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                                                                                            xhttp7.setRequestHeader('Content-type', "application/json");
+                                                                                            xhttp7.send();
+
+                                                                                        }
+                                                                                    }
+
+                                                                                    var cro_done_cancer_result_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+                                                                                    cro_done_cancer_result_url += "/api/v1/observations?person_id=" + sessionStorage.patientID;
+                                                                                    cro_done_cancer_result_url += "&concept_id=" + cryo_done_date_concept_id;
+
+                                                                                    var xhttp9 = new XMLHttpRequest();
+                                                                                    xhttp9.onreadystatechange = function () {
+                                                                                        if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                                                                                            var cro_done_cancer_observations = JSON.parse(this.responseText);
+                                                                                            for (var i = 0; i <= cro_done_cancer_observations.length - 1; i++) {
+                                                                                                var obs_datetime = cro_done_cancer_observations[i]["obs_datetime"];
+                                                                                                obs_datetime = new Date(obs_datetime);
+                                                                                                if (obs_datetime >= latest_via_results_obs_date) {
+
+
+                                                                                                    var cryo_done_date = new Date(cro_done_cancer_observations[i]["value_datetime"]);
+                                                                                                    next_via_date = cryo_done_date.addDays(one_year);
+                                                                                                    var date_gone_after_cryo_is_done = diffinDays(sessionStorage.sessionDate, cryo_done_date);
+                                                                                                    remaining_days = one_year - date_gone_after_cryo_is_done;
+                                                                                                    if (date_gone_after_cryo_is_done >= one_year) {
+                                                                                                        viaReferred = "false";
+                                                                                                        patientHasviaResults = "false";
+
+                                                                                                        var next_via_referral_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+                                                                                                        next_via_referral_url += "/api/v1/observations?person_id=" + sessionStorage.patientID;
+                                                                                                        next_via_referral_url += "&concept_id=" + via_referral_concept_id;
+
+
+                                                                                                        var xhttp10 = new XMLHttpRequest();
+                                                                                                        xhttp10.onreadystatechange = function () {
+                                                                                                            if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                                                                                                                var next_via_referral_observations = JSON.parse(this.responseText);
+                                                                                                                for (var i = 0; i <= next_via_referral_observations.length - 1; i++) {
+                                                                                                                    var obs_datetime = next_via_referral_observations[i]["obs_datetime"];
+                                                                                                                    var value_coded = next_via_referral_observations[i]["value_coded"];
+                                                                                                                    obs_datetime = new Date(obs_datetime);
+                                                                                                                    if (obs_datetime >= next_via_date) {
+                                                                                                                        if (value_coded == yes_concept_id) {
+                                                                                                                            viaReferred = "true";
+                                                                                                                        }
+                                                                                                                        break;
+                                                                                                                    }
+                                                                                                                }
+
+                                                                                                                var next_cervical_cancer_result_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+                                                                                                                next_cervical_cancer_result_url += "/api/v1/observations?person_id=" + sessionStorage.patientID;
+                                                                                                                next_cervical_cancer_result_url += "&concept_id=" + via_results_concept_id;
+
+                                                                                                                var xhttp11 = new XMLHttpRequest();
+                                                                                                                xhttp11.onreadystatechange = function () {
+                                                                                                                    if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                                                                                                                        var next_cervical_cancer_result_observations = JSON.parse(this.responseText);
+                                                                                                                        for (var i = 0; i <= next_cervical_cancer_result_observations.length - 1; i++) {
+                                                                                                                            var obs_datetime = next_cervical_cancer_result_observations[i]["obs_datetime"];
+                                                                                                                            obs_datetime = new Date(obs_datetime);
+                                                                                                                            if (obs_datetime >= next_via_date) {
+                                                                                                                                patientHasviaResults = "true";
+                                                                                                                                break;
+                                                                                                                            }
+                                                                                                                        }
+                                                                                                                    }
+                                                                                                                };
+                                                                                                                xhttp11.open("GET", next_cervical_cancer_result_url, true);
+                                                                                                                xhttp11.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                                                                                                                xhttp11.setRequestHeader('Content-type', "application/json");
+                                                                                                                xhttp11.send();
+
+
+                                                                                                            }
+                                                                                                        };
+                                                                                                        xhttp10.open("GET", next_via_referral_url, true);
+                                                                                                        xhttp10.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                                                                                                        xhttp10.setRequestHeader('Content-type', "application/json");
+                                                                                                        xhttp10.send();
+                                                                                                    }
+                                                                                                    break;
+                                                                                                }
+                                                                                            }
+                                                                                        }
+                                                                                    };
+                                                                                    xhttp9.open("GET", cro_done_cancer_result_url, true);
+                                                                                    xhttp9.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                                                                                    xhttp9.setRequestHeader('Content-type', "application/json");
+                                                                                    xhttp9.send();
+
+                                                                                    //gotoNextPage();
+                                                                                    var via_referral_outcome__url = apiProtocol + "://" + apiURL + ":" + apiPort;
+                                                                                    via_referral_outcome__url += "/api/v1/observations?person_id=" + sessionStorage.patientID;
+                                                                                    via_referral_outcome__url += "&concept_id=" + via_referral_outcome_concept_id;
+
+                                                                                    var xhttp12 = new XMLHttpRequest();
+                                                                                    xhttp12.onreadystatechange = function () {
+                                                                                        if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                                                                                            var via_referral_outcome_observations = JSON.parse(this.responseText);
+                                                                                            for (var i = 0; i <= via_referral_outcome_observations.length - 1; i++) {
+                                                                                                var obs_datetime = via_referral_outcome_observations[i]["obs_datetime"];
+                                                                                                obs_datetime = new Date(obs_datetime);
+                                                                                                if (obs_datetime >= latest_via_results_obs_date) {
+                                                                                                    latest_via_referral_outcome = via_referral_outcome_observations[i]["value_text"];
+                                                                                                    if (!latest_via_referral_outcome) {
+                                                                                                        var concept_name_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+                                                                                                        concept_name_url += "/api/v1/concepts/" + via_referral_outcome_observations[i]["value_coded"];
+                                                                                                        var xhttp13 = new XMLHttpRequest();
+                                                                                                        xhttp13.onreadystatechange = function () {
+                                                                                                            if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                                                                                                                var concept = JSON.parse(this.responseText);
+                                                                                                                if (concept) {
+                                                                                                                    var concept_names = concept["concept_names"];
+                                                                                                                    for (var key in concept_names) {
+                                                                                                                        if (concept_names[key]["concept_name_type"].match(/FULLY_SPECIFIED/i)) {
+                                                                                                                            latest_via_referral_outcome = concept_names[key]["name"];
+                                                                                                                            break;
+                                                                                                                        }
+                                                                                                                    }
+
+                                                                                                                    if (latest_via_referral_outcome.match(/NO CANCER/i)) {
+                                                                                                                        var via_referral_outcome_obs_date = obs_datetime;
+                                                                                                                        next_via_date = via_referral_outcome_obs_date.addDays(three_years)
+                                                                                                                        var date_gone_after_referral_outcome_is_done = diffinDays(sessionStorage.sessionDate, via_referral_outcome_obs_date);
+                                                                                                                        remaining_days = three_years - date_gone_after_referral_outcome_is_done;
+                                                                                                                        no_cancer = "true";
+                                                                                                                        lesion_size_too_big = "false";
+                                                                                                                        if (date_gone_after_referral_outcome_is_done >= three_years) {
+                                                                                                                            viaReferred = "false";
+                                                                                                                            patientHasviaResults = "false";
+                                                                                                                            no_cancer = "false";
+
+                                                                                                                            var next_via_referral_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+                                                                                                                            next_via_referral_url += "/api/v1/observations?person_id=" + sessionStorage.patientID;
+                                                                                                                            next_via_referral_url += "&concept_id=" + via_referral_concept_id;
+
+                                                                                                                            var xhttp14 = new XMLHttpRequest();
+                                                                                                                            xhttp14.onreadystatechange = function () {
+                                                                                                                                if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                                                                                                                                    var next_via_referral_observations = JSON.parse(this.responseText);
+                                                                                                                                    for (var i = 0; i <= next_via_referral_observations.length - 1; i++) {
+                                                                                                                                        var obs_datetime = next_via_referral_observations[i]["obs_datetime"];
+                                                                                                                                        obs_datetime = new Date(obs_datetime);
+                                                                                                                                        if (obs_datetime >= next_via_date) {
+                                                                                                                                            patientHasviaResults = "true";
+                                                                                                                                            break;
+                                                                                                                                        }
+                                                                                                                                    }
+                                                                                                                                }
+                                                                                                                            };
+                                                                                                                            xhttp14.open("GET", next_via_referral_url, true);
+                                                                                                                            xhttp14.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                                                                                                                            xhttp14.setRequestHeader('Content-type', "application/json");
+                                                                                                                            xhttp14.send();
+                                                                                                                        }
+                                                                                                                    }
+                                                                                                                }
+
+                                                                                                            }
+                                                                                                        };
+                                                                                                        xhttp13.open("GET", concept_name_url, true);
+                                                                                                        xhttp13.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                                                                                                        xhttp13.setRequestHeader('Content-type', "application/json");
+                                                                                                        xhttp13.send();
+                                                                                                    } else {
+                                                                                                        if (latest_via_referral_outcome.match(/NO CANCER/i)) {
+                                                                                                            var via_referral_outcome_obs_date = obs_datetime;
+                                                                                                            next_via_date = via_referral_outcome_obs_date.addDays(three_years)
+                                                                                                            var date_gone_after_referral_outcome_is_done = diffinDays(sessionStorage.sessionDate, via_referral_outcome_obs_date);
+                                                                                                            remaining_days = three_years - date_gone_after_referral_outcome_is_done;
+                                                                                                            no_cancer = "true";
+                                                                                                            lesion_size_too_big = "false";
+                                                                                                            if (date_gone_after_referral_outcome_is_done >= three_years) {
+                                                                                                                viaReferred = "false";
+                                                                                                                patientHasviaResults = "false";
+                                                                                                                no_cancer = "false";
+
+                                                                                                                var next_via_referral_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+                                                                                                                next_via_referral_url += "/api/v1/observations?person_id=" + sessionStorage.patientID;
+                                                                                                                next_via_referral_url += "&concept_id=" + via_referral_concept_id;
+
+                                                                                                                var xhttp14 = new XMLHttpRequest();
+                                                                                                                xhttp14.onreadystatechange = function () {
+                                                                                                                    if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                                                                                                                        var next_via_referral_observations = JSON.parse(this.responseText);
+                                                                                                                        for (var i = 0; i <= next_via_referral_observations.length - 1; i++) {
+                                                                                                                            var obs_datetime = next_via_referral_observations[i]["obs_datetime"];
+                                                                                                                            obs_datetime = new Date(obs_datetime);
+                                                                                                                            if (obs_datetime >= next_via_date) {
+                                                                                                                                patientHasviaResults = "true";
+                                                                                                                                break;
+                                                                                                                            }
+                                                                                                                        }
+                                                                                                                    }
+                                                                                                                };
+                                                                                                                xhttp14.open("GET", next_via_referral_url, true);
+                                                                                                                xhttp14.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                                                                                                                xhttp14.setRequestHeader('Content-type', "application/json");
+                                                                                                                xhttp14.send();
+                                                                                                            }
+                                                                                                        }
+                                                                                                        break;
+                                                                                                    }
+
+                                                                                                }
+                                                                                            }
+                                                                                        }
+                                                                                    };
+                                                                                    xhttp12.open("GET", via_referral_outcome__url, true);
+                                                                                    xhttp12.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                                                                                    xhttp12.setRequestHeader('Content-type', "application/json");
+                                                                                    xhttp12.send();
+                                                                                }
+                                                                            }
+                                                                        };
+
+                                                                        xhttp6.open("GET", concept_name_url, true);
+                                                                        xhttp6.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                                                                        xhttp6.setRequestHeader('Content-type', "application/json");
+                                                                        xhttp6.send();
+                                                                    } else {
+                                                                        //gotoNextPage();
+                                                                    }
+
+                                                                    break;
+                                                                }
+                                                            }
+
+                                                            /*********/
+                                                            var via_done_date_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+                                                            via_done_date_url += "/api/v1/observations?person_id=" + sessionStorage.patientID;
+                                                            via_done_date_url += "&concept_id=" + via_done_date_concept_id;
+
+                                                            var xhttp15 = new XMLHttpRequest();
+                                                            xhttp15.onreadystatechange = function () {
+                                                                if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                                                                    var via_done_date_observations = JSON.parse(this.responseText);
+                                                                    if (via_done_date_observations.length > 0){
+                                                                        var value_datetime = via_done_date_observations[0]["value_datetime"]
+                                                                        var via_done_date_answer_string = new Date(value_datetime)
+                                                                        var days_gone_after_via_done = diffinDays(sessionStorage.sessionDate, via_done_date_answer_string);
+                                                                        if (days_gone_after_via_done < three_years){
+                                                                            viaReferred = "true";
+                                                                            patientHasviaResults = "false";
+                                                                            viaResultsExpired = "false";
+                                                                            remaining_days = three_years - days_gone_after_via_done;
+                                                                        }
+                                                                    }
+
+                                                                    var via_outcomes_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+                                                                    via_outcomes_url += "/api/v1/observations?person_id=" + sessionStorage.patientID;
+                                                                    via_outcomes_url += "&concept_id=" + via_referral_outcome_concept_id;
+
+                                                                    var xhttp16 = new XMLHttpRequest();
+                                                                    xhttp16.onreadystatechange = function () {
+                                                                        if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                                                                            var via_outcomes_observations = JSON.parse(this.responseText);
+                                                                            for (var i=0; i<= via_outcomes_observations.length - 1; i++){
+                                                                                var referral_outcome = via_outcomes_observations[i]["value_text"].toUpperCase();
+                                                                                if (terminal_referral_outcomes.includes(referral_outcome)){
+                                                                                    lesion_size_too_big = "false";
+                                                                                    terminal = "true"
+                                                                                }
+                                                                            }
+
+
+                                                                        }
+                                                                    };
+                                                                    xhttp16.open("GET", via_outcomes_url, true);
+                                                                    xhttp16.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                                                                    xhttp16.setRequestHeader('Content-type', "application/json");
+                                                                    xhttp16.send()
+                                                                }
+                                                            };
+
+                                                            xhttp15.open("GET", via_done_date_url, true);
+                                                            xhttp15.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                                                            xhttp15.setRequestHeader('Content-type', "application/json");
+                                                            xhttp15.send()
+                                                            /*********/
+
+                                                        }
+                                                    }
+                                                };
+                                                xhttp5.open("GET", via_results_url, true);
+                                                xhttp5.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                                                xhttp5.setRequestHeader('Content-type', "application/json");
+                                                xhttp5.send();
+
+                                            }
+
+                                            var positive_cryo_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+                                            positive_cryo_url += "/api/v1/observations?person_id=" + sessionStorage.patientID;
+                                            positive_cryo_url += "&concept_id=" + positive_cro_concept_id;
+
+                                            var xhttp17 = new XMLHttpRequest();
+                                            xhttp17.onreadystatechange = function () {
+                                                if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                                                    var positive_cryo_observations = JSON.parse(this.responseText);
+                                                    for (var i = 0; i <= positive_cryo_observations.length - 1; i++) {
+                                                        var obs_datetime = positive_cryo_observations[i]["obs_datetime"];
+                                                        obs_datetime = new Date(obs_datetime);
+                                                        if (obs_datetime >= latest_via_results_obs_date) {
+                                                            var cryo_result_answer = positive_cryo_observations[i]["value_text"];
+                                                            if (cryo_result_answer == "CRYO DELAYED"){
+                                                                cryo_delayed = "true";
+                                                                patientHasviaResults = "false";
+                                                                break;
+                                                            }
+
+                                                        }
+                                                    }
+                                                }
+                                            };
+                                            xhttp17.open("GET", positive_cryo_url, true);
+                                            xhttp17.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                                            xhttp17.setRequestHeader('Content-type', "application/json");
+                                            xhttp17.send();
+
+
+                                            else {
+                                                gotoNextPage();
+                                            }
+                                        }
+                                    };
+                                    xhttp4.open("GET", via_result_obs_datetime_url, true);
+                                    xhttp4.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                                    xhttp4.setRequestHeader('Content-type', "application/json");
+                                    xhttp4.send();
+
+                                }
+                            };
+                            xhttp3.open("GET", ever_had_via_url, true);
+                            xhttp3.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                            xhttp3.setRequestHeader('Content-type', "application/json");
+                            xhttp3.send();
+
+                        }
+                    };
+                    xhttp2.open("GET", via_referral_url, true);
+                    xhttp2.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                    xhttp2.setRequestHeader('Content-type', "application/json");
+                    xhttp2.send();
+
+
+                }
+            };
+
+            xhttp1.open("GET", patient_went_for_via_url, true);
+            xhttp1.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+            xhttp1.setRequestHeader('Content-type', "application/json");
+            xhttp1.send();
+        }
+
+        function diffinDays(date1, date2) {
+            var date1 = new Date(date1);
+            var date2 = new Date(date2);
+            var timeDiff = Math.abs(date2.getTime() - date1.getTime());
+            var diffDays = Math.ceil(timeDiff / (1000 * 3600 * 24));
+            return diffDays
+        }
+
+        Date.prototype.addDays = function (days) {
+            var date = new Date(this.valueOf());
+            date.setDate(date.getDate() + days);
+            return date;
+        };
+
+        function resetPage() {
+            jQuery('#keyboard').show();
+            jQuery("#buttons").show();
+            jQuery("#innerPop").show()
+            jQuery("#inputFrame" + tstCurrentPage).show();
+            jQuery(".loader").hide();
+        }
+
+        var answers_hash = {
+            "ever_had_via": "",
+            "year_via_was_done": "",
+            "month_via_was_done": "",
+            "day_via_was_done": "",
+            "via_results_available": "",
+            "via_results": "",
+            "year_cryo_was_done": "",
+            "month_cryo_was_done": "",
+            "day_cryo_was_done": "",
+            "cryo_result": "",
+            "referral_outcome": ""
+        };
+
+        function setNextButtonToGetInputValue(key) {
+            __$('nextButton').onmousedown = function () {
+                value = __$('touchscreenInput' + tstCurrentPage).value;
+                answers_hash[key] = value;
+                gotoNextPage();
+            }
+        }
+
+        function submitCervicalCancerScreening() {
+            var currentTime = moment().format(' HH:mm:ss');
+            var encounter_datetime = moment(sessionStorage.sessionDate).format('YYYY-MM-DD');
+            encounter_datetime += currentTime;
+
+            var encounter = {
+                encounter_type_id: 154,
+                patient_id: sessionStorage.patientID,
+                encounter_datetime: encounter_datetime
+            };
+
+            submitParameters(encounter, "/encounters", "postCervicalCancerScreeningObs");
+        }
+
+        var via_done_date = "";
+        var patient_eligible_for_via;
+
+        var calendar_months = {
+            "Jan": "01",
+            "Feb": "02",
+            "Mar": "03",
+            "Apr": "04",
+            "May": "05",
+            "Jun": "06",
+            "Jul": "07",
+            "Aug": "08",
+            "Sep": "09",
+            "Oct": "10",
+            "Nov": "11",
+            "Dec": "12",
+        };
+
+        function postCervicalCancerScreeningObs(encounter) {
+            var year_via_was_done = answers_hash["year_via_was_done"];
+            var month_via_was_done = answers_hash["month_via_was_done"];
+
+            if (year_via_was_done.length > 0) {
+                if (month_via_was_done.length > 0) {
+                    via_done_date = year_via_was_done + "-" + calendar_months[month_via_was_done] + "-" + "01";
+                }
+            }
+
+            var obs = {
+                encounter_id: encounter.encounter_id,
+                observations: [
+                    {
+                        concept_id: ever_had_via_concept_id,
+                        value_coded: getYesNoConceptID(answers_hash["ever_had_via"])
+                    },
+
+                    {
+                        concept_id: via_referral_concept_id,
+                        value_coded: getYesNoConceptID(patient_eligible_for_via)
+                    },
+
+                    {
+                        concept_id: via_done_date_concept_id,
+                        value_datetime: via_done_date
+                    },
+                    {
+                        concept_id: via_results_available,
+                        value_coded: getYesNoConceptID(answers_hash["via_results_available"])
+                    }
+                ]
+            };
+
+            if (answers_hash["via_results"].length > 0) {
+                if (answers_hash["via_results"].match(/SUSPECT CANCER/i)) {
+                    obs.observations.push({
+                        concept_id: via_results_concept_id,
+                        value_text: answers_hash["via_results"]
+                    })
+                } else {
+                    obs.observations.push({
+                        concept_id: via_results_concept_id,
+                        value_coded: getVIAResultsConceptID(answers_hash["via_results"])
+                    })
+                }
+            }
+
+            if (answers_hash["cryo_result"].length > 0) {
+                obs.observations.push({
+                    concept_id: positive_cro_concept_id,
+                    value_text: answers_hash["cryo_result"]
+                });
+
+                var cryo_done_date = "";
+                if (answers_hash["year_cryo_was_done"].length > 0) {
+                    if (answers_hash["month_cryo_was_done"].length > 0) {
+                        if (answers_hash["day_cryo_was_done"].length > 0) {
+                            cryo_done_date = answers_hash["year_cryo_was_done"] + "-" + calendar_months[answers_hash["month_cryo_was_done"]] + "-" + answers_hash["day_cryo_was_done"];
+
+                        }
+                    }
+                }
+                obs.observations.push({
+                    concept_id: cryo_done_date_concept_id,
+                    value_datetime: cryo_done_date
+                })
+            }
+
+            if (answers_hash["referral_outcome"].length > 0) {
+                obs.observations.push({
+                    concept_id: via_referral_outcome_concept_id,
+                    value_text: answers_hash["referral_outcome"]
+                });
+            }
+
+            submitParameters(obs, "/observations", "nextPage")
+        }
+
+        function getYesNoConceptID(concept_name) {
+            if (concept_name) {
+                concept_name = concept_name.toUpperCase();
+                var yes_no_concepts = {
+                    "YES": 1065,
+                    "NO": 1066,
+                    "": ""
+                };
+
+                return yes_no_concepts[concept_name]
+            } else {
+                return ""
+            }
+        }
+
+        function getVIAResultsConceptID(concept_name) {
+            if (concept_name) {
+                concept_name = concept_name.toUpperCase();
+                var via_results_concepts = {
+                    "NEGATIVE": 664,
+                    "POSITIVE": 703,
+                    "": ""
+                };
+
+                return via_results_concepts[concept_name]
+            } else {
+                return ""
+            }
+        }
+
+        function nextPage() {
+            nextEncounter(sessionStorage.patientID, 1);
+        }
+
+        function changeSubmitButtonToSubmitVIAEligibility() {
+            __$('nextButton').innerHTML = "<span>Finish</span>";
+            __$('nextButton').onmousedown = function () {
+                patient_eligible_for_via = __$("touchscreenInput" + tstCurrentPage).value;
+                submitCervicalCancerScreening();
+            }
+        }
+
+        function changeSubmitButtonToSubmitNegativeVIAResults() {
+            __$('nextButton').onmousedown = function () {
+                var value = __$("touchscreenInput" + tstCurrentPage).value;
+                answers_hash["via_results"] = value;
+                if (value.match(/NEGATIVE/i)) {
+                    submitCervicalCancerScreening();
+                } else {
+                    gotoNextPage();
+                }
+            }
+        }
+
+        function changeSubmitButtonToSubmitCryoResults() {
+            __$('nextButton').onmousedown = function () {
+                var value = __$("touchscreenInput" + tstCurrentPage).value;
+                answers_hash["day_cryo_was_done"] = value;
+                submitCervicalCancerScreening();
+            }
+        }
+
+        function changeSubmitButtonToSubmitIfCryoIsDelayed() {
+            __$('nextButton').onmousedown = function () {
+                var value = __$("touchscreenInput" + tstCurrentPage).value;
+                answers_hash["cryo_result"] = value;
+                if (value.match(/CRYO DELAYED/i)) {
+                    submitCervicalCancerScreening();
+                } else {
+                    gotoNextPage();
+                }
+            }
+        }
+
+        function changeSubmitButtonToSubmitIfNoReferralsToday() {
+            __$('nextButton').onmousedown = function () {
+                var value = __$("touchscreenInput" + tstCurrentPage).value;
+                if (value.match(/NO/i)) {
+                    submitCervicalCancerScreening();
+                } else {
+                    gotoNextPage();
+                }
+            }
+        }
+
+        function changeSubmitButtonToSubmitReferralOutcomes() {
+            __$('nextButton').onmousedown = function () {
+                var value = __$("touchscreenInput" + tstCurrentPage).value;
+                if (value.length <= 0) {
+                    showMessage("Select value to continue");
+                    return;
+                }
+                answers_hash["referral_outcome"] = value;
+                submitCervicalCancerScreening();
+            }
+        }
+
+    </script>
+
+</head>
+
+<body id="mateme">
+<div id="container">
+    <div id="content">
+
+        <form>
+
+            <input type="text" name="variables"
+                   tt_onLoad="initializeVariables();"
+                   tt_onUnLoad="resetPage();"
+                   tt_pageStyleClass="NoControls" optional="true"/>
+
+
+            <input type="hidden" value="EVER HAD VIA?"/>
+
+            <select allowFreeText="false" condition="cervicalFirstVisitPatient() == true;" helpText="Ever had VIA?"
+                    tt_onLoad="setNextButtonToGetInputValue('ever_had_via')"
+                    id="ever_had_via" name="ever_had_via" tt_pageStyleClass="NoKeyboard">
+                <option value=''></option>
+                <option value=""></option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+            </select>
+
+            <input condition="__$('ever_had_via').value.match(/YES/i)" field_type="number" helpText="Year VIA Was Done"
+                   tt_onLoad="setNextButtonToGetInputValue('year_via_was_done')"
+                   id="via_year" name="via_year" tt_pageStyleClass="Numeric NumbersOnly" type="text"/>
+
+            <select condition="__$('via_year').value.length > 0" helpText="Month VIA Was Done" id="via_month"
+                    tt_onLoad="setNextButtonToGetInputValue('month_via_was_done'); jQuery('#keyboard').hide()"
+                    name="via_month" tt_onLoad="__$('keyboard').style.display = 'none'"
+                    tt_onUnLoad="updateVIAdoneDate();">
+                <option value=""></option>
+                <option value="1">Jan</option>
+                <option value="2">Feb</option>
+                <option value="3">Mar</option>
+                <option value="4">Apr</option>
+                <option value="5">May</option>
+                <option value="6">Jun</option>
+                <option value="7">Jul</option>
+                <option value="8">Aug</option>
+                <option value="9">Sep</option>
+                <option value="10">Oct</option>
+                <option value="11">Nov</option>
+                <option value="12">Dec</option>
+            </select>
+
+            <input type="hidden" value="VIA REFERRAL"/>
+
+            <select allowFreeText="false" condition="viaNotReferred() == true && patientVIAwithinThreeYears() == false;"
+                    tt_onLoad="changeSubmitButtonToSubmitVIAEligibility();"
+                    helpText="This patient is elligible for VIA. Refer to VIA? <span class='referral_count'><span>Today's Referrals Count: 0/1000</span></span><br /><br />"
+                    id="refer_to_via" name="via_referral" tt_pageStyleClass="NoKeyboard">
+                <option value=''></option>
+                <option value=""></option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+            </select>
+
+            <input type="hidden" value="VIA RESULTS AVAILABLE?"/>
+            <select allowFreeText="false" tt_onLoad="setNextButtonToGetInputValue('via_results_available')"
+                    condition="patientReferredAndHasNoresults() == true && cryoDelayed == 'false';"
+                    helpText="Are the VIA results available?" id="results_available?"
+                    name="via_results_available" tt_pageStyleClass="NoKeyboard">
+                <option value=''></option>
+                <option value=""></option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+            </select>
+
+            <input type="hidden" value="PATIENT WENT FOR VIA?"/>
+
+            <select allowFreeText="false"
+                    condition="__$('results_available?').value == 'No' && patientWentForVIA == 'false'"
+                    helpText="Did patient go for VIA?" id="patient_went_for_via"
+                    name="patient_went_for_via" tt_pageStyleClass="NoKeyboard">
+                <option value=''></option>
+                <option value=""></option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+            </select>
+
+            <input condition="__$('patient_went_for_via').value == 'No'" helpText="Refer this patient to VIA"
+                   id="no_via" name="no_via" optional="true" tt_onLoad="modifyAttributes();"
+                   tt_pageStyleClass="NoControls" type="text"/>
+
+            <input condition="__$('patient_went_for_via').value == 'Yes' || (__$('results_available?').value == 'No' && patientWentForVIA == 'true')"
+                   helpText="Remind the patient to bring results on next visit!" id="yes_via" name="yes_via"
+                   optional="true" tt_onLoad="modifyAttributes()" tt_pageStyleClass="NoControls" type="text"/>
+
+
+            <input type="hidden" value="VIA RESULTS"/>
+
+            <select allowFreeText="false" condition="__$('results_available?').value == 'Yes'" helpText="Record Results"
+                    tt_onLoad="changeSubmitButtonToSubmitNegativeVIAResults();"
+                    id="via_results" name="via_results" tt_pageStyleClass="NoKeyboard">
+                <option value=''></option>
+                <option value=""></option>
+                <option value="Negative">Negative</option>
+                <option value="Positive">Positive</option>
+                <option value="Suspect Cancer">Suspect Cancer</option>
+            </select>
+
+
+            <input type="hidden" value="POSITIVE CRYO"/>
+            <select allowFreeText="false"
+                    condition="__$('via_results').value.match(/Positive/i) || cryoDelayed == 'true'"
+                    helpText="Record Cryo Result" id="positive_cryo" name="positive_cryo"
+                    tt_onLoad="setCervicalCancerDelayedReminder(); changeSubmitButtonToSubmitIfCryoIsDelayed();"
+                    tt_pageStyleClass="NoKeyboard">
+                <option value=''></option>
+                <option value=""></option>
+                <option value="Cryo Done">Cryo Done</option>
+                <option value="Cryo Delayed">Cryo Delayed</option>
+                <option value="Lesion Size too big">Lesion Size too big</option>
+            </select>
+
+            <input condition="__$('positive_cryo').value.match(/Cryo Done/i)" field_type="number"
+                   tt_onLoad="setNextButtonToGetInputValue('year_cryo_was_done')"
+                   helpText="Year Cryo Was Done" id="cryo_year" name="cryo_year" tt_pageStyleClass="Numeric NumbersOnly"
+                   type="text"/>
+
+            <select condition="__$('cryo_year').value.length > 0" helpText="Month Cryo Was Done" id="cryo_month"
+                    tt_onLoad="setNextButtonToGetInputValue('month_cryo_was_done'); __$('keyboard').style.display = 'none'"
+                    name="cryo_month">
+                <option value=""></option>
+                <option value="1">Jan</option>
+                <option value="2">Feb</option>
+                <option value="3">Mar</option>
+                <option value="4">Apr</option>
+                <option value="5">May</option>
+                <option value="6">Jun</option>
+                <option value="7">Jul</option>
+                <option value="8">Aug</option>
+                <option value="9">Sep</option>
+                <option value="10">Oct</option>
+                <option value="11">Nov</option>
+                <option value="12">Dec</option>
+            </select>
+
+            <input condition="__$('cryo_month').value.length > 0" field_type="number" helpText="Day Cryo Was Done"
+                   id="cryo_day" name="cryo_day" tt_onLoad="changeSubmitButtonToSubmitCryoResults();" type="text"/>
+
+            <select condition="__$('via_results').value.match(/Suspect Cancer/i) || __$('positive_cryo').value.match(/Lesion Size too big/i) || __$('lesion_size_too_big').value.match(/TRUE/i)"
+                    helpText="Do you want to capture Referral outcomes today?" id="referral_outcome"
+                    tt_onLoad="changeSubmitButtonToSubmitIfNoReferralsToday();"
+                    name="referral_outcome">
+                <option value=""></option>
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+            </select>
+
+            <input type="hidden" value="VIA REFERRAL OUTCOME"/>
+
+            <select allowFreeText="false" condition="__$('referral_outcome').value.match(/YES/i)"
+                    tt_onLoad="changeSubmitButtonToSubmitReferralOutcomes();"
+                    helpText="Select Referral Outcome" id="via_referral_outcome"
+                    name="via_referral_outcome" tt_pageStyleClass="NoKeyboard">
+                <option value=""></option>
+                <option value="Pre/Cancer Treated">Pre/Cancer Treated</option>
+                <option value="Cancer Untreatable">Cancer Untreatable</option>
+                <option value="No Cancer">No Cancer</option>
+            </select>
+
+            <input allowFreeText="false" id="cryo_done_date" name="observations[][value_coded_or_text]" type="hidden"
+                   value=""/>
+            <input type="hidden" value="CRYO DONE DATE"/>
+
+
+            <input allowFreeText="false" id="via_done_date" name="observations[][value_coded_or_text]" type="hidden"
+                   value=""/>
+            <input type="hidden" value="VIA DONE DATE"/>
+
+            <input id="lesion_size_too_big" name="lesion_size_too_big" type="hidden" value="false"/>
+
+        </form>
+
+
+        <div id="cervical_cancer_reminder" style="display:none;">
+            <div id="cervical_cancer_reminder_header">
+                <span style="font-size: 16pt; font-weight: bold;">Cervical Cancer Screening Reminder</span>
+            </div>
+
+            <div id="cervical_cancer_reminder_content">
+                <div style="position: relative; overflow:auto; height: 80%; font-size: 14pt; font-weight: bold; color: white;">
+                    <br/>
+                    <Center>This patient had positive VIA but cryo was not done.<br/>
+                        Refer urgently for cryo again
+                    </center>
+                </div>
+            </div>
+
+            <div id="cervical_cancer_reminder_footer">
+                <span onclick="hideCervicalCancerWarning();">Continue</span>
+            </div>
+        </div>
+
+        <div id="cervical_cancer_reminder_cover" style="display:none;">
+
+        </div>
+
+        <div class="loader"></div>
+    </div>
+</div>
+</body>
+
+</html>

@@ -1726,7 +1726,8 @@
                 on_tb_treatment: "", tb_status: "", is_patient_pregnant: "",
                 is_patient_breastfeeding: "", current_fpm: "", todays_fpm: "",
                 on_tb_treatment: "", on_fpm: "",
-                arvs: "", cpt: "", inh: "", prescribe_drugs: "", allergic_to_cpt: ""
+                arvs: "", cpt: "", inh: "", prescribe_drugs: "", allergic_to_cpt: "",
+                refer_to_art_clinician: ""
             }
 
             function submitHIVClinicConsultation() {
@@ -1834,6 +1835,7 @@
                 var ipt_concept_id = 656
 
                 var allergic_to_sulphur_concept_id = 8012;
+                var refer_to_art_clinician_concept_id = 6969;
 
                 var obs = {
                     encounter_id: encounter.encounter_id,
@@ -2164,6 +2166,13 @@
                     }
                 }
 
+                if (refer_to_clinician){
+                    obs.observations.push({
+                        concept_id: refer_to_art_clinician_concept_id,
+                        value_coded: (answers_hash["refer_to_art_clinician"].length > 0 ? (answers_hash["refer_to_art_clinician"].trim().toUpperCase() == "YES" ? 1065 : 1066) : "")
+                    })
+                }
+
                 submitParameters(obs, "/observations", "nextPage")
             }
 
@@ -2459,6 +2468,8 @@
             }
 
             var tubal_ligation = false;
+            var refer_to_clinician = true;
+            var refer_to_clinician_already_asked = false;
 
             function initializeVariables() {
                 jQuery(".loader").show();
@@ -2468,11 +2479,19 @@
 
                 var family_planning_method_concept_id = 374;
                 var tubal_ligation_value_coded = 1719;
+                var refer_to_art_clinician_concept_id = 6969;
 
                 var tubal_ligation_url = apiProtocol + "://" + apiURL + ":" + apiPort;
                 tubal_ligation_url += "/api/v1/observations?person_id=" + sessionStorage.patientID;
                 tubal_ligation_url += "&concept_id=" + family_planning_method_concept_id;
                 tubal_ligation_url += "&value_coded=" + tubal_ligation_value_coded;
+
+
+
+                var refer_to_clinician_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+                refer_to_clinician_url += "/api/v1/observations?person_id=" + sessionStorage.patientID;
+                refer_to_clinician_url += "&concept_id=" + refer_to_art_clinician_concept_id;
+                refer_to_clinician_url += "&obs_datetime=" + sessionStorage.sessionDate;
 
                 var xhttp1 = new XMLHttpRequest();
                 xhttp1.onreadystatechange = function () {
@@ -2480,11 +2499,44 @@
                         var tubal_ligation_observations = JSON.parse(this.responseText);
                         if (tubal_ligation_observations.length > 0) {
                             tubal_ligation = true;
-                            gotoNextPage();
-                        } else {
-                            gotoNextPage();
                         }
 
+                        var user_roles_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+                        user_roles_url += "/api/v1/user_roles";
+
+                        var xhttp2 = new XMLHttpRequest();
+                        xhttp2.onreadystatechange = function () {
+                            if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                                var roles = JSON.parse(this.responseText);
+
+                                for (var i = 0; i <= roles.length - 1; i++) {
+                                    if (roles[i]["role"].match(/Clinician/i) || roles[i]["role"].match(/Doctor/i)) {
+                                        refer_to_clinician = false;
+                                    }
+                                }
+
+                                var xhttp3 = new XMLHttpRequest();
+                                xhttp3.onreadystatechange = function () {
+                                    if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                                        var refer_to_clinician_observations = JSON.parse(this.responseText);
+                                        if (refer_to_clinician_observations.length > 0){
+                                            refer_to_clinician_already_asked = true;
+                                        }
+
+                                        gotoNextPage();
+                                    }
+                                };
+                                xhttp3.open("GET", refer_to_clinician_url, true);
+                                xhttp3.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                                xhttp3.setRequestHeader('Content-type', "application/json");
+                                xhttp3.send();
+
+                            }
+                        };
+                        xhttp2.open("GET", user_roles_url, true);
+                        xhttp2.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                        xhttp2.setRequestHeader('Content-type', "application/json");
+                        xhttp2.send();
                     }
                 };
 
@@ -2492,6 +2544,35 @@
                 xhttp1.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
                 xhttp1.setRequestHeader('Content-type', "application/json");
                 xhttp1.send();
+            }
+
+            function submitIfYesReferToClinicianIsSelected(){
+                var liElements = jQuery("li");
+                for (var i = 0; i <= liElements.length - 1; i++) {
+                    var inner_html = liElements[i].innerHTML;
+                    if (inner_html.match(/YES/i)) {
+                        liElements[i].removeAttribute("onclick");
+                        liElements[i].onmousedown = function () {
+                            updateTouchscreenInputForSelect(this);
+                            __$("nextButton").innerHTML = "<span>Finish</span>";
+                            __$("nextButton").onmousedown = function(){
+                                answers_hash["refer_to_art_clinician"] = "Yes";
+                                submitHIVClinicConsultation();
+                            }
+                        }
+
+                    } else {
+                        liElements[i].removeAttribute("onclick");
+                        liElements[i].onmousedown = function () {
+                            updateTouchscreenInputForSelect(this);
+                            __$("nextButton").innerHTML = "<span>Next</span>";
+                            __$("nextButton").onmousedown = function(){
+                                answers_hash["refer_to_art_clinician"] = "No";
+                               gotoNextPage();
+                            }
+                        }
+                    }
+                }
             }
 
             function resetPage() {
@@ -3326,6 +3407,15 @@
 
                 }
             </script>
+
+
+            <select allowFreeText="false" helpText="Refer patient to clinician?" id="refer_to_clinician"
+                    condition="refer_to_clinician == true"
+                    name="refer_patient_to_clinician" tt_onLoad="submitIfYesReferToClinicianIsSelected();" tt_pageStyleClass="NoKeyboard">
+                <option value=""></option>
+                <option value="YES">Yes</option>
+                <option value="NO">No</option>
+            </select>
 
 
             <select allowFreeText="false" helpText="Medication to prescribe during this visit" id="med_to_prescribe"
