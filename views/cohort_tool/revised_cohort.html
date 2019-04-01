@@ -4,6 +4,19 @@
 <link rel="stylesheet" href="/assets/css/custom.css">
 
 <style type="text/css" xmlns="http://www.w3.org/1999/html">
+       
+@page {
+  size: auto;   /* auto is the current printer page size */
+  margin: 0mm;  /* this affects the margin in the printer settings */
+}
+
+body {
+  background-color:#FFFFFF; 
+  border: solid 1px black ;
+  margin: 0px;  /* the margin on the content before printing */
+}
+
+
 
 #spinner {
     position: absolute;
@@ -2790,7 +2803,7 @@ function showDisaggregatedReport(){
         <button id="btnNext" class="green right" style="margin: 5px 0px 0px; padding: 0px; float: right;" onclick="location='/';">
             <span>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Finish &nbsp; &nbsp;&nbsp; &nbsp; &nbsp;</span>
         </button>
-        <button id="activities" class="btn btn-success buttons blue" style="margin-right: 5px;" onmousedown="javascript:printPDF();">
+        <button id="activities" class="btn btn-success buttons blue" style="margin-right: 5px;" onmousedown="javascript:printWindow();">
             <span>&nbsp; &nbsp; &nbsp; Print &nbsp; &nbsp; &nbsp;</span>
         </button>
         <button id="tasks" class="btn btn-success buttons blue" style="margin-right: 5px;"  onmousedown="showDisaggregatedReport();">
@@ -3521,8 +3534,12 @@ getIndicators();
 
 
 
-
-
+function printWindow() {
+  var footer = document.getElementsByClassName('footer')[0];
+  footer.style = 'display: none;';
+  window.print();
+  footer.style = 'display: inline;';
+}
 
 
 
