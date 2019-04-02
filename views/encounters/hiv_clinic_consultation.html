@@ -4203,11 +4203,15 @@
 
                 var xhttp = new XMLHttpRequest();
                 xhttp.onreadystatechange = function () {
-                    if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
-                        var obj = JSON.parse(this.responseText);
-                        extended_fpm_assessment = (obj['extended.family.planning'] == 'true' ? true : false);
-
-                        setTimeout(closeCover(), 2000);
+                    if (this.readyState == 4 ) {
+                        if(this.status == 201 || this.status == 200) {
+                            var obj = JSON.parse(this.responseText);
+                            extended_fpm_assessment = (obj['extended.family.planning'] == 'true' ? true : false);
+                            setTimeout(closeCover(), 2000);
+                        }else if(this.status == 404) {
+                            extended_fpm_assessment = false;
+                        }
+                        
                     }
                 };
                 xhttp.open("GET", url, true);
