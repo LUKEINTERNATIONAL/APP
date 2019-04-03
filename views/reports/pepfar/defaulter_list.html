@@ -162,7 +162,7 @@ function initDataTable() {
 function getList(sdate, edate) {
   var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1";
   url += "/defaulter_list?start_date=" + sdate + "&end_date=" + edate
-  url += "&program_id=" + sessionStorage.programID + "&pepfar=false";
+  url += "&program_id=" + sessionStorage.programID + "&pepfar=true";
   url += "&date=" + sessionStorage.sessionDate;
 
   document.getElementById('spinner').style = 'display: inline;';
@@ -217,11 +217,11 @@ function loadClients(data) {
     buttons: [
       {
         extend: 'csv',
-        title: sessionStorage.currentLocation + ' MoH defaulterlist: ' + period
+        title: sessionStorage.currentLocation + ' PEPFAR defaulterlist: ' + period
       },
       {
         extend: 'pdf',
-        title: sessionStorage.currentLocation + ' MoH defaulterlist: ' + period
+        title: sessionStorage.currentLocation + ' PEPFAR defaulterlist: ' + period
       }
     ],
     columnDefs: [
