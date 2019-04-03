@@ -3468,10 +3468,9 @@ function getIndicators() {
       renderResults();
       document.getElementById('spinner').style = 'display: none;';
       document.getElementById('report-cover').style = 'display: none;';
-      runningReport = false;
-    }else{
+    } else if (this.readyState === 4) {
       runningReport = true;
-      checkIfReportReady();
+      setTimeout(getIndicators, 60000);
     }
   };
   xhttp.open("GET", url, true);
@@ -3485,7 +3484,7 @@ var myVar;
 var runningReport = true;
 
 function checkIfReportReady() {
-  myVar = setTimeout("getIndicators()", 60000);
+  myVar = setTimeout(getIndicators, 60000);
   if(runningReport == false)
     location.reload()
 
