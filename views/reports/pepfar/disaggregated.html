@@ -213,6 +213,32 @@ function renegerateReport() {
   initializeGet(age_groups[0]);
 }
 
+function initializeReport() {
+
+  var url = sessionStorage.apiProtocol + "://" + sessionStorage.apiURL + ":" + sessionStorage.apiPort + "/api/v1";
+  url += '/cohort_disaggregated';
+  url += "?date=" + sessionStorage.sessionDate;
+  url += "&quarter=pepfar";
+  url += "&age_group=" + age_groups[0];
+  url += "&rebuild_outcome=false";
+  url += "&initialize=true";
+  url += "&start_date=" + start_date;
+  url += "&end_date=" + end_date;
+  url += '&program_id=' + sessionStorage.programID;
+
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+      var obj = JSON.parse(this.responseText);
+      getData(age_groups[0]);
+    }
+  };
+  xhttp.open("GET", url, true);
+  xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+  xhttp.setRequestHeader('Content-type', "application/json");
+  xhttp.send();
+}
+
 function getData(age_group) {
 
   var url = sessionStorage.apiProtocol + "://" + sessionStorage.apiURL + ":" + sessionStorage.apiPort + "/api/v1";
@@ -223,6 +249,7 @@ function getData(age_group) {
   url += "&end_date=" + end_date;
   url += "&age_group=" + age_group;
   url += "&rebuild_outcome=" + rebuild_outcome;
+  url += "&initialize=false";
   url += '&program_id=' + sessionStorage.programID;
 
   rebuild_outcome = false;
@@ -362,6 +389,7 @@ function getAllFemale(age_group) {
   url += "&end_date=" + end_date;
   url += "&age_group=" + age_group;
   url += "&rebuild_outcome=" + rebuild_outcome;
+  url += "&initialize=false";
   url += '&program_id=' + sessionStorage.programID;
 
   var xhttp = new XMLHttpRequest();
@@ -468,13 +496,13 @@ function ageGroups() {
     '25-29 years', '30-34 years',
     '35-39 years', '40-44 years',
     '45-49 years', '50 plus years'
-  ];
+  ].reverse();
 }
 
 ageGroups();
 
 function initializeGet() {
-  getData(age_groups[0]);
+  initializeReport();
 }
 
 var period = moment(start_date).format('DD/MMM/YYYY')

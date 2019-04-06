@@ -193,6 +193,30 @@ function initializeTable() {
 
 <script>
 
+function initializeReport() {
+
+  var url = sessionStorage.apiProtocol + "://" + sessionStorage.apiURL + ":" + sessionStorage.apiPort + "/api/v1";
+  url += '/cohort_disaggregated';
+  url += "?date=" + sessionStorage.sessionDate;
+  url += "&quarter=" + quarter;
+  url += "&age_group=" + age_groups[0];
+  url += "&rebuild_outcome=false";
+  url += "&initialize=true";
+  url += '&program_id=' + sessionStorage.programID;
+
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+      var obj = JSON.parse(this.responseText);
+      getData(age_groups[0]);
+    }
+  };
+  xhttp.open("GET", url, true);
+  xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+  xhttp.setRequestHeader('Content-type', "application/json");
+  xhttp.send();
+}
+
 function getData(age_group) {
 
   var url = sessionStorage.apiProtocol + "://" + sessionStorage.apiURL + ":" + sessionStorage.apiPort + "/api/v1";
@@ -201,6 +225,7 @@ function getData(age_group) {
   url += "&quarter=" + quarter;
   url += "&age_group=" + age_group;
   url += "&rebuild_outcome=false";
+  url += "&initialize=false";
   url += '&program_id=' + sessionStorage.programID;
 
   var xhttp = new XMLHttpRequest();
@@ -240,12 +265,12 @@ function addMales() {
     var tds = cells[i].getElementsByTagName('td');
     tx_new += parseInt(tds[3].innerHTML);
     tx_curr += parseInt(tds[4].innerHTML);
-    tx_screened_for_tb += parseInt(tds[5].innerHTML);
-    tx_given_ipt += parseInt(tds[6].innerHTML);
+    tx_given_ipt += parseInt(tds[5].innerHTML);
+    tx_screened_for_tb += parseInt(tds[6].innerHTML);
   }
 
   data_table.row.add([31,'All', 'Male', tx_new, tx_curr, 
-    tx_screened_for_tb, tx_given_ipt]).node().id = 'all-males'; 
+    tx_given_ipt, tx_screened_for_tb]).node().id = 'all-males'; 
   data_table.draw();
   addClass('all-males');
   getAllFemale('Pregnant');
@@ -278,8 +303,8 @@ function assignNum(age, gender, num) {
 function assignTD(tds, num, gender) {
   tds[3].innerHTML = num.tx_new;
   tds[4].innerHTML = num.tx_curr;
-  tds[5].innerHTML = num.tx_screened_for_tb;
-  tds[6].innerHTML = num.tx_given_ipt;
+  tds[5].innerHTML = num.tx_given_ipt;
+  tds[6].innerHTML = num.tx_screened_for_tb;
 }
 
 function addTableBody() {
@@ -336,6 +361,7 @@ function getAllFemale(age_group) {
   url += "&quarter=" + quarter;
   url += "&age_group=" + age_group;
   url += "&rebuild_outcome=false";
+  url += "&initialize=false";
   url += '&program_id=' + sessionStorage.programID;
 
   var xhttp = new XMLHttpRequest();
@@ -367,7 +393,7 @@ function loadAllFemale(data, age_group) {
       }
 
       data_table.row.add([count,'All', g, tx_new, tx_curr, 
-        tx_screened_for_tb, tx_given_ipt]).node().id = age_group.toLowerCase();
+        tx_given_ipt, tx_screened_for_tb]).node().id = age_group.toLowerCase();
       data_table.draw();
       addClass(age_group.toLowerCase()); 
     }
@@ -439,10 +465,10 @@ var age_groups = [
   '25-29 years', '30-34 years',
   '35-39 years', '40-44 years',
   '45-49 years', '50 plus years'
-];
+].reverse();
 
 function initializeGet() {
-  getData(age_groups[0]);
+  initializeReport();
 }
 
 document.getElementById('quarter-title').innerHTML = quarter;
@@ -462,7 +488,6 @@ function validateReport() {
 
   for(var i = 0 ; i < rows.length; i++){
     var tds = rows[i].getElementsByTagName('td');
-    report_total += parseInt(tds[3].innerHTML);
     report_total += parseInt(tds[4].innerHTML);
   }
 
