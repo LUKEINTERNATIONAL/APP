@@ -73,17 +73,28 @@ function loadQuarters() {
       current_qtr = '4 ' + curr_year;
   }
 
-
-
   var count = parseInt(current_qtr.substring(0,1));
   var i = 0;
 
   while(i < 14) { 
+
+    if(i == 0)
+      addFollowingQ(qtrs, count, curr_year);
+
     qtrs.push('Q' + count + ' ' + curr_year);
     count = (count > 0 ? (count -= 1) : count);
     curr_year = (count == 0 ? (curr_year - 1) : curr_year);
     count = (count == 0 ? (count += 4) : count);
+
     i++;
+  }
+
+  function addFollowingQ(qtrs, count, curr_year){
+    if(count < 4){
+      qtrs.push('Q' + (count + 1) + " " + curr_year);
+    }else{
+      qtrs.push('Q1' + " " + (curr_year + 1));
+    }
   }
 
   var sel = document.getElementById('quarters');
