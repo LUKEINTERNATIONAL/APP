@@ -53,7 +53,7 @@
     "htn_vitals": {
       "available": true,
       "activitiesIcon": "/assets/images/dispensing.png",
-      "url": "/apps/ART/views/htn/vitals.html"
+      "url": "/views/patient/vitals.html"
     },
     "bp_management": {
       "available": true,
