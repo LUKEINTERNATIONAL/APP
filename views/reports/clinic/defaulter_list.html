@@ -195,8 +195,29 @@ function loadClients(data) {
     if(outcome_date)
      outcome_date = moment(data[i].defaulter_date).format('DD/MMM/YYYY');
 
+    var contact = [];
+    if(data[i].cell_number)
+      contact.push("CELL: " + data[i].cell_number);
+
+    if(data[i].district)
+      contact.push("District: " + data[i].district);
+
+    if(data[i].ta)
+      contact.push("TA: " + data[i].ta);
+
+    if(data[i].village)
+      contact.push("Village: " + data[i].village);
+
+    var contact_details = '';
+    for(var j = 0; j < contact.length; j++) {
+      if(j > 0)
+        contact_details += '<br />';
+
+     contact_details += contact[j];
+    }
+
     formatted_data.push([arv_num, given_name, 
-      family_name, gender, birthdate, outcome_date, '']);
+      family_name, gender, birthdate, outcome_date, contact_details]);
   }
  
   var period = start_date + " - " + end_date;
@@ -270,6 +291,8 @@ function addClassIMGcontainter(person_id) {
 
     if(i == 4) 
       cells[i].setAttribute('class', 'birthdate');
+
+
 
   }
 }
