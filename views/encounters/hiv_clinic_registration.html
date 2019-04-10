@@ -1439,6 +1439,7 @@
                         };
 
                         if ($('ever_received_art').value == 'YES'){
+                            obs.observations.push({ concept_id: 7754, value_coded: 1065});
                             obs.observations.push({ concept_id: 6981, value_text: answers_hash["art_number_at_previous_location"]});
                             obs.observations.push({ concept_id: 7751, value_datetime: answers_hash["date_art_last_taken"], value_text: date_art_last_taken_value_text});
                             obs.observations.push({ concept_id: 7752, value_coded: answers_hash["taken_art_in_the_last_two_months"].trim().toUpperCase() == "YES" ? 1065: 1066 });
@@ -1447,6 +1448,8 @@
                             obs.observations.push({ concept_id: 1499, value_datetime: answers_hash["drug_start_date"]});
                             obs.observations.push({ concept_id: 2516, value_datetime: answers_hash["date_art_started"]});
                             obs.observations.push({ concept_id: 5497, value_numeric: answers_hash["cd4_count"], value_modifier: cd4_count_modifier_global});
+                        }else {
+                            obs.observations.push({ concept_id: 7754, value_coded: 1066});
                         }
 
                         var confirmatory_year = $('confirmatory_hiv_test_year').value;
