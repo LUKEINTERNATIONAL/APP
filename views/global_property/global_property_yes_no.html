@@ -16,7 +16,7 @@ function addYesNo() {
   var searchParams = new URLSearchParams(query);
   var property = searchParams.get('value');
   
-  var title = property.split('_').join(' ').toUpperCase();
+  var title = property.split(/[\._]+/).join(' ').toUpperCase();
   if (property !== "dde_enabled") {
     var attr = property.split('_').join('.');
   }else {
