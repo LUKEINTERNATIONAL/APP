@@ -2460,8 +2460,12 @@
             }
 
             var tubal_ligation = false;
-            var refer_to_clinician = true;
+            var refer_to_clinician = false;
             var refer_to_clinician_already_asked = false;
+            
+            if(sessionStorage.userRoles.match(/Nurse/i)) {
+              var refer_to_clinician = true;
+            }
 
             function initializeVariables() {
                 jQuery(".loader").show();
