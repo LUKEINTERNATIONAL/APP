@@ -1,0 +1,14 @@
+
+#consultation-history-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+#consultation-history-table td {
+  border-style: solid;
+  border-width: 0px 0px 1px 0px;
+}
+
+.min-consultation-history-tables td {
+  border-style: none !important;
+}

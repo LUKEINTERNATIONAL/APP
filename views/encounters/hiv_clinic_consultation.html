@@ -57,8 +57,8 @@
     <link rel="stylesheet" href="/assets/css/alertifyjs/css/alertify.css" type="text/css">
 
 
-    <!-- link rel="stylesheet" href="/apps/ART/assets/css/consultation.history.css" type="text/css">
-    <script type="text/javascript" src="/apps/ART/assets/js/consultation.history.js"></script-->
+    <link rel="stylesheet" href="/apps/ART/assets/css/consultation.history.css" type="text/css">
+    <script type="text/javascript" src="/apps/ART/assets/js/consultation.history.js"></script>
 
     <script type="text/javascript">
         var patient_id = sessionStorage.patientID;
@@ -3284,9 +3284,10 @@
 
             <!-- previous selected side effects -->
 
-            <!-- input type="text" name="summary"
-                               tt_onLoad="__$('keyboard').style.display = 'none'; consultationHistory();"
-                               tt_pageStyleClass="NoControls" helpText="Consultation history (summary)" optional="true"/ -->
+            <input type="text" name="summary"
+             tt_onLoad="__$('keyboard').style.display = 'none'; consultationHistory();"
+             tt_pageStyleClass="NoControls" 
+             helpText="Side effects / Contraindications history" optional="true"/>
 
 
             <!-- previous selected side effects ends -->
