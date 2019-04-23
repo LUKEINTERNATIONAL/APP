@@ -12,3 +12,8 @@
 .min-consultation-history-tables td {
   border-style: none !important;
 }
+
+#consultation-history-table th {
+  border-width: 0px 0px 8px 0px;
+  border-color: teal;
+}

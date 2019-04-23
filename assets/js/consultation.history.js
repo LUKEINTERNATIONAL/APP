@@ -1,3 +1,4 @@
+var side_effects_history = {};
 
 function consultationHistory() {
   var frame = document.getElementById('inputFrame' + tstCurrentPage);
@@ -20,7 +21,7 @@ function consultationHistory() {
     tr.appendChild(th);
   }
 
-  pullPastConditions();
+  loadSE(side_effects_history);
 }
 
 function pullPastConditions() {
@@ -33,7 +34,7 @@ function pullPastConditions() {
   xhttp.onreadystatechange = function () {
       if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
           var obs = JSON.parse(this.responseText);
-          loadSE(obs);
+          side_effects_history = obs;
       }
   };
   xhttp.open("GET", url, true);
@@ -73,14 +74,15 @@ function loadSE(data) {
       min_tr.appendChild(min_td);
 
       min_td = document.createElement('td');
+
       try {
-        var drug_induced = conditions[concept_id].drug_induced.drug_induced.toUpperCase() == 'NO' ? 'Not drug-induced' : 'Drug-induced';
+        var drug_induced = conditions[concept_id].drug_induced == false ? 'Not drug-induced' : 'Drug-induced';
         min_td.innerHTML = '(' + drug_induced + ')';
       }catch(i){
       }
 
-      if (conditions[concept_id].drug_induced.drug != 'N/A') {
-        min_td.innerHTML += '  :' + conditions[concept_id].drug_induced.drug;
+      if (conditions[concept_id].drug != 'N/A') {
+        min_td.innerHTML += '  :' + conditions[concept_id].drug;
       }
       min_tr.appendChild(min_td);
     }
@@ -100,3 +102,6 @@ function loadSE(data) {
 
 
 }
+  
+  
+pullPastConditions();
