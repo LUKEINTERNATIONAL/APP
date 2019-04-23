@@ -105,7 +105,7 @@
         filing_number_limit_property_url += "/api/v1/global_properties?property=filing.number.limit";
 
         var use_filing_number_property_url = apiProtocol + "://" + apiURL + ":" + apiPort;
-        use_filing_number_property_url += "/api/v1/global_properties?property=use.filing.number";
+        use_filing_number_property_url += "/api/v1/global_properties?property=use.filing.numbers";
 
         var activate_fast_track_property_url = apiProtocol + "://" + apiURL + ":" + apiPort;
         activate_fast_track_property_url += "/api/v1/global_properties?property=enable.fast.track";
@@ -335,7 +335,7 @@
                                                                                                                 html += "<tr>";
                                                                                                                 html += "<td>" + (count = count + 1) + "</td>";
                                                                                                                 html += "<td>Use filing number</td>";
-                                                                                                                property = property["use.filing.number"];
+                                                                                                                property = property["use.filing.numbers"];
                                                                                                                 if (property) {
                                                                                                                     if (property == "true") {
                                                                                                                         html += "<td>Yes</td>";
