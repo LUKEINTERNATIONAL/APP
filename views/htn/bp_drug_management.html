@@ -946,8 +946,9 @@
                             var htn_drug_id = drug_map_name_id[current_bp_drugs[i]];
                             htn_drug_data.push({drug_id: htn_drug_id, name: current_bp_drugs[i]})
                     }
-                    sessionStorage.setItem("htn_drugs", JSON.stringify(htn_drug_data))
-                    nextEncounter(sessionStorage.patientID, 1);
+                    sessionStorage.setItem("htn_drugs", JSON.stringify(htn_drug_data));
+                    var next_task_url = "/apps/ART/views/encounters/prescription.html";
+                    window.location = next_task_url;
                 }
             }
 
