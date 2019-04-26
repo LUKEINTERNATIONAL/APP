@@ -223,7 +223,9 @@
         }
       }, {}, function (data, status) {
         if (status === 201) {
-          createPatientFilingNumber(patientId, data.new_identifier.identifier);
+          sessionStorage.newPatientID = patientId;
+          redirectToUrl("/apps/ART/views/assigned_patient_file_number.html?new=" + data.new_identifier.identifier);
+          // createPatientFilingNumber(patientId, data.new_identifier.identifier);
         } else {
           showMessage('No available active file numbers. Please archive a dormant one from the following list.');
           setTimeout(function () {
