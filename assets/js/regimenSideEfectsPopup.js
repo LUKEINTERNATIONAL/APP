@@ -179,8 +179,8 @@ function fetchSideEffectsIfANY(concept) {
   var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1";
   url += "/observations?concept_id=" + concept_id; 
   url += "&person_id=" + sessionStorage.patientID;
-  url += "&start_date=1900-01-01&end_date="; 
-  url += moment(sessionDate).format('YYYY-MM-DD');
+  // url += "&start_date=1990-01-01&end_date="; 
+  // url += moment(sessionDate).format('YYYY-MM-DD');
 
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
@@ -225,8 +225,8 @@ function fetchOtherSideEffectsIfANY(concept) {
   var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1";
   url += "/observations?concept_id=" + concept_id; 
   url += "&person_id=" + sessionStorage.patientID;
-  url += "&start_date=1900-01-01&end_date="; 
-  url += moment(sessionDate).format('YYYY-MM-DD');
+  // url += "&start_date=1900-01-01&end_date="; 
+  // url += moment(sessionDate).format('YYYY-MM-DD');
 
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
