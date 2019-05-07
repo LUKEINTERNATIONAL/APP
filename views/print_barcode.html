@@ -1,0 +1,53 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html;charset=UTF-8"/>
+    <script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js"
+            defer="true"></script>
+    <script type="text/javascript" src="/assets/js/jquery.min.js"></script>
+
+    <script type="text/javascript" src="/assets/js/yes_no_ctrls.js"></script>
+    <link rel="stylesheet" href="/assets/css/yes_no_ctrls.css" type="text/css">
+    <script type="text/javascript" src="/assets/js/post_parameters.js"></script>
+    <script type="text/javascript" src="/assets/js/generic_ajaxrequest.js"></script>
+    <script type="text/javascript" src="/apps/ART/assets/js/arv_number.js"></script>
+    <script type="text/javascript" src="/assets/js/moment.js"></script>
+    <script type="text/javascript" src="/assets/js/alertifyjs/alertify.js"></script>
+    <script type="text/javascript" src="/assets/js/does_connection_exist.js"></script>
+
+    <link rel="stylesheet" href="/assets/css/alertifyjs/css/alertify.css" type="text/css">
+
+
+    <script type="text/javascript">
+        var tt_cancel_destination = "/";
+
+        function changeAttribute() {
+            document.getElementById('nextButton').innerHTML = "<span>Print</span>";
+        }
+    </script>
+
+    <style type="text/css">
+        #Unknown, #date, #star, #abc, #slash, #percent, #comma, #minus, #plus, #decimal {
+            display: none;
+        }
+
+    </style>
+</head>
+
+<body>
+<div id="container">
+    <div id="content">
+        <form>
+            <select objectType="drug" ajaxURL="/drugs?name=" allowFreeText="true"
+                    field_type="alpha" helpText="Select drug" id="drug_id"
+                    name="drug_id">
+            </select>
+
+            <input field_type="number" helpText="Quantity" id="pill_count_" name="pill_count[]" size="30"
+                   tt_onLoad="changeAttribute();" type="text"/>
+        </form>
+    </div>
+</div>
+</body>
+</html>
