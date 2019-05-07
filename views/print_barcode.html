@@ -22,9 +22,48 @@
     <script type="text/javascript">
         var tt_cancel_destination = "/";
 
-        function changeAttribute() {
-            document.getElementById('nextButton').innerHTML = "<span>Print</span>";
+        function changeDefaultSettings() {
+            __$('nextButton').innerHTML = "<span>Print</span>";
+            __$('nextButton').onmousedown = function () {
+                var quantity = __$('touchscreenInput' + tstCurrentPage).value;
+                if (!quantity) {
+                    showMessage("You must enter a value to continue");
+                    return
+                }
+
+                window.location = "/views/print/drug_barcode.html?drug_id=" + selected_drug_id + "&quantity=" + quantity;
+
+            }
         }
+
+        var selected_drug_id;
+
+        function getSelectedDrug() {
+            __$('nextButton').onmousedown = function () {
+                var value = __$('touchscreenInput' + tstCurrentPage).value;
+                if (!value) {
+                    showMessage("You must enter a value to continue");
+                    return
+                }
+
+                var liElements = jQuery("li");
+                for (var i=0; i<=liElements.length - 1; i++){
+                    if (liElements[i].style.backgroundColor.match(/lightblue/i)){
+                        selected_drug_id = liElements[i].getAttribute("tstvalue");
+                        break;
+                    }
+                }
+
+                gotoNextPage();
+
+            }
+        }
+
+        function resetNextButton() {
+            var nextButton = document.getElementById('nextButton');
+            nextButton.setAttribute('onmousedown', 'gotoNextPage();');
+        }
+
     </script>
 
     <style type="text/css">
@@ -40,12 +79,13 @@
     <div id="content">
         <form>
             <select objectType="drug" ajaxURL="/drugs?name=" allowFreeText="true"
-                    field_type="alpha" helpText="Select drug" id="drug_id"
+                    field_type="alpha" helpText="Select drug" id="drug_id" tt_onLoad="getSelectedDrug();"
+                    tt_onUnLoad="resetNextButton();"
                     name="drug_id">
             </select>
 
             <input field_type="number" helpText="Quantity" id="pill_count_" name="pill_count[]" size="30"
-                   tt_onLoad="changeAttribute();" type="text"/>
+                   tt_onLoad="changeDefaultSettings();" tt_onUnLoad="resetNextButton();" type="text"/>
         </form>
     </div>
 </div>
