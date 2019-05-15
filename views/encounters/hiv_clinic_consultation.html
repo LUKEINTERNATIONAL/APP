@@ -2662,7 +2662,7 @@
             <!-- Extended family assessment -->
 
             <select allowFreeText="false"
-                    condition="patientGender == 'F' && $('pregnant').value != 'YES' && parseInt(sessionStorage.patientAge) >= 9 && parseInt(sessionStorage.patientAge) <= 55 && $('session_fpm_used').value == 'NONE' && extended_fpm_assessment == true"
+                    condition="patientGender == 'F' && $('pregnant').value != 'YES' && parseInt(sessionStorage.patientAge) >= 9 && parseInt(sessionStorage.patientAge) <= 55 && $('session_fpm_used').value == 'NONE' && (!$('fpm_used').value.match(/DEPO-PROVERA/)) && extended_fpm_assessment == true"
                     helpText="Main reason for not using family planning methods"
                     id="reason_for_not_using_fpm"
                     name="observations[][value_coded_or_text_multiple][]"
