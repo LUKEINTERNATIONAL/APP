@@ -115,7 +115,7 @@
     <div id="content">
       <form>
         <input type="text" name="filing-numbers" tt_onLoad="__$('keyboard').style.display = 'none'; init();"
-          tt_pageStyleClass="NoControls" helpText="Filing numbers" optional="true" />
+          tt_pageStyleClass="NoControls" helpText="Archive dormant client" optional="true" />
 
       </form>
 
@@ -184,6 +184,10 @@
     }
 
     function archiveFileNumber(event, patientId) {
+
+      alert(event.id);
+      return;
+
       POST({
         url: apiUrl + '/patients/' + patientId + '/filing_number',
         async: true,
