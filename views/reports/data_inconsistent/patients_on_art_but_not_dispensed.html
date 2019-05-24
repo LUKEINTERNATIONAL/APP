@@ -150,7 +150,7 @@
 </div>
   
 <div class="title-table">
-      <table id="incomplete_visits" class="table table-incomplete-visits" style="width:100%">
+      <table id="patients_on_art_but_not_dispensed" class="table table-incomplete-visits" style="width:100%">
         <thead>  
           <tr>     
           <th>ARV number</th>
@@ -209,7 +209,7 @@
   // }
 
   function renderData(data) {
-    var table = document.getElementById("incomplete_visits").getElementsByTagName("tbody")[0];
+    var table = document.getElementById("patients_on_art_but_not_dispensed").getElementsByTagName("tbody")[0];
     var obj = data;
     for (var index = 0; index < obj.length; index++) {
 
@@ -268,7 +268,7 @@
 
   function initTable(){
 
-    dTable = jQuery('#incomplete_visits');
+    dTable = jQuery('#patients_on_art_but_not_dispensed');
     dTable.dataTable({
                   "lengthChange":true,
                   "pageLength" : 10,
@@ -287,17 +287,16 @@
   }
 
 
-
-  function getDateEnrolled() {
+  function getPatientsOnArtButNotDispensed() {
     var apiProtocol = sessionStorage.apiProtocol;
     var apiURL = sessionStorage.apiURL;
     var apiPort = sessionStorage.apiPort;
     
-    var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1/incomplete_visits";
+    var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1/patients_on_art_but_not_dispensed";
       var xhttp = new XMLHttpRequest();
       xhttp.onreadystatechange = function () {
         if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
-          var table = document.getElementById("incomplete_visits").getElementsByTagName("tbody")[0];
+          var table = document.getElementById("patients_on_art_but_not_dispensed").getElementsByTagName("tbody")[0];
           var obj = JSON.parse(this.responseText);
           // console.log(obj);
           document.getElementById("cover-div").style="display:none;";
