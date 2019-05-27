@@ -255,6 +255,8 @@ function getData(age_group) {
 }
 
 function loadData(data, age_group) {
+  data_table.clear();
+
   for(qtr in data) {
     var row_id = (qtr.split(' ')[1]);
     var outcome = data[qtr];
