@@ -25,6 +25,11 @@
       "activitiesIcon": "/assets/images/consultation.png",
       "url": "/apps/ART/views/encounters/hiv_clinic_consultation.html"
     },
+    "hiv clinic consultation (clinician)": {
+      "available": true,
+      "activitiesIcon": "/assets/images/consultation.png",
+      "url": "/apps/ART/views/encounters/hiv_clinic_consultation.html"
+    },
     "hiv clinic registration": {
       "available": true,
       "activitiesIcon": "/assets/images/registration.png",

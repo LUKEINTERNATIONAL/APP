@@ -2178,6 +2178,10 @@
                         concept_id: refer_to_art_clinician_concept_id,
                         value_coded: (answers_hash["refer_to_art_clinician"].length > 0 ? (answers_hash["refer_to_art_clinician"].trim().toUpperCase() == "YES" ? 1065 : 1066) : "")
                     })
+                }else{
+                    obs.observations.push({
+                      concept_id: refer_to_art_clinician_concept_id, value_coded: 1066
+                    })
                 }
 
                 submitParameters(obs, "/observations", "nextPage")
