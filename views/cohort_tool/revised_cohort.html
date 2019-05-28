@@ -224,6 +224,7 @@ body {
 var print_pdf_attr = {};
 
 function drillDown(indicator) {
+    document.location = "/apps/ART/views/cohort_tool/driller/driller.html?resource_id=" + indicator;
 }
 
 
@@ -3449,6 +3450,7 @@ function getIndicators() {
     return;
 
   document.getElementById('spinner').style = 'display: inline;';
+
   document.getElementById('report-cover').style = 'display: inline;';
   
   var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1/programs/1/reports/cohort?name=";
@@ -3502,6 +3504,7 @@ function renderResults() {
     
     try{
       indicator = document.getElementById(id);
+      indicator.setAttribute('href', "javascript:drillDown('"+cohortValues[i].id+"');");
       indicator.innerHTML = cohortValues[i].contents;
       print_pdf_attr[id] = cohortValues[i].contents;
     }catch(e){
