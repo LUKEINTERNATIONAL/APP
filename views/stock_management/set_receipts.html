@@ -1613,7 +1613,12 @@
         function customizeFinishButton() {
             __$("nextButton").innerHTML = "<span>Save</span>";
             __$("nextButton").onmousedown = function () {
-                var data = [];
+
+                var barcode_value = JSON.parse(sessionStorage.receipts)["identifier"];
+                var data = {
+                    "batch_number": barcode_value,
+                    "items": []
+                };
 
                 for (var drug_name in drugs_hash) {
                     var drug = drug_name.split("_")[0];
@@ -1625,22 +1630,18 @@
                     //expire_amount = total_tins
                     //date = date_of_expiry
 
-                    var barcode_value = JSON.parse(sessionStorage.receipts)["identifier"];
                     if (date_of_expiry.length > 0 && tabs_per_tin.length > 0 && total_tins.length > 0) {
-                        data.push({
+                        data["items"].push({
                             drug_id: drug_id,
                             expiry_date: date_of_expiry,
-                            amount: tabs_per_tin,
-                            expire_amount: total_tins,
+                            quantity: tabs_per_tin,
                             delivery_date: delivery_date,
-                            identifier: barcode_value
                         })
                     }
 
                 }
 
-                var observations = {obs: data};
-                var create_stock_url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1/stock";
+                var create_stock_url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1/pharmacy/batches";
                 var xhttp = new XMLHttpRequest();
                 xhttp.onreadystatechange = function () {
                     if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
@@ -1652,13 +1653,13 @@
                 xhttp.open("POST", create_stock_url, true);
                 xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
                 xhttp.setRequestHeader('Content-type', "application/json");
-                xhttp.send(JSON.stringify(observations));
+                xhttp.send(JSON.stringify(data));
 
             }
         }
 
         window.onresize = function () {
-            loadCSS();
+            //loadCSS();
         }
 
     </script>

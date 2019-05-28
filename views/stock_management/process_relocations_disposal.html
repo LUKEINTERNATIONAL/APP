@@ -1678,6 +1678,7 @@
                 __$("nextButton").onmousedown = function () {
                     var data = [];
 
+                    var facility_id = JSON.parse(sessionStorage.relocation_or_disposal)["location_id"]
                     for (var drug_name in drugs_hash) {
                         var drug = drug_name.split("_")[0];
                         var date_of_expiry = drugs_hash[drug_name]["date_of_expiry"];
@@ -1691,20 +1692,30 @@
 
                         if (date_of_expiry.length > 0 && tabs_per_tin.length > 0 && total_tins.length > 0 && authorization_code.length > 0) {
                             data.push({
-                                drug: drug,
                                 drug_id: drug_id,
-                                date_of_expiry: date_of_expiry,
-                                tabs_per_tin: tabs_per_tin,
-                                total_tins: total_tins,
-                                authorization_code: authorization_code
+                                quantity: (total_tins * tabs_per_tin),
+                                reallocation_code: authorization_code
                             })
                         }
 
                     }
 
-                    console.log(data);
-                    alertify.alert("Waiting for the back end");
-                    jQuery(".ajs-primary").hide();
+                    for (var i = 0; i <= data.length - 1; i++) {
+                        var create_stock_url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1/pharmacy/items/:batch_item_id/reallocate";
+                        var xhttp = new XMLHttpRequest();
+                        xhttp.onreadystatechange = function () {
+                            if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                                //var response = JSON.parse(this.responseText);
+                                window.location = "/";
+
+                            }
+                        };
+                        xhttp.open("POST", create_stock_url, true);
+                        xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                        xhttp.setRequestHeader('Content-type', "application/json");
+                        xhttp.send(JSON.stringify(data));
+                    }
+
                 }
             }
 
