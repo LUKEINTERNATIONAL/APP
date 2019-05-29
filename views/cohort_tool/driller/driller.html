@@ -1,0 +1,92 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Cohort Driller</title>
+
+    <!-- Stylesheets .......................................................................... -->
+    <link rel="stylesheet" href="/public/touchscreentoolkit/lib/stylesheets/touch-fancy.css" type="text/css">
+    <link rel="stylesheet" href="/apps/ART/assets/css/datatable/jquery.dataTables.min.css" type="text/css">
+    <link rel="stylesheet" href="/apps/ART/assets/css/datatable/scroller.dataTables.min.css" type="text/css">
+    <link rel="stylesheet" href="./driller.css" type="text/css">
+    <!-- /Stylesheets .......................................................................... -->
+
+    <!-- Javacripts .......................................................................... -->
+    <script type="text/javascript" charset="utf8" src="/assets/js/virtual.keyboard.js"></script>
+    <script type="text/javascript" src="./driller.js"></script>
+    <script type="text/javascript" src="/assets/js/jquery.min.js"></script>
+    <script type="text/javascript" src="/assets/js/datatables/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="/assets/js/datatables/dataTables.fixedHeader.min.js"></script>
+    <script type="text/javascript" src="/assets/js/moment.js"></script>
+
+    <!-- print report start .......................................................................... -->
+    <script type="text/javascript" src="/assets/js/datatables/dataTables.buttons.min.js"></script>
+    <script type="text/javascript" src="/assets/js/datatables/buttons.flash.min.js"></script>
+    <script type="text/javascript" src="/assets/js/datatables/jszip.min.js"></script>
+    <script type="text/javascript" src="/assets/js/datatables/pdfmake.min.js"></script>
+    <script type="text/javascript" src="/assets/js/datatables/vfs_fonts.js"></script>
+    <script type="text/javascript" src="/assets/js/datatables/buttons.html5.min.js"></script>
+    <script type="text/javascript" src="/assets/js/datatables/buttons.print.min.js"></script>
+    <!-- print report ends .......................................................................... -->
+    
+    <!-- /Javacripts .......................................................................... -->
+    
+</head>
+<body>
+    <div class="title-table">
+        <div class='title-row'>
+            <div class='title-cell' id='title-cell-left'>
+                <img src="/assets/images/login-logos/Malawi-Coat_of_arms_of_arms.png" alt="Malawi coat of arms"/>
+            </div>
+            <div class='title-cell' id='title-cell-right'>
+                <table style="width: 100%; text-align: left; margin-left: 10px;">
+                    <tr>
+                        <th>Title:</th><td colspan="2" id="report-title">Cohort Driller<td>
+                    </tr>
+                    <tr>
+                        <th>Period:</th>
+                        <td id="quarter-title"><td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+    <div>
+        <table id="example" class="display">
+            <thead> 
+                <tr>
+                    <td>ARV number</td>
+                    <td>Name</td>
+                    <td>Gender</td>
+                    <td>Birth Date</td>
+                    <td>Action</td>
+                </tr> 
+            </thead>
+            <tbody id="table-body"></tbody>
+            <tfoot></tfoot>
+        </table>
+    </div>
+
+    <div id="buttons" class="buttonsDiv">
+        <button class="button blue navButton" onmousedown="window.history.back();"><span>Finish</span></button>
+    </div>
+
+    <img src="/apps/OPD/assets/images/formloader.gif" id="spinner" />
+    <div id="report-cover"></div>   
+</body>
+<script>
+    let url = window.location.href;
+    url = new URL(url);
+    let quarter = url.searchParams.get("quarter");
+    let on_art =  url.searchParams.get('total_alive_and_on_art');
+    let data_table;
+    
+    getDrilledPatients();
+    </script>
+
+</html>
