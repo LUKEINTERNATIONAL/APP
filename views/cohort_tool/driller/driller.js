@@ -130,13 +130,17 @@ function initializeTable() {
 }
 
 function getDrilledPatients() {
-        var apiProtocol = sessionStorage.apiProtocol;
-        var apiURL = sessionStorage.apiURL;
-        var apiPort = sessionStorage.apiPort;
-        var url_string = window.location;
-        var parsedURL = new URL(url_string);
-        var resource_id = parsedURL.searchParams.get("resource_id");
-        var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1/cohort_report_drill_down?";
+        const apiProtocol = sessionStorage.apiProtocol;
+        const apiURL = sessionStorage.apiURL;
+        const apiPort = sessionStorage.apiPort;
+        const url_string = window.location;
+        const parsedURL = new URL(url_string);
+        const resource_id = parsedURL.searchParams.get("resource_id");
+        const quarter = parsedURL.searchParams.get("quarter");
+        const drill_name = parsedURL.searchParams.get("report_name").replace(/_/g, " ");
+        document.getElementById("report-title").innerHTML = drill_name;
+        document.getElementById("quarter-title").innerHTML = quarter;
+        let url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1/cohort_report_drill_down?";
         url += "id="+resource_id;
         url += "&date="+moment(sessionStorage.sessionDate).format("YYYY-MM-DD");
         url += "&program_id="+sessionStorage.programID; 
@@ -144,7 +148,7 @@ function getDrilledPatients() {
         var xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function () {
             if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
-                var obj = JSON.parse(this.responseText);
+                const obj = JSON.parse(this.responseText);
                 document.getElementById("report-cover").style = "display:none;";
                 document.getElementById("spinner").style = "display:none;";
                 buildDuplicates(obj); 
@@ -166,47 +170,29 @@ function getDrilledPatients() {
         xhttp.send();
 }
 function buildDuplicates(object) {
-        var table = document.getElementById("table-body");
-        var cells = ["left", "right", "bottom-left", "bottom-right"];
-        for (var i = 0; i < object.length; i++) {
-            var obj = object[i];
-            var dob = moment(obj["birthdate"]).format("DD/MMM/YYYY");
-            var roundedAge = Math.round(moment().diff(obj["birthdate"], 'years', true));
-            var patientDOB = moment(obj["birthdate"]).format("DD/MMM/YYYY");
-            
-            var full_name = object[i].given_name + " " + object[i].family_name;
-            var gender = obj["gender"];
-            var arv_number = obj["arv_number"];
-            var full_age = patientDOB + " (" + roundedAge + ")";
+        const table = document.getElementById("table-body");
+        for (let i = 0; i < object.length; i++) {
+            const obj = object[i];
+            const roundedAge = Math.round(moment().diff(obj["birthdate"], 'years', true));
+            const patientDOB = moment(obj["birthdate"]).format("DD/MMM/YYYY");
+            const full_name = object[i].given_name + " " + object[i].family_name;
+            const gender = obj["gender"];
+            const arv_number = obj["arv_number"];
+            const full_age = patientDOB + " (" + roundedAge + ")";
 
-
-            var tr = document.createElement("tr");
+            const tr = document.createElement("tr");
             addDetails(arv_number, tr);
             addDetails(full_name, tr);
             addDetails(gender, tr);
             addDetails(full_age, tr);
             
-            var btn = document.createElement('button');
+            const btn = document.createElement('button');
             btn.innerHTML = '<span>Select</span>';
             btn.setAttribute('class', 'button green');
             btn.setAttribute('onclick', "goToMasterCard('" + obj.person_id + "')");
             
             addDetails(btn, tr, true);
             table.appendChild(tr);
-            
-            // var tr = document.createElement("tr");
-            // tr.style.width = "100%";
-            // tr.style.fontSize = "20px";
-            // var td = document.createElement("td");
-            // td.innerHTML = "Name: " + object[i].given_name + " " + object[i].family_name;
-            // td.innerHTML += " (" + gender + ") <br/>Age / DOB: " + patientDOB + " " + roundedAge;
-            // tr.appendChild(td);
-            // table.appendChild(tr);
-
-            // orderTableCell.appendChild(table);
-            // orderTableCell.setAttribute("class", "order-table-cell");
-            // orderTableCell.setAttribute("id", object[i].patient_id);
-            // orderTable.appendChild(orderTableCell);
         }
         initializeTable();
     }
