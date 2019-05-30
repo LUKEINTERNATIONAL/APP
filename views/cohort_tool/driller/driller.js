@@ -108,8 +108,9 @@ function initializeTable() {
         searching: false,
         paging: true,
         scrollY: 400,
-        Processing: true,
-        ServerSide: true,
+        columnDefs: [{ 
+          targets: 0, type: 'natural' 
+        } ],
         scroller: {
         loadingIndicator: true
         },
@@ -117,11 +118,11 @@ function initializeTable() {
         buttons: [
             {
                 extend: 'csv',
-                title: 'MoH ' + sessionStorage.currentLocation + ': cohort disaggregated report ' + quarter
+                title: 'MoH ' + sessionStorage.currentLocation + ': cohort drill down report'
             },
             {
                 extend: 'pdf',
-                title: 'MoH' + sessionStorage.currentLocation + ': cohort disaggregated report ' + quarter
+                title: 'MoH ' + sessionStorage.currentLocation + ': cohort drill down report'
             }
         ]
     });
