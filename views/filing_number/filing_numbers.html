@@ -1,0 +1,41 @@
+<script type="text/javascript" src="/assets/js/jquery.min.js"></script>
+<script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js" defer="true"></script>
+<script type="text/javascript" src="/assets/js/moment.js"></script>
+<script type="text/javascript" src="/assets/js/alertifyjs/alertify.js"></script>
+<script type="text/javascript" src="/assets/js/does_connection_exist.js"></script>
+
+<link rel="stylesheet" href="/assets/css/alertifyjs/css/alertify.css" type="text/css">
+
+<style>
+</style>
+
+<script>
+function addLayOut() {
+  var frame = document.getElementById('inputFrame' + tstCurrentPage);
+  frame.style = 'height: 90%;';
+  var obj = document.createElement('iframe');
+  obj.setAttribute('id','external-page');
+  frame.appendChild(obj);
+  
+//  $("#external-page").load("include/test.html"); 
+  obj.setAttribute('src','/apps/ART/views/file_numbers_temp.html');
+  console.log('aaa')
+}
+
+</script>
+
+<body id="mateme">
+<div id="container">
+    <div id="content">
+
+        <form>
+            <input type="text" name="summary"
+                   tt_onLoad="__$('keyboard').style.display = 'none'; addLayOut();"
+                   tt_pageStyleClass="NoControls" helpText="Filing number management" optional="true"/>
+
+        </form>
+
+    </div>
+</div>
+</body>
+

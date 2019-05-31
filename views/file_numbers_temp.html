@@ -1,0 +1,120 @@
+<style>
+
+div {
+  -webkit-user-select: none; /* Safari 3.1+ */
+  -moz-user-select: none; /* Firefox 2+ */
+  -ms-user-select: none; /* IE 10+ */
+  user-select: none; /* Standard syntax */
+}
+
+.table-container {
+  display: table;
+  width: 100%;
+  font-size: 1.3em;
+}
+
+.table-container-row {
+  display: table-row;
+}
+
+.table-container-cell {
+  display: table-cell;
+  text-align: center;
+}
+
+.data-cell {
+  vertical-align: middle;
+  height: 200px;
+}
+
+.icons {
+  font-size: 1.1em;
+}
+
+.numbers {
+  width: 150px;
+  height: 150px;
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  align-items: center;
+  border: solid 2px;
+}
+
+.numbers:after {
+  display: block;
+  padding-bottom: 100%;
+}
+
+.numbers p {
+  position: relative;
+  left: 30%;
+}
+
+.dormant-colors {
+  background-color: lightyellow;
+}
+
+.active-colors {
+  background-color: lightgreen;
+}
+
+</style>
+
+
+
+<div class="table-container">
+
+
+  <div class="table-container-row">
+    <div class="table-container-cell">
+      &nbsp;
+    </div>
+    <div class="table-container-cell">
+      Name
+    </div>
+    <div class="table-container-cell">
+      New
+    </div>
+    <div class="table-container-cell">
+      Old
+    </div>
+  </div>
+
+
+  <div class="table-container-row">
+    <div class="table-container-cell data-cell icons">
+      Dormant&nbsp;&#8594;&nbsp;Active
+    </div>
+    <div class="table-container-cell data-cell">
+      Testpatient TestpatientOne
+    </div>
+    <div class="table-container-cell data-cell">
+      <div class="numbers active-colors"><p>1 03 02</p></div>
+    </div>
+    <div class="table-container-cell data-cell">
+      <div class="numbers dormant-colors"><p>1 02 03</p></div>
+    </div>
+  </div>
+
+  <div class="table-container-row">
+    <div class="table-container-cell data-cell icons">
+      Active&nbsp;&#8594;&nbsp;Dormant
+    </div>
+    <div class="table-container-cell data-cell">
+      Testpatient TestpatientTneTestpatient TestpatientTne
+    </div>
+    <div class="table-container-cell data-cell">
+      <div class="numbers active-colors"><p>1 03 02</p></div>
+    </div>
+    <div class="table-container-cell data-cell">
+      <div class="numbers dormant-colors"><p>1 02 03</p></div>
+    </div>
+  </div>
+
+
+
+<script>
+
+
+</script>
