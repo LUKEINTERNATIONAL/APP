@@ -135,7 +135,7 @@ function initDataTable() {
 
 function getList(sdate) {
   var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1";
-  url += "/booked_appointments?date=" + sdate;
+  url += "/booked_appointments?date=" + sdate + "&program_id=" + sessionStorage.programID;
 
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
@@ -185,7 +185,7 @@ function loadClients(data) {
       {"className": "dt-center", "targets": 4},
       {"className": "dt-center", "targets": 6}
     ]
-  } );
+  } );false
 
 }
 
