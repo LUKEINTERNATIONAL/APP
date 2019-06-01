@@ -31,11 +31,23 @@ div p {
 var urlToSearch = new URL(document.URL);
 var patient_id = urlToSearch.searchParams.get("patient_id");
 
+try {
+  var archive_client = urlToSearch.searchParams.get("archive_client");
+  archive_client = (archive_client == 'true' ? true : false);
+}catch(q) {
+  var archive_client = false;
+}
+
 function fetchFilingNumber() {
+
+  if(archive_client == true){
+    archiveClient();
+    return;
+  }
 
   var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1";
   url += '/patients/' + patient_id + '/filing_number';
-  
+
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
     if (this.readyState == 4 ) {
@@ -69,7 +81,27 @@ function fetchFilingNumber() {
 }
 
 
-setTimeout(function(){ fetchFilingNumber() }, 3000);
+setTimeout(function(){ fetchFilingNumber() }, 2000);
+
+
+function archiveClient() {
+  var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1";
+  url += '/archive_active_filing_number?patient_id=' + patient_id;
+
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 ) {
+      if (this.status == 201) {
+        var obj = JSON.parse(this.responseText);
+        printFilingNumber();
+      }
+    }
+  };
+  xhttp.open("GET", url, true);
+  xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+  xhttp.setRequestHeader('Content-type', "application/json");
+  xhttp.send();
+}
 
 </script>
 

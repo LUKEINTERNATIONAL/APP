@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="/assets/css/alertifyjs/css/alertify.css" type="text/css">
 
 <style>
-#clearButton, #cancelButton {
+#cancelButton {
   display: none;
 }
 
@@ -82,7 +82,7 @@ function addLayOut() {
   finishButton.setAttribute('onmousedown','nextTask();');
 
   var frame = document.getElementById('inputFrame' + tstCurrentPage);
-  frame.style = 'height: 90%;';
+  frame.style = 'height: 90%; width: 96%;';
   var obj = document.createElement('div');
   obj.setAttribute('class','table-container');
   frame.appendChild(obj);
@@ -179,8 +179,16 @@ function loadInfo() {
         el = document.getElementById('primary-name');
         getClient(primary_patient_id, el);
 
-        if(!secondary_id.match(/none/i))
-          formatFilingNumber(secondary_id, dormantPrefix);
+        if(!secondary_id.match(/none/i)) {
+          var oldNum = document.getElementById('new-num').innerHTML;
+          document.getElementById('old-active-num').innerHTML = oldNum;
+
+          num = formatFilingNumber(secondary_id, dormantPrefix);
+          document.getElementById('new-dormant-num').innerHTML = num;
+          el = document.getElementById('secondary-name');
+          getClient(secondary_patient_id, el);
+        }
+
 
       }
     }
@@ -211,7 +219,26 @@ function getClient(client_id, e) {
         var obj = JSON.parse(this.responseText);
         var names = obj.person.names[0];
         e.innerHTML = names.given_name + " " + names.family_name;
-        printID(client_id);
+        if(parseInt(client_id) == parseInt(secondary_patient_id) || parseInt(secondary_patient_id) == 0) {
+          var cancelButton = document.getElementById('cancelButton');
+          cancelButton.innerHTML = '<span>Print active#</span>';
+          cancelButton.setAttribute('onmousedown','printID(' + primary_patient_id + ');');
+          cancelButton.setAttribute('class','button blue navButton');
+          cancelButton.style = 'display: inline;';
+          printID(primary_patient_id);
+        }
+
+        /* ........................................................ */
+        var clearButton = document.getElementById('clearButton');
+        console.log(parseInt(secondary_patient_id));
+        if(parseInt(secondary_patient_id) > 0) {
+          clearButton.innerHTML = '<span>Print dormant#</span>';
+          clearButton.setAttribute('onmousedown','printID(' + secondary_patient_id + ');');
+        }else{
+          clearButton.style = 'display: none;';
+        }
+        /* ........................................................ */
+
       }
     }
   };

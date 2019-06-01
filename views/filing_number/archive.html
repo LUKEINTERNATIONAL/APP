@@ -2,7 +2,8 @@
 <script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js" defer="true"></script>
 <script type="text/javascript" src="/assets/js/moment.js"></script>
 <script type="text/javascript" src="/assets/js/alertifyjs/alertify.js"></script>
-<script type="text/javascript" src="/assets/js/does_connection_exist.js"></script>
+<!--script type="text/javascript" src="/assets/js/does_connection_exist.js"></script-->
+<script type="text/javascript" src="/assets/js/post_parameters.js"></script>
 
 <link rel="stylesheet" href="/assets/css/alertifyjs/css/alertify.css" type="text/css">
 
@@ -64,7 +65,7 @@ function getNextBatch() {
 
 function addLayOut() {
   var frame = document.getElementById('inputFrame' + tstCurrentPage);
-  frame.style = 'height: 90%;';
+  frame.style = 'height: 90%; width: 96%;';
   frame.innerHTML = null;
 
   var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1";
@@ -168,7 +169,6 @@ function addData(e, data) {
 }
 
 function selectClent(id, identifier) {
-  console.log(id);
 
   tstMessageBar.innerHTML = "Are you sure you want to archive<p />";
   tstMessageBar.innerHTML += formatFilingNumber(identifier, activePrefix);
@@ -183,18 +183,37 @@ function selectClent(id, identifier) {
   var yesBTN = document.createElement('button');
   yesBTN.innerHTML = "<span>Yes</span>";
   yesBTN.setAttribute('class', 'button blue navButton');
-  yesBTN.setAttribute('onmousedown','hideMessage(); archivePatient(' + id + ');');
+  yesBTN.setAttribute('onmousedown','hideMessage(); archivePatient(' + id + ',"' + identifier + '");');
   tstMessageBar.appendChild(yesBTN);
 
   tstMessageBar.style.display = "block";
 }
 
-function archivePatient(id) {
+function archivePatient(id, identifier) {
   var href = window.location.href;
   var url = new URL(href);
   primary_patient_id  = url.searchParams.get("primary_patient_id");
 
-  console.log(primary_patient_id + " --- " + id)
+  var url = '/swap_active_number';
+
+  parameters = {
+    primary_patient_id: primary_patient_id,
+    secondary_patient_id: id,
+    identifier: identifier
+  }
+
+  console.log(url);
+  submitParameters(parameters, url, 'displayResults')
+}
+
+function displayResults(obj) {
+  console.log(obj);
+  var url2 = '/apps/ART/views/filing_number/filing_numbers.html';
+  url2 += '?primary_patient_id=' + obj.primary_patient_id;
+  url2 += '&secondary_patient_id=' + obj.secondary_patient_id;
+  url2 += '&new_identifier=' + obj.active_number;
+  url2 += '&old_identifier=' + obj.dormant_number;
+  document.location = url2;
 }
 
 var activePrefix;
