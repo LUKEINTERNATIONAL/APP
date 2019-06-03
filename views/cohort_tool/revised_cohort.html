@@ -2810,10 +2810,6 @@ function showDisaggregatedReport(){
         <button id="tasks" class="btn btn-success buttons blue" style="margin-right: 5px;"  onmousedown="showDisaggregatedReport();">
             <span>&nbsp; Disaggregated report &nbsp;</span>
         </button>
-        <button id="btnNext" class="green right" style="margin: 5px 10px 0px; padding: 0px; float: right;" 
-          onclick="viewRawData();">
-            <span>&nbsp; Raw data &nbsp;</span>
-        </button>
         <button id="btnNext" class="red right" style="margin: 5px 0px 0px; padding: 0px; float: left;" onmousedown="regenerateReport();">
             <span>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Regenerate &nbsp; &nbsp;&nbsp;</span>
         </button>
@@ -2829,12 +2825,6 @@ function showDisaggregatedReport(){
 <div id="report-cover"></div>
 
 <script type="text/javascript">
-
-function viewRawData() {
-  var url = window.location.href;
-  sessionStorage.cohort_url = url; 
-  location = 'raw_data.html';
-}
 
 function validateReport() {  
   
