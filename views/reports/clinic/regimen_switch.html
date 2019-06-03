@@ -7,6 +7,7 @@
 
 <link rel="stylesheet" href="/apps/ART/assets/css/datatable/jquery.dataTables.min.css" type="text/css">
 <link rel="stylesheet" href="/apps/ART/assets/css/datatable/scroller.dataTables.min.css" type="text/css">
+<script type="text/javascript" src="/apps/ART/views/cohort_tool/driller/natural.js"></script>
 
 <script type="text/javascript" src="/assets/js/datatables/jquery.dataTables.min.js"></script>
 <script type="text/javascript" src="/assets/js/datatables/dataTables.fixedHeader.min.js"></script>
@@ -234,7 +235,9 @@ function loadClients(info) {
     pageLength:     10000,
     lengthChange:   false,
     paging:         false,
-    order:          [[ 0, "asc" ]],
+    columnDefs: [{
+      targets: 0, type: 'natural'
+    } ],
     dom: 'Bfrtip',
     buttons: [
       {
