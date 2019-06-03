@@ -38,10 +38,22 @@ try {
   var archive_client = false;
 }
 
+try {
+  var print_fn = urlToSearch.searchParams.get("print_fn");
+  print_fn = (print_fn == 'true' ? true : false);
+}catch(q) {
+  var print_fn = false;
+}
+
 function fetchFilingNumber() {
 
   if(archive_client == true){
     archiveClient();
+    return;
+  }
+
+  if(print_fn == true){
+    printFN();
     return;
   }
 
@@ -94,6 +106,39 @@ function archiveClient() {
       if (this.status == 201) {
         var obj = JSON.parse(this.responseText);
         printFilingNumber();
+      }
+    }
+  };
+  xhttp.open("GET", url, true);
+  xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+  xhttp.setRequestHeader('Content-type', "application/json");
+  xhttp.send();
+}
+
+function printFN() {
+  var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1";
+  url += '/patients/' + patient_id;
+
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 ) {
+      if (this.status == 201 || this.status == 200) {
+        var obj = JSON.parse(this.responseText);
+        //printFilingNumber();
+        var identifiers = obj.patient_identifiers;
+        var fn_avilable = false
+        for(var i = 0 ; i < identifiers.length; i++){
+          if(identifiers[i].type.name.match(/filing number/i)){
+            fn_avilable = true;
+          }
+        }
+
+        if(fn_avilable == true) {
+          printFilingNumber();
+        }else{
+          print_fn = false;
+          fetchFilingNumber();
+        }
       }
     }
   };
