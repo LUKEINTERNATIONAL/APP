@@ -1531,8 +1531,9 @@
                 var ii = -1;
                 var i = 0;
 
+                //selected_drugs_hash
                 for (var drug_name in drugs_hash) {
-                    var drug = drug_name.split("_")[0];
+                    var drug = drug_name.split("::")[0];
                     var date_of_expiry = drugs_hash[drug_name]["date_of_expiry"];
                     var tabs_per_tin = drugs_hash[drug_name]["tabs_per_tin"];
                     var total_tins = drugs_hash[drug_name]["total_tins"];
@@ -1744,7 +1745,7 @@
                        tt_onLoad="$('clearButton').style.display = 'none'; checkContainer(); updateNextButton(); validator = setInterval('validateInputFields();', 350); "
                        tt_pageStyleClass="NoKeyboard" type="text"/>
 
-                <input helpText="&lt;span style='color: red;background: white;'&gt;Confirm Entry (Touch row to change) &lt;/span&gt;"
+                <input helpText="<span style='color: red;background: white;'>Confirm Entry (Touch row to change) </span>"
                        id="summary" name="showSummary" optional="true"
                        tt_onLoad="clearInterval(validator); showSummary(); customizeFinishButton()"
                        tt_pageStyleClass="NoKeyboard" type="text"/>
