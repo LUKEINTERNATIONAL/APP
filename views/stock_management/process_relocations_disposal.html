@@ -418,11 +418,11 @@
                     var scrollable_div = document.createElement("div");
                     scrollable_div.id = 'scrollable-div';
                     scrollable_div.style.overflow = "auto";
-                    scrollable_div.style.height = "250px";
+                    scrollable_div.style.height = "auto";
                     scrollable_div.style.paddingTop = "15px";
 
                     var tbl = document.createElement("table");
-                    tbl.id = "batch-table"
+                    tbl.id = "batch-table";
                     //tbl.style.position = "absolute";
                     tbl.style.border = "1.5px solid #5ca6c4";
                     tbl.style.borderRadius = "10px";
@@ -437,7 +437,7 @@
 
                     var th_row = document.createElement("tr");
                     drg = item.getAttribute("value");
-                    rows_count = 2;
+                    rows_count = 0;
                     if (typeof addedRowsHash[drg] != "undefined") {
                         rows_count = rows_count + parseInt(addedRowsHash[drg]);
                     }
@@ -449,7 +449,7 @@
                         th.appendChild(thText);
                         th_row.appendChild(th);
                     }
-                    tbl.appendChild(th_row)
+                    tbl.appendChild(th_row);
 
                     var tblBody = document.createElement("tbody");
                     for (var i = 0; i <= rows_count; i++) {
@@ -500,9 +500,9 @@
                             textField.className = "input-field";
                             textField.id = inputID;
                             textField.value = inputValue;
-                            textField.setAttribute("field_type", field_type)
+                            textField.setAttribute("field_type", field_type);
                             textField.setAttribute("row", i);
-                            textField.setAttribute("drug_name", item.getAttribute("value") + "_" + i)
+                            textField.setAttribute("drug_name", item.getAttribute("value") + "_" + i);
                             textField.style.height = '35px';
                             textField.style.width = '194px';
                             textField.style.fontSize = '26px';
@@ -545,6 +545,7 @@
                     scrollable_div.appendChild(tbl)
                     __$("data-pane").appendChild(scrollable_div);
                     jQuery("#batch-table td:first-child, #batch-table th:first-child").hide();
+                    jQuery("#batch-table td:nth-child(3), #batch-table th:nth-child(3)").hide();
                     /* CUSTOM END*/
 
                     var table = document.createElement("div");
@@ -558,7 +559,7 @@
                     table.style.borderRadius = "8px";
                     table.style.marginLeft = "25px";
                     table.style.marginBottom = "7px";
-                    table.style.border = '1.5px solid #5ca6c4';
+                    table.style.border = '1.5px solid white';
                     table.style.borderRadius = '10px';
 
                     header.id = "input-header";
@@ -583,7 +584,7 @@
                     button.onmousedown = function () {
                         addNewRow();
                     }
-                    __$("data-pane").appendChild(button);
+                    //__$("data-pane").appendChild(button);
                 }
 
                 function showDate(parent, target) {
@@ -612,7 +613,7 @@
                     tbl.style.display = "table";
                     tbl.id = "popupkeyboard";
                     tbl.style.marginTop = "270px";
-                    tbl.style.marginLeft = "18%";
+                    tbl.style.marginLeft = "200px";
                     tbl.style.borderSpacing = "5px";
 
                     parent.appendChild(tbl);
@@ -1885,7 +1886,6 @@
                                 incomplete_rows.push([drugName, row_number]); //The drug has not been clicked yet.
                             }
                         }
-
                     }
 
                     if (incomplete_rows.length > 0) {
@@ -1907,8 +1907,8 @@
                 }
 
                 function row_complete(tabs_per_tin, total_tins, date_of_expiry, authorization_code) {
-                    if (total_tins.length > 0 || date_of_expiry.length > 0 || authorization_code.length > 0) {
-                        if (total_tins.length > 0 && date_of_expiry.length > 0 && authorization_code.length > 0) {
+                    if (total_tins.length > 0 || authorization_code.length > 0) {
+                        if (total_tins.length > 0 && authorization_code.length > 0) {
                             return true
                         } else {
                             return false
@@ -1916,7 +1916,6 @@
                     } else {
                         return true
                     }
-
                 }
 
                 function addNewRow() {
@@ -2590,7 +2589,7 @@
                 }
 
                 .special-custom-keyboard {
-                    margin-left: -29%;
+                    /*margin-left: -29%;*/
                 }
             </style>
 
