@@ -1634,11 +1634,10 @@
                         data["items"].push({
                             drug_id: drug_id,
                             expiry_date: date_of_expiry,
-                            quantity: tabs_per_tin,
+                            quantity: parseInt(tabs_per_tin) * parseInt(total_tins),
                             delivery_date: delivery_date,
                         })
                     }
-
                 }
 
                 var create_stock_url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1/pharmacy/batches";

@@ -687,38 +687,21 @@
                 var relocation_facility = __$("relocation_facility").value;
                 var relocation_date = __$("relocation_date").value;
                 var disposal_date = __$("disposal_date").value;
-//drug_short_full_name
-                //selected_batch_data
                 var drugs_hash = [];
-                var drugs = document.getElementById("select_drugs");
-                var selectedDrugsLiOptions = getSelectedOptions(drugs);
 
-                /*for (var i = 0; i <= selectedDrugsLiOptions.length - 1; i++) {
-                    var short_name = selectedDrugsLiOptions[i].value;
-                    var full_name = selectedDrugsLiOptions[i].innerHTML;
-                    var drug_id = selectedDrugsLiOptions[i].getAttribute("drug_id");
-                    if (drug_id) {
-                        drugs_hash.push({short_name: short_name, full_name: full_name, drug_id: drug_id});
-                    }
-                }*/
-
-                for (var batchID in selected_batch_data) {
-                    var drug_ids = selected_batch_data[batchID];
-                    for (var i = 0; i <= drug_ids.length - 1; i++) {
-                        var splitted_drug_data = drug_ids[i].split("_");
-
-                        var drug_id = splitted_drug_data[0];
-                        var expiry_date = splitted_drug_data[1];
-                        var short_name = drug_short_full_name[drug_id]["short_name"];
-                        var full_name = drug_short_full_name[drug_id]["full_name"];
-                        drugs_hash.push({
-                            short_name: short_name,
-                            full_name: full_name,
-                            drug_id: drug_id,
-                            expiry_date: expiry_date,
-                            batch_id: batchID
-                        });
-                    }
+                for (var pharmacy_batch_item_id in selected_batch_data) {
+                    var data_split = selected_batch_data[pharmacy_batch_item_id].split("_");
+                    var drug_id = data_split[0];
+                    var expiry_date = data_split[1];
+                    var short_name = drug_short_full_name[drug_id]["short_name"];
+                    var full_name = drug_short_full_name[drug_id]["full_name"];
+                    drugs_hash.push({
+                        short_name: short_name,
+                        full_name: full_name,
+                        drug_id: drug_id,
+                        expiry_date: expiry_date,
+                        pharmacy_batch_item_id: pharmacy_batch_item_id
+                    });
                 }
 
                 var data = {
@@ -737,11 +720,6 @@
                     showMessage("Select value to continue");
                     return;
                 }
-
-                /*if (drugs_hash.length == 0) {
-                    showMessage("Select value to continue");
-                    return;
-                }*/
 
                 window.location = "/apps/ART/views/stock_management/process_relocations_disposal.html"
             }
@@ -801,13 +779,13 @@
                     for (var i = 0; i <= batch_items.length - 1; i++) {
                         var drug_id = batch_items[i].drug_id;
                         var expiry_date = batch_items[i].expiry_date;
-                        var pharmacy_batch_id = batch_items[i].pharmacy_batch_id;
+                        var pharmacy_batch_item_id = batch_items[i].id;
                         var drug_name = drug_map_hash[drug_id] + " Expiry date:      " + expiry_date;
                         if (!expiry_dates.includes(expiry_date)) {
                             expiry_dates.push(expiry_date);
                         }
 
-                        html += '<li id="' + i + '" tstvalue="' + drug_name + '"expiry_date="' + expiry_date + '" drug_id="' + drug_id + '" pharmacy_batch_id="' + pharmacy_batch_id + '" class="' + className + '" tag="' + className + '" onmousedown=""' +
+                        html += '<li id="' + i + '" tstvalue="' + drug_name + '"expiry_date="' + expiry_date + '" drug_id="' + drug_id + '" pharmacy_batch_item_id="' + pharmacy_batch_item_id + '" class="' + className + '" tag="' + className + '" onmousedown=""' +
                             ' onclick="null; updatePharmacyBatchData(this); updateTouchscreenInputForSelect(__$(\'optionValue\' + this.id), this); " ' +
                             'style=""><div style="display: table; border-spacing: 0px;"><div style="display: table-row">' +
                             '<div style="display: table-cell;"><img id="img' + i + '" src="/public/touchscreentoolkit/lib/images/unticked.jpg" ' +
@@ -834,23 +812,15 @@
         var selected_batch_data = {};
 
         function updatePharmacyBatchData(obj) {
-            var pharmacy_batch_id = obj.getAttribute("pharmacy_batch_id");
+            var pharmacy_batch_item_id = obj.getAttribute("pharmacy_batch_item_id");
             var drug_id = obj.getAttribute("drug_id");
             var expiry_date = obj.getAttribute("expiry_date");
             var drug_id_and_expiry_date = drug_id + "_" + expiry_date;
 
-            if (!selected_batch_data[pharmacy_batch_id]) {
-                selected_batch_data[pharmacy_batch_id] = []
-            }
-
             if (obj.style.backgroundColor.match(/lightblue/i)) {
-                removeElement(selected_batch_data[pharmacy_batch_id], drug_id_and_expiry_date)
+                delete selected_batch_data[pharmacy_batch_item_id]
             } else {
-                selected_batch_data[pharmacy_batch_id].push(drug_id_and_expiry_date);
-            }
-
-            if (selected_batch_data[pharmacy_batch_id].length == 0) {
-                delete selected_batch_data[pharmacy_batch_id]
+                selected_batch_data[pharmacy_batch_item_id] = drug_id_and_expiry_date
             }
         }
 
