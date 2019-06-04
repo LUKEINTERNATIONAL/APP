@@ -1693,7 +1693,7 @@
                 __$("nextButton").innerHTML = "<span>Save</span>";
                 __$("nextButton").onmousedown = function () {
                     var facility_id = JSON.parse(sessionStorage.relocation_or_disposal)["location_id"];
-                    if (processed_products.length == 0){
+                    if (processed_products.length == 0) {
                         return
                     }
                     for (var i = 0; i <= processed_products.length - 1; i++) {
@@ -1706,12 +1706,21 @@
                         var packSize = drug_cms_packsizes[shortName];
                         var quantity = totalTins * packSize;
 
-                        var relocate_or_dispose_stock_url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1/pharmacy/items/" + pharmacyBatchItemID + "/reallocate";
-                        var items = {
-                            "reallocation_code": authorization_code,
-                            "quantity": quantity,
-                            "location_id": facility_id
-                        };
+
+                        if (disposal_date.length == 0) {
+                            var relocate_or_dispose_stock_url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1/pharmacy/items/" + pharmacyBatchItemID + "/reallocate";
+                            var items = {
+                                "reallocation_code": authorization_code,
+                                "quantity": quantity,
+                                "location_id": facility_id
+                            };
+                        } else {
+                            var relocate_or_dispose_stock_url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1/pharmacy/items/" + pharmacyBatchItemID + "/dispose";
+                            var items = {
+                                "reallocation_code": authorization_code,
+                                "quantity": quantity
+                            };
+                        }
 
                         var xhttp = new XMLHttpRequest();
                         xhttp.onreadystatechange = function () {
