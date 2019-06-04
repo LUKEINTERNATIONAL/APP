@@ -1693,6 +1693,9 @@
                 __$("nextButton").innerHTML = "<span>Save</span>";
                 __$("nextButton").onmousedown = function () {
                     var facility_id = JSON.parse(sessionStorage.relocation_or_disposal)["location_id"];
+                    if (processed_products.length == 0){
+                        return
+                    }
                     for (var i = 0; i <= processed_products.length - 1; i++) {
                         var authorization_code = processed_products[i]["authorization_code"];
                         var split_data = processed_products[i]["drug"].split("::");
