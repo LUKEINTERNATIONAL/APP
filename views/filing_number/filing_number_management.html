@@ -158,13 +158,18 @@ function checkArchived() {
       if (this.status == 201 || this.status == 200) {
         var obj = JSON.parse(this.responseText);
         var identifiers = obj.patient_identifiers;
+        var archive_number_available = false;
+
         for(var i = 0 ; i < identifiers.length; i++){
           if(identifiers[i].type.name.match(/Archived filing number/i)){
-            archiveClient();    
-            
-          }else {
-            printFN();
+            archive_number_available = true;
           }
+        }
+
+        if(archive_number_available == false){
+          archiveClient();    
+        }else {
+          printFN();
         }
 
         
