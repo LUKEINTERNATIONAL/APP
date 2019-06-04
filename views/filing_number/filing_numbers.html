@@ -230,7 +230,6 @@ function getClient(client_id, e) {
 
         /* ........................................................ */
         var clearButton = document.getElementById('clearButton');
-        console.log(parseInt(secondary_patient_id));
         if(parseInt(secondary_patient_id) > 0) {
           clearButton.innerHTML = '<span>Print dormant#</span>';
           clearButton.setAttribute('onmousedown','printID(' + secondary_patient_id + ');');
