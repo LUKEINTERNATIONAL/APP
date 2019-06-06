@@ -503,7 +503,7 @@ function selectedDI() {
 
 function possibleCausedMedicationOfSideEffects() {
   var session_date = moment(new Date(sessionStorage.sessionDate)).format('YYYY-MM-DD');
-  var url = 'http://' + apiURL + ':' + apiPort + '/api/v1/patients/';
+  var url = sessionStorage.apiProtocol+ '://' + apiURL + ':' + apiPort + '/api/v1/patients/';
   url += sessionStorage.patientID + '/drugs_received';
 
   var req = new XMLHttpRequest();

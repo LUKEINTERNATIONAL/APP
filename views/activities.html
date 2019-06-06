@@ -36,7 +36,7 @@ var apiPort = sessionStorage.apiPort;
 var patient_id = sessionStorage.patientID;
 var previousActivities = null;
 function getActivities(){
-  var url = 'http://'+apiURL+':'+apiPort+'/api/v1/user_properties?property=activities';
+  var url = sessionStorage.apiProtocol+ '://'+apiURL+':'+apiPort+'/api/v1/user_properties?property=activities';
   var req = new XMLHttpRequest();
   req.onreadystatechange = function(){
 

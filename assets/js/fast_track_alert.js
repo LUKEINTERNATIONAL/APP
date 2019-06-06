@@ -148,7 +148,7 @@ function cancelFT() {
     patient_id = parseInt(url.searchParams.get("patient_id"));
   }
 
-  var url = 'http://'+apiURL+':'+apiPort+'/api/v1/cancel_fast_track';
+  var url = sessionStorage.apiProtocol+ '://'+apiURL+':'+apiPort+'/api/v1/cancel_fast_track';
   url += '?person_id=' + patient_id + '&date=' + sessionStorage.sessionDate;
 
   var req = new XMLHttpRequest();

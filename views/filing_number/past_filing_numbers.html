@@ -80,7 +80,7 @@
         jQuery("#buttons").append(finishButtonHtml2);
 
         function ajaxRequest() {
-            var url = 'http://' + apiURL + ':' + apiPort + '/api/v1/patients/' + sessionStorage.patientID;
+            var url = sessionStorage.apiProtocol+ '://' + apiURL + ':' + apiPort + '/api/v1/patients/' + sessionStorage.patientID;
             var req = new XMLHttpRequest();
             req.onreadystatechange = function () {
                 if (this.readyState == 4) {

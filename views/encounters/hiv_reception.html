@@ -23,7 +23,7 @@
     var patientID = sessionStorage.patientID;
 
     function getGuardian() {
-        var url = 'http://' + apiURL + ':' + apiPort + '/api/v1/people/' + patientID + '/relationships';
+        var url = sessionStorage.apiProtocol+ '://' + apiURL + ':' + apiPort + '/api/v1/people/' + patientID + '/relationships';
         var req = new XMLHttpRequest();
         req.onreadystatechange = function () {
 
