@@ -83,7 +83,7 @@
     var id = sessionStorage.getItem("patientID");
 
     function ajaxRequest() {
-      var url = 'http://' + apiURL + ':' + apiPort + '/api/v1/programs/1/patients/' + id;
+      var url = sessionStorage.apiProtocol+ '://' + apiURL + ':' + apiPort + '/api/v1/programs/1/patients/' + id;
       document.getElementById("nextEncounter").innerHTML = sessionStorage.nextEncounter;
       var available = document.getElementById("available");
       available.innerHTML = sessionStorage.nextEncounterAvailable;

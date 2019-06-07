@@ -2086,7 +2086,7 @@ function loadFastTrackMedications() {
     if (patient_is_fast_track) {
         sessionStorage.setItem("fast_track_visit", "true");
         var session_date = moment(new Date(sessionStorage.sessionDate)).format('YYYY-MM-DD');
-        var last_drugs_received_url = 'http://' + apiURL + ':' + apiPort + '/api/v1/patients/';
+        var last_drugs_received_url = sessionStorage.apiProtocol+ '://' + apiURL + ':' + apiPort + '/api/v1/patients/';
         last_drugs_received_url += sessionStorage.patientID + "/last_drugs_received?date=" + session_date + "?program_id=" + sessionStorage.programID;
 
         var xhttp = new XMLHttpRequest();

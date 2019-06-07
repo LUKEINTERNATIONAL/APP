@@ -143,7 +143,7 @@
 
     function buildPillCountScreen() {
         var session_date = moment(new Date(sessionStorage.sessionDate)).format('YYYY-MM-DD');
-        var url = 'http://' + apiURL + ':' + apiPort + '/api/v1/programs/1/patients/';
+        var url = sessionStorage.apiProtocol+ '://' + apiURL + ':' + apiPort + '/api/v1/programs/1/patients/';
         url += sessionStorage.patientID + "/last_drugs_received?date=" + session_date;
 
         var req = new XMLHttpRequest();
@@ -191,7 +191,7 @@
         var date = new Date(sessionStorage.sessionDate);
         date.setDate(date.getDate() - 1); //1 day
         var session_date = moment(date).format('YYYY-MM-DD');
-        var url = 'http://' + apiURL + ':' + apiPort + '/api/v1/patients/' + sessionStorage.patientID + '/drugs_received?date=' + session_date;
+        var url = sessionStorage.apiProtocol+ '://' + apiURL + ':' + apiPort + '/api/v1/patients/' + sessionStorage.patientID + '/drugs_received?date=' + session_date;
 
         var req = new XMLHttpRequest();
         req.onreadystatechange = function () {
@@ -863,7 +863,7 @@
     var client_on_ft = false;
 
     function onFT() {
-        var url = 'http://' + apiURL + ':' + apiPort + '/api/v1/on_fast_track?person_id=';
+        var url = sessionStorage.apiProtocol+ '://' + apiURL + ':' + apiPort + '/api/v1/on_fast_track?person_id=';
         url += sessionStorage.patientID + '&date=' + sessionStorage.sessionDate;
         var req = new XMLHttpRequest();
         req.onreadystatechange = function () {
