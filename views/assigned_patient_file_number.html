@@ -8,72 +8,120 @@
 
 
 <style>
-  #clearButton { display: none; }
-/* #cancelButton { display: none; } */
 
-      #fileNumbers {
-        width: 90%;
-        padding: 2%;
-        margin: 0 auto;
-      }
+#filing-table {
+  width: 100%;
+  border-collapse: collapse;
+}
 
-      .fileNumber {
-        background-color: white;
-        width: 90%;
-        margin: 3%;
-        padding: 2%;
-        border-radius: 2px;
-        box-shadow: 0 1px 1px black;
-      }
+.filing-table-th {
+  text-align: center;
+  font-size: 20px;
+}
 
-      img {
-        margin-left: 5%;
-      }
+#filing-table td {
+  height: 150px;
+  font-size: 25px;
+  border-style: solid;
+  border-width: 2px 0px 0px 0px;
+}
 
-      .fileNumber:hover {
-        cursor: pointer;
-        box-shadow: 0 6px 6px brown;
-      }
+.active-cell {
+  background-color: lightgreen;
+  text-align: center;
+  width: 170px;
+}
 
-      .fileNumber h3 {
-        font-family: Ubuntu;
-        color: crimson;
-      }
+.dormant-cell {
+  background-color: lightyellow;
+  text-align: center;
+  width: 170px;
+}
 
-      .fileNumber p {
-        font-family: Ubuntu;
-        font-weight: 100;
-        text-align: justify;
-        word-spacing: .2em;
-      }
-
-      h3 {
-        font-size: 1.2em;
-      }
+.arrows {
+  font-size: 30px;
+}
 </style>
 
 <script>
   
   function loadNumbers() {
-  patientID = fetchArgumentFromUrlString("patient_id");
   tt_cancel_destination = "/views/patient_dashboard.html?patient_id=" + sessionStorage.patientID;
   
   var f = document.getElementById('inputFrame' + tstCurrentPage);
   f.style = 'width: 96%; height: 90%;';
 
-  var b = document.getElementById('nextButton');
-  b.innerHTML = '<span>Next</span>';
-  b.setAttribute('onmousedown',`nextEncounter(${sessionStorage.patientID}, 1, true)`);
+  var table = document.createElement('table');
+  table.setAttribute('id','filing-table');
+  f.appendChild(table);
 
-  const fileNumbers = document.createElement('div')
-  fileNumbers.setAttribute('id', 'fileNumbers')
-  f.appendChild(fileNumbers)
+  var tr = document.createElement('tr');
+  table.appendChild(tr);
 
-  populatePageWithSwappedFileNumber(fetchFileNumbersToPrint())
+  var cells = ['&nbsp;','Name','Old label','New label'];
+
+  for(var i = 0 ; i < cells.length; i++){
+    var th = document.createElement('th');
+    th.innerHTML = cells[i];
+    th.setAttribute('class','filing-table-th');
+    if(i == 1)
+      th.setAttribute('style', 'text-align: left;');
+
+    tr.appendChild(th);
+  }
+
+  cells = ['Add&nbsp;<span class="arrows">&#8594;</span>&nbsp;Active','name-field','old-label','new-label'];
+  tr = document.createElement('tr');
+  table.appendChild(tr);
+
+  for(var i = 0 ; i < cells.length; i++){
+    var th = document.createElement('td');
+    if(i == 0) {
+      th.innerHTML = cells[i];
+      th.setAttribute('class','filing-table-th');
+      th.setAttribute('style','text-align: left; padding-left: 5px;');
+    }else{
+      th.setAttribute('id', cells[i]);
+      th.setAttribute('class','filing-table-td');
+    }
+    
+    if(i == 2) {
+      th.setAttribute('class','dormant-cell');
+    }else if(i == 3){
+      th.setAttribute('class','active-cell');
+    }else if(i == 1){
+      th.innerHTML = "chikulepo shiakhsnoddand phiri"
+    }
+
+    tr.appendChild(th);
+  }
+
+  cells = ['Active&nbsp;<span class="arrows">&#8594;</span>&nbsp;Dormant','name-field-2','old-label-2','new-label-2'];
+  tr = document.createElement('tr');
+  table.appendChild(tr);
+
+  for(var i = 0 ; i < cells.length; i++){
+    var th = document.createElement('td');
+    if(i == 0) {
+      th.innerHTML = cells[i];
+      th.setAttribute('class','filing-table-th');
+      th.setAttribute('style','text-align: left; padding-left: 5px;');
+    }else{
+      th.setAttribute('id', cells[i]);
+      th.setAttribute('class','filing-table-td');
+    }
+    
+    if(i == 2) {
+      th.setAttribute('class','dormant-cell');
+    }else if(i == 3){
+      th.setAttribute('class','active-cell');
+    }
+
+    tr.appendChild(th);
+  }
+
 }
 
-function refreshList() {
-}
 </script>
 
 
@@ -89,60 +137,4 @@ function refreshList() {
       </form>
     </div>
   </div>
-
-  <script>
-    function populatePageWithSwappedFileNumber(fileNumbers) {
-      document.getElementById('fileNumbers').innerHTML += createFileNumberElement(fileNumbers.new,
-        'New Patient Gets Active File Number Below:');
-        printFileNumber(sessionStorage.getItem('newPatientID'), false)
-
-      if (fileNumbers.old.fileNumber) {
-        document.getElementById('fileNumbers').innerHTML +=
-          '<img src=\'/assets/images/upload.png\' style=\'width: 5%\'/>';
-        document.getElementById('fileNumbers').innerHTML +=
-          '<img src=\'/assets/images/download.png\' style=\'width: 5%\'/>';
-        document.getElementById('fileNumbers').innerHTML += createFileNumberElement(fileNumbers.old,
-          'Patient To Be Archived Gets File Number Below:');
-
-        setTimeout(function () {
-          printFileNumber(sessionStorage.getItem('oldPatientID'), true);
-        }, 1000)
-      }
-    }
-
-    function createFileNumberElement(fileData, status) {
-      return "<div class='fileNumber'><h3>" + status +
-        "</h3><hr width='100%'/><p>File #:&nbsp;&nbsp;" + fileData.fileNumber +
-        "</p></div>";
-    }
-
-    function fetchArgumentFromUrlString(argumentName) {
-      var url = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : location.href;
-
-      var urlToSearch = new URL(url);
-      var argument = urlToSearch.searchParams.get(argumentName);
-      return argument;
-    }
-
-    function fetchFileNumbersToPrint() {
-      return {
-        new: {
-          fileNumber: fetchArgumentFromUrlString('new')
-        },
-        old: {
-          fileNumber: fetchArgumentFromUrlString('old')
-        }
-      };
-    }
-
-    function printFileNumber (patientId, archived) {
-      var archived_url = "";
-      if (archived == true) {
-        archived_url = "?archived=true";
-      }
-      var printURL = "/patients/" + patientId + "/labels/filing_number" + archived_url;
-      printURL = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1" + printURL;
-      document.location = printURL;
-    }
-  </script>
 </body>

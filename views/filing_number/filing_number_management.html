@@ -1,0 +1,187 @@
+<script type="text/javascript" src="/assets/js/jquery.min.js"></script>
+<script type="text/javascript" src="/assets/js/core.js"></script>
+<!--script type="text/javascript" src="/assets/js/does_connection_exist.js"></script-->
+
+
+<style>
+
+div {
+  height: 90%;
+  width: 100%;
+  text-align: center;
+}
+
+div p {
+  padding-top: 10%;
+  font-size: 30px;
+}
+
+</style>
+
+
+
+<div>
+  <p>Arranging <b>filing numbers</b>, please wait.</p>
+  <img src="/assets/images/loading.gif" class="icons" />
+</div>
+
+
+<script>
+
+var urlToSearch = new URL(document.URL);
+var patient_id = urlToSearch.searchParams.get("patient_id");
+
+try {
+  var archive_client = urlToSearch.searchParams.get("archive_client");
+  archive_client = (archive_client == 'true' ? true : false);
+}catch(q) {
+  var archive_client = false;
+}
+
+try {
+  var print_fn = urlToSearch.searchParams.get("print_fn");
+  print_fn = (print_fn == 'true' ? true : false);
+}catch(q) {
+  var print_fn = false;
+}
+
+function fetchFilingNumber() {
+
+  if(archive_client == true){
+    checkArchived();
+    return;
+  }
+
+  if(print_fn == true){
+    printFN();
+    return;
+  }
+
+  var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1";
+  url += '/patients/' + patient_id + '/filing_number';
+
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 ) {
+      if (this.status == 201) {
+        var obj = JSON.parse(this.responseText);
+        var new_identifier = obj.new_identifier.identifier;
+        try {
+          var old_identifier = obj.archived_identifier.identifier;
+          var secondary_patient_id = obj.patient_id;
+        }catch(i) {
+          var old_identifier = 'none';
+          var secondary_patient_id = 0;
+        }
+        var url = '/apps/ART/views/filing_number/filing_numbers.html';
+        url += '?primary_patient_id=' + patient_id;
+        url += '&secondary_patient_id=' + secondary_patient_id;
+        url += '&new_identifier=' + new_identifier;
+        url += '&old_identifier=' + old_identifier;
+        document.location = url;
+      }else{
+        var url = '/apps/ART/views/filing_number/archive.html?primary_patient_id=' + patient_id;
+        document.location = url;
+      }
+    }
+  };
+  xhttp.open("POST", url, true);
+  xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+  xhttp.setRequestHeader('Content-type', "application/json");
+  xhttp.send();
+
+}
+
+
+setTimeout(function(){ fetchFilingNumber() }, 2000);
+
+
+function archiveClient() {
+  var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1";
+  url += '/archive_active_filing_number?patient_id=' + patient_id;
+
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 ) {
+      if (this.status == 201) {
+        var obj = JSON.parse(this.responseText);
+        printFilingNumber();
+      }
+    }
+  };
+  xhttp.open("GET", url, true);
+  xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+  xhttp.setRequestHeader('Content-type', "application/json");
+  xhttp.send();
+}
+
+function printFN() {
+  var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1";
+  url += '/patients/' + patient_id;
+
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 ) {
+      if (this.status == 201 || this.status == 200) {
+        var obj = JSON.parse(this.responseText);
+        //printFilingNumber();
+        var identifiers = obj.patient_identifiers;
+        var fn_avilable = false
+        for(var i = 0 ; i < identifiers.length; i++){
+          if(identifiers[i].type.name.match(/filing number/i)){
+            fn_avilable = true;
+          }
+        }
+
+        if(fn_avilable == true) {
+          printFilingNumber();
+        }else{
+          print_fn = false;
+          fetchFilingNumber();
+        }
+      }
+    }
+  };
+  xhttp.open("GET", url, true);
+  xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+  xhttp.setRequestHeader('Content-type', "application/json");
+  xhttp.send();
+}
+
+function checkArchived() {
+  var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1";
+  url += '/patients/' + patient_id;
+
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 ) {
+      if (this.status == 201 || this.status == 200) {
+        var obj = JSON.parse(this.responseText);
+        var identifiers = obj.patient_identifiers;
+        var archive_number_available = false;
+
+        for(var i = 0 ; i < identifiers.length; i++){
+          if(identifiers[i].type.name.match(/Archived filing number/i)){
+            archive_number_available = true;
+          }
+        }
+
+        if(archive_number_available == false){
+          archiveClient();    
+        }else {
+          printFN();
+        }
+
+        
+      }
+    }
+  };
+  xhttp.open("GET", url, true);
+  xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+  xhttp.setRequestHeader('Content-type', "application/json");
+  xhttp.send();
+}
+
+</script>
+
+

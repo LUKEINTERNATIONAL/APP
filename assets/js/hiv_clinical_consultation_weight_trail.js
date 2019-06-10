@@ -1,6 +1,6 @@
 function getWeights() {
   passedData = [];
-  var url = 'http://'+apiURL+':'+apiPort+'/api/v1/observations/?person_id='+sessionStorage.patientID+'&concept_id=5089';
+  var url = sessionStorage.apiProtocol+ '://'+apiURL+':'+apiPort+'/api/v1/observations/?person_id='+sessionStorage.patientID+'&concept_id=5089';
           var req = new XMLHttpRequest();
           req.onreadystatechange = function(){
           
@@ -34,7 +34,7 @@ function getWeights() {
           }
 }
 function getHeight() {
-  var url = 'http://'+apiURL+':'+apiPort+'/api/v1/observations/?person_id='+sessionStorage.patientID+'&concept_id=5090';
+  var url = sessionStorage.apiProtocol+ '://'+apiURL+':'+apiPort+'/api/v1/observations/?person_id='+sessionStorage.patientID+'&concept_id=5090';
           var req = new XMLHttpRequest();
           req.onreadystatechange = function(){
           

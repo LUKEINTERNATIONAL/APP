@@ -151,7 +151,7 @@
     var start_date = moment().subtract(5, "days").format("YYYY-MM-DD");
 
     function getVisits() {
-        var url = 'http://' + apiURL + ':' + apiPort + '/api/v1/programs/1/reports/visits?name=visits&start_date=' + start_date + '&end_date=' + end_date;
+        var url = sessionStorage.apiProtocol+ '://' + apiURL + ':' + apiPort + '/api/v1/programs/1/reports/visits?name=visits&start_date=' + start_date + '&end_date=' + end_date;
         var req = new XMLHttpRequest();
         req.onreadystatechange = function () {
 

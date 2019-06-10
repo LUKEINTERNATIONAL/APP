@@ -1,0 +1,275 @@
+<script type="text/javascript" src="/assets/js/jquery.min.js"></script>
+<script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js" defer="true"></script>
+<script type="text/javascript" src="/assets/js/moment.js"></script>
+<script type="text/javascript" src="/assets/js/alertifyjs/alertify.js"></script>
+<script type="text/javascript" src="/assets/js/does_connection_exist.js"></script>
+<script type="text/javascript" src="/assets/js/generic_ajaxrequest.js"></script>
+
+<link rel="stylesheet" href="/assets/css/alertifyjs/css/alertify.css" type="text/css">
+
+<style>
+#cancelButton {
+  display: none;
+}
+
+div {
+  -webkit-user-select: none; /* Safari 3.1+ */
+  -moz-user-select: none; /* Firefox 2+ */
+  -ms-user-select: none; /* IE 10+ */
+  user-select: none; /* Standard syntax */
+}
+
+.table-container {
+  display: table;
+  width: 100%;
+  font-size: 1.3em;
+}
+
+.table-container-row {
+  display: table-row;
+}
+
+.table-container-cell {
+  display: table-cell;
+  text-align: center;
+}
+
+.data-cell {
+  vertical-align: middle;
+  height: 200px;
+}
+
+.numbers {
+  width: 150px;
+  height: 150px;
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  align-items: center;
+  border: solid 2px;
+}
+
+.numbers:after {
+  display: block;
+  padding-bottom: 100%;
+}
+
+.numbers p {
+  position: relative;
+  left: 40px;
+  font-size: 25px;
+  font-weight: bolder;
+}
+
+.dormant-colors {
+  background-color: lightyellow;
+}
+
+.active-colors {
+  background-color: lightgreen;
+}
+
+</style>
+
+<script>
+var tt_cancel_destination = "/views/patient_dashboard.html?patient_id=" + sessionStorage.patientID;
+
+function nextTask() {
+  nextEncounter(primary_patient_id, sessionStorage.programID, true);
+}
+
+function addLayOut() {
+  var finishButton = document.getElementById('nextButton');
+  finishButton.innerHTML = '<span>Continue</span>';
+  finishButton.setAttribute('onmousedown','nextTask();');
+
+  var frame = document.getElementById('inputFrame' + tstCurrentPage);
+  frame.style = 'height: 90%; width: 96%;';
+  var obj = document.createElement('div');
+  obj.setAttribute('class','table-container');
+  frame.appendChild(obj);
+
+  var row = document.createElement('div');
+  row.setAttribute('class','table-container-row');
+  obj.appendChild(row);
+
+
+  var cells = ['&nbsp;','Name','New number','Old number'];
+  for(var i = 0 ; i < cells.length; i++){
+    var cell = document.createElement('div');
+    cell.setAttribute('class','table-container-cell');
+    cell.innerHTML = cells[i];
+    row.appendChild(cell);
+  }
+
+  var row = document.createElement('div');
+  row.setAttribute('class','table-container-row');
+  obj.appendChild(row);
+
+  var cells = ['Dormant&nbsp;&#8594;&nbsp;Active','primary-name','new-num','old-num'];
+  buildRows(row, cells);
+
+  var row = document.createElement('div');
+  row.setAttribute('class','table-container-row');
+  obj.appendChild(row);
+
+  var cells = ['Active&nbsp;&#8594;&nbsp;Dormant','secondary-name','new-dormant-num','old-active-num'];
+  buildRows(row, cells);
+
+  loadInfo();
+}
+
+function buildRows(row, cells) {
+  for(var i = 0 ; i < cells.length; i++){
+    var cell = document.createElement('div');
+    cell.setAttribute('class','table-container-cell data-cell');
+    if(i == 0)
+      cell.innerHTML = cells[i];
+
+    if(i == 1)
+      cell.setAttribute('id', cells[i]);
+
+    if(i == 2) {
+      var dev1 = document.createElement('div');
+      dev1.setAttribute('class','numbers active-colors');
+      cell.appendChild(dev1);
+      var p = document.createElement('p');
+      p.setAttribute('id', cells[i]);
+      dev1.appendChild(p);
+    }
+
+    if(i == 3) {
+      var dev1 = document.createElement('div');
+      dev1.setAttribute('class','numbers dormant-colors');
+      cell.appendChild(dev1);
+      var p = document.createElement('p');
+      p.setAttribute('id', cells[i]);
+      dev1.appendChild(p);
+    }
+
+    row.appendChild(cell);
+  }
+}
+
+var primary_patient_id;
+var secondary_patient_id;
+var primary_id;
+var secondary_id;
+
+function loadInfo() {
+  var href = window.location.href;
+  var url = new URL(href);
+  primary_patient_id  = url.searchParams.get("primary_patient_id");
+  secondary_patient_id = url.searchParams.get("secondary_patient_id");
+  primary_id = url.searchParams.get("new_identifier");
+  secondary_id = url.searchParams.get("old_identifier");
+
+    var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1";
+  url += '/global_properties?property=filing.number.prefix';
+  
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 ) {
+      if (this.status == 201 || this.status == 200 ) {
+        var obj = JSON.parse(this.responseText);
+        var prefix = obj['filing.number.prefix'].split(',');
+        var activePrefix = prefix[0];
+        var dormantPrefix = prefix[1];
+        
+        var num = formatFilingNumber(primary_id, activePrefix);
+        document.getElementById('new-num').innerHTML = num;
+        el = document.getElementById('primary-name');
+        getClient(primary_patient_id, el);
+
+        if(!secondary_id.match(/none/i)) {
+          var oldNum = document.getElementById('new-num').innerHTML;
+          document.getElementById('old-active-num').innerHTML = oldNum;
+
+          num = formatFilingNumber(secondary_id, dormantPrefix);
+          document.getElementById('new-dormant-num').innerHTML = num;
+          el = document.getElementById('secondary-name');
+          getClient(secondary_patient_id, el);
+        }
+
+
+      }
+    }
+  };
+  xhttp.open("GET", url, true);
+  xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+  xhttp.setRequestHeader('Content-type', "application/json");
+  xhttp.send();
+
+}
+
+function formatFilingNumber(num, prefix) {
+  var str = num.replace(prefix,"");
+  var filing_number = str.substring(0,1) + " ";
+  filing_number += str.substring(1,4) + " "
+  filing_number += str.substring(4, str.length);
+  return filing_number;
+}
+
+function getClient(client_id, e) {
+  var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1";
+  url += '/patients/' + client_id;
+  
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 ) {
+      if (this.status == 201 || this.status == 200 ) {
+        var obj = JSON.parse(this.responseText);
+        var names = obj.person.names[0];
+        e.innerHTML = names.given_name + " " + names.family_name;
+        if(parseInt(client_id) == parseInt(secondary_patient_id) || parseInt(secondary_patient_id) == 0) {
+          var cancelButton = document.getElementById('cancelButton');
+          cancelButton.innerHTML = '<span>Print active#</span>';
+          cancelButton.setAttribute('onmousedown','printID(' + primary_patient_id + ');');
+          cancelButton.setAttribute('class','button blue navButton');
+          cancelButton.style = 'display: inline;';
+          printID(primary_patient_id);
+        }
+
+        /* ........................................................ */
+        var clearButton = document.getElementById('clearButton');
+        if(parseInt(secondary_patient_id) > 0) {
+          clearButton.innerHTML = '<span>Print dormant#</span>';
+          clearButton.setAttribute('onmousedown','printID(' + secondary_patient_id + ');');
+        }else{
+          clearButton.style = 'display: none;';
+        }
+        /* ........................................................ */
+
+      }
+    }
+  };
+  xhttp.open("GET", url, true);
+  xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+  xhttp.setRequestHeader('Content-type', "application/json");
+  xhttp.send();
+
+}
+
+function printID(id) {
+  var url = "/patients/" + id + "/labels/filing_number"
+  url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1" + url;
+  document.location = url;
+}
+
+</script>
+
+<body id="mateme">
+<div id="container">
+    <div id="content">
+
+        <form>
+            <input type="text" name="summary"
+                   tt_onLoad="__$('keyboard').style.display = 'none'; addLayOut();"
+                   tt_pageStyleClass="NoControls" helpText="Filing number management" optional="true"/>
+
+        </form>
+
+    </div>
+</div>
+</body>
+

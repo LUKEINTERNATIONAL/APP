@@ -129,7 +129,7 @@ function buildResultTable() {
 
 function getOrders(tbody) {
 
-  var url = 'http://' + apiURL + ':' + apiPort + '/api/v1/programs/1/lab_tests/orders?patient_id=' + patientID;
+  var url = sessionStorage.apiProtocol+ '://' + apiURL + ':' + apiPort + '/api/v1/programs/1/lab_tests/orders?patient_id=' + patientID;
   var req = new XMLHttpRequest();
   req.onreadystatechange = function () {
 
@@ -370,7 +370,7 @@ window.onclick = function(event) {
 }
 
 function loadTests(string, checks){
-  var url = 'http://'+apiURL+':'+apiPort+'/api/v1/'+string;
+  var url = sessionStorage.apiProtocol+ '://'+apiURL+':'+apiPort+'/api/v1/'+string;
   var req = new XMLHttpRequest();
   req.onreadystatechange = function(){
     if (this.readyState == 4) {
@@ -421,7 +421,7 @@ function loadTests(string, checks){
 function loadLocations(string){
  document.getElementById("modal-next").style.visibility = "hidden";
 document.getElementById("modal-submit").style.visibility = "visible";
-  var url = 'http://'+apiURL+':'+apiPort+'/api/v1/locations?name='+string;
+  var url = sessionStorage.apiProtocol+ '://'+apiURL+':'+apiPort+'/api/v1/locations?name='+string;
   var req = new XMLHttpRequest();
   req.onreadystatechange = function(){
     if (this.readyState == 4) {
@@ -689,7 +689,7 @@ function setOrders(encounter) {
 function postOrders(test_type_id, encounter_id) {
   var date = new Date(orderDate.testDate);
   var http = new XMLHttpRequest();
-  var url = 'http://' + apiURL + ':' + apiPort + '/api/v1/programs/1/lab_tests/orders?patient_id=' + patientID;
+  var url = sessionStorage.apiProtocol+ '://' + apiURL + ':' + apiPort + '/api/v1/programs/1/lab_tests/orders?patient_id=' + patientID;
   var params = JSON.stringify({
     encounter_id: encounter_id,
     test_type_id: test_type_id,

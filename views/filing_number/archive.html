@@ -1,0 +1,282 @@
+<script type="text/javascript" src="/assets/js/jquery.min.js"></script>
+<script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js" defer="true"></script>
+<script type="text/javascript" src="/assets/js/moment.js"></script>
+<script type="text/javascript" src="/assets/js/alertifyjs/alertify.js"></script>
+<!--script type="text/javascript" src="/assets/js/does_connection_exist.js"></script-->
+<script type="text/javascript" src="/assets/js/post_parameters.js"></script>
+
+<link rel="stylesheet" href="/assets/css/alertifyjs/css/alertify.css" type="text/css">
+
+<style>
+#clearButton {
+  display: none;
+}
+
+.table-main {
+  display: table;
+  width: 100%;
+  border-spacing: 10px;
+}
+
+.table-main-row {
+  display: table-row;
+}
+
+.table-main-cell {
+  display: table-cell;
+  width: 25%;
+  border: 2px solid;
+  height: 175px;
+  box-shadow: 5px 10px #888888;
+  background-color: snow;
+}
+
+.filing-numbers {
+  color: green;
+  font-weight: bold;
+}
+
+.table-main-cell table {
+  width: 100%;
+}
+
+.table-main-cell th {
+  text-align: left;
+  width: 65px;
+}
+
+</style>
+
+<script>
+var tt_cancel_destination = "/views/patient_dashboard.html?patient_id=" + sessionStorage.patientID;
+var pageSize = 12;
+var pageNum = 0;
+
+function changeNextBTN() {
+  var nextButton = document.getElementById('nextButton');
+  nextButton.setAttribute('onmousedown', 'getNextBatch();');
+  nextButton.innerHTML = '<span>Next Batch</span>';
+}
+
+function getNextBatch() {
+  pageNum += 1;
+  addLayOut();
+}
+
+function addLayOut() {
+  var frame = document.getElementById('inputFrame' + tstCurrentPage);
+  frame.style = 'height: 90%; width: 96%;';
+  frame.innerHTML = null;
+
+  var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1";
+  url += '/archiving_candidates?page=' + pageNum;
+  url += '&page_size=' + pageSize;
+  
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 ) {
+      if ( (this.status == 201 || this.status == 200)) {
+        var obj = JSON.parse(this.responseText);
+        buildCubes(obj);
+      }
+    }
+  };
+  xhttp.open("GET", url, true);
+  xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+  xhttp.setRequestHeader('Content-type', "application/json");
+  xhttp.send();
+
+}
+
+function buildCubes(data) {
+  var frame = document.getElementById('inputFrame' + tstCurrentPage);
+  var table = document.createElement('div');
+  table.setAttribute('class','table-main');
+  frame.appendChild(table);
+
+  var row = document.createElement('div');
+  row.setAttribute('class','table-main-row');
+  table.appendChild(row);
+  var counter = 0;
+
+  for(var i = 0 ; i < data.length ; i++){
+    if(counter == 4){
+      counter = 0;
+      row = document.createElement('div');
+      row.setAttribute('class','table-main-row');
+      table.appendChild(row);
+    }
+
+    var cell = document.createElement('div');
+    cell.setAttribute('class','table-main-cell');
+    addData(cell, data[i]);
+    row.appendChild(cell);
+    counter++;
+
+  }
+
+
+}
+
+function addData(e, data) {
+  var table = document.createElement('table');
+  
+  var tr = document.createElement('tr');
+  var th = document.createElement('th');
+  var td = document.createElement('td');
+  th.innerHTML = 'Filing #:';
+  td.innerHTML = formatFilingNumber(data.identifier, activePrefix);
+  td.setAttribute('class','filing-numbers');
+  tr.appendChild(th);
+  tr.appendChild(td);
+  table.appendChild(tr);
+
+
+  tr = document.createElement('tr');
+  th = document.createElement('th');
+  td = document.createElement('td');
+  th.innerHTML = 'Name:';
+  td.innerHTML = data.given_name;
+  td.innerHTML += " " + data.family_name;
+  tr.appendChild(th);
+  tr.appendChild(td);
+  table.appendChild(tr);
+
+
+  tr = document.createElement('tr');
+  th = document.createElement('th');
+  td = document.createElement('td');
+  th.innerHTML = 'Outcome:';
+  var outcome = renderState(data.state);
+  td.innerHTML = outcome;
+  tr.appendChild(th);
+  tr.appendChild(td);
+  table.appendChild(tr);
+
+  if((!outcome.match(/died/i) && !outcome == 'TO') && data.appointment_date) {
+    tr = document.createElement('tr');
+    th = document.createElement('th');
+    td = document.createElement('td');
+    th.innerHTML = 'A.date:';
+    td.innerHTML = moment(data.appointment_date).format('DD/MMM/YYYY');
+    tr.appendChild(th);
+    tr.appendChild(td);
+    table.appendChild(tr);
+  }
+
+  e.appendChild(table);
+  e.setAttribute('onmousedown', "selectClent(" + data.patient_id + ",'" + data.identifier + "');");
+}
+
+function selectClent(id, identifier) {
+
+  tstMessageBar.innerHTML = "Are you sure you want to archive<p />";
+  tstMessageBar.innerHTML += formatFilingNumber(identifier, activePrefix);
+  tstMessageBar.innerHTML += "?<br /><br />";
+  
+  var noBTN = document.createElement('button');
+  noBTN.innerHTML = "<span>No</span>";
+  noBTN.setAttribute('class', 'button blue navButton');
+  noBTN.setAttribute('onmousedown','hideMessage();');
+  tstMessageBar.appendChild(noBTN);
+
+  var yesBTN = document.createElement('button');
+  yesBTN.innerHTML = "<span>Yes</span>";
+  yesBTN.setAttribute('class', 'button blue navButton');
+  yesBTN.setAttribute('onmousedown','hideMessage(); archivePatient(' + id + ',"' + identifier + '");');
+  tstMessageBar.appendChild(yesBTN);
+
+  tstMessageBar.style.display = "block";
+}
+
+function archivePatient(id, identifier) {
+  var href = window.location.href;
+  var url = new URL(href);
+  primary_patient_id  = url.searchParams.get("primary_patient_id");
+
+  var url = '/swap_active_number';
+
+  parameters = {
+    primary_patient_id: primary_patient_id,
+    secondary_patient_id: id,
+    identifier: identifier
+  }
+
+  console.log(url);
+  submitParameters(parameters, url, 'displayResults')
+}
+
+function displayResults(obj) {
+  console.log(obj);
+  var url2 = '/apps/ART/views/filing_number/filing_numbers.html';
+  url2 += '?primary_patient_id=' + obj.primary_patient_id;
+  url2 += '&secondary_patient_id=' + obj.secondary_patient_id;
+  url2 += '&new_identifier=' + obj.active_number;
+  url2 += '&old_identifier=' + obj.dormant_number;
+  document.location = url2;
+}
+
+var activePrefix;
+var dormantPrefix;
+
+function filingNumberPrefix() {
+  var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1";
+  url += '/global_properties?property=filing.number.prefix';
+
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 ) {
+      if (this.status == 201 || this.status == 200 ) {
+        var obj = JSON.parse(this.responseText);
+        var prefix = obj['filing.number.prefix'].split(',');
+        activePrefix = prefix[0];
+        dormantPrefix = prefix[1];
+        addLayOut();
+      }
+    }
+  };
+  xhttp.open("GET", url, true);
+  xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+  xhttp.setRequestHeader('Content-type', "application/json");
+  xhttp.send();
+
+}
+
+function formatFilingNumber(num, prefix) {
+  var str = num.replace(prefix,"");
+  var filing_number = str.substring(0,1) + " ";
+  filing_number += str.substring(1,4) + " "
+  filing_number += str.substring(4, str.length);
+  return filing_number;
+}
+
+function renderState(num) {
+  if(num == '2')
+    return 'TO'
+
+  if(num == '3')
+    return 'Died'
+
+  if(num == '6')
+    return 'Treatment stopped'
+
+  return num
+}
+
+</script>
+
+<body id="mateme">
+<div id="container">
+    <div id="content">
+
+        <form>
+            <input type="text" name="summary"
+                   tt_onLoad="__$('keyboard').style.display = 'none'; changeNextBTN();filingNumberPrefix();"
+                   tt_pageStyleClass="NoControls" helpText="Filing number (archive)" optional="true"/>
+
+        </form>
+
+    </div>
+</div>
+</body>
+

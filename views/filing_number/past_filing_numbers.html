@@ -1,0 +1,323 @@
+<script defer="true" src="/public/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js"
+        type="text/javascript"></script>
+
+<script src="/assets/js/jquery.min.js" type="text/javascript"></script>
+
+<script type="text/javascript" src="/assets/js/post_parameters.js"></script>
+<script type="text/javascript" src="/assets/js/generic_ajaxrequest.js"></script>
+<script type="text/javascript" src="/assets/js/alertifyjs/alertify.js"></script>
+<script type="text/javascript" src="/assets/js/does_connection_exist.js"></script>
+<script type="text/javascript" src="/assets/js/httpUtils.js"></script>
+
+<link rel="stylesheet" href="/assets/css/alertifyjs/css/alertify.css" type="text/css">
+
+<script src="/assets/js/moment.js"></script>
+<link rel="stylesheet" href="/assets/css/lab.min.css" type="text/css">
+
+<style>
+    #nextButton {
+        display: none;
+    }
+
+    #past-filing-numbers {
+        width: 100%;
+    }
+
+    #past-filing-numbers th {
+        background-color: teal;
+        color: white;
+        text-align: center;
+        line-height: 2em;
+    }
+
+    #past-filing-numbers tbody {
+        text-align: center;
+        line-height: 2em;
+        letter-spacing: 1px;
+    }
+
+    .actionbtn {
+        border: none;
+        color: white;
+        padding: 10px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        cursor: pointer;
+        border-radius: 8px;
+    }
+
+    .activate {
+        background-color: green;
+    }
+
+    .deactivate {
+        /* background-color: red; */
+    }
+</style>
+
+<script type="text/javascript">
+    var patient_id = sessionStorage.patientID;
+    var tt_cancel_destination = "/views/patient_dashboard.html?patient_id=" + patient_id;
+
+    function showPastfilingNumbers() {
+        html = "<table>";
+        html += "</html>";
+        jQuery("#keyboard").hide();
+        jQuery("#clearButton").hide();
+        jQuery("#cancelButton").hide();
+
+        jQuery(".inputFrameClass").css("width", "96%");
+        jQuery(".inputFrameClass").css("height", "80%");
+        jQuery(".inputFrameClass").css("overflow", "scroll");
+
+
+        finishButtonHtml = '<button class="button navButton green"  onmousedown="gotoPatientDashboard();"><span>Finish</span></button>'
+        finishButtonHtml2 = '<button class="button navButton blue" style="float: left" onmousedown="getActiveFileNumber();" id="get-active-number"><span>Get Active Number</span></button>'
+        jQuery("#buttons").append(finishButtonHtml);
+        jQuery("#buttons").append(finishButtonHtml2);
+
+        function ajaxRequest() {
+            var url = sessionStorage.apiProtocol+ '://' + apiURL + ':' + apiPort + '/api/v1/patients/' + sessionStorage.patientID;
+            var req = new XMLHttpRequest();
+            req.onreadystatechange = function () {
+                if (this.readyState == 4) {
+                    if (this.status == 200) {
+                        var results = JSON.parse(this.responseText);
+                        var file_number = getIdentifier(results["patient_identifiers"], 17);
+                        getPastFilingNumbers(file_number);
+                    }
+                }
+            };
+            try {
+                req.open('GET', url, true);
+                req.setRequestHeader('Authorization', sessionStorage.getItem('authorization'));
+                req.send(null);
+            } catch (e) {
+            }
+        }
+
+
+        function getIdentifier(identifiers, identifier_type) {
+            var identifier = [];
+            for (var index = 0; index < identifiers.length; index++) {
+                if (identifiers[index]["identifier_type"] == identifier_type) {
+                    identifier.push(identifiers[index]);
+                } else {
+                    identifier = [];
+                }
+            }
+            return identifier;
+        }
+
+
+
+
+        function getPastFilingNumbers(current_file_number) {
+            var past_filing_numbers_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+            past_filing_numbers_url += "/api/v1/patients/" + sessionStorage.patientID + "/past_filing_numbers";
+            var xhttp1 = new XMLHttpRequest();
+            xhttp1.onreadystatechange = function () {
+                if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                    var old_filing_numbers = JSON.parse(this.responseText);
+                    var past_filing_numbers = [];
+                    if (Object.keys(current_file_number).length > 0) {
+
+                        for (let index = 0; index < current_file_number.length; index++) {
+                            past_filing_numbers.push(current_file_number[index]);
+                        }
+
+                    }
+                    if (old_filing_numbers.length > 0) {
+
+                        for (var i = 0; i < old_filing_numbers.length; i++) {
+
+                            past_filing_numbers.push(old_filing_numbers[i]);
+
+                        }
+                    }
+                    var html = "<table id='past-filing-numbers'>";
+                    html += "<thead>";
+                    html += "<th>Status</th>";
+                    html += "<th>Filing #</th>";
+                    html += "<th>Date created</th>";
+                    html += "<th>Date voided</th>";
+                    html += "<th>Action</th>";
+                    html += "</thead>";
+                    html += "<tbody style='overflow: scroll;'>";
+                    var count = 1;
+                    for (var key in past_filing_numbers) {
+                        var identifier = past_filing_numbers[key]["identifier"];
+                        var date_created = past_filing_numbers[key]["date_created"];
+                        date_created = moment(date_created).format('DD/MMM/YYYY');
+                        var date_voided = past_filing_numbers[key]["date_voided"];
+                        date_voided = moment(date_voided).format('DD/MMM/YYYY');
+
+                        html += "<tr>";
+                        html += "<td>" + ((past_filing_numbers[key].voided == 1) ? "voided" : "active") + "</td>";
+                        html += "<td>" + identifier + "</td>";
+                        html += "<td>" + date_created + "</td>";
+                        html += "<td>" + ((past_filing_numbers[key].voided == 1) ? date_voided : "") + "</td>"
+                        if((past_filing_numbers[key].voided != 1)) {
+                            html += "<td class=deactivate></td>";
+                            // html += "<td><span id=" + past_filing_numbers[key].patient_identifier_id + " class='actionbtn " + ((past_filing_numbers[key].voided == 1) ? "activate' onclick='getActiveFileNumber();'>Activate" : "deactivate' onclick='archiveFileNumber(this);'>Archive") + "</span></td>";
+                            // html += "<td><span id=" + past_filing_numbers[key].patient_identifier_id + " class='actionbtn " + ((past_filing_numbers[key].voided == 1) ? "activate' onclick='getActiveFileNumber();'>Activate" : "deactivate' onclick='archiveFileNumber(this);'>Archive") + "</span></td>";
+                        }
+                        html += "</tr>";
+                        count = count + 1;
+                    }
+
+                    html += "</tbody>";
+                    html += "<table>";
+                    jQuery(".inputFrameClass").append(html);
+
+                    if (document.getElementsByClassName("deactivate").length > 0) {
+                        document.getElementById("get-active-number").style.display = "none";
+                    }
+                }
+            };
+
+            xhttp1.open("GET", past_filing_numbers_url, true);
+            xhttp1.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+            xhttp1.setRequestHeader('Content-type', "application/json");
+            xhttp1.send();
+        }
+
+        ajaxRequest();
+    }
+
+
+    function gotoPatientDashboard() {
+        window.location = "/views/patient_dashboard.html?patient_id=" + sessionStorage.patientID;
+    }
+
+    function archiveFileNumber(identifier) {
+
+        showPrompt({
+            message: "Are you sure want to archive this file number ?",
+            yesCallback: function yesCallback() {
+
+                removePrompt();
+                var patientId = sessionStorage.patientID;
+                var apiUrl = apiProtocol + "://" + apiURL + ":" + apiPort + '/api/v1/archive_active_filing_number?patient_id=' + sessionStorage.patientID;
+                var xhttp = new XMLHttpRequest();
+                xhttp.onreadystatechange = function () {
+                    if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+
+                        showMessage("successfully archived")
+                        setTimeout(location.reload(), 4000);
+                    }
+                };
+                xhttp.open("GET", apiUrl, true);
+                xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                xhttp.setRequestHeader('Content-type', "application/json");
+                xhttp.send();
+            },
+            noCallback: removePrompt
+        });
+
+    }
+    function createScreenOverlay() {
+        var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+        var overlay = document.createElement('div');
+        overlay.setAttribute('id', 'dankOverlay');
+        overlay.style = 'background-color: ' +
+            options.color + ';\nopacity: ' +
+            options.opacity + ';position: fixed;width: 100%;height: 100%;top: 0;bottom: 0;left: 0;right: 0;z-index: 9000;';
+        return overlay;
+    }
+
+    function createToolkitButton() {
+        var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+        var button = document.createElement('button');
+        button.innerHTML += '<span>' + options.text + '</span>';
+
+        if (options.attributes) {
+            options.attributes.forEach(function (attribute) {
+                button.setAttribute(attribute.name, attribute.value);
+            });
+        }
+
+        if (options.listeners) {
+            options.listeners.forEach(function (listener) {
+                button.addEventListener(listener.event, listener.handler);
+            });
+        }
+
+        if (options.style) {
+            button.style = options.style;
+        }
+
+        return button;
+    }
+
+    function removePrompt() {
+        document.body.removeChild(document.getElementById('dankOverlay'))
+        document.body.removeChild(document.getElementById('dankPrompt'))
+    }
+
+    function getActiveFileNumber() {
+        var url = '/apps/ART/views/filing_number/filing_number_management.html?patient_id=' + sessionStorage.patientID;
+        document.location = url;
+    }
+
+    function showPrompt() {
+        var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+        var prompt = document.createElement('div');
+        prompt.setAttribute('id', 'dankPrompt');
+        prompt.style =
+            'background-color: white;font-size: 1.5em;font-family: Ubuntu;position: fixed;width: 50%;height: auto;top: 25%;left: 25%;padding: 2%;' +
+            'border-radius: 4px;z-index: 9000;';
+
+        var promptMessage = document.createElement('h3');
+        promptMessage.innerText = options.message;
+        promptMessage.innerHTML += '<hr />';
+        prompt.appendChild(promptMessage);
+
+        prompt.appendChild(createToolkitButton({
+            text: 'Yes',
+            listeners: [{
+                event: 'click',
+                handler: options.yesCallback
+            }],
+            style: 'color: white; float: left'
+        }));
+
+        prompt.appendChild(createToolkitButton({
+            text: 'No',
+            listeners: [{
+                event: 'click',
+                handler: options.noCallback
+            }],
+            style: 'color: white; float: right'
+        }));
+
+        document.body.appendChild(createScreenOverlay({
+            color: 'black',
+            opacity: .8
+        }));
+        document.body.appendChild(prompt);
+    }
+</script>
+
+<body id="mateme">
+<div id="container">
+    <div id="content">
+        <form>
+
+            <input type="text" name="summary"
+                   tt_onLoad="showPastfilingNumbers();"
+                   tt_pageStyleClass="NoControls" helpText="Filing Number Trail" optional="true"/>
+
+
+        </form>
+
+    </div>
+</div>
+</body>
+

@@ -223,7 +223,9 @@ body {
 
 var print_pdf_attr = {};
 
-function drillDown(indicator) {
+function drillDown(indicator, report_name, quarter) {
+    indicator = indicator.split(",");
+    window.location = "/apps/ART/views/cohort_tool/driller/driller.html?resource_id=" + indicator[0] + "&report_name=" + indicator[1]+ "&quarter=" + Quarter;
 }
 
 
@@ -2808,10 +2810,6 @@ function showDisaggregatedReport(){
         <button id="tasks" class="btn btn-success buttons blue" style="margin-right: 5px;"  onmousedown="showDisaggregatedReport();">
             <span>&nbsp; Disaggregated report &nbsp;</span>
         </button>
-        <button id="btnNext" class="green right" style="margin: 5px 10px 0px; padding: 0px; float: right;" 
-          onclick="viewRawData();">
-            <span>&nbsp; Raw data &nbsp;</span>
-        </button>
         <button id="btnNext" class="red right" style="margin: 5px 0px 0px; padding: 0px; float: left;" onmousedown="regenerateReport();">
             <span>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Regenerate &nbsp; &nbsp;&nbsp;</span>
         </button>
@@ -2827,12 +2825,6 @@ function showDisaggregatedReport(){
 <div id="report-cover"></div>
 
 <script type="text/javascript">
-
-function viewRawData() {
-  var url = window.location.href;
-  sessionStorage.cohort_url = url; 
-  location = 'raw_data.html';
-}
 
 function validateReport() {  
   
@@ -3449,6 +3441,7 @@ function getIndicators() {
     return;
 
   document.getElementById('spinner').style = 'display: inline;';
+
   document.getElementById('report-cover').style = 'display: inline;';
   
   var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1/programs/1/reports/cohort?name=";
@@ -3502,6 +3495,7 @@ function renderResults() {
     
     try{
       indicator = document.getElementById(id);
+      indicator.setAttribute('href', `javascript:drillDown('${cohortValues[i].id}, ${cohortValues[i].name}');`);
       indicator.innerHTML = cohortValues[i].contents;
       print_pdf_attr[id] = cohortValues[i].contents;
     }catch(e){
