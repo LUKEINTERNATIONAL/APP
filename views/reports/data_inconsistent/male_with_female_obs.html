@@ -276,7 +276,7 @@
         lookForTag()
   }
 
-    function getUrlParameterByName(name, url) {
+  function getUrlParameterByName(name, url) {
 
       if (!url) url = window.location.href;
       name = name.replace(/[\[\]]/g, '\\$&');
@@ -285,7 +285,7 @@
       if (!results) return null;
       if (!results[2]) return '';
       return decodeURIComponent(results[2].replace(/\+/g, ' '));
-    }
+  }
 
   function getMaleFemale() {
     var apiProtocol = sessionStorage.apiProtocol;
@@ -294,7 +294,7 @@
     var start_date = getUrlParameterByName('start_date',window.location.href);
     var end_date = getUrlParameterByName('end_date',window.location.href);
     
-    var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1/art_data_cleaning_tools?start_date=" + start_date + "&end_date=" + end_date + "&program_id=1&report_name=MISSING START REASONS";
+    var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1/art_data_cleaning_tools?start_date=" + start_date + "&end_date=" + end_date + "&program_id=1&report_name=MALE CLIENTS WITH FEMALE OBS";
       var xhttp = new XMLHttpRequest();
       xhttp.onreadystatechange = function () {
         if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
