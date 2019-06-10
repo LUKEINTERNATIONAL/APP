@@ -203,6 +203,90 @@
 
     }
 
+    #summary {
+        top: 60px;
+        overflow: auto;
+        height: 450px ! important;
+    }
+
+    .remove {
+        margin-left: 58px;
+        padding: 6px;
+    }
+
+    .img-holder {
+        background: white;
+    }
+
+    .scell {
+        height: 35px;
+        font-size: 20px;
+        border-bottom: 0.4px solid gray;
+        border-right: 0.4px solid gray;
+        border-radius: 4px;
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    .drug-label {
+        min-width: 25%;
+        text-align: left;
+        padding-left: 2%;
+        overflow-X: hidden;
+    }
+
+    .drug-value {
+        min-width: 25%;
+        cursor: pointer;
+    }
+
+    .hvalue {
+        border: hidden;
+        background: white;
+        font-size: 22px;
+        font-family: sans-serif;
+        font-weight: bold;
+        cursor: auto;
+        color: gray;
+        text-align: left;
+        padding-left: 9px;
+        text-shadow: 1px 1px black;
+        vertical-align: middle;
+    }
+
+    #small {
+        font-size: 19px;
+        margin-left: 15px;
+    }
+
+    .bar {
+        left: 31%;
+        width: 450px;
+        position: absolute;
+        top: 23%;
+        font-size: 1.9em;
+        text-align: center;
+        background-color: tomato;
+        padding: 10px;
+        z-index: 999;
+        border: 5px outset tomato;
+        display: none;
+        border-radius: 15px;
+    }
+
+    .bar button {
+        font-size: 0.7em;
+        margin: 5px;
+    }
+
+    .barcode {
+        position: absolute;
+        left: 26%;
+        width: 5%;
+        top: 24%;
+        width: 100px;
+    }
+
 </style>
 
 <script type="text/javascript">
@@ -328,7 +412,7 @@
     function showStocVerification() {
         html = "<table>";
         html += "</html>";
-        jQuery("#nextButton").hide();
+        //jQuery("#nextButton").hide();
         jQuery("#keyboard").hide();
         jQuery("#clearButton").hide();
         //jQuery("#cancelButton").hide();
@@ -337,8 +421,8 @@
         jQuery(".inputFrameClass").css("height", "86%");
         jQuery(".inputFrameClass").css("overflow-x", "auto");
 
-        finishButtonHtml = '<button class="button navButton green"  onmousedown="gotoHome();"><span>Next</span></button>'
-        jQuery("#buttons").append(finishButtonHtml);
+        //finishButtonHtml = '<button class="button navButton green"  onmousedown="gotoHome();"><span>Next</span></button>'
+        //jQuery("#buttons").append(finishButtonHtml);
 
         var xhttp1 = new XMLHttpRequest();
 
@@ -378,7 +462,7 @@
         jQuery("div").removeClass("active");
         jQuery(obj).addClass("active");
         var drugID = obj.getAttribute("drug_id");
-
+        selected_drug_id = drugID;
         var stock_url = apiProtocol + "://" + apiURL + ":" + apiPort;
         stock_url += "/api/v1/pharmacy/items?drug_id=" + drugID;
 
@@ -395,15 +479,26 @@
                 rightData += "<tbody>";
 
                 for (var key in previous_stock_data) {
-                    console.log(previous_stock_data[key]);
                     var current_quantity = previous_stock_data[key]["current_quantity"];
                     var delivery_date = previous_stock_data[key]["delivery_date"];
                     var pharmacy_batch_item_id = previous_stock_data[key]["id"];
                     var current_quantity_id = "current-quantity-" + pharmacy_batch_item_id;
-
                     rightData += "<tr>";
                     rightData += "<td>" + delivery_date + "</td>";
-                    rightData += "<td id='" + current_quantity_id + "'>" + current_quantity + "</td>";
+
+                    var verifiedQuantity;
+                    try {
+                        verifiedQuantity = verifiedData[selected_drug_id][pharmacy_batch_item_id];
+                    } catch (e) {
+
+                    }
+
+                    if (verifiedQuantity) {
+                        rightData += "<td style='color: green; font-weight: bold;' id='" + verifiedQuantity + "'>" + verifiedQuantity + "</td>"
+                    } else {
+                        rightData += "<td id='" + current_quantity_id + "'>" + current_quantity + "</td>";
+                    }
+
                     rightData += "<td pharmacy_batch_item_id='" + pharmacy_batch_item_id + "' onclick='enterTins(this)'><span class='update-stock-button'>Update stock</span></td>";
                     rightData += "</tr>";
                 }
@@ -485,8 +580,10 @@
         }
 
         e.appendChild(table);
-
     }
+
+    var selected_drug_id;
+    var verifiedData = {};
 
     function enterKeypadValue(e) {
         var inputBox = document.getElementById('tins');
@@ -494,7 +591,7 @@
             inputBox.value = inputBox.value.substring(0, inputBox.value.length - 1);
         } else if (e.innerHTML.match(/Clear/i)) {
             inputBox.value = null;
-            removeFromHash();
+            //removeFromHash();
         } else if (e.innerHTML.match(/Done/i)) {
             closePopUp();
         } else {
@@ -507,6 +604,10 @@
     function closePopUp() {
         var inputBox = document.getElementById('tins');
         if (isNumeric(inputBox.value)) {
+            if (!verifiedData[selected_drug_id]) {
+                verifiedData[selected_drug_id] = {}
+            }
+            verifiedData[selected_drug_id][selected_pharmacy_batch_item_id] = inputBox.value;
             var html = "<span style='color: green; font-weight: bold;'>" + inputBox.value + "</span>";
             jQuery("#current-quantity-" + selected_pharmacy_batch_item_id).html(html)
 
@@ -519,6 +620,95 @@
         return !isNaN(parseFloat(n)) && isFinite(n);
     }
 
+    function showSummary() {
+        //touchscreenInput1
+        __$("inputFrame" + tstCurrentPage).style.background = "rgba(235, 240, 240, 0.3)";
+        jQuery("#touchscreenInput" + tstCurrentPage).hide();
+        var ii = 2;
+        var header = document.createElement("div");
+        header.id = 'heada';
+        header.style.display = "table";
+        header.style.width = "100%";
+
+        var r = document.createElement("div");
+        r.style.display = "table-row";
+        header.appendChild(r);
+        var label = document.createElement("div");
+        label.className = "drug-label scell hvalue";
+        label.style.display = "table-cell";
+        label.innerHTML = "Drug";
+        r.appendChild(label);
+
+        var label = document.createElement("div");
+        label.className = "drug-value scell hvalue";
+        label.style.display = "table-cell";
+        label.innerHTML = "Total units";
+        r.appendChild(label);
+
+        var label = document.createElement("div");
+        label.className = "drug-value scell hvalue";
+        label.style.display = "table-cell";
+        label.innerHTML = "Date of Expiry";
+        r.appendChild(label);
+
+
+        var label = document.createElement("div");
+        label.className = "drug-value scell hvalue";
+        label.style.display = "table-cell";
+        label.innerHTML = "Authorisation code";
+        r.appendChild(label);
+
+        __$("inputFrame" + tstCurrentPage).appendChild(header);
+
+
+        var table = document.createElement("div");
+        table.id = "summary";
+        table.style.display = "table";
+        table.style.width = "100%";
+
+        var div = document.createElement("div");
+        div.style.height = "530px";
+        div.style.paddingTOp = "10px";
+        div.style.marginTop = "10px";
+        div.style.overflowY = "auto";
+        div.style.width = "100%";
+        div.appendChild(table);
+
+        __$("inputFrame" + tstCurrentPage).appendChild(div);
+
+        var row = document.createElement("div");
+        row.style.display = "table-row";
+        row.style.background = (ii % 2 == 0) ? "rgb(240, 240, 250)" : "white";
+        table.appendChild(row);
+
+        var label = document.createElement("div");
+        label.className = "drug-label scell";
+        label.style.display = "table-cell";
+        label.innerHTML = "Test Drug";
+        row.appendChild(label);
+
+        var amount = document.createElement("div");
+        amount.className = "drug-value scell editable";
+        amount.style.display = "table-cell";
+        amount.innerHTML = "20";
+        row.appendChild(amount);
+
+
+        var expire_amount = document.createElement("div");
+        expire_amount.style.display = "table-cell";
+        expire_amount.className = "drug-value scell editable";
+        expire_amount.innerHTML = "20";
+        row.appendChild(expire_amount);
+
+        var expire_amount = document.createElement("div");
+        expire_amount.style.display = "table-cell";
+        expire_amount.className = "drug-value scell editable";
+        expire_amount.innerHTML = "20";
+        row.appendChild(expire_amount);
+
+        __$("heada").style.width = (table.offsetWidth) + "px";
+        r.style.width = (table.offsetWidth) + "px";
+    }
 </script>
 
 <body id="mateme">
@@ -530,6 +720,10 @@
                    tt_onLoad="showStocVerification();"
                    tt_pageStyleClass="NoControls" helpText="Stock Verification" optional="true"/>
 
+            <input helpText="<span style='color: red;background: white;'>Summary </span>"
+                   id="summary" name="showSummary" optional="true"
+                   tt_onLoad="showSummary();"
+                   tt_pageStyleClass="NoKeyboard" type="text"/>
 
         </form>
 
