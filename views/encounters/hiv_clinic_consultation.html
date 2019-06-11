@@ -2478,6 +2478,7 @@
                 jQuery("#inputFrame" + tstCurrentPage).hide();
 
                 var family_planning_method_concept_id = 374;
+                var family_planning_method_to_take_concept_id = 1618;
                 var tubal_ligation_value_coded = 1719;
                 var refer_to_art_clinician_concept_id = 6969;
 
@@ -2485,7 +2486,11 @@
                 tubal_ligation_url += "/api/v1/observations?person_id=" + sessionStorage.patientID;
                 tubal_ligation_url += "&concept_id=" + family_planning_method_concept_id;
                 tubal_ligation_url += "&value_coded=" + tubal_ligation_value_coded;
-
+                
+                var current_tubal_ligation_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+                current_tubal_ligation_url += "/api/v1/observations?person_id=" + sessionStorage.patientID;
+                current_tubal_ligation_url += "&concept_id=" + family_planning_method_to_take_concept_id;
+                current_tubal_ligation_url += "&value_coded=" + tubal_ligation_value_coded;
 
 
                 var refer_to_clinician_url = apiProtocol + "://" + apiURL + ":" + apiPort;
@@ -2499,6 +2504,20 @@
                         var tubal_ligation_observations = JSON.parse(this.responseText);
                         if (tubal_ligation_observations.length > 0) {
                             tubal_ligation = true;
+                        }else {
+                            var xhttp4 = new XMLHttpRequest();
+                            xhttp4.onreadystatechange = function () {
+                            if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {           
+                                var tubal_ligation_observations = JSON.parse(this.responseText);
+                                    if (tubal_ligation_observations.length > 0) {
+                                        tubal_ligation = true;
+                                    }       
+                                }
+                            }
+                            xhttp4.open("GET", current_tubal_ligation_url, true);
+                            xhttp4.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                            xhttp4.setRequestHeader('Content-type', "application/json");
+                            xhttp4.send();
                         }
 
                         var user_roles_url = apiProtocol + "://" + apiURL + ":" + apiPort;
@@ -2606,7 +2625,7 @@
 
 
             <input type="text" name="pregnant-breastfeeding-questions"
-                   condition="sessionStorage.showPregnantQuestion === 'true'&& sessionStorage.patientGender === 'F' && parseInt(sessionStorage.patientAge) >= 9 && parseInt(sessionStorage.patientAge) <= 55"
+                   condition="sessionStorage.showPregnantQuestion === 'true'&& sessionStorage.patientGender === 'F' && parseInt(sessionStorage.patientAge) >= 9 && parseInt(sessionStorage.patientAge) <= 55 && tubal_ligation == false"
                    validationCode="checkPregnancyAndAge() == 'false'"
                    validationMessage="Patient is 25 years old. Is she pregnant / Breastfeeding?"
                    tt_onLoad="__$('keyboard').style.display = 'none';addPregBreastFeedingYesNo(); showCategory2('Clinic consultation');"
