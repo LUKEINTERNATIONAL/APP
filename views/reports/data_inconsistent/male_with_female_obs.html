@@ -153,8 +153,7 @@
           <tr>     
           <th>ARV number</th>
           <th>Name</th>
-          <th>Earliest start date</th>
-          <th>Date enrolled</th>
+          <th>Patient Id</th>
           <th>Gender</th>
           <th>Birth Date</th>
           <th>Action</th>
@@ -208,20 +207,16 @@
         table.appendChild(tr);
 
         var td = document.createElement("td");
-        td.innerHTML = obj[index].identifier;
+        td.innerHTML = obj[index].arv_number;
         tr.appendChild(td);
 
         var td = document.createElement("td");
         td.style.textAlign = 'left'
-        td.innerHTML = obj[index].name;
+        td.innerHTML = obj[index].given_name + " " + obj[index].family_name;
         tr.appendChild(td); 
 
         var td = document.createElement("td");
-        td.innerHTML = obj[index].earliest_start_date;
-        tr.appendChild(td);
-
-        var td = document.createElement("td");
-        td.innerHTML = obj[index].date_enrolled;
+        td.innerHTML = obj[index].patient_id;
         tr.appendChild(td);
 
         var td = document.createElement("td");
