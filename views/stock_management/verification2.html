@@ -493,6 +493,7 @@
 
         var drugShortName = drugs[drugID]["short_name"];
         var packSize = drug_cms_packsizes[drugShortName];
+        selected_pack_size = packSize;
 
         var xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function () {
@@ -508,7 +509,7 @@
 
                 for (var key in previous_stock_data) {
                     var current_quantity = previous_stock_data[key]["current_quantity"];
-                    current_quantity =  parseFloat(current_quantity)/packSize;
+                    current_quantity = parseFloat(current_quantity) / packSize;
                     var delivery_date = previous_stock_data[key]["delivery_date"];
                     var expiry_date = previous_stock_data[key]["expiry_date"];
                     var pharmacy_batch_item_id = previous_stock_data[key]["id"];
@@ -551,6 +552,7 @@
 
     var selected_pharmacy_batch_item_id;
     var selected_expiry_date;
+    var selected_pack_size;
 
     function enterTins(obj) {
         jQuery("#confirmatory-test-cover").show();
@@ -645,8 +647,11 @@
             updated_data.push({
                 drug_id: selected_drug_id,
                 expiry_date: selected_expiry_date,
-                tins: inputBox.value
+                pack_size: selected_pack_size,
+                tins: inputBox.value,
+                pharmacy_batch_item_id: selected_pharmacy_batch_item_id
             });
+
             var html = "<span style='color: green; font-weight: bold;'>" + inputBox.value + "</span>";
             jQuery("#current-quantity-" + selected_pharmacy_batch_item_id).html(html)
 
@@ -742,6 +747,39 @@
         __$("heada").style.width = (table.offsetWidth) + "px";
         r.style.width = (table.offsetWidth) + "px";
     }
+
+    function customizeFinishButton() {
+        __$("nextButton").innerHTML = "<span>Save</span>";
+        __$("nextButton").onmousedown = function () {
+
+            if (updated_data.length == 0) {
+                return
+            }
+            for (var i = 0; i <= updated_data.length - 1; i++) {
+                var pharmacyBatchItemID = updated_data[i]["pharmacy_batch_item_id"];
+                var pack_size = updated_data[i]["pack_size"];
+                var tins = parseFloat(updated_data[i]["tins"]);
+                var current_quantity = tins * pack_size;
+                var verification_url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1/pharmacy/items/" + pharmacyBatchItemID;
+                var data = {
+                    "current_quantity": current_quantity,
+                };
+
+                var xhttp = new XMLHttpRequest();
+                xhttp.onreadystatechange = function () {
+                    if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                        var response = JSON.parse(this.responseText);
+                    }
+                };
+                xhttp.open("PUT", verification_url, true);
+                xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+                xhttp.setRequestHeader('Content-type', "application/json");
+                xhttp.send(JSON.stringify(data));
+            }
+
+            window.location = "/";
+        }
+    }
 </script>
 
 <body id="mateme">
@@ -755,7 +793,7 @@
 
             <input helpText="<span style='color: red;background: white;'>Summary </span>"
                    id="summary" name="showSummary" optional="true"
-                   tt_onLoad="showSummary();"
+                   tt_onLoad="showSummary(); customizeFinishButton();"
                    tt_pageStyleClass="NoKeyboard" type="text"/>
 
         </form>
