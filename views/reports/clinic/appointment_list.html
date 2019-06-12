@@ -135,7 +135,9 @@ function initDataTable() {
 
 function getList(sdate) {
   var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1";
-  url += "/booked_appointments?date=" + sdate + "&program_id=" + sessionStorage.programID;
+  url += "/programs/" + sessionStorage.programID;
+  url += "/booked_appointments?date=" + sdate;
+  url += "&paginate=false"; 
 
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {

@@ -505,9 +505,10 @@ function getAppointMents(date) {
   highlighDates(date);
   
   var url = apiProtocol + "://" + apiURL + ":" + apiPort;
-  url += "/api/v1/appointments?date="+date.getAttribute("date");
-  url += "&paginate=false&program_id=" + sessionStorage.programID;
-  
+  url += "/api/v1/programs/" + sessionStorage.programID;
+  url += "/booked_appointments?date=" + date.getAttribute("date");
+  url += "&paginate=false";
+ 
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
     if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
