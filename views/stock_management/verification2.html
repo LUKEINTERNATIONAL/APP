@@ -206,7 +206,7 @@
     #summary {
         top: 60px;
         overflow: auto;
-        height: 450px ! important;
+        /*height: 450px ! important*/;
     }
 
     .remove {
@@ -408,6 +408,33 @@
         }
     }
 
+    var drug_cms_packsizes = {
+        "Cotrimoxazole (960mg)": 1000,
+        "Cotrimoxazole (480mg tablet)": 1000,
+        "INH or H (Isoniazid 100mg tablet)": 100,
+        "LPV/r (Lopinavir and Ritonavir 100/25mg tablet)": 60,
+        "TMP/SMX (Cotrimoxazole 120mg tablet)": 1000,
+        "AZT/3TC/NVP (300/150/200mg tablet)": 60,
+        "LPV/r (Lopinavir and Ritonavir 200/50mg tablet)": 120,
+        "AZT/3TC (Zidovudine and Lamivudine 300/150mg)": 60,
+        "EFV (Efavirenz 600mg tablet)": 30,
+        "TDF/3TC/EFV (300/300/600mg tablet)": 30,
+        "TDF/3TC (Tenofavir and Lamivudine 300/300mg tablet": 30,
+        "ABC/3TC (Abacavir and Lamivudine 600/300mg tablet)": 30,
+        "NVP (Nevirapine 50 mg tablet)": 60,
+        "INH or H (Isoniazid 300mg tablet)": 1000,
+        "NVP (Nevirapine syrup 1.5mL/dose in 25mL bottle)": 25,
+        "NVP (Nevirapine syrup 1mL/dose in 100mL bottle)": 100,
+        "ATV/r (Atazanavir 300mg/Ritonavir 100mg)": 30,
+        "AZT/3TC/NVP (60/30/50mg tablet)": 60,
+        "AZT/3TC (Zidovudine and Lamivudine 60/30 tablet)": 60,
+        "d4T/3TC/NVP (30/150/200mg tablet)": 60,
+        "EFV (Efavirenz 200mg tablet)": 90,
+        "NVP (Nevirapine 200 mg tablet)": 60,
+        "d4T/3TC (Stavudine Lamivudine 30/150 tablet)": 60,
+        "ABC/3TC (Abacavir and Lamivudine 60/30mg tablet)": 60,
+        "Pyridoxine (50mg)": 1000
+    };
 
     function showStocVerification() {
         html = "<table>";
@@ -454,8 +481,6 @@
         }
 
         jQuery(".left-div").append(leftData);
-
-
     }
 
     function showAllDrugStock(obj) {
@@ -465,6 +490,9 @@
         selected_drug_id = drugID;
         var stock_url = apiProtocol + "://" + apiURL + ":" + apiPort;
         stock_url += "/api/v1/pharmacy/items?drug_id=" + drugID;
+
+        var drugShortName = drugs[drugID]["short_name"];
+        var packSize = drug_cms_packsizes[drugShortName];
 
         var xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function () {
@@ -480,7 +508,9 @@
 
                 for (var key in previous_stock_data) {
                     var current_quantity = previous_stock_data[key]["current_quantity"];
+                    current_quantity =  parseFloat(current_quantity)/packSize;
                     var delivery_date = previous_stock_data[key]["delivery_date"];
+                    var expiry_date = previous_stock_data[key]["expiry_date"];
                     var pharmacy_batch_item_id = previous_stock_data[key]["id"];
                     var current_quantity_id = "current-quantity-" + pharmacy_batch_item_id;
                     rightData += "<tr>";
@@ -499,7 +529,7 @@
                         rightData += "<td id='" + current_quantity_id + "'>" + current_quantity + "</td>";
                     }
 
-                    rightData += "<td pharmacy_batch_item_id='" + pharmacy_batch_item_id + "' onclick='enterTins(this)'><span class='update-stock-button'>Update stock</span></td>";
+                    rightData += "<td expiry_date='" + expiry_date + "' pharmacy_batch_item_id='" + pharmacy_batch_item_id + "' onclick='enterTins(this)'><span class='update-stock-button'>Update stock</span></td>";
                     rightData += "</tr>";
                 }
                 rightData += "</tbody>";
@@ -520,11 +550,13 @@
     }
 
     var selected_pharmacy_batch_item_id;
+    var selected_expiry_date;
 
     function enterTins(obj) {
         jQuery("#confirmatory-test-cover").show();
         var pharmacy_batch_item_id = obj.getAttribute("pharmacy_batch_item_id");
-        selected_pharmacy_batch_item_id = pharmacy_batch_item_id
+        selected_expiry_date = obj.getAttribute("expiry_date");
+        selected_pharmacy_batch_item_id = pharmacy_batch_item_id;
         var popUpBox = document.getElementById('confirmatory-test-popup-div');
         popUpBox.style = 'display: inline';
         popUpBox.innerHTML = null;
@@ -601,6 +633,8 @@
     }
 
 
+    var updated_data = [];
+
     function closePopUp() {
         var inputBox = document.getElementById('tins');
         if (isNumeric(inputBox.value)) {
@@ -608,6 +642,11 @@
                 verifiedData[selected_drug_id] = {}
             }
             verifiedData[selected_drug_id][selected_pharmacy_batch_item_id] = inputBox.value;
+            updated_data.push({
+                drug_id: selected_drug_id,
+                expiry_date: selected_expiry_date,
+                tins: inputBox.value
+            });
             var html = "<span style='color: green; font-weight: bold;'>" + inputBox.value + "</span>";
             jQuery("#current-quantity-" + selected_pharmacy_batch_item_id).html(html)
 
@@ -650,13 +689,6 @@
         label.innerHTML = "Date of Expiry";
         r.appendChild(label);
 
-
-        var label = document.createElement("div");
-        label.className = "drug-value scell hvalue";
-        label.style.display = "table-cell";
-        label.innerHTML = "Authorisation code";
-        r.appendChild(label);
-
         __$("inputFrame" + tstCurrentPage).appendChild(header);
 
 
@@ -675,35 +707,37 @@
 
         __$("inputFrame" + tstCurrentPage).appendChild(div);
 
-        var row = document.createElement("div");
-        row.style.display = "table-row";
-        row.style.background = (ii % 2 == 0) ? "rgb(240, 240, 250)" : "white";
-        table.appendChild(row);
+        for (var i = 0; i <= updated_data.length - 1; i++) {
+            var drugID = updated_data[i]["drug_id"];
+            var drugShortName = drugs[drugID]["short_name"];
+            //var drugFullName = drugs[drugID]["full_name"];
 
-        var label = document.createElement("div");
-        label.className = "drug-label scell";
-        label.style.display = "table-cell";
-        label.innerHTML = "Test Drug";
-        row.appendChild(label);
+            var expiry_date = updated_data[i]["expiry_date"];
+            var tins = updated_data[i]["tins"];
 
-        var amount = document.createElement("div");
-        amount.className = "drug-value scell editable";
-        amount.style.display = "table-cell";
-        amount.innerHTML = "20";
-        row.appendChild(amount);
+            var row = document.createElement("div");
+            row.style.display = "table-row";
+            row.style.background = (ii % 2 == 0) ? "rgb(240, 240, 250)" : "white";
+            table.appendChild(row);
 
+            var label = document.createElement("div");
+            label.className = "drug-label scell";
+            label.style.display = "table-cell";
+            label.innerHTML = drugShortName;
+            row.appendChild(label);
 
-        var expire_amount = document.createElement("div");
-        expire_amount.style.display = "table-cell";
-        expire_amount.className = "drug-value scell editable";
-        expire_amount.innerHTML = "20";
-        row.appendChild(expire_amount);
+            var label = document.createElement("div");
+            label.className = "drug-value scell editable";
+            label.style.display = "table-cell";
+            label.innerHTML = tins;
+            row.appendChild(label);
 
-        var expire_amount = document.createElement("div");
-        expire_amount.style.display = "table-cell";
-        expire_amount.className = "drug-value scell editable";
-        expire_amount.innerHTML = "20";
-        row.appendChild(expire_amount);
+            var label = document.createElement("div");
+            label.style.display = "table-cell";
+            label.className = "drug-value scell editable";
+            label.innerHTML = expiry_date;
+            row.appendChild(label);
+        }
 
         __$("heada").style.width = (table.offsetWidth) + "px";
         r.style.width = (table.offsetWidth) + "px";
