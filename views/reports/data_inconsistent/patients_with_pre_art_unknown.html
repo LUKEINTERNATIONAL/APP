@@ -153,13 +153,12 @@
       <table id="patients_with_pre_art_unknown" class="table table-incomplete-visits" style="width:100%">
         <thead>  
           <tr>     
-          <th>ARV number</th>
-          <th>Name</th>
-          <th>Earliest start date</th>
-          <th>Date enrolled</th>
-          <th>Gender</th>
-          <th>Birth Date</th>
-          <th>Action</th>
+            <th>ARV number</th>
+            <th>Name</th>
+            <th>Patient Id</th>
+            <th>Gender</th>
+            <th>Birth Date</th>
+            <th>Action</th>
          </tr>
         </thead>
 
@@ -218,20 +217,16 @@
         table.appendChild(tr);
 
         var td = document.createElement("td");
-        td.innerHTML = obj[index].identifier;
+        td.innerHTML = obj[index].arv_number;
         tr.appendChild(td);
 
         var td = document.createElement("td");
         td.style.textAlign = 'left'
-        td.innerHTML = obj[index].name;
+        td.innerHTML = obj[index].given_name + " " + obj[index].family_name;
         tr.appendChild(td); 
 
         var td = document.createElement("td");
-        td.innerHTML = obj[index].earliest_start_date;
-        tr.appendChild(td);
-
-        var td = document.createElement("td");
-        td.innerHTML = obj[index].date_enrolled;
+        td.innerHTML = obj[index].patient_id;
         tr.appendChild(td);
 
         var td = document.createElement("td");
@@ -246,8 +241,8 @@
         tr.appendChild(td);
         
         var btn = document.createElement('button');
-        btn.innerHTML = '<span>View</span>';
-        btn.setAttribute('class', 'button blue navButton1');
+        btn.innerHTML = '<span>Views</span>';
+        btn.setAttribute('class', 'button blue navButton');
         btn.setAttribute('onclick', "redirectToMastercard('"+obj[index].patient_id+"')");
         td.appendChild(btn);
     }
