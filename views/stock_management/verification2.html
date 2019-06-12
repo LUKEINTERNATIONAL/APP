@@ -753,8 +753,10 @@
         __$("nextButton").onmousedown = function () {
 
             if (updated_data.length == 0) {
+                showMessage("No drug selected");
                 return
             }
+
             for (var i = 0; i <= updated_data.length - 1; i++) {
                 var pharmacyBatchItemID = updated_data[i]["pharmacy_batch_item_id"];
                 var pack_size = updated_data[i]["pack_size"];
