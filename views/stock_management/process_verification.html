@@ -525,7 +525,7 @@
                     }
 
                     if (verifiedQuantity) {
-                        rightData += "<td style='color: green; font-weight: bold;' id='" + verifiedQuantity + "'>" + verifiedQuantity + "</td>"
+                        rightData += "<td id='" + current_quantity_id + "' style='color: green; font-weight: bold;' id='" + verifiedQuantity + "'>" + verifiedQuantity + "</td>"
                     } else {
                         rightData += "<td id='" + current_quantity_id + "'>" + current_quantity + "</td>";
                     }
@@ -636,6 +636,7 @@
 
 
     var updated_data = [];
+    var controlHash = {};
 
     function closePopUp() {
         var inputBox = document.getElementById('tins');
@@ -644,13 +645,28 @@
                 verifiedData[selected_drug_id] = {}
             }
             verifiedData[selected_drug_id][selected_pharmacy_batch_item_id] = inputBox.value;
-            updated_data.push({
-                drug_id: selected_drug_id,
-                expiry_date: selected_expiry_date,
-                pack_size: selected_pack_size,
-                tins: inputBox.value,
-                pharmacy_batch_item_id: selected_pharmacy_batch_item_id
-            });
+            var key = selected_drug_id + "::" + selected_expiry_date
+
+            if (controlHash[key]) {
+                for (var i = 0; i <= updated_data.length - 1; i++) {
+                    var drug_id = updated_data[i]["drug_id"]
+                    var expiry_date = updated_data[i]["expiry_date"];
+                    if (drug_id == selected_drug_id && expiry_date == selected_expiry_date) {
+                        updated_data[i]["tins"] = inputBox.value;
+                        break
+                    }
+                }
+            } else {
+                controlHash[key] = inputBox.value;
+                updated_data.push({
+                    drug_id: selected_drug_id,
+                    expiry_date: selected_expiry_date,
+                    pack_size: selected_pack_size,
+                    tins: inputBox.value,
+                    pharmacy_batch_item_id: selected_pharmacy_batch_item_id
+                });
+            }
+
 
             var html = "<span style='color: green; font-weight: bold;'>" + inputBox.value + "</span>";
             jQuery("#current-quantity-" + selected_pharmacy_batch_item_id).html(html)
@@ -757,31 +773,38 @@
                 return
             }
 
-            for (var i = 0; i <= updated_data.length - 1; i++) {
-                var pharmacyBatchItemID = updated_data[i]["pharmacy_batch_item_id"];
-                var pack_size = updated_data[i]["pack_size"];
-                var tins = parseFloat(updated_data[i]["tins"]);
-                var current_quantity = tins * pack_size;
-                var verification_url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1/pharmacy/items/" + pharmacyBatchItemID;
-                var data = {
-                    "current_quantity": current_quantity,
-                };
-
-                var xhttp = new XMLHttpRequest();
-                xhttp.onreadystatechange = function () {
-                    if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
-                        var response = JSON.parse(this.responseText);
-                    }
-                };
-                xhttp.open("PUT", verification_url, true);
-                xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
-                xhttp.setRequestHeader('Content-type', "application/json");
-                xhttp.send(JSON.stringify(data));
-            }
-
+            createAJAXRequest(updated_data);
             window.location = "/";
         }
     }
+
+    function createAJAXRequest(data) {
+        console.log(data);
+        if (data.length > 0) {
+            var pharmacyBatchItemID = data[0]["pharmacy_batch_item_id"];
+            var pack_size = data[0]["pack_size"];
+            var tins = parseFloat(data[0]["tins"]);
+            var current_quantity = tins * pack_size;
+            var verification_url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1/pharmacy/items/" + pharmacyBatchItemID;
+            var current_quantity = {
+                "current_quantity": current_quantity,
+            };
+
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                    data.shift();
+                    createAJAXRequest(data);
+                }
+            };
+            xhttp.open("PUT", verification_url, false);
+            xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+            xhttp.setRequestHeader('Content-type', "application/json");
+            xhttp.send(JSON.stringify(current_quantity));
+        }
+    }
+
+
 </script>
 
 <body id="mateme">
