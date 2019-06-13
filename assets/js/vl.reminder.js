@@ -19,7 +19,7 @@ function getARTstartedDate() {
   xhttp.onreadystatechange = function() {
     if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
       arv_earliest_start_dates = JSON.parse(this.responseText);
-      VLordered();
+      checkIfVLresultsWithinBounds()
     }
   };
   xhttp.open("GET", url, true);
@@ -73,6 +73,8 @@ function checkIFwithVLBounds() {
   var cutoff = 12;
   var i = 0;
 
+  console.log(period_on_art)
+
   while(i <= 36) {
     time_bounds.push({start: (cutoff), end: (cutoff + 12)});
     cutoff += 12
@@ -82,28 +84,43 @@ function checkIFwithVLBounds() {
   
   if(VLdate == undefined) {
     for(var i = 0 ; i < time_bounds.length ; i++){
+
       if(period_on_art >= time_bounds[i].start && period_on_art <= time_bounds[i].end){
         vlAlert(period_on_art);
         break;
       }
-      if((period_on_art + 1) == time_bounds[i].start){
+      if((period_on_art + 1) == time_bounds[i].start && (vlAlertReminderDone == false)){
         vlAlertReminder(period_on_art);
         break;
       }
     }
   }else{
+    for(var i = 0 ; i < time_bounds.length ; i++){
+
+      if(period_on_art >= time_bounds[i].start && period_on_art <= time_bounds[i].end){
+        vlAlert(period_on_art);
+        break;
+      }
+      if((period_on_art + 1) == time_bounds[i].start && (vlAlertReminderDone == false)){
+        vlAlertReminder(period_on_art);
+        break;
+      }
+    }
+    /*
     var date1 = new Date(sessionStorage.sessionDate);
     var date2 = new Date(VLdate);
     var months_since_last_VL = dateDiffInMonths(date1, date2);
     for(var i = 0 ; i < time_bounds.length ; i++){
       if(period_on_art >= time_bounds[i].start && period_on_art <= time_bounds[i].end){
+        console.log(time_bounds[i].start + " ---- " + time_bounds[i].end);
         var within_12_months = (months_since_last_VL >= 0 && months_since_last_VL <= 12);
+        console.log(within_12_months)
         if(within_12_months == false){
           vlAlert(period_on_art);
           break;
         }
       }
-    }
+    } */
   }
 
 
@@ -148,7 +165,7 @@ function vlAlert(period_on_art){
   buttonContainerRow.setAttribute('class','buttonContainerRow');
   buttonContainer.appendChild(buttonContainerRow);
 
-  var cells = ['Remind later','Order VL'];
+  var cells = ['Remind later','Wait till<br />next milestone','Order VL'];
 
   for(var i = 0 ; i < cells.length ; i++){
     var buttonContainerCell = document.createElement('div');
@@ -161,6 +178,9 @@ function vlAlert(period_on_art){
       buttonContainerCell.setAttribute('onmousedown','cancelVLOrder();');
     }else if(i == 1) {
       buttonContainerCell.setAttribute('id','buttonContainerCell-blue');
+      buttonContainerCell.setAttribute('onmousedown','cancelVLOrder();');
+    }else if(i == 2) {
+      buttonContainerCell.setAttribute('id','buttonContainerCell-green');
       buttonContainerCell.setAttribute('onmousedown','cancelVLOrder();pressOrder();');
     }
 
@@ -184,7 +204,10 @@ function cancelVLOrder() {
   document.getElementById('vl-cover-div').style = 'display: none;';
 }
 
+var  vlAlertReminderDone = false;
+
 function vlAlertReminder(period_on_art){
+  vlAlertReminderDone = true;
   var popUpBox = document.getElementById('vl-popup-div');
   var coverDIV = document.getElementById('vl-cover-div');
 
@@ -244,7 +267,7 @@ function VLordered() {
   var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1";
   url += '/observations?person_id=' + sessionStorage.patientID;
   url += '&date=' + sessionStorage.sessionDate;
-  url += '&concept_id=8015';
+  url += '&concept_id=6659';
 
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
@@ -255,7 +278,6 @@ function VLordered() {
       var results_given;
 
       for(var i = 0 ; i < obs.length ; i++){
-        console.log(obs[i].value_coded + "   " + obs[i].obs_datetime)
         obs_date = new Date(  moment(obs[i].obs_datetime).format('YYYY-MM-DD') );
         if(obs_datetimes == undefined){
           obs_datetimes = obs_date;
@@ -277,7 +299,9 @@ function VLordered() {
         if(months_passed >= 3) {
           calculateVLreminder();
         }else{
-          askIfresultsAvailable(obs_datetimes);
+          if(askIfresultsAvailable_shown == false)
+            askIfresultsAvailable(obs_datetimes);
+
         }
 
       }
@@ -288,6 +312,8 @@ function VLordered() {
   xhttp.setRequestHeader('Content-type', "application/json");
   xhttp.send();
 }
+
+var askIfresultsAvailable_shown = false;
 
 function askIfresultsAvailable(obs_date) {
   var popUpBox = document.getElementById('vl-popup-div');
@@ -348,6 +374,23 @@ function askIfresultsAvailable(obs_date) {
 
     buttonContainerRow.appendChild(buttonContainerCell);
   }
+
+  askIfresultsAvailable_shown = true;
 }
 
+function checkIfVLresultsWithinBounds() {
+  for(var i = 0 ; i < VLresults.length; i++){
+    var results = VLresults[i].results;
+    var rdate = VLresults[i].result_date;
+    var row_id = VLresults[i].row_id;
+
+    if(results.match(/>|=/)) {
+      var actual_int = results.replace('=','').replace('>');
+      if(parseFloat(actual_int) >= 938)
+        document.getElementById(row_id).style = 'background-color: red; color: white;';
+
+    }
+  }
+  VLordered();
+}
 //getARTstartedDate();
