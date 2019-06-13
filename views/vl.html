@@ -591,7 +591,7 @@
 </div>
 <tr>
 <td colspan="7">
-<table width="100%" cellpadding="8" style="border-collapse: collapse;">
+<table id="viral_load_report_table" width="100%" cellpadding="8" style="border-collapse: collapse;">
 <tr>
     <td>
         &nbsp;
@@ -641,7 +641,7 @@
     <td style="border-top: 1px solid #333; border-left: 1px solid #333;">
         Routine
     </td>
-    <td style="border: 1px solid #333; width: 80px; text-align: right;" id="M">
+    <td style="border: 1px solid #333; width: 80px; text-align: right;" class="reason_for_test__routine">
         &nbsp;
     </td>
     <td align="right">
@@ -650,7 +650,7 @@
     <td style="border-top: 1px solid #333; border-left: 1px solid #333;">
         0-4 Weeks
     </td>
-    <td style="border: 1px solid #333; width: 80px; text-align: right;" id="LNEV">
+    <td style="border: 1px solid #333; width: 80px; text-align: right;" class="client_notification__0_4_weeks">
         &nbsp;
     </td>
     <td align="right">
@@ -659,7 +659,7 @@
     <td style="border-top: 1px solid #333; border-left: 1px solid #333;">
         Initial decision pending
     </td>
-    <td style="border: 1px solid #333; width: 80px; text-align: right;" id="N">
+    <td style="border: 1px solid #333; width: 80px; text-align: right;" class="initial_decision__pending">
         &nbsp;
     </td>
 </tr>
@@ -670,7 +670,7 @@
     <td style="border-left: 1px solid #333;">
         Targeted
     </td>
-    <td style="border: 1px solid #333; width: 80px; text-align: right;" id="FNP">
+    <td style="border: 1px solid #333; width: 80px; text-align: right;" class="reason_for_test__targeted">
         &nbsp;
     </td>
     <td align="right">
@@ -679,7 +679,7 @@
     <td style="border-left: 1px solid #333;">
         5-8 Weeks
     </td>
-    <td style="border: 1px solid #333; width: 80px; text-align: right;" id="LN">
+    <td style="border: 1px solid #333; width: 80px; text-align: right;" class="client_notification__5_8_weeks">
         &nbsp;
     </td>
     <td align="right">
@@ -688,7 +688,7 @@
     <td style="border-left: 1px solid #333;">
         Cont. current regimen
     </td>
-    <td style="border: 1px solid #333; width: 80px; text-align: right;" id="P">
+    <td style="border: 1px solid #333; width: 80px; text-align: right;" class="initial_decision__cont_current_regimen">
         &nbsp;
     </td>
 </tr>
@@ -699,7 +699,7 @@
     <td style="border-left: 1px solid #333;">
         Follow-up after high VL
     </td>
-    <td style="border: 1px solid #333; width: 80px; text-align: right;" id="FP">
+    <td style="border: 1px solid #333; width: 80px; text-align: right;" class="reason_for_test__follow_up_after_high_viral_load">
         &nbsp;
     </td>
     <td align="right">
@@ -708,7 +708,7 @@
     <td style="border-left: 1px solid #333;">
         9-12 Weeks
     </td>
-    <td style="border: 1px solid #333; width: 80px; text-align: right;" id="LP">
+    <td style="border: 1px solid #333; width: 80px; text-align: right;" class="client_notification__9_12_weeks">
         &nbsp;
     </td>
     <td align="right">
@@ -717,7 +717,7 @@
     <td style="border-left: 1px solid #333; border-bottom: 1px solid #333;">
         Switch
     </td>
-    <td style="border: 1px solid #333; width: 80px; text-align: right;" id="T12N">
+    <td style="border: 1px solid #333; width: 80px; text-align: right;" class="initial_decision__switch">
         &nbsp;
     </td>
 </tr>
@@ -728,7 +728,7 @@
     <td style="border-left: 1px solid #333; border-bottom: 1px solid #333;">
         Repeat / lost / missing
     </td>
-    <td style="border: 1px solid #333; width: 80px; text-align: right;" id="FP">
+    <td style="border: 1px solid #333; width: 80px; text-align: right;" class="reason_for_test__repeat">
         &nbsp;
     </td>
     <td align="right">
@@ -737,7 +737,7 @@
     <td style="border-left: 1px solid #333; border-bottom: 1px solid #333;">
         13+ Weeks / missing
     </td>
-    <td style="border: 1px solid #333; width: 80px; text-align: right;" id="LP">
+    <td style="border: 1px solid #333; width: 80px; text-align: right;" class="client_notification__13_weeks_plus_or_missing">
         &nbsp;
     </td>
     <td align="right">
@@ -746,7 +746,7 @@
     <td style="font-style: italic; text-align: right; min-width: 200px;">
         Total high VL patients
     </td>
-    <td style="border: 2px solid #333; width: 80px; text-align: right;" id="outcome_summary">
+    <td style="border: 2px solid #333; width: 80px; text-align: right;" class="total_high_viral_load_patients">
         &nbsp;
     </td>
 </tr>
@@ -757,7 +757,7 @@
     <td style="text-align: right; font-style: italic;">
         Total Samples
     </td>
-    <td style="border: 2px solid #333; width: 80px; text-align: right;" id="sex_pregnancy">
+    <td style="border: 2px solid #333; width: 80px; text-align: right;" class="total_samples">
         &nbsp;
     </td>
     <td align="right">
@@ -766,7 +766,7 @@
     <td style="font-style: italic; text-align: right; min-width: 200px;">
         Total Samples
     </td>
-    <td style="border: 2px solid #333; width: 80px; text-align: right;" id="outcome_summary">
+    <td style="border: 2px solid #333; width: 80px; text-align: right;" class="total_client_notification_samples">
         &nbsp;
     </td>
     <td align="right">
@@ -893,7 +893,7 @@
     <td style="border-left: 1px solid #333; border-top: 1px solid #333;">
         0-4 Weeks
     </td>
-    <td style="border: 1px solid #333; width: 80px; text-align: right;" id="15_24Y">
+    <td style="border: 1px solid #333; width: 80px; text-align: right;" class="receipt_of_results__0_4_weeks">
         &nbsp;
     </td>
     <td align="right">
@@ -902,7 +902,7 @@
     <td style="border-left: 1px solid #333; border-top: 1px solid #333;">
         Routine
     </td>
-    <td style="border: 1px solid #333; width: 80px; text-align: right;" id="PPY">
+    <td style="border: 1px solid #333; width: 80px; text-align: right;" class="initial_high_viral_load__reason_for_test__routine">
         &nbsp;
     </td>
     <td align="right">
@@ -911,7 +911,7 @@
     <td style="border-left: 1px solid #333; border-top: 1px solid #333; width: 80px;">
         Final decision pending
     </td>
-    <td style="width: 80px; border: 1px solid #333; text-align: right;" id="RGTCNN">
+    <td style="width: 80px; border: 1px solid #333; text-align: right;" class="final_decision__final_decision_pending">
         &nbsp;
     </td>
 </tr>
@@ -922,7 +922,7 @@
     <td style="border-left: 1px solid #333;">
         5-8 Weeks
     </td>
-    <td style="border: 1px solid #333; width: 80px; text-align: right;" id="15_24Y">
+    <td style="border: 1px solid #333; width: 80px; text-align: right;" class="receipt_of_results__5_8_weeks">
         &nbsp;
     </td>
     <td align="right">
@@ -931,7 +931,7 @@
     <td style="border-left: 1px solid #333;">
         Targeted
     </td>
-    <td style="border: 1px solid #333; width: 80px; text-align: right;" id="PPY">
+    <td style="border: 1px solid #333; width: 80px; text-align: right;" class="initial_high_viral_load__reason_for_test__targeted">
         &nbsp;
     </td>
     <td align="right">
@@ -940,7 +940,7 @@
     <td style="border-left: 1px solid #333; width: 80px;">
         Cont. current regimen
     </td>
-    <td style="width: 80px; border: 1px solid #333; text-align: right;" id="RGTCNN">
+    <td style="width: 80px; border: 1px solid #333; text-align: right;" class="final_decision__cont_current_regimen">
         &nbsp;
     </td>
 </tr>
@@ -951,7 +951,7 @@
     <td style="border-left: 1px solid #333;">
         9-12 Weeks
     </td>
-    <td style="border: 1px solid #333; width: 80px; text-align: right;" id="15_24Y">
+    <td style="border: 1px solid #333; width: 80px; text-align: right;" class="receipt_of_results__9_12_weeks">
         &nbsp;
     </td>
     <td align="right">
@@ -960,7 +960,7 @@
     <td style="border-bottom: 1px solid #333; border-left: 1px solid #333;">
         Repeat
     </td>
-    <td style="border: 1px solid #333; width: 80px; text-align: right;" id="PPY">
+    <td style="border: 1px solid #333; width: 80px; text-align: right;" class="initial_high_viral_load__reason_for_test__repeat">
         &nbsp;
     </td>
     <td align="right">
@@ -969,7 +969,7 @@
     <td style="border-left: 1px solid #333; width: 80px;">
         Switch
     </td>
-    <td style="width: 80px; border: 1px solid #333; text-align: right;" id="RGTCNN">
+    <td style="width: 80px; border: 1px solid #333; text-align: right;" class="final_decision__switch">
         &nbsp;
     </td>
 </tr>
@@ -980,7 +980,7 @@
     <td style="border-left: 1px solid #333; border-bottom: 1px solid #333;">
         13+ Weeks / missing
     </td>
-    <td style="border: 1px solid #333; width: 80px; text-align: right;" id="25P">
+    <td style="border: 1px solid #333; width: 80px; text-align: right;" class="receipt_of_results__13_plus_weeks_or_missing">
         &nbsp;
     </td>
     <td align="right">
@@ -989,7 +989,7 @@
     <td style="text-align: right;">
         Total high VL patients
     </td>
-    <td style="border: 2px solid #333; width: 80px; text-align: right;" id="age_group">
+    <td style="border: 2px solid #333; width: 80px; text-align: right;" class="total_high_viral_load_patients">
         &nbsp;
     </td>
     <td align="right">
@@ -998,7 +998,7 @@
     <td style="border-left: 1px solid #333; width: 80px;">
         Refer to HIV Specialist
     </td>
-    <td style="width: 80px; border: 1px solid #333; text-align: right;" id="RGTCNP">
+    <td style="width: 80px; border: 1px solid #333; text-align: right;" class="final_decision__refer_to_hiv_specialist">
         &nbsp;
     </td>
 </tr>
@@ -1009,7 +1009,7 @@
     <td style="text-align: right; font-style: italic;">
         Total Samples
     </td>
-    <td style="border: 2px solid #333; width: 80px; text-align: right;" id="age_group">
+    <td style="border: 2px solid #333; width: 80px; text-align: right;" class="total_samples">
         &nbsp;
     </td>
     <td align="right">
@@ -1027,7 +1027,7 @@
     <td style="border-top: 1px solid #333; width: 80px;">
         Total high VL patients
     </td>
-    <td style="border: 2px solid #333; width: 80px; text-align: right;" id="age_group">
+    <td style="border: 2px solid #333; width: 80px; text-align: right;" class="total_high_viral_load_patients">
         &nbsp;
     </td>
 </tr>
@@ -1064,7 +1064,7 @@
     <td style="border-top: 1px solid #333; border-left: 1px solid #333;">
         Electronic
     </td>
-    <td style="border: 1px solid #333; width: 80px; text-align: right;" id="PITC">
+    <td style="border: 1px solid #333; width: 80px; text-align: right;" class="results_type__electronic">
         &nbsp;
     </td>
     <td style="width: 30px; text-align: right;">
@@ -1073,7 +1073,7 @@
     <td style="border-top: 1px solid #333; border-left: 1px solid #333;">
         3 Sessions completed
     </td>
-    <td style="border: 1px solid #333; width: 80px; text-align: right;" id="PITC">
+    <td style="border: 1px solid #333; width: 80px; text-align: right;" class="intensive_adherence_counselling__3_sessions_completed">
         &nbsp;
     </td>
     <td align="right">
@@ -1093,7 +1093,7 @@
     <td style="border-left: 1px solid #333;">
         Paper
     </td>
-    <td style="border: 1px solid #333; width: 80px; text-align: right;" id="PITC">
+    <td style="border: 1px solid #333; width: 80px; text-align: right;" class="results_type__paper">
         &nbsp;
     </td>
     <td style="width: 30px; text-align: right;">
@@ -1102,7 +1102,7 @@
     <td style="border-left: 1px solid #333;">
         Sess. not completed
     </td>
-    <td style="border: 1px solid #333; width: 80px; text-align: right;" id="PITC">
+    <td style="border: 1px solid #333; width: 80px; text-align: right;" class="intensive_adherence_counselling__sess_not_completed">
         &nbsp;
     </td>
     <td align="right">
@@ -1122,7 +1122,7 @@
     <td style="border: 1px dotted #00000a;">
         Missing results
     </td>
-    <td style="border: 1px solid #333; width: 80px; text-align: right;" id="PITC">
+    <td style="border: 1px solid #333; width: 80px; text-align: right;" class="results_type__missing_results">
         &nbsp;
     </td>
     <td style="width: 30px; text-align: right;">
@@ -1131,7 +1131,7 @@
     <td style="border-top: 1px solid #333;">
         Total high VL patients
     </td>
-    <td style="border: 2px solid #333; width: 80px; text-align: right;" id="age_group">
+    <td style="border: 2px solid #333; width: 80px; text-align: right;" class="total_high_viral_load_patients">
         &nbsp;
     </td>
     <td align="right">
@@ -1151,7 +1151,7 @@
     <td style="text-align: right; font-style: italic;">
         Tot. clients (check)
     </td>
-    <td style="border: 2px solid #333; width: 80px; text-align: right;" id="htc_access_type">
+    <td style="border: 2px solid #333; width: 80px; text-align: right;" class="total_clients">
         &nbsp;
     </td>
     <td align="right">
@@ -1203,9 +1203,9 @@
         11
     </td>
     <td style="border-left: 1px solid #333; border-top: 1px solid #333;">
-        < 1000
+        &lt; 1000
     </td>
-    <td style="border: 1px solid #333; width: 80px; text-align: right;" id="15_24Y">
+    <td style="border: 1px solid #333; width: 80px; text-align: right;" class="viral_load_results__less_than_1000">
         &nbsp;
     </td>
     <td align="right">
@@ -1214,7 +1214,7 @@
     <td style="border-left: 1px solid #333; border-top: 1px solid #333;">
         Not yet collected
     </td>
-    <td style="border: 1px solid #333; width: 80px; text-align: right;" id="PPY">
+    <td style="border: 1px solid #333; width: 80px; text-align: right;" class="follow_up_viral_load_results__not_yet_collected">
         &nbsp;
     </td>
     <td align="right">
@@ -1234,7 +1234,7 @@
     <td style="border-left: 1px solid #333;">
         1000+
     </td>
-    <td style="border: 1px solid #333; width: 80px; text-align: right;" id="15_24Y">
+    <td style="border: 1px solid #333; width: 80px; text-align: right;" class="viral_load_results__more_than_1000">
         &nbsp;
     </td>
     <td align="right">
@@ -1243,7 +1243,7 @@
     <td style="border-left: 1px solid #333;">
         < 1000
     </td>
-    <td style="border: 1px solid #333; width: 80px; text-align: right;" id="PPY">
+    <td style="border: 1px solid #333; width: 80px; text-align: right;" class="follow_up_viral_load_results__less_than_1000">
         &nbsp;
     </td>
     <td align="right">
@@ -1263,7 +1263,7 @@
     <td style="border-left: 1px solid #333;">
         Samples rejected
     </td>
-    <td style="border: 1px solid #333; width: 80px; text-align: right;" id="15_24Y">
+    <td style="border: 1px solid #333; width: 80px; text-align: right;" class="viral_load_results__samples_rejected">
         &nbsp;
     </td>
     <td align="right">
@@ -1272,7 +1272,7 @@
     <td style="border-left: 1px solid #333;">
         Sample Rejected
     </td>
-    <td style="border: 1px solid #333; width: 80px; text-align: right;" id="PPY">
+    <td style="border: 1px solid #333; width: 80px; text-align: right;" class="follow_up_viral_load_results__samples_rejected">
         &nbsp;
     </td>
     <td style="width: 30px; text-align: right;">
@@ -1292,7 +1292,7 @@
     <td style="border-left: 1px solid #333;">
         Results missing
     </td>
-    <td style="border: 1px solid #333; width: 80px; text-align: right;" id="PITC">
+    <td style="border: 1px solid #333; width: 80px; text-align: right;" class="viral_load_results__results_missing">
         &nbsp;
     </td>
     <td style="width: 30px; text-align: right;">
@@ -1301,7 +1301,7 @@
     <td style="border-left: 1px solid #333;">
         Results missing
     </td>
-    <td style="border: 1px solid #333; width: 80px; text-align: right;" id="PITC">
+    <td style="border: 1px solid #333; width: 80px; text-align: right;" class="follow_up_viral_load_results__results_missing">
         &nbsp;
     </td>
     <td align="right">
@@ -1321,7 +1321,7 @@
     <td style="border-top: 1px solid #333;">
         Total Samples
     </td>
-    <td style="border: 2px solid #333; width: 80px; text-align: right;" id="age_group">
+    <td style="border: 2px solid #333; width: 80px; text-align: right;" class="total_samples">
         &nbsp;
     </td>
     <td style="width: 30px; text-align: right;">
@@ -1330,7 +1330,7 @@
     <td style="border-top: 1px solid #333;">
         Total high VL patients
     </td>
-    <td style="border: 2px solid #333; width: 80px; text-align: right;" id="age_group">
+    <td style="border: 2px solid #333; width: 80px; text-align: right;" class="total_high_viral_load_patients">
         &nbsp;
     </td>
     <td align="right">
@@ -1375,7 +1375,6 @@
 </table>
 </td>
 </tr>
-</body>
 <footer class="footer">
     <div class="container-footer">
         <button id="btnNext" class="green right" style="margin: 5px 0px 0px; padding: 0px; float: right;" onclick="location='/';">
@@ -1386,4 +1385,6 @@
         </button>
     </div>
 </footer>
+<script src="../assets/js/viral_load_report.js"></script>
+</body>
 </html>
