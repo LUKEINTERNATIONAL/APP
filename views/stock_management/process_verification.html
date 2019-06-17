@@ -645,11 +645,19 @@
                 verifiedData[selected_drug_id] = {}
             }
             verifiedData[selected_drug_id][selected_pharmacy_batch_item_id] = inputBox.value;
-            var key = selected_drug_id + "::" + selected_expiry_date
+            var key = selected_drug_id + "::" + selected_expiry_date;
+
+            controlHash[key] = {
+                drug_id: selected_drug_id,
+                expiry_date: selected_expiry_date,
+                pack_size: selected_pack_size,
+                tins: inputBox.value,
+                pharmacy_batch_item_id: selected_pharmacy_batch_item_id
+            };
 
             if (controlHash[key]) {
                 for (var i = 0; i <= updated_data.length - 1; i++) {
-                    var drug_id = updated_data[i]["drug_id"]
+                    var drug_id = updated_data[i]["drug_id"];
                     var expiry_date = updated_data[i]["expiry_date"];
                     if (drug_id == selected_drug_id && expiry_date == selected_expiry_date) {
                         updated_data[i]["tins"] = inputBox.value;
