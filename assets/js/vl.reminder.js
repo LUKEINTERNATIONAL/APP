@@ -38,7 +38,7 @@ function processVLalert() {
 
   if(eligibile == false) {
     if(vl_info.message) {
-      if(vl_info.match(/VL is due in a month time/i))
+      if(vl_info.message.match(/VL is due in a month time/i))
         milestoneMessage(message);
     
     }
