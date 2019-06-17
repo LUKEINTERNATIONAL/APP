@@ -277,7 +277,7 @@ function milestoneMessage(message) {
     buttonContainerCell.innerHTML = cells[i];
 
     buttonContainerCell.setAttribute('id','buttonContainerCell-blue');
-    buttonContainerCell.setAttribute('onmousedown','cancelVLOrder();');
+    buttonContainerCell.setAttribute('onmousedown','cancelVLOrder();' + nextButtonVL);
     buttonContainerRow.appendChild(buttonContainerCell);
   }
 
