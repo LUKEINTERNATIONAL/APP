@@ -2452,6 +2452,9 @@
 
 
             function changeNextButtonForLabOrders() {
+                if(!oldtstCurrentPage)
+                  return;
+
                 var nextButton = document.getElementById('nextButton');
                 nextButton.onmousedown = function () {
                     if (oldtstCurrentPage) {
@@ -2597,7 +2600,7 @@
 
 
             <input type="text" name="lab-summary"
-                   tt_onLoad="__$('keyboard').style.display = 'none'; buildLabOrderDisplay();"
+                   tt_onLoad="__$('keyboard').style.display = 'none'; buildLabOrderDisplay();changeNextButtonForLabOrders();"
                    tt_pageStyleClass="NoControls" helpText="Lab orders" optional="true"/>
 
             <!-- input type="text" name="iac" condition="iac == true"
@@ -3422,6 +3425,7 @@
             <select allowFreeText="false" helpText="Medication to prescribe during this visit" id="med_to_prescribe"
                     name="observations[][value_coded_or_text]"
                     tt_pageStyleClass="NoKeyboard" multiple="multiple"
+                    tt_onUnLoad="removeAllergicToCPT();"
                     tt_onLoad="controlNoneSelection(); setFunctionForSubmittingForm(); controlCPTIPTOptions(); addChangeAllergicToCPTValue();">
                 <option value="ARVs">ARVs</option>
                 <option value="CPT">CPT</option>
@@ -3747,6 +3751,14 @@
                     }
                 }
 
+            }
+
+            function removeAllergicToCPT() {
+              var e = document.getElementById('changeCPTValueBtn');
+              if(e) {
+                var root = document.getElementById('buttons');
+                root.removeChild(e);
+              }
             }
 
 
