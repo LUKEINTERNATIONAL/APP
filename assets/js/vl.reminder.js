@@ -40,6 +40,12 @@ function prepareForVLcheck() {
       nextBtn.setAttribute('onmousedown', 'processVLalert();');
     }
   }
+  
+  var cover = document.getElementById('regimen-change-cover');
+  var loader = document.getElementsByClassName('loader')[0];
+  cover.style = 'display: none';
+  loader.style = 'display: none;'
+
 }
 
 var VLmilestoneCheckDone = false;
@@ -61,8 +67,10 @@ function processVLalert() {
       if(vl_info.message.match(/VL is due in a month time/i))
         milestoneMessage(message);
     
+      return;
     }
 
+    gotoNextPage();
     return;
   }
 

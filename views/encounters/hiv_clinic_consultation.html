@@ -2601,7 +2601,7 @@
 
 
             <input type="text" name="lab-summary"
-                   tt_onLoad="__$('keyboard').style.display = 'none';removeAttrFromNextBTN();buildLabOrderDisplay();changeNextButtonForLabOrders();"
+                   tt_onLoad="removeAttrFromNextBTN();__$('keyboard').style.display = 'none';buildLabOrderDisplay();changeNextButtonForLabOrders();"
                    tt_onUnload="removeOrderBtn();"
                    tt_pageStyleClass="NoControls" helpText="Lab orders" optional="true"/>
 
@@ -4262,8 +4262,13 @@
           }
 
           function removeAttrFromNextBTN() {
-            var ord = document.getElementById('nextButton');
-            ord.setAttribute('onmousedown','');
+            if(VLmilestoneCheckDone == true)
+              return;
+
+            var cover = document.getElementById('regimen-change-cover');
+            cover.style = 'display: inline';
+            var loader = document.getElementsByClassName('loader')[0];
+            loader.style = 'display: inline;'
           }
 
         </script>
