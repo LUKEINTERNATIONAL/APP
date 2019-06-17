@@ -18,7 +18,7 @@ function getARTstartedDate() {
     if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
       vl_info = JSON.parse(this.responseText);
       if(Object.keys(vl_info).length > 0)
-        processVLalert();
+        prepareForVLcheck();
 
     }
   };
@@ -28,7 +28,27 @@ function getARTstartedDate() {
   xhttp.send();
 }
 
+var nextButtonVL;
+function prepareForVLcheck() {
+  if(VLmilestoneCheckDone == true)
+    return;
+
+  var nextBtn = document.getElementById('nextButton');
+  if(nextButton) {
+    if(nextButton.innerHTML.match(/Next/i)) {
+      nextButtonVL = nextBtn.getAttribute('onmousedown');
+      nextBtn.setAttribute('onmousedown', 'processVLalert();');
+    }
+  }
+}
+
+var VLmilestoneCheckDone = false;
+
 function processVLalert() {
+  var nextBtn = document.getElementById('nextButton');
+  nextBtn.setAttribute('onmousedown', nextButtonVL);
+  VLmilestoneCheckDone = true;
+
   var eligibile = vl_info.eligibile;
   var earliest_start_date = moment(vl_info.earliest_start_date).format('DD/MMM/YYYY');
   var milestone = vl_info.milestone;
@@ -107,10 +127,10 @@ function milestoneAlert() {
 
     if(i == 0) {
       buttonContainerCell.setAttribute('id','buttonContainerCell-red');
-      buttonContainerCell.setAttribute('onmousedown','cancelVLOrder();');
+      buttonContainerCell.setAttribute('onmousedown','cancelVLOrder();' + nextButtonVL);
     }else if(i == 1) {
       buttonContainerCell.setAttribute('id','buttonContainerCell-blue');
-      buttonContainerCell.setAttribute('onmousedown','cancelVLOrder();waitTillNextMilestone();');
+      buttonContainerCell.setAttribute('onmousedown','cancelVLOrder();waitTillNextMilestone();' + nextButtonVL);
     }else if(i == 2) {
       buttonContainerCell.setAttribute('id','buttonContainerCell-green');
       buttonContainerCell.setAttribute('onmousedown','cancelVLOrder();pressOrder();');
