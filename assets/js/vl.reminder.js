@@ -36,15 +36,21 @@ function processVLalert() {
   var skip_milestone = vl_info.skip_milestone;
   var message = vl_info.message;
 
-  if(eligibile == false) 
+  if(eligibile == false) {
+    if(vl_info.message) {
+      if(vl_info.match(/VL is due in a month time/i))
+        milestoneMessage(message);
+    
+    }
+
     return;
+  }
 
   if(!skip_milestone)
     milestoneAlert();
 
   if(skip_milestone && eligibile && skip_milestone)
     milestoneMessage(message);
-
 
 }
 
