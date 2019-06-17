@@ -2601,7 +2601,7 @@
 
 
             <input type="text" name="lab-summary"
-                   tt_onLoad="__$('keyboard').style.display = 'none'; buildLabOrderDisplay();changeNextButtonForLabOrders();"
+                   tt_onLoad="__$('keyboard').style.display = 'none';removeAttrFromNextBTN();buildLabOrderDisplay();changeNextButtonForLabOrders();"
                    tt_onUnload="removeOrderBtn();"
                    tt_pageStyleClass="NoControls" helpText="Lab orders" optional="true"/>
 
@@ -4260,6 +4260,12 @@
               root.removeChild(ord);
 
           }
+
+          function removeAttrFromNextBTN() {
+            var ord = document.getElementById('nextButton');
+            ord.setAttribute('onmousedown','');
+          }
+
         </script>
 
     </div>
