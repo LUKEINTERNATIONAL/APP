@@ -2458,6 +2458,7 @@
                 var nextButton = document.getElementById('nextButton');
                 nextButton.onmousedown = function () {
                     if (oldtstCurrentPage) {
+                        removeOrderBtn();
                         gotoPage(oldtstCurrentPage + 1);
                         oldtstCurrentPage = null;
                     } else {
@@ -2601,6 +2602,7 @@
 
             <input type="text" name="lab-summary"
                    tt_onLoad="__$('keyboard').style.display = 'none'; buildLabOrderDisplay();changeNextButtonForLabOrders();"
+                   tt_onUnload="removeOrderBtn();"
                    tt_pageStyleClass="NoControls" helpText="Lab orders" optional="true"/>
 
             <!-- input type="text" name="iac" condition="iac == true"
@@ -4251,7 +4253,14 @@
             useExtendedFPMassessment();
 
 
+          function removeOrderBtn() {
+            var root = document.getElementById('buttons');
+            var ord = document.getElementById('pressOrder');
+            console.log(ord);
+            if(ord)
+              root.removeChild(ord);
 
+          }
         </script>
 
     </div>
