@@ -188,43 +188,14 @@
         *
         *Any change at the back end is a disaster
         * */
-        var date = new Date(sessionStorage.sessionDate);
-        date.setDate(date.getDate() - 1); //1 day
-        var session_date = moment(date).format('YYYY-MM-DD');
-        var url = sessionStorage.apiProtocol+ '://' + apiURL + ':' + apiPort + '/api/v1/patients/' + sessionStorage.patientID + '/drugs_received?date=' + session_date;
+        var sDate = new Date(sessionStorage.sessionDate);
+        sDate.setDate(sDate.getDate() - 1); //1 day
+        var session_date = moment(sDate).format('YYYY-MM-DD');
+        var url = sessionStorage.apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1";
+        url += "/patients/" + sessionStorage.patientID;
+        url += "/drugs_received?date=" + session_date;
 
-        var req = new XMLHttpRequest();
-        req.onreadystatechange = function () {
-            if (this.readyState == 4) {
-                if (this.status == 200) {
-                    var medications = JSON.parse(this.responseText);
-                    var latest_medication_date = medications[0].order.start_date;
-                    var formatted_latest_medication_date = moment(latest_medication_date).format("YYYY-MM-DD");
-
-                    var medication_dates = [];
-                    var orders = [];
-                    for (var i = 0; i <= medications.length - 1; i++) {
-                        var drugID = medications[i]["drug"]["drug_id"];
-                        if (!htn_drug_ids.includes(drugID)) {
-                            formatted_medication_date = moment(medications[i].order.start_date).format("YYYY-MM-DD")
-                            medication_dates.push(medications[i].order.start_date)
-                            if (formatted_latest_medication_date == formatted_medication_date) {
-                              getPillsRemaining(medications[i]);
-                              orders.push(medications[i])
-                            }
-                        }
-                    }
-
-                    showMedication(orders);
-                }
-            }
-        };
-        try {
-            req.open('GET', url, true);
-            req.setRequestHeader('Authorization', sessionStorage.getItem('authorization'));
-            req.send(null);
-        } catch (e) {
-        }
+        console.log(url);
 
     }
 
@@ -892,13 +863,13 @@
       var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1";
       url += '/observations?concept_id=2540';
       url += '&person_id=' + el.order.patient_id;
-
+      
       var xhttp = new XMLHttpRequest();
       xhttp.onreadystatechange = function() {
         if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
           var obs = JSON.parse(this.responseText);
           for(var i = 0 ; i < obs.length; i++){
-            console.log(obs[i].order_id + "==" + obs[i].obs_datetime + "   ###  " +  el.order.order_id + "===" + el.order.start_date);
+            console.log(obs[i].order_id)
             if(obs[i].order_id == el.order.order_id){
               Object.assign(el, {amount_of_pills_brought_to_clinic_last_time: obs[i].value_numeric});
               console.log(el)
