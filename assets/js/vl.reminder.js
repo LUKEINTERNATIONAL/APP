@@ -17,9 +17,14 @@ function getARTstartedDate() {
   xhttp.onreadystatechange = function() {
     if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
       vl_info = JSON.parse(this.responseText);
-      if(Object.keys(vl_info).length > 0)
+      if(Object.keys(vl_info).length > 0){
         prepareForVLcheck();
-
+      }else{
+        var cover = document.getElementById('regimen-change-cover');
+        var loader = document.getElementsByClassName('loader')[0];
+        cover.style = 'display: none';
+        loader.style = 'display: none;'
+      }
     }
   };
   xhttp.open("GET", url, true);
