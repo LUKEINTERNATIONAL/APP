@@ -103,6 +103,7 @@
             jQuery(".loader").show();
             jQuery('#keyboard').hide();
             jQuery("#clearButton").hide();
+            jQuery("#cancelButton").hide();
             //jQuery("#inputFrame" + tstCurrentPage).hide();
 
 
@@ -133,7 +134,7 @@
                         var current_quantity = pharmacy_items[key]["current_quantity"];
 
                         html += "<tr>";
-                        html += "<td>" + drug_name + "</td>";
+                        html += "<td class='medication'>" + drug_name + "</td>";
                         html += "<td class='expiry-date'>" + expiry_date + "</td>";
                         html += "<td class='current-quantity'>" + current_quantity + "</td>";
                         html += "</tr>";
@@ -150,6 +151,13 @@
             xhttp.setRequestHeader('Content-type', "application/json");
             xhttp.send();
         }
+
+        function customizeFinishButton() {
+            __$("nextButton").onmousedown = function () {
+                window.location = "/";
+            }
+        }
+
     </script>
 </head>
 
@@ -215,7 +223,7 @@
         letter-spacing: 1;
     }
 
-    #stock tbody tr td{
+    #stock tbody tr td {
         border: 1px solid black;
     }
 
@@ -225,6 +233,10 @@
 
     .current-quantity {
         text-align: right;
+        padding-right: 10px;
     }
 
+    .medication {
+        padding-left: 10px;
+    }
 </style>
