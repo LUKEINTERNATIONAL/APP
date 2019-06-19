@@ -318,6 +318,13 @@ bottom: 0px;
             var currentWeight = parseFloat(sessionStorage.currentWeight)
             var patientGender = sessionStorage.patientGender;
 
+            // Code for patients from ANC
+            if (sessionStorage.switchedFromANC == "true"){
+
+              sessionStorage.showPregnantQuestion = false;
+
+            }
+
             function getFirstPositiveHivTestTypeObservation() {
                 var confirmatory_hiv_test_type_concept_id = 7880;
                 var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1/observations?person_id=" + sessionStorage.patientID + "&concept_id=" + confirmatory_hiv_test_type_concept_id + "&page_size=1";

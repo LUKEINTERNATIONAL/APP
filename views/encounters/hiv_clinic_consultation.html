@@ -2620,7 +2620,7 @@
             <input allowFreeText="false" id="on_fpm" name="observations[][value_coded_or_text]" type="hidden" value=""/>
 
             <select allowFreeText="false"
-                    condition="patientGender == 'F' && $('pregnant').value != 'YES' && parseInt(sessionStorage.patientAge) >= 9 && parseInt(sessionStorage.patientAge) <= 55 && (tubal_ligation != true)"
+                    condition="patientGender == 'F' && $('pregnant').value != 'YES' && parseInt(sessionStorage.patientAge) >= 9 && parseInt(sessionStorage.patientAge) <= 55 && (tubal_ligation != true) && sessionStorage.switchedFromANC == 'false'"
                     helpText="What method are you currently on?" id="fpm_used" multiple="multiple"
                     name="observations[][value_coded_or_text_multiple][]"
                     tt_onLoad="setNextButtonToGetInputValue('current_fpm'); showCategory2('Clinic consultation'); fpm_used=false; startFamilyPlanningTimer(); window.setTimeout('controlNoneSelectionForFamilyPlanning(); setOptionsForSafeFamilyPlanningMethodsPopup();', 300);"
@@ -2639,7 +2639,7 @@
             </select>
 
             <select allowFreeText="false"
-                    condition="patientGender == 'F' && $('pregnant').value != 'YES' && parseInt(sessionStorage.patientAge) >= 9 && parseInt(sessionStorage.patientAge) <= 55 && (tubal_ligation != true)"
+                    condition="patientGender == 'F' && $('pregnant').value != 'YES' && parseInt(sessionStorage.patientAge) >= 9 && parseInt(sessionStorage.patientAge) <= 55 && (tubal_ligation != true) && sessionStorage.switchedFromANC == 'false'"
                     helpText="What method are you providing today?" id="session_fpm_used" multiple="multiple"
                     name="observations[][value_coded_or_text_multiple][]"
                     tt_onLoad="setNextButtonToGetInputValue('todays_fpm'); showCategory2('Clinic consultation'); fpm_used=false; startFamilyPlanningTimer(); window.setTimeout('controlNoneSelectionForFamilyPlanning(); setOptionsForSafeFamilyPlanningMethodsPopup();', 300)"
