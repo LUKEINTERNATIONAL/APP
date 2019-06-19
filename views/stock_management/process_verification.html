@@ -647,14 +647,6 @@
             verifiedData[selected_drug_id][selected_pharmacy_batch_item_id] = inputBox.value;
             var key = selected_drug_id + "::" + selected_expiry_date;
 
-            controlHash[key] = {
-                drug_id: selected_drug_id,
-                expiry_date: selected_expiry_date,
-                pack_size: selected_pack_size,
-                tins: inputBox.value,
-                pharmacy_batch_item_id: selected_pharmacy_batch_item_id
-            };
-
             if (controlHash[key]) {
                 for (var i = 0; i <= updated_data.length - 1; i++) {
                     var drug_id = updated_data[i]["drug_id"];
@@ -665,6 +657,14 @@
                     }
                 }
             } else {
+                controlHash[key] = {
+                    drug_id: selected_drug_id,
+                    expiry_date: selected_expiry_date,
+                    pack_size: selected_pack_size,
+                    tins: inputBox.value,
+                    pharmacy_batch_item_id: selected_pharmacy_batch_item_id
+                };
+
                 controlHash[key] = inputBox.value;
                 updated_data.push({
                     drug_id: selected_drug_id,
@@ -787,7 +787,6 @@
     }
 
     function createAJAXRequest(data) {
-        console.log(data);
         if (data.length > 0) {
             var pharmacyBatchItemID = data[0]["pharmacy_batch_item_id"];
             var pack_size = data[0]["pack_size"];
