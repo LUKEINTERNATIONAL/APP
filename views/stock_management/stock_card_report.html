@@ -120,18 +120,44 @@
                     html += "<table id='stock'>";
                     html += "<thead>";
                     html += "<th style='padding-right: 3px;'>Medication</th>";
-                    html += "<th>Expiry Date</th>";
-                    html += "<th>Stock on hand</th>";
+                    html += "<th>Earliest Expiry Date</th>";
+                    html += "<th>Stock on hand (Tins)</th>";
                     html += "</thead>";
                     html += "<tbody>";
 
                     html += "<tbody>";
+
+                    var pharmacyData = {};
                     for (var key in pharmacy_items) {
                         var drug_id = pharmacy_items[key]["drug_id"];
                         var expiry_date = pharmacy_items[key]["expiry_date"];
                         expiry_date = moment(expiry_date).format("MMM/YYYY");
                         var drug_name = pharmacy_items[key]["drug_name"];
+                        var pack_size = drug_cms_packsizes[drug_name];
                         var current_quantity = pharmacy_items[key]["current_quantity"];
+
+                        if (!pharmacyData[drug_id]) {
+                            pharmacyData[drug_id] = {};
+                            pharmacyData[drug_id]["current_quantity"] = 0;
+                            pharmacyData[drug_id]["expiry_dates"] = [];
+                            pharmacyData[drug_id]["pack_size"] = pack_size;
+                            pharmacyData[drug_id]["drug_name"] = drug_name;
+                        }
+
+                        pharmacyData[drug_id]["current_quantity"] += parseFloat(current_quantity);
+                        pharmacyData[drug_id]["expiry_dates"].push(pharmacy_items[key]["expiry_date"]);
+                    }
+
+                    for (var drugID in pharmacyData) {
+                        var drug_name = pharmacyData[drugID]["drug_name"];
+                        var pack_size = pharmacyData[drugID]["pack_size"];
+                        var current_quantity = pharmacyData[drugID]["current_quantity"] / pack_size;
+                        var expiry_dates = pharmacyData[drugID]["expiry_dates"];
+
+                        expiry_dates.sort(function (a, b) {
+                            return new Date(a) - new Date(b);
+                        });
+                        expiry_date = moment(expiry_dates[0]).format("MMM/YYYY");
 
                         html += "<tr>";
                         html += "<td class='medication'>" + drug_name + "</td>";
@@ -139,6 +165,7 @@
                         html += "<td class='current-quantity'>" + current_quantity + "</td>";
                         html += "</tr>";
                     }
+
                     html += "</tbody>";
                     html += "</table>";
                     html += "</div>";
@@ -169,7 +196,7 @@
         <form>
 
             <input type="text" name="summary"
-                   tt_onLoad="initializeVariables();"
+                   tt_onLoad="initializeVariables(); customizeFinishButton();"
                    tt_pageStyleClass="NoControls" helpText="HIV product stock report" optional="true"/>
 
         </form>
