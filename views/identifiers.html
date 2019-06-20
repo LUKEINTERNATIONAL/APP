@@ -29,6 +29,7 @@
           <strong>ARV Number:</strong>
         </span> 
         <span id="arv-number"></span> 
+        <span ><strong>Current Regimen </strong> <span id="current-regimen"></span> </span> 
       </div>
       <div class="addresses"><span class="headers"><strong>File Number:</strong></span>&nbsp;<span id="filing-number"></span></div>
       <div class="addresses"><span class="headers"><strong>Current Outcome:</strong></span>&nbsp;<span id="current-outcome"></span></div>
@@ -54,6 +55,7 @@
               document.getElementById("filing-number").innerHTML = ((results.filing_number.number !== "N/A") ? results.filing_number.number : "No Filing Number Available");
               document.getElementById("arv-number").innerHTML = ((results.arv_number !== "N/A") ? "("+results.arv_number+")" : "No ARV Number Available");
               document.getElementById("current-outcome").innerHTML =  ((results.current_outcome !== "N/A") ? results.current_outcome : "No Outcome Available");
+              document.getElementById("current-regimen").innerHTML =  ((results.current_regimen !== "N/A") ? results.current_regimen : "No Regimen Available");
             }
           }
         };
