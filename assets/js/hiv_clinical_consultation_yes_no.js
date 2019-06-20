@@ -43,8 +43,15 @@ var iacRight = [
 
 function addPregBreastFeedingYesNo() {
   var tar = document.getElementById("inputFrame" + tstCurrentPage);
-  var attr = 'Pregnant?, 9#Breastfeeding?,10'
-  buildYesNoUI('Pregnant-Breastfeeding', attr, tar);
+
+  if (sessionStorage.switchedFromANC == "true"){
+    var attr = 'Breastfeeding?,10';
+    buildYesNoUI('Pregnant-Breastfeeding', attr, tar);
+  }else{
+    var attr = 'Pregnant?, 9#Breastfeeding?,10'
+    buildYesNoUI('Pregnant-Breastfeeding', attr, tar);
+  }
+
   if(iac == true) {
     var nextButton =  document.getElementById('nextButton');
     nextButton.setAttribute('onmousedown', previousNextButton);
