@@ -1244,6 +1244,7 @@ bottom: 0px;
                         {concept_id: 8207, value_text: answers_hash["cd4_less_than_or_equal_to_350"]},
                         {concept_id: 9389, value_text: answers_hash["cd4_less_than_or_equal_to_500"]},
                         {
+
                           concept_id: 7563, value_coded: reasonForART(answers_hash["reason_for_art_eligibility"]), 
                           value_text: answers_hash["reason_for_art_eligibility"]
                         },
@@ -1256,7 +1257,18 @@ bottom: 0px;
                         }
                     ]
                 };
+                if (patientGender == "F") {
+                    
+                    obs.observations.push({
+                        concept_id: 6131,
+                        value_coded: (answers_hash["is_patient_pregnant"].length > 0 ? (answers_hash["is_patient_pregnant"].trim().toUpperCase() == "YES" ? 1065 : 1066) : "")
+                    })
+                    obs.observations.push({
+                        concept_id: 7965,
+                        value_coded: (answers_hash["is_patient_breastfeeding"].length > 0 ? (answers_hash["is_patient_breastfeeding"].trim().toUpperCase() == "YES" ? 1065 : 1066) : "")
+                    })
 
+                }
 
                 for (condition in selected_stage_conditions) {
                     if (selected_stage_conditions[condition].length > 0) {
@@ -1415,6 +1427,19 @@ bottom: 0px;
 
             return reasons[reason_for_art_eligibility];
           }
+
+
+          function updateBreastFeedingPregnancyAnswers() {
+                preganncy_status = yesNo_Hash["Pregnant-Breastfeeding"]["Pregnant?"];
+                breast_feeding_status = yesNo_Hash["Pregnant-Breastfeeding"]["Breastfeeding?"];
+
+                answers_hash["is_patient_pregnant"] = preganncy_status;
+                answers_hash["is_patient_breastfeeding"] = breast_feeding_status;
+
+                $('pregnant').value = preganncy_status.toUpperCase();
+                $("breastfeeding").value = breast_feeding_status.toUpperCase();
+
+            }
 
         </script>
 
