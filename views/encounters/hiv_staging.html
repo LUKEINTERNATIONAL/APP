@@ -319,11 +319,11 @@ bottom: 0px;
             var patientGender = sessionStorage.patientGender;
 
             // Code for patients from ANC
-            if (sessionStorage.switchedFromANC == "true"){
+            //if (sessionStorage.switchedFromANC == "true"){
 
-              sessionStorage.showPregnantQuestion = false;
+              //sessionStorage.showPregnantQuestion = false;
 
-            }
+            //}
 
             function getFirstPositiveHivTestTypeObservation() {
                 var confirmatory_hiv_test_type_concept_id = 7880;
@@ -1388,6 +1388,12 @@ bottom: 0px;
             function updatePregnancyBreastFeedingInputs(){
                 try {
                     var pregnant_value = yesNo_Hash["Pregnant-Breastfeeding"]["Pregnant?"];
+                    
+                    if (pregnant_value == undefined && sessionStorage.switchedFromANC == "true"){ 
+                       
+                        pregnant_value = "yes"; 
+                    
+                    }
                     var breast_feeding_value = yesNo_Hash["Pregnant-Breastfeeding"]["Breastfeeding?"];
                     __$("pregnant").value = pregnant_value.toUpperCase();
                     __$("breast_feeding").value = breast_feeding_value.toUpperCase();
