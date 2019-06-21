@@ -115,7 +115,7 @@ function buildReportLinks(group) {
 
   var reports = reportGrouping(group);
 
-  for(var i = 0 ; i < reports.length ; i++){
+  for(var i = 0 ; i < reports.sort().length ; i++){
     if(counter == 0) {
       row = document.createElement("div");
       row.setAttribute("class","reports-container-row");
