@@ -6,7 +6,9 @@
  <script type="text/javascript" charset="utf8" src="/assets/js/datatables/jquery-3.3.1.js"></script>
  <script type="text/javascript" charset="utf8" src="/assets/js/datatables/jquery.dataTables.min.js"></script>
  <script type="text/javascript" charset="utf8" src="/assets/js/virtual.keyboard.js"></script>
+ <script type="text/javascript" charset="utf8" src="/assets/js/moment.js"></script>
 
+ <script type="text/javascript" charset="utf8" src="/apps/ART/views/cohort_tool/driller/natural.js"></script>
 
 <style>
   .title-table {
@@ -131,6 +133,11 @@
   margin-left:45%;
   z-index: 991;
 }
+
+#missing_arv_dispensation_length {
+  display: none;
+}
+
 </style> 
 
 <div class="top-cover-wrapper">
@@ -139,7 +146,8 @@
   </div>  
   
   <div class="page-title">
-    <center>Missing ARV dispensation</center>
+      Patient with prescriptions without dispensation<br />
+      Report period: &nbsp;<span id="report-period"</span>
   </div>
 
   <div class="search-area" style="display:none;">
@@ -182,6 +190,16 @@
 
 
 <script type="text/javascript"> 
+
+  
+var passedUrl = window.location.href;
+passedUrl = new URL(passedUrl);
+var start_date = passedUrl.searchParams.get("start_date");
+var end_date = passedUrl.searchParams.get("end_date");
+
+var report_period = document.getElementById('report-period');
+report_period.innerHTML = moment(start_date).format('DD/MMM/YYYY');
+report_period.innerHTML += ' ' + moment(end_date).format('DD/MMM/YYYY');
 
    jQuery(document).ready(function($) {
             $('#logout').click(function() {
@@ -270,7 +288,9 @@
                   "autoWidth": true,
                   "pagingType":"full_numbers",
                   "bInfo" : true,
-                  "order": [],
+                  columnDefs: [{
+                    targets: 0, type: 'natural'
+                  } ],
                   "sScrollY": "441px",
                   olanguage: {
                     sProcessing: "<img src='/assets/images/loading.gif'>"

@@ -3,10 +3,12 @@
 
 <link rel="stylesheet" type="text/css" href="/assets/css/datatables/jquery.dataTables.min.css">
 <link rel="stylesheet" media="screen" href="/assets/css/extra_buttons.css" />
- <script type="text/javascript" charset="utf8" src="/assets/js/datatables/jquery-3.3.1.js"></script>
- <script type="text/javascript" charset="utf8" src="/assets/js/datatables/jquery.dataTables.min.js"></script>
- <script type="text/javascript" charset="utf8" src="/assets/js/virtual.keyboard.js"></script>
+<script type="text/javascript" charset="utf8" src="/assets/js/datatables/jquery-3.3.1.js"></script>
+<script type="text/javascript" charset="utf8" src="/assets/js/datatables/jquery.dataTables.min.js"></script>
+<script type="text/javascript" charset="utf8" src="/assets/js/virtual.keyboard.js"></script>
+<script type="text/javascript" charset="utf8" src="/assets/js/moment.js"></script>
 
+<script type="text/javascript" charset="utf8" src="/apps/ART/views/cohort_tool/driller/natural.js"></script>
 
 <style>
   .title-table {
@@ -139,7 +141,8 @@
   </div>  
   
   <div class="page-title">
-    <center>Multiple start reasons</center>
+    Patients with multiple start reasons<br />
+    Report period: &nbsp;<span id="report-period"</span>
   </div>
 
   <div class="search-area" style="display:none;">
@@ -182,6 +185,14 @@
 
 
 <script type="text/javascript"> 
+var passedUrl = window.location.href;
+passedUrl = new URL(passedUrl);
+var start_date = passedUrl.searchParams.get("start_date");
+var end_date = passedUrl.searchParams.get("end_date");
+
+var report_period = document.getElementById('report-period');
+report_period.innerHTML = moment(start_date).format('DD/MMM/YYYY');
+report_period.innerHTML += ' ' + moment(end_date).format('DD/MMM/YYYY');
 
    jQuery(document).ready(function($) {
             $('#logout').click(function() {
