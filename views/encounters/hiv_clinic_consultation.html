@@ -59,7 +59,8 @@
 
     <link rel="stylesheet" href="/apps/ART/assets/css/consultation.history.css" type="text/css">
     <script type="text/javascript" src="/apps/ART/assets/js/consultation.history.js"></script>
-
+    <link rel="stylesheet" href="/assets/css/provider.css" type="text/css">
+    <script type="text/javascript" src="/assets/js/provider.js  "></script>
     <script type="text/javascript">
         var patient_id = sessionStorage.patientID;
         var patientGender = sessionStorage.patientGender;
@@ -69,7 +70,6 @@
 
 
         var labResultsTable = null;
-
         function initLabResultsTable() {
             labResultsTable = jQuery('#result-table').DataTable({
                 fixedHeader: true,
@@ -1739,7 +1739,8 @@
                     encounter_type_id: 53,
                     patient_id: patient_id,
                     encounter_datetime: encounter_datetime
-                }
+                };
+
 
                 submitParameters(encounter, "/encounters", "postHIVClinicConsultationObs");
             }
@@ -2611,7 +2612,7 @@
         <form action="#" method='post'>
 
             <input type="text" name="initiliaze_variables"
-                   tt_onLoad="initializeVariables();"
+                   tt_onLoad="checkIfInBDMode();initializeVariables();"
                    tt_onUnLoad="resetPage();"
                    tt_pageStyleClass="NoControls" optional="true"/>
 

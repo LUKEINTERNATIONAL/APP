@@ -28,6 +28,8 @@
     <script type="text/javascript" src="/assets/js/does_connection_exist.js"></script>
 
     <link rel="stylesheet" href="/assets/css/alertifyjs/css/alertify.css" type="text/css">
+    <link rel="stylesheet" href="/assets/css/provider.css" type="text/css">
+    <script type="text/javascript" src="/assets/js/provider.js  "></script>
     <script type="text/javascript">
         var patient_id = sessionStorage.patientID;
         var tt_cancel_destination = "/views/patient_dashboard.html?patient_id=" + patient_id;
@@ -305,7 +307,6 @@ bottom: 0px;
 <div id="container">
     <div id="content">
         <script type="text/javascript">
-
             var age = parseInt(sessionStorage.patientAge);
             var ageInMonths = age * 12;
             var firstPositiveHivTestType = "";
@@ -317,7 +318,7 @@ bottom: 0px;
             var currentBMI = parseFloat(sessionStorage.bmi);
             var currentWeight = parseFloat(sessionStorage.currentWeight)
             var patientGender = sessionStorage.patientGender;
-
+            checkIfInBDMode();
             // Code for patients from ANC
             //if (sessionStorage.switchedFromANC == "true"){
 
@@ -1237,7 +1238,12 @@ bottom: 0px;
                     encounter_type_id: 52,
                     patient_id: patient_id,
                     encounter_datetime: encounter_datetime
+                };
+
+                if(providerID != null) {
+                    encounter.provider_id = providerID;
                 }
+
 
                 submitParameters(encounter, "/encounters", "postHIVStagingObs");
             }
@@ -1457,8 +1463,9 @@ bottom: 0px;
         </script>
 
         <form>
+            
             <input allowFreeText="false" id="breastfeeding" name="observations[][value_coded_or_text]"
-                   condition="patientGender == 'F'" type="hidden"/>
+                   condition="patientGender == 'F'" type="hidden" tt_onLoad=""/>
 
             <input type="text" name="pregnant-breastfeeding-questions"
                    condition="patientGender == 'F' && patientAge >= 12 &&

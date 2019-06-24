@@ -8,7 +8,8 @@
 <link rel="stylesheet" href="/assets/css/yes_no_ctrls.css" type="text/css">
 <script type="text/javascript" src="/assets/js/alertifyjs/alertify.js"></script>
 <script type="text/javascript" src="/assets/js/does_connection_exist.js"></script>
-
+<link rel="stylesheet" href="/assets/css/provider.css" type="text/css">
+<script type="text/javascript" src="/assets/js/provider.js  "></script>
 <link rel="stylesheet" href="/assets/css/alertifyjs/css/alertify.css" type="text/css">
 <style>
 #clearButton {display: none; }
@@ -245,7 +246,7 @@ function bookFT() {
       <form>
         <select allowFreeText="false" helpText="Assess client for FT" 
          id="assess-for-ft" name="fast-assessment"
-         tt_onLoad ="addWatchers();"> 
+         tt_onLoad ="addWatchers();checkIfInBDMode();">
           <option value=""></option>
           <option value="Yes">Yes</option>
           <option value="No">No</option>

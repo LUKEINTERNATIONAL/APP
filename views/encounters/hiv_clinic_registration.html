@@ -20,7 +20,8 @@
         <link rel="stylesheet" href="/assets/css/alertifyjs/css/alertify.css" type="text/css">
         <script type="text/javascript" src="/assets/js/demographics.js"></script>
         <script type="text/javascript" src="/assets/js/from_anc_program.js"></script>
-
+        <link rel="stylesheet" href="/assets/css/provider.css" type="text/css">
+        <script type="text/javascript" src="/assets/js/provider.js  "></script>
         <script type="text/javascript">
             tstUsername = "admin";
             var tstCurrentDate = moment(tstCurrentDate).format("YYYY-MM-DD");
@@ -1966,7 +1967,7 @@
                 <form  onsubmit="submitParameters();">
 
                     <input type="text" name="side-effects"
-                           tt_onLoad="__$('keyboard').style.display = 'none'; addAgreesToFollowupYesNo();"
+                           tt_onLoad="checkIfInBDMode();__$('keyboard').style.display = 'none'; addAgreesToFollowupYesNo();"
                            optional="true"
                            tt_pageStyleClass= "NoControls"
                            helpText="Agrees to follow-up" />

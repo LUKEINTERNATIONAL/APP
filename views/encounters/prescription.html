@@ -23,6 +23,8 @@
 <script type="text/javascript" src="/apps/ART/assets/js/prescription.js"></script>
 <script type="text/javascript" src="/assets/js/alertifyjs/alertify.js"></script>
 <script type="text/javascript" src="/assets/js/does_connection_exist.js"></script>
+<link rel="stylesheet" href="/assets/css/provider.css" type="text/css">
+<script type="text/javascript" src="/assets/js/provider.js  "></script>
 
 <link rel="stylesheet" href="/assets/css/alertifyjs/css/alertify.css" type="text/css">
 
@@ -181,7 +183,7 @@
         <form action="post">
 
             <input type="text" name="regimens"
-                   tt_onLoad="initializeVariables();"
+                   tt_onLoad="initializeVariables();checkIfInBDMode();"
                    tt_onUnLoad="resetPage();"
                    tt_pageStyleClass="NoControls" optional="true"/>
 
