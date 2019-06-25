@@ -246,7 +246,7 @@ report_period.innerHTML += ' ' + moment(end_date).format('DD/MMM/YYYY');
         tr.appendChild(td);
         
         var btn = document.createElement('button');
-        btn.innerHTML = '<span>Views</span>';
+        btn.innerHTML = '<span>View</span>';
         btn.setAttribute('class', 'button blue navButton');
         btn.setAttribute('onclick', "redirectToMastercard('"+obj[index].patient_id+"')");
         td.appendChild(btn);
