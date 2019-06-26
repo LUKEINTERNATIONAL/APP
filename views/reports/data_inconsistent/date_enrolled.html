@@ -202,24 +202,25 @@
   /**
   * Quick search from the returned queries
   */
-  var dateEnrolled = [];
-
   function renderData(data) {
     var table = document.getElementById("date_enrolled").getElementsByTagName("tbody")[0];
     var obj = data;
     for (var index = 0; index < obj.length; index++) {
-
+        console.log(obj[index])
         
         var tr = document.createElement("tr");
         table.appendChild(tr);
 
         var td = document.createElement("td");
-        td.innerHTML = obj[index].identifier;
+        td.innerHTML = obj[index].arv_number;
         tr.appendChild(td);
+
+        var name = obj[index].given_name;
+        name += " " + obj[index].family_name;
 
         var td = document.createElement("td");
         td.style.textAlign = 'left'
-        td.innerHTML = obj[index].name;
+        td.innerHTML = name;
         tr.appendChild(td); 
 
         var td = document.createElement("td");
@@ -300,7 +301,7 @@
     var start_date = getUrlParameterByName('start_date',window.location.href);
     var end_date = getUrlParameterByName('end_date',window.location.href);
     
-    var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1/art_data_cleaning_tools?start_date=" + start_date + "&end_date=" + end_date + "&program_id=1&report_name=DATE ENROLLED LESS THAN EARLIEST START DATE";
+    var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1/art_data_cleaning_tools?start_date=" + start_date + "&end_date=" + end_date + "&program_id=1&report_name=DOB MORE THAN DATE ENROLLED";
       var xhttp = new XMLHttpRequest();
       xhttp.onreadystatechange = function () {
         if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
@@ -312,7 +313,6 @@
           /**
           * Keeping the returned queries
           */
-          dateEnrolled.push(...obj);
           
           /**
           * Displaying the returned results
