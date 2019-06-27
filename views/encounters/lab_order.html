@@ -84,6 +84,25 @@
 
         <script type="text/javascript">
 
+          function getVLInfo(){
+            var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1";
+            url += '/programs/1/patients/' + sessionStorage.patientID;
+            url += '/vl_info?date=' + sessionStorage.sessionDate;
+
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+              if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                vl_info = JSON.parse(this.responseText);
+              }
+            }
+            xhttp.open("GET", url, true);
+            xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+            xhttp.setRequestHeader('Content-type', "application/json");
+            xhttp.send();
+          }
+
+          getVLInfo();
+
           function pressOrder() {
             var orderBox = document.createElement('div');
             orderBox.setAttribute('id', 'orders-box');
@@ -266,8 +285,25 @@
               }
             }
 
-            //e.setAttribute('onmousedown', '');
-            createEncounter();
+            e.setAttribute('onmousedown', '');
+
+            var viral_load_selected = false;
+            for(var i = 0; i < selected_tests.length; i++){
+              console.log(selected_tests[i]);
+              for(var test in selected_tests[i]) {
+                if(selected_tests[i][test].match(/viral load/i)){
+                  viral_load_selected = true;
+                  break;
+                }
+              }
+            }
+    
+            if(viral_load_selected && (Object.keys(vl_info).length > 0) && vl_info.eligibile == true){
+                vlOrdered();
+            }else{
+              createEncounter();
+            }
+
           }
 
           function createEncounter() {
@@ -288,7 +324,7 @@
 
           function createLabOrders(encounter) {
             var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1";
-            url += '/programs/1/lab_tests/orders/lims-old';
+            url += '/programs/1/lab_tests/orders/lims-old?date='+sessionStorage.sessionDate;
 
             for(var i = 0; i < selected_tests.length; i++){
 
@@ -303,8 +339,8 @@
               var xhttp = new XMLHttpRequest();
               xhttp.onreadystatechange = function () {
                 if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
-                    console.log("Hello");
-                    if(parseInt(i) === parseInt(selected_tests.length - 1)){
+                    console.log(parseInt(i)+"   "+parseInt(selected_tests.length));
+                    if(parseInt(i) === parseInt(selected_tests.length)){
                       selected_tests = [];
                       window.location.href = "/apps/ART/views/encounters/hiv_clinic_consultation.html";
                     }
