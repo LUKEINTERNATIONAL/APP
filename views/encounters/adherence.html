@@ -800,7 +800,7 @@
 
         observations.push({
             concept_id: 3140,
-            value_text: r.value,
+            value_coded: (r.value == 'Yes' ? 1065 : 1066),
             person_id: sessionStorage.patientID
         });
         submitAdherence();
