@@ -126,12 +126,19 @@
             nextB.setAttribute('id', 'next-button');
             ordersNavBar.appendChild(nextB);
 
-            var cancelB = document.createElement('button');
-            cancelB.innerHTML = '<span>Clear</span>';
-            cancelB.style = 'float: left; left: 5px;';
-            cancelB.setAttribute('class', 'button red navButton nav-orders-btns');
-            cancelB.setAttribute('onmousedown', 'clearLabOrder();');
-            ordersNavBar.appendChild(cancelB);
+            var clear = document.createElement('button');
+            clear.innerHTML = '<span>Clear</span>';
+            //cancelB.style = 'float: left; left: 5px;';
+            clear.setAttribute('class', 'button blue navButton nav-orders-btns');
+            clear.setAttribute('onmousedown', 'clearLabOrder();');
+            ordersNavBar.appendChild(clear);
+
+            var cancel = document.createElement('button');
+            cancel.innerHTML = '<span>Cancel order</span>';
+            cancel.style = 'float: left; left: 5px;';
+            cancel.setAttribute('class', 'button red navButton nav-orders-btns');
+            cancel.setAttribute('onmousedown', 'cancelLabOrder();');
+            ordersNavBar.appendChild(cancel);
           }
 
 
@@ -214,6 +221,11 @@
             }
           }
 
+          function cancelLabOrder(){
+            selected_tests = [];
+            window.history.back();
+          }
+
           function clearLabOrder() {
             var selected_item = jQuery("td.tests-containers[test-selected=true]")
             
@@ -255,7 +267,7 @@
             }
 
             //e.setAttribute('onmousedown', '');
-            //createEncounter();
+            createEncounter();
           }
 
           function createEncounter() {
@@ -276,42 +288,35 @@
 
           function createLabOrders(encounter) {
             var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1";
-            url += '/programs/1/lab_tests/orders?patient_id=' + sessionStorage.patientID;
-            var lab_orders_data = []
-            for (var test_name in selected_tests){
-                test_reason = selected_tests[test_name];
-                data = {
-                    "test_type": test_name,
-                    "reason": test_reason
-                }
+            url += '/programs/1/lab_tests/orders/lims-old';
 
-                lab_orders_data.push(data)
-            }
+            for(var i = 0; i < selected_tests.length; i++){
 
-            var parameters = {
-                encounter_id: encounter.encounter_id,
-                tests: lab_orders_data,
-                date: sessionStorage.sessionDate,
-                requesting_clinician: sessionStorage.username
-            };
+              data = {}
+              data["test_type"] = selected_tests[i]["Test Type"];
+              data["specimen_type"] = selected_tests[i]["Specimen"];
+              data["reason"] = selected_tests[i]["Reason"];
+              data["patient_id"] = sessionStorage.patientID;
+            
+              var parametersPassed = JSON.stringify(data);
 
-            var parametersPassed = JSON.stringify(parameters);
-
-            var xhttp = new XMLHttpRequest();
-            xhttp.onreadystatechange = function () {
+              var xhttp = new XMLHttpRequest();
+              xhttp.onreadystatechange = function () {
                 if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
-                    try {
-                    var messageBar = document.getElementById('messageBar');
-                    messageBar.style = 'background-color: green; border-color: lightgreen;';
-                    }catch(s){}
-                    showMessage('Order(s) successful done.');
-                    clearLabOrder();
+                    console.log("Hello");
+                    if(parseInt(i) === parseInt(selected_tests.length - 1)){
+                      selected_tests = [];
+                      window.location.href = "/apps/ART/views/encounters/hiv_clinic_consultation.html";
+                    }
                 }
-            };
-            xhttp.open("POST", url, true);
-            xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
-            xhttp.setRequestHeader('Content-type', "application/json");
-            xhttp.send(parametersPassed);
+              };
+              xhttp.open("POST", url, true);
+              xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+              xhttp.setRequestHeader('Content-type', "application/json");
+              xhttp.send(parametersPassed);
+
+            }
+            
           }
 
           function postOrders(encounter, test, reason) {
