@@ -434,7 +434,7 @@
 
           function fetchSpecimen(test_type){
             var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1";
-            url += '/programs/1/lab_tests/panels?test_type=' +test_type;
+            url += '/programs/1/lab_tests/panels?test_type=' +encodeURIComponent(test_type.replace(/&amp;/g, "&"));
 
             var xhttp = new XMLHttpRequest();
             xhttp.onreadystatechange = function () {
