@@ -59,7 +59,7 @@
 
         <script>
           
-          var selected_tests = {};
+          var selected_tests = [];
 
         </script>
 
@@ -321,29 +321,29 @@
                     var obs = JSON.parse(this.responseText);
                     sortOrders(encounter);
                 }
-    };
-    xhttp.open("POST", url, true);
-    xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
-    xhttp.setRequestHeader('Content-type', "application/json");
-    xhttp.send(parametersPassed);
-}
+            };
+            xhttp.open("POST", url, true);
+            xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+            xhttp.setRequestHeader('Content-type', "application/json");
+            xhttp.send(parametersPassed);
+          }
 
-function fetchOrders() {
-    var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1";
-    url += "/programs/1/lab_tests/orders?patient_id=" + sessionStorage.patientID;
+          function fetchOrders() {
+            var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1";
+            url += "/programs/1/lab_tests/orders?patient_id=" + sessionStorage.patientID;
 
-    var xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function () {
-        if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
-            var obj = JSON.parse(this.responseText);
-            updateOrderTable(obj);
-        }
-    };
-    xhttp.open("GET", url, true);
-    xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
-    xhttp.setRequestHeader('Content-type', "application/json");
-    xhttp.send();
-}
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+              if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                var obj = JSON.parse(this.responseText);
+                updateOrderTable(obj);
+              }
+            };
+            xhttp.open("GET", url, true);
+            xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+            xhttp.setRequestHeader('Content-type', "application/json");
+            xhttp.send();
+          }
 
 
           function selectTest(e) {
@@ -364,7 +364,7 @@ function fetchOrders() {
 
                 testDIV.style = cssStyle += 'opacity: 0.4;';
                 var selected = e.getElementsByTagName('td')[0];
-                selected_tests[selected.innerHTML] = null;
+                selected_tests.push({"Test Type" : selected.innerHTML, "Specimen" : null, "Reason" : null});
                 enableReasons();
                 resetReasonSelection();
                 fetchSpecimen(e.getElementsByTagName('td')[0].innerHTML);
@@ -399,7 +399,7 @@ function fetchOrders() {
                   var li = document.createElement('li');
                   li.innerHTML = specimen[i];
                   li.setAttribute('value', specimen[i]);
-                  li.setAttribute('reason', specimen[i]);
+                  li.setAttribute('specimen', specimen[i]);
                   li.setAttribute('id', i);
                   li.setAttribute('class', 'test-reasons ' + oddEven);
                   li.setAttribute('onmousedown', "selectSpecimen(this);");
@@ -421,7 +421,7 @@ function fetchOrders() {
             var reasonDIV = document.getElementById('specimen-div');
             var UL = reasonDIV.getElementsByTagName('ul')[0];
             UL.setAttribute('style', 'opacity: 0.4;');
-            //resetReasonSelection();
+
             displayReasons();
           }
 
@@ -440,24 +440,24 @@ function fetchOrders() {
             }
 
             e.style = 'background-color: lightblue;';
-            for (var t in selected_tests) {
-              if (selected_tests[t] == null) {
-                selected_tests[t] = e.getAttribute('reason');
-              }
-            }
+            selected_tests[selected_tests.length - 1]["Specimen"] = e.getAttribute('specimen')
 
             disableReasons();
-            //enableTestDIV();
           }
 
           function selectReason(e) {
             var UL = document.getElementById('reasons-list');
-            //var UL = reasonDIV.getElementsByTagName('ul')[0];
             var cssStyle = UL.getAttribute('style');
             if (cssStyle.match(/opacity/i)) {
               showMessage('Select test before select reason');
               return;
             }
+
+            reasons = document.getElementById("selected-tests-display");
+            reasons.innerHTML = null;
+
+            specimen = document.getElementById("specimen-list");
+            specimen.innerHTML = null;
 
             var list = document.getElementsByClassName('test-reasons');
             for (var i = 0; i < list.length; i++) {
@@ -465,13 +465,8 @@ function fetchOrders() {
             }
 
             e.style = 'background-color: lightblue;';
-            for (var t in selected_tests) {
-              if (selected_tests[t] == null) {
-                selected_tests[t] = e.getAttribute('reason');
-              }
-            }
-
-            //disableReasons();
+            selected_tests[selected_tests.length - 1]["Reason"] = e.getAttribute('reason')
+            
             enableTestDIV();
           }
 
@@ -540,12 +535,12 @@ function fetchOrders() {
 
           function removeTest(test) {
             var temp = selected_tests;
-            selected_tests = {}
+            selected_tests = []
             for (var t in temp) {
                 if (test == t)
                     continue;
 
-                selected_tests[t] = temp[t];
+                //selected_tests[t] = temp[t];
             }
             displayReasons();
           }
