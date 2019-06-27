@@ -385,7 +385,7 @@
                 e.style = 'background-color: ""';
                 e.setAttribute('test-selected', 'false');
                 img.setAttribute('src', '/public/touchscreentoolkit/lib/images/unticked.jpg');
-                disableReasons();
+                //disableReasons();
                 var selected = e.getElementsByTagName('td')[0];
                 removeTest(selected.innerHTML);
             }
@@ -552,15 +552,28 @@
           }
 
           function removeTest(test) {
-            var temp = selected_tests;
-            selected_tests = []
-            for (var t in temp) {
-                if (test == t)
-                    continue;
+            table = document.getElementById('summary-table');
+            for(var i = 0; i < selected_tests.length; i++){
+              for(key in selected_tests[i]){
+                try{
+                  if (selected_tests[i]["Test Type"] === test){
+                    selected_tests.splice(i,1);
+                    tr = jQuery("tr[data='"+test+"']")[0];
+                    table.removeChild(tr);
+                  }
+
+                }catch(e){}
+              }
+            }
+            //var temp = selected_tests;
+            //selected_tests = []
+            //for (var t in temp) {
+              //  if (test == t)
+                //    continue;
 
                 //selected_tests[t] = temp[t];
-            }
-            displayReasons();
+//            }
+            //displayReasons();
           }
 
       function addMainReasonForTests() {
@@ -630,6 +643,8 @@
         var table = document.getElementById('summary-table');
         
         var tr = document.createElement('tr');
+        tr.setAttribute('data', test["Test Type"]);
+
         var td1 = document.createElement('td');
         td1.innerHTML = test["Test Type"];
         var td2 = document.createElement('td');
