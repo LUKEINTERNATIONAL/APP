@@ -3450,6 +3450,7 @@ function getIndicators() {
   if(regenerate_report === true) {
     url += "&regenerate=true";
     regenerate_report = false;
+    reload_status = true;
   }
 
   var xhttp = new XMLHttpRequest();
@@ -3459,8 +3460,13 @@ function getIndicators() {
       cohortResults = JSON.parse(this.responseText);
       myStopFunction();
       renderResults();
+
       document.getElementById('spinner').style = 'display: none;';
       document.getElementById('report-cover').style = 'display: none;';
+        
+      if(reload_status == true) 
+        location.reload();
+
     } else if (this.readyState === 4) {
       runningReport = true;
       setTimeout(getIndicators, 60000);
@@ -3475,6 +3481,7 @@ function getIndicators() {
 
 var myVar;
 var runningReport = true;
+var reload_status = false;
 
 function checkIfReportReady() {
   myVar = setTimeout(getIndicators, 60000);
