@@ -38,14 +38,22 @@
     </script>
     <style>
       #specimen-div {
-          height: 170px;
+          height: 30%;
+          overflow: auto;
       }
       #selected-tests-display {
-        height: 55%;
-        margin-top: 59px;
+        height: 40%;
+        margin-top: 30px;
         overflow: auto;
         border-radius: 9px;
         background-color: #fff;
+      }
+      #summary {
+        font-size: 18px;
+        background-color: beige;
+        margin-top: 20px;
+        height: 89px;
+        overflow: auto;
       }
     </style>
 
@@ -159,7 +167,7 @@
               var cell = document.createElement('div');
               cellCSS = 'vertical-align: top;';
               var width = (i == 1 ? '50%;' : '45%;');
-              cellCSS += 'height: 595px; width: ' + width;
+              cellCSS += 'height: 560px; width: ' + width;
               cellCSS += 'padding-left: 5px; overflow-x: hidden;';
               cell.style = cellCSS;
               cell.setAttribute('id', cells[i]);
@@ -219,6 +227,9 @@
               var selected = e.getElementsByTagName('td')[0];
               removeTest(selected.innerHTML);
             }
+
+            reasons = document.getElementById("selected-tests-display");
+            reasons.innerHTML = null;
             enableTestDIV();
             var reasonDIV = document.getElementById('tests-right');
             var UL = reasonDIV.getElementsByTagName('ul')[0];
@@ -226,23 +237,25 @@
           }
 
           function createOrders(e) {
-            var valid_selection = true;
-            var not_selection_done = isHashEmpty(selected_tests);
 
-            if (not_selection_done == true) {
+            if (selected_tests.length === 0){
               showMessage("Select test(s) to continue");
               return;
             }
 
-            for (var test in selected_tests) {
-              if (selected_tests[test] == null) {
-                showMessage('Add a test reason for ' + test);
-                return
+            for(var i = 0; i < selected_tests.length; i++){
+              for(key in selected_tests[i]){
+
+                if(selected_tests[i][key] === null){
+                  showMessage("Complete the selection to press an order");
+                  return;
+                }
+
               }
             }
 
-            e.setAttribute('onmousedown', '');
-            createEncounter();
+            //e.setAttribute('onmousedown', '');
+            //createEncounter();
           }
 
           function createEncounter() {
@@ -465,7 +478,12 @@
             }
 
             e.style = 'background-color: lightblue;';
-            selected_tests[selected_tests.length - 1]["Reason"] = e.getAttribute('reason')
+            try{
+              selected_tests[selected_tests.length - 1]["Reason"] = e.getAttribute('reason');
+              updateSummary(selected_tests[selected_tests.length - 1]);
+            }catch(e){
+              console.log(e);
+            }
             
             enableTestDIV();
           }
@@ -563,24 +581,41 @@
         specimen_div.appendChild(ul)
         container.appendChild(specimen_div);
 
-        var reasons = []; //['Routine', 'Targeted', 'Confirmatory', 'Stat', 'Reapet / Missing'];
-        for (var i = 0; i < reasons.length; i++) {
-            var oddEven = (i & 1) ? "odd" : "even";
-
-            var li = document.createElement('li');
-            li.innerHTML = reasons[i];
-            li.setAttribute('value', reasons[i]);
-            li.setAttribute('reason', reasons[i]);
-            li.setAttribute('id', i);
-            li.setAttribute('class', 'test-reasons ' + oddEven);
-            li.setAttribute('onmousedown', "selectSpecimen(this);");
-            //ul.appendChild(li);
-        }
-
         var selectedTestDisplay = document.createElement('div');
         selectedTestDisplay.setAttribute('id', 'selected-tests-display');
         selectedTestDisplay.innerHTML = '&nbsp;';
         container.appendChild(selectedTestDisplay);
+
+        var summaryDisplay = document.createElement('div');
+        summaryDisplay.setAttribute('id', 'summary');
+
+        var summaryTable = document.createElement('table');
+        summaryTable.setAttribute('id', 'summary-table');
+        summaryTable.setAttribute('style', 'width: 100%;');
+
+        var tr = document.createElement('tr');
+        var td1 = document.createElement('td');
+        td1.setAttribute('class', 'summary-table-cell')
+        td1.setAttribute('style', 'width: 40%; font-weight: bold;')
+        td1.innerHTML = "Test";
+
+        var td2 = document.createElement('td');
+        td2.setAttribute('class', 'summary-table-cell')
+        td2.setAttribute('style', 'width: 30%; font-weight: bold;')
+        td2.innerHTML = "Specimen";
+        
+        var td3 = document.createElement('td');
+        td3.setAttribute('class', 'summary-table-cell')
+        td3.setAttribute('style', 'width: 30%; font-weight: bold;')
+        td3.innerHTML = "Reason";
+        
+        tr.appendChild(td1)
+        tr.appendChild(td2)
+        tr.appendChild(td3)
+        summaryTable.appendChild(tr)
+
+        summaryDisplay.appendChild(summaryTable);
+        container.appendChild(summaryDisplay);
       }
 
       function addUntickBox(th, i) {
@@ -589,6 +624,24 @@
         img.setAttribute('src', '/public/touchscreentoolkit/lib/images/unticked.jpg');
         img.style = 'width: 25px; height: 25px;';
         th.appendChild(img);
+      }
+
+      function updateSummary(test){
+        var table = document.getElementById('summary-table');
+        
+        var tr = document.createElement('tr');
+        var td1 = document.createElement('td');
+        td1.innerHTML = test["Test Type"];
+        var td2 = document.createElement('td');
+        td2.innerHTML = test["Specimen"];
+        var td3 = document.createElement('td');
+        td3.innerHTML = test["Reason"];
+
+        tr.appendChild(td1);
+        tr.appendChild(td2);
+        tr.appendChild(td3);
+
+        table.appendChild(tr);
       }
     // ////////////////////////////////////////////////////////////////////////////////////////////////
 
