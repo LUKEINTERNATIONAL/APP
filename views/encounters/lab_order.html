@@ -1,0 +1,735 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta http-equiv="content-type" content="text/html;charset=UTF-8"/>
+    <title>New Lab Orders</title>
+    <script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js"
+            defer="true"></script>
+    <script type="text/javascript" src="/assets/js/jquery.min.js"></script>
+
+    <script type="text/javascript" src="/assets/js/post_parameters.js"></script>
+    <script type="text/javascript" src="/assets/js/generic_ajaxrequest.js"></script>
+    <script type="text/javascript" src="/assets/js/moment.js"></script>
+
+    <link rel="stylesheet" href="/apps/ART/assets/css/vl.reminder.css" type="text/css">
+    <script type="text/javascript" src="/apps/ART/assets/js/vl.reminder.js"></script>
+    <!-- ........... VL files end ....................... -->
+
+    <link rel="stylesheet" href="/assets/css/lab.min.css" type="text/css">
+
+    <script type="text/javascript" src="/assets/js/alertifyjs/alertify.js"></script>
+    <script type="text/javascript" src="/assets/js/does_connection_exist.js"></script>
+
+    <link rel="stylesheet" href="/assets/css/alertifyjs/css/alertify.css" type="text/css">
+    
+    <script type="text/javascript">
+      
+      var patient_id = sessionStorage.patientID;
+      
+      var tt_cancel_destination = "/views/patient_dashboard.html?patient_id=" + patient_id;
+      
+      var lab_orders_required = false;
+      
+      var oldtstCurrentPage = null;
+
+      var labResultsTable = null;
+
+      var targetLabSet = false; 
+
+    </script>
+    <style>
+      #specimen-div {
+          height: 30%;
+          overflow: auto;
+      }
+      #selected-tests-display {
+        height: 40%;
+        margin-top: 30px;
+        overflow: auto;
+        border-radius: 9px;
+        background-color: #fff;
+      }
+      #summary {
+        font-size: 18px;
+        background-color: beige;
+        margin-top: 20px;
+        height: 89px;
+        overflow: auto;
+      }
+    </style>
+
+  </head>
+
+  <body id="mateme">
+    
+    <div id="container">
+      
+      <div id="content">
+
+        <script>
+          
+          var selected_tests = [];
+
+        </script>
+
+        <form action="#" method='post'>
+
+            <input type="text" name="lab-summary"
+                   tt_onLoad="__$('keyboard').style.display = 'none';
+                   currentLocation();changeNextButtonForLabOrders();"
+                   tt_onUnload="removeOrderBtn();"
+                   tt_pageStyleClass="NoControls" helpText="Lab orders" optional="true"/>
+        </form>
+
+        <div id="regimen-change-cover"></div>
+
+        <script type="text/javascript">
+
+          function getVLInfo(){
+            var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1";
+            url += '/programs/1/patients/' + sessionStorage.patientID;
+            url += '/vl_info?date=' + sessionStorage.sessionDate;
+
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+              if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                vl_info = JSON.parse(this.responseText);
+              }
+            }
+            xhttp.open("GET", url, true);
+            xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+            xhttp.setRequestHeader('Content-type', "application/json");
+            xhttp.send();
+          }
+
+          getVLInfo();
+          // currentLocation
+          function pressOrder() {
+            var orderBox = document.createElement('div');
+            orderBox.setAttribute('id', 'orders-box');
+
+            var orderCover = document.createElement('div');
+            orderCover.setAttribute('id', 'orders-cover');
+
+            var container = document.createElement('div');
+            container.setAttribute('id', 'orders-container');
+            orderBox.appendChild(container);
+
+            var orderNavBar = document.createElement('div');
+            orderNavBar.setAttribute('id', 'orders-nav-bar');
+            orderBox.appendChild(orderNavBar);
+
+            var windowBody = document.getElementsByTagName('body')[0];
+
+            try {
+              var div1 = document.getElementById('orders-box');
+              var div2 = document.getElementById('orders-cover');
+              windowBody.removeChild(div1);
+              windowBody.removeChild(div2);
+            } catch (e) {
+            }
+
+            windowBody.appendChild(orderBox);
+            windowBody.appendChild(orderCover);
+            orderCover.style = 'display: inline;';
+            orderBox.style = 'display: inline;';
+
+            addNavButtons(orderNavBar);
+            fetchAvailableTests();
+          }
+
+          function addNavButtons(ordersNavBar) {
+            var nextB = document.createElement('button');
+            nextB.innerHTML = '<span>Order test(s)</span>';
+            nextB.setAttribute('class', 'button green navButton nav-orders-btns');
+            nextB.setAttribute('onmousedown', 'createOrders(this);');
+            nextB.setAttribute('id', 'next-button');
+            ordersNavBar.appendChild(nextB);
+
+            var clear = document.createElement('button');
+            clear.innerHTML = '<span>Clear</span>';
+            //cancelB.style = 'float: left; left: 5px;';
+            clear.setAttribute('class', 'button blue navButton nav-orders-btns');
+            clear.setAttribute('onmousedown', 'clearLabOrder();');
+            ordersNavBar.appendChild(clear);
+
+            var cancel = document.createElement('button');
+            cancel.innerHTML = '<span>Cancel order</span>';
+            cancel.style = 'float: left; left: 5px;';
+            cancel.setAttribute('class', 'button red navButton nav-orders-btns');
+            cancel.setAttribute('onmousedown', 'cancelLabOrder();');
+            ordersNavBar.appendChild(cancel);
+          }
+
+
+          function fetchAvailableTests() {
+            var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1";
+            url += '/programs/1/lab_tests/types';
+
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+              if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                var obs = JSON.parse(this.responseText);
+                displayT(obs);
+              }
+            };
+            xhttp.open("GET", url, true);
+            xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+            xhttp.setRequestHeader('Content-type', "application/json");
+            xhttp.send();
+          }
+
+          function displayT(tests) {
+            var container = document.getElementById('orders-container');
+
+            var div = document.createElement('div');
+            divCSS = "height: 620px; width: 98%;";
+            divCSS += "border: solid 1px; padding: 10px;";
+            divCSS += "border-radius: 9px;";
+            div.style = divCSS;
+            container.appendChild(div);
+
+            var cells = ['tests-left', 'tests-right'];
+            for (var i = 0; i < cells.length; i++) {
+              var cell = document.createElement('div');
+              cellCSS = 'vertical-align: top;';
+              var width = (i == 1 ? '50%;' : '45%;');
+              cellCSS += 'height: 560px; width: ' + width;
+              cellCSS += 'padding-left: 5px; overflow-x: hidden;';
+              cell.style = cellCSS;
+              cell.setAttribute('id', cells[i]);
+              div.appendChild(cell);
+            }
+            addLefttable(tests);
+            addMainReasonForTests();
+          }
+
+          function addLefttable(tests) {
+            var table = document.createElement('table');
+            table.setAttribute('class', 'tests-tables');
+            var container = document.getElementById('tests-left');
+            container.appendChild(table);
+
+            for (var i = 0; i < tests.sort().length; i++) {
+              var tr = document.createElement('tr');
+              table.appendChild(tr);
+
+              var td = document.createElement('td');
+              /* .......... */
+              var minTable = document.createElement('table');
+              minTable.style = 'width: 100%;';
+              var minTr = document.createElement('tr');
+              minTable.appendChild(minTr);
+              var minTH = document.createElement('th');
+              minTH.style = "text-align: center; width: 5px;border-style: solid; border-width: 0px;";
+              addUntickBox(minTH, i);
+              minTr.appendChild(minTH);
+
+              var minTD = document.createElement('td');
+              minTD.innerHTML = tests[i];
+              minTD.style = 'padding-left: 10px;';
+              minTr.appendChild(minTD);
+
+              td.appendChild(minTable);
+              /* .......... */
+
+              td.setAttribute('class', 'tests-containers');
+              td.setAttribute('onmousedown', 'selectTest(this);');
+              td.setAttribute('test-selected', 'false');
+              td.setAttribute('id', 'test-' + i);
+              tr.appendChild(td);
+            }
+          }
+
+          function cancelLabOrder(){
+            selected_tests = [];
+            window.history.back();
+          }
+
+          function clearLabOrder() {
+            var selected_item = jQuery("td.tests-containers[test-selected=true]")
+            
+            for(var i = 0; i < selected_item.length; i++){
+              var e = document.getElementById(selected_item[i].id);
+              var img = document.getElementById('order-' + e.id.split('-')[1]);
+              e.style = 'background-color: ""';
+              e.setAttribute('test-selected', 'false');
+              img.setAttribute('src', '/public/touchscreentoolkit/lib/images/unticked.jpg');
+              disableReasons();
+              var selected = e.getElementsByTagName('td')[0];
+              removeTest(selected.innerHTML);
+            }
+
+            reasons = document.getElementById("selected-tests-display");
+            reasons.innerHTML = null;
+            enableTestDIV();
+            var reasonDIV = document.getElementById('tests-right');
+            var UL = reasonDIV.getElementsByTagName('ul')[0];
+            UL.setAttribute('style', 'opacity: 0.4;');
+          }
+
+          function createOrders(e) {
+
+            if (selected_tests.length === 0){
+              showMessage("Select test(s) to continue");
+              return;
+            }
+
+            for(var i = 0; i < selected_tests.length; i++){
+              for(key in selected_tests[i]){
+
+                if(selected_tests[i][key] === null){
+                  showMessage("Complete the selection to press an order");
+                  return;
+                }
+
+              }
+            }
+
+            e.setAttribute('onmousedown', '');
+
+            var viral_load_selected = false;
+            for(var i = 0; i < selected_tests.length; i++){
+              console.log(selected_tests[i]);
+              for(var test in selected_tests[i]) {
+                if(selected_tests[i][test].match(/viral load/i)){
+                  viral_load_selected = true;
+                  break;
+                }
+              }
+            }
+    
+            if(viral_load_selected && (Object.keys(vl_info).length > 0) && vl_info.eligibile == true){
+                vlOrdered();
+            }else{
+              createEncounter();
+            }
+
+          }
+
+          function createEncounter() {
+            var currentTime = moment().format(' HH:mm:ss');
+            var encounter_datetime = moment(sessionStorage.sessionDate).format('YYYY-MM-DD');
+            encounter_datetime += currentTime;
+
+            var encounter = {
+                encounter_type_name: 'LAB ORDERS',
+                encounter_type_id: 57,
+                patient_id: sessionStorage.patientID,
+                encounter_datetime: encounter_datetime
+            }
+
+            submitParameters(encounter, "/encounters", "createLabOrders");
+          }
+
+
+          function createLabOrders(encounter) {
+            var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1";
+            url += '/programs/1/lab_tests/orders/lims-old?date='+sessionStorage.sessionDate;
+
+            for(var i = 0; i < selected_tests.length; i++){
+
+              data = {}
+              data["test_type"] = selected_tests[i]["Test Type"];
+              data["specimen_type"] = selected_tests[i]["Specimen"];
+              data["reason"] = selected_tests[i]["Reason"];
+              data["patient_id"] = sessionStorage.patientID;
+            
+              var parametersPassed = JSON.stringify(data);
+
+              var xhttp = new XMLHttpRequest();
+              xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                    console.log(parseInt(i)+"   "+parseInt(selected_tests.length));
+                    if(parseInt(i) === parseInt(selected_tests.length)){
+                      selected_tests = [];
+                      window.location.href = "/apps/ART/views/encounters/hiv_clinic_consultation.html";
+                    }
+                }
+              };
+              xhttp.open("POST", url, true);
+              xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+              xhttp.setRequestHeader('Content-type', "application/json");
+              xhttp.send(parametersPassed);
+
+            }
+            
+          }
+
+          function postOrders(encounter, test, reason) {
+            var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1";
+            url += '/programs/1/lab_tests/orders?patient_id=' + sessionStorage.patientID;
+
+            var parameters = {
+                encounter_id: encounter.encounter_id,
+                test_types: [test],
+                date: sessionStorage.sessionDate,
+                reason: reason,
+                requesting_clinician: sessionStorage.username
+            };
+
+            var parametersPassed = JSON.stringify(parameters);
+
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                    var obs = JSON.parse(this.responseText);
+                    sortOrders(encounter);
+                }
+            };
+            xhttp.open("POST", url, true);
+            xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+            xhttp.setRequestHeader('Content-type', "application/json");
+            xhttp.send(parametersPassed);
+          }
+
+          function fetchOrders() {
+            var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1";
+            url += "/programs/1/lab_tests/orders?patient_id=" + sessionStorage.patientID;
+
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+              if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                var obj = JSON.parse(this.responseText);
+                updateOrderTable(obj);
+              }
+            };
+            xhttp.open("GET", url, true);
+            xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+            xhttp.setRequestHeader('Content-type', "application/json");
+            xhttp.send();
+          }
+
+
+          function selectTest(e) {
+            var selected = e.getAttribute('test-selected');
+            var img = document.getElementById('order-' + e.id.split('-')[1]);
+            var testDIV = document.getElementById('tests-left');
+            var cssStyle = testDIV.getAttribute('style');
+            if (cssStyle.match(/opacity/i)) {
+                showMessage('Select test reason to continue');
+                return;
+            }
+
+
+            if (selected == 'false') {
+                e.style = 'background-color: lightblue;';
+                e.setAttribute('test-selected', 'true');
+                img.setAttribute('src', '/public/touchscreentoolkit/lib/images/ticked.jpg');
+
+                testDIV.style = cssStyle += 'opacity: 0.4;';
+                var selected = e.getElementsByTagName('td')[0];
+                selected_tests.push({"Test Type" : selected.innerHTML, "Specimen" : null, "Reason" : null});
+                enableReasons();
+                resetReasonSelection();
+                fetchSpecimen(e.getElementsByTagName('td')[0].innerHTML);
+            } else {
+                e.style = 'background-color: ""';
+                e.setAttribute('test-selected', 'false');
+                img.setAttribute('src', '/public/touchscreentoolkit/lib/images/unticked.jpg');
+                //disableReasons();
+                var selected = e.getElementsByTagName('td')[0];
+                removeTest(selected.innerHTML);
+            }
+          }
+
+          function fetchSpecimen(test_type){
+            var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1";
+            url += '/programs/1/lab_tests/panels?test_type=' +encodeURIComponent(test_type.replace(/&amp;/g, "&"));
+
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+              if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                var specimen = JSON.parse(this.responseText);
+                var div = document.getElementById('specimen-div');
+                var ul = document.getElementById('specimen-list');
+                ul.innerHTML = "";
+                div.innerHTML = "";
+
+                ul.setAttribute('style', 'opacity: 0.4;');
+
+                for (var i = 0; i < specimen.length; i++) {
+                  var oddEven = (i & 1) ? "odd" : "even";
+
+                  var li = document.createElement('li');
+                  li.innerHTML = specimen[i];
+                  li.setAttribute('value', specimen[i]);
+                  li.setAttribute('specimen', specimen[i]);
+                  li.setAttribute('id', i);
+                  li.setAttribute('class', 'test-reasons ' + oddEven);
+                  li.setAttribute('onmousedown', "selectSpecimen(this);");
+                  ul.appendChild(li);
+                }
+
+                div.appendChild(ul);
+                enableReasons();
+
+              }
+            };
+            xhttp.open("GET", url, true);
+            xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+            xhttp.setRequestHeader('Content-type', "application/json");
+            xhttp.send();
+          }
+
+          function disableReasons() {
+            var reasonDIV = document.getElementById('specimen-div');
+            var UL = reasonDIV.getElementsByTagName('ul')[0];
+            UL.setAttribute('style', 'opacity: 0.4;');
+
+            displayReasons();
+          }
+
+          function selectSpecimen(e) {
+            var reasonDIV = document.getElementById('specimen-div');
+            var UL = reasonDIV.getElementsByTagName('ul')[0];
+            var cssStyle = UL.getAttribute('style');
+            if (cssStyle.match(/opacity/i)) {
+              showMessage('Select test before selecting specimen');
+              return;
+            }
+
+            var list = document.getElementsByClassName('test-reasons');
+            for (var i = 0; i < list.length; i++) {
+              list[i].style = 'background-color: "";';
+            }
+
+            e.style = 'background-color: lightblue;';
+            selected_tests[selected_tests.length - 1]["Specimen"] = e.getAttribute('specimen')
+
+            disableReasons();
+          }
+
+          function selectReason(e) {
+            var UL = document.getElementById('reasons-list');
+            var cssStyle = UL.getAttribute('style');
+            if (cssStyle.match(/opacity/i)) {
+              showMessage('Select test before select reason');
+              return;
+            }
+
+            reasons = document.getElementById("selected-tests-display");
+            reasons.innerHTML = null;
+
+            specimen = document.getElementById("specimen-list");
+            specimen.innerHTML = null;
+
+            var list = document.getElementsByClassName('test-reasons');
+            for (var i = 0; i < list.length; i++) {
+              list[i].style = 'background-color: "";';
+            }
+
+            e.style = 'background-color: lightblue;';
+            try{
+              selected_tests[selected_tests.length - 1]["Reason"] = e.getAttribute('reason');
+              updateSummary(selected_tests[selected_tests.length - 1]);
+            }catch(e){
+              console.log(e);
+            }
+            
+            enableTestDIV();
+          }
+
+          function enableReasons() {
+            var reasonDIV = document.getElementById('tests-right');
+            var UL = reasonDIV.getElementsByTagName('ul')[0];
+            UL.setAttribute('style', '');
+          }
+
+
+          function enableTestDIV() {
+            var testDIV = document.getElementById('tests-left');
+            var css = "vertical-align: top;";
+            css += "height: 595px;";
+            css += "width: 45%;";
+            css += "padding-left: 5px;";
+            css += "overflow-x: hidden;";
+            testDIV.setAttribute('style', css);
+          }
+
+          function disableTestDIV() {
+            var testDIV = document.getElementById('tests-left');
+            var css = testDIV.getAttribute('style');
+            testDIV.setAttribute('style', css + "opacity: 0.4;");
+          }
+
+          function resetReasonSelection() {
+            var list = document.getElementsByClassName('test-reasons');
+            for (var i = 0; i < list.length; i++) {
+                list[i].style = 'background-color: "";';
+            }
+          }
+
+          function displayReasons() {
+            var div = document.getElementById('selected-tests-display');
+            div.innerHTML = null;
+
+            var label_div = document.createElement('div');
+            label_div.setAttribute('id', 'reason-label');
+            label_div.innerHTML = "Reason"
+            label_div.style = 'text-align: center;border-style: solid;border-width: 0px 0px 1px 0px;';
+
+            var ul = document.createElement('ul');
+            ul.setAttribute('id', 'reasons-list')
+            ul.setAttribute('style', '');
+            label_div.appendChild(ul)
+            div.appendChild(label_div);
+        
+            var reasons = ['Routine', 'Targeted', 'Confirmatory', 'Stat', 'Reapet / Missing'];
+        
+            for (var i = 0; i < reasons.length; i++) {
+              var oddEven = (i & 1) ? "odd" : "even";
+
+              var li = document.createElement('li');
+              li.innerHTML = reasons[i];
+              li.setAttribute('value', reasons[i]);
+              li.setAttribute('reason', reasons[i]);
+              li.setAttribute('id', i);
+              li.setAttribute('class', 'test-reasons ' + oddEven);
+              li.setAttribute('onmousedown', "selectReason(this);");
+              ul.appendChild(li);
+            }
+
+            div.appendChild(ul);
+          }
+
+          function removeTest(test) {
+            table = document.getElementById('summary-table');
+            for(var i = 0; i < selected_tests.length; i++){
+              for(key in selected_tests[i]){
+                try{
+                  if (selected_tests[i]["Test Type"] === test){
+                    selected_tests.splice(i,1);
+                    tr = jQuery("tr[data='"+test+"']")[0];
+                    table.removeChild(tr);
+                  }
+
+                }catch(e){}
+              }
+            }
+            //var temp = selected_tests;
+            //selected_tests = []
+            //for (var t in temp) {
+              //  if (test == t)
+                //    continue;
+
+                //selected_tests[t] = temp[t];
+//            }
+            //displayReasons();
+          }
+
+      function addMainReasonForTests() {
+        var container = document.getElementById('tests-right');
+        container.setAttribute('class', 'options');
+
+        var div = document.createElement('div');
+        div.style = 'text-align: center;border-style: solid;border-width: 0px 0px 1px 0px;';
+        div.innerHTML = 'Specimen(s)';
+        container.appendChild(div);
+
+        var specimen_div = document.createElement('div');
+        specimen_div.setAttribute('id', 'specimen-div');
+
+        var ul = document.createElement('ul');
+        ul.setAttribute('style', 'opacity: 0.4;');
+        ul.setAttribute('id', 'specimen-list')
+        specimen_div.appendChild(ul)
+        container.appendChild(specimen_div);
+
+        var selectedTestDisplay = document.createElement('div');
+        selectedTestDisplay.setAttribute('id', 'selected-tests-display');
+        selectedTestDisplay.innerHTML = '&nbsp;';
+        container.appendChild(selectedTestDisplay);
+
+        var summaryDisplay = document.createElement('div');
+        summaryDisplay.setAttribute('id', 'summary');
+
+        var summaryTable = document.createElement('table');
+        summaryTable.setAttribute('id', 'summary-table');
+        summaryTable.setAttribute('style', 'width: 100%;');
+
+        var tr = document.createElement('tr');
+        var td1 = document.createElement('td');
+        td1.setAttribute('class', 'summary-table-cell')
+        td1.setAttribute('style', 'width: 40%; font-weight: bold;')
+        td1.innerHTML = "Test";
+
+        var td2 = document.createElement('td');
+        td2.setAttribute('class', 'summary-table-cell')
+        td2.setAttribute('style', 'width: 30%; font-weight: bold;')
+        td2.innerHTML = "Specimen";
+        
+        var td3 = document.createElement('td');
+        td3.setAttribute('class', 'summary-table-cell')
+        td3.setAttribute('style', 'width: 30%; font-weight: bold;')
+        td3.innerHTML = "Reason";
+        
+        tr.appendChild(td1)
+        tr.appendChild(td2)
+        tr.appendChild(td3)
+        summaryTable.appendChild(tr)
+
+        summaryDisplay.appendChild(summaryTable);
+        container.appendChild(summaryDisplay);
+      }
+
+      function addUntickBox(th, i) {
+        var img = document.createElement('img')
+        img.setAttribute('id', 'order-' + i);
+        img.setAttribute('src', '/public/touchscreentoolkit/lib/images/unticked.jpg');
+        img.style = 'width: 25px; height: 25px;';
+        th.appendChild(img);
+      }
+
+      function currentLocation() {
+
+        var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1";
+        url += '/global_properties?property=target.lab';
+        
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+          if (this.readyState == 4 ) {
+            if (this.status == 201 || this.status == 200 ) {
+              targetLabSet = true;
+              pressOrder();
+            }else if(this.status == 404){
+              targetLabSet = false;
+              showMessage("Target Lab is not set, please set it in the application settings");
+              setTimeout('next();', 2000);
+            }
+          }
+      };
+      xhttp.open("GET", url, true);
+      xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+      xhttp.setRequestHeader('Content-type', "application/json");
+      xhttp.send();
+      }
+
+      function next() {
+        window.history.back();
+      }
+      function updateSummary(test){
+        var table = document.getElementById('summary-table');
+        
+        var tr = document.createElement('tr');
+        tr.setAttribute('data', test["Test Type"]);
+
+        var td1 = document.createElement('td');
+        td1.innerHTML = test["Test Type"];
+        var td2 = document.createElement('td');
+        td2.innerHTML = test["Specimen"];
+        var td3 = document.createElement('td');
+        td3.innerHTML = test["Reason"];
+
+        tr.appendChild(td1);
+        tr.appendChild(td2);
+        tr.appendChild(td3);
+
+        table.appendChild(tr);
+      }
+    // ////////////////////////////////////////////////////////////////////////////////////////////////
+
+            </script>
+
+        </div>

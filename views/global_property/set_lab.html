@@ -1,0 +1,51 @@
+
+<script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js" defer="true"></script>
+<script type="text/javascript" src="/assets/js/jquery.min.js"></script>
+<script type="text/javascript" src="/assets/js/post_parameters.js"></script>
+<script type="text/javascript" src="/assets/js/generic_ajaxrequest.js"></script>
+
+<script>
+
+function changeNext() {
+  var b = document.getElementById('nextButton');
+  b.setAttribute('onmousedown','validateGPentry();');
+}
+
+function validateGPentry() {
+  var inputField = document.getElementById('touchscreenInput' + tstCurrentPage)
+
+  if(inputField.value.length < 1){
+    showMessage('Please select a facility.');
+    return;
+  }
+
+  var gp = {
+    property: 'target.lab', 
+    property_value: inputField.getAttribute('tstvalue')
+  };
+
+  submitParameters(gp, '/global_properties', "gpSet");
+}
+
+function gpSet(e){ document.location = '/' }
+</script>
+
+<body id="mateme">
+  <div id="container">
+    <div id="content">
+
+      <form>
+
+        <select objectType="labs" ajaxURL="/programs/1/lab_tests/labs?search_name=" 
+          allowFreeText="true" 
+          field_type="alpha" 
+          helpText="Please select target lab" 
+          id="target_lab"
+          tt_onload="changeNext()"
+          name="target_lab"></select>
+      </form>
+
+   </div>
+ </div>
+</body>
+
