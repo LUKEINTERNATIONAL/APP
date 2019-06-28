@@ -35,6 +35,8 @@
 
       var labResultsTable = null;
 
+      var targetLabSet = false; 
+
     </script>
     <style>
       #specimen-div {
@@ -75,7 +77,7 @@
 
             <input type="text" name="lab-summary"
                    tt_onLoad="__$('keyboard').style.display = 'none';
-                   pressOrder();changeNextButtonForLabOrders();"
+                   currentLocation();changeNextButtonForLabOrders();"
                    tt_onUnload="removeOrderBtn();"
                    tt_pageStyleClass="NoControls" helpText="Lab orders" optional="true"/>
         </form>
@@ -102,7 +104,7 @@
           }
 
           getVLInfo();
-
+          // currentLocation
           function pressOrder() {
             var orderBox = document.createElement('div');
             orderBox.setAttribute('id', 'orders-box');
@@ -680,6 +682,33 @@
         th.appendChild(img);
       }
 
+      function currentLocation() {
+
+        var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1";
+        url += '/global_properties?property=target.lab';
+        
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+          if (this.readyState == 4 ) {
+            if (this.status == 201 || this.status == 200 ) {
+              targetLabSet = true;
+              pressOrder();
+            }else if(this.status == 404){
+              targetLabSet = false;
+              showMessage("Target Lab is not set, please set it in the application settings");
+              setTimeout('next();', 2000);
+            }
+          }
+      };
+      xhttp.open("GET", url, true);
+      xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+      xhttp.setRequestHeader('Content-type', "application/json");
+      xhttp.send();
+      }
+
+      function next() {
+        window.history.back();
+      }
       function updateSummary(test){
         var table = document.getElementById('summary-table');
         
