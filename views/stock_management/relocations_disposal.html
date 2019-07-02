@@ -831,6 +831,20 @@
             }
         }
 
+        function validateDateOfRelocation() {
+            __$("nextButton").onmousedown = function () {
+                var relocation_date = __$('touchscreenInput' + tstCurrentPage).value;
+                if (!isDateValid(relocation_date.replace(/-/g, '/'))) {
+                    showMessage("Input a valid relocation date");
+                    return false
+                }
+                gotoNextPage();
+            }
+        }
+
+        function isDateValid(date) {
+            return (new Date(date) !== "Invalid Date") && !isNaN(new Date(date));
+        }
     </script>
 
 </head>
@@ -857,7 +871,7 @@
 
             <input condition="$('relocation_or_disposal').value.toUpperCase() == 'RELOCATIONS'" field_type="date"
                    helpText="Date of Relocation" id="relocation_date" name="relocation_date"
-                   tt_onLoad="setMaxDate();"
+                   tt_onLoad="setMaxDate(); validateDateOfRelocation();"
                    tt_pageStyleClass="Date DatesOnly" type="text" value=""/>
 
 
