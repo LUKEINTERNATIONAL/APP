@@ -67,10 +67,19 @@
                     showMessage("Enter value to continue");
                     return;
                 }
+
+                if (!isDateValid(verification_date.replace(/-/g, '/'))) {
+                    showMessage("Input a valid verification date");
+                    return false
+                }
+
                 window.location = "/apps/ART/views/stock_management/process_verification.html";
             }
         }
 
+        function isDateValid(date) {
+            return (new Date(date) !== "Invalid Date") && !isNaN(new Date(date));
+        }
 
     </script>
 
