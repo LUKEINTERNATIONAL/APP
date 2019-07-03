@@ -1411,16 +1411,49 @@
             }
         }
 
+        function isNumeric(num) {
+            return !isNaN(num)
+        }
+
+        function isDateValid(date) {
+            return (new Date(date) !== "Invalid Date") && !isNaN(new Date(date));
+        }
+
         function updateNextButton() {
             __$("nextButton").onmousedown = function () {
+                var error_messages = [];
+                for (var key in drugs_hash) {
+                    var drugName = key.split("_")[0];
+                    var row_number = (parseInt(key.split("_")[1]) + 1);
 
-                var message = "";
-                for (var i in unfinished_drugs) {
-                    message += ("<br /> - " + drug_short_names[unfinished_drugs[i]] + (i < (unfinished_drugs.length - 1) ? "," : ""));
+                    var tabs_per_tin = drugs_hash[key]["tabs_per_tin"];
+                    var total_tins = drugs_hash[key]["total_tins"];
+                    var date_of_expiry = drugs_hash[key]["date_of_expiry"];
+
+                    if (!isNumeric(total_tins)) {
+                        error_messages.push("Invalid total tins input for " + drugName);
+                    }
+
+                    if (date_of_expiry) {
+                        if (!isDateValid("01/" + date_of_expiry)) {
+                            error_messages.push("Invalid expiry date for " + drugName);
+                        }
+                    }
+
+                    if (!row_complete(tabs_per_tin, total_tins, date_of_expiry)) {
+                        error_messages.push("Incomplete entries for " + drugName);
+                    }
+
+                    if (parseInt(key.split("_")[1]) == 0) {
+                        if (drugs_hash[key]["tabs_per_tin"].length == 0) {
+                            //The drug has not been clicked yet.
+                            error_messages.push("Incomplete entries for " + drugName);
+                        }
+                    }
                 }
 
-                if (message.length > 0) {
-                    showMessage(("Incomplete entries for:" + message), false, false);
+                if (error_messages.length > 0) {
+                    showMessage(error_messages.join("<br />"));
                 } else {
                     gotoNextPage();
                 }
@@ -1902,12 +1935,12 @@
             <form action="#">
 
                 <input helpText="Batch details" id="input" name="information" optional="true"
-                       tt_onLoad="$('clearButton').style.display = 'none'; checkContainer(); updateNextButton(); validator = setInterval('validateInputFields();', 350); "
+                       tt_onLoad="$('clearButton').style.display = 'none'; checkContainer(); updateNextButton();"
                        tt_onUnload="clearInterval(validator)" tt_pageStyleClass="NoKeyboard" type="text"/>
 
                 <input helpText="<span style='color: red;background: white;'>Confirm Entry (Touch row to change) </span>"
                        id="summary" name="showSummary" optional="true"
-                       tt_onLoad="clearInterval(validator); showSummary(); customizeFinishButton();"
+                       tt_onLoad="showSummary(); customizeFinishButton();"
                        tt_pageStyleClass="NoKeyboard" type="text"/>
             </form>
         </div>
