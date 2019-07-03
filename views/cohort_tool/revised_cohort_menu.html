@@ -63,13 +63,13 @@ function loadQuarters() {
   var curr_date = new Date();
   var curr_year = curr_date.getFullYear();
 
-  if(curr_date >= (new Date(curr_year, 1, 1) && curr_year <= (new Date(curr_year, 3, 31)))){
+  if(  curr_date >= (new Date(curr_year + '-01-01')) && curr_date <= (new Date(curr_year + '-03-31'))  ){
       current_qtr = '1 ' + curr_year;
-  }else if (curr_date >= (new Date(curr_year, 4, 1) && curr_year <= (new Date(curr_year, 6, 30)))){
+  }else if ( curr_date >= (new Date(curr_year + '-04-01')) && curr_date <= (new Date(curr_year + '-06-30')) ){
       current_qtr = '2 ' + curr_year;
-  }else if (curr_date >= (new Date(curr_year, 7, 1) && curr_year <= (new Date(curr_year, 9, 30)))){
+  }else if ( curr_date >= (new Date(curr_year + '-07-01')) && curr_date <= (new Date(curr_year + '-09-30')) ){
       current_qtr = '3 ' + curr_year;
-  }else if (curr_date >= (new Date(curr_year, 10, 1) && curr_year <= (new Date(curr_year, 12, 31)))){
+  }else if ( curr_date >= (new Date(curr_year + '-10-01')) && curr_date <= (new Date(curr_year + '-12-31')) ){
       current_qtr = '4 ' + curr_year;
   }
 
