@@ -1,0 +1,871 @@
+<script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js"
+        defer="true"></script>
+<!-- <script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/standard.js" defer="true"></script> -->
+<script type="text/javascript" src="/assets/js/jquery.min.js"></script>
+
+<script type="text/javascript" src="/assets/js/post_parameters.js"></script>
+<script type="text/javascript" src="/assets/js/generic_ajaxrequest.js"></script>
+<script type="text/javascript" src="/assets/js/alertifyjs/alertify.js"></script>
+<script type="text/javascript" src="/assets/js/does_connection_exist.js"></script>
+
+<link rel="stylesheet" href="/assets/css/alertifyjs/css/alertify.css" type="text/css">
+
+<script src="/assets/js/moment.js"></script>
+<link rel="stylesheet" href="/assets/css/lab.min.css" type="text/css">
+
+<style>
+    #properties {
+        width: 100%;
+    }
+
+    #properties th {
+        background-color: gray;
+        color: white;
+        text-align: center;
+        line-height: 2em;
+    }
+
+    #properties tbody {
+        text-align: center;
+        line-height: 2em;
+        letter-spacing: 1;
+    }
+
+    .left-div {
+        overflow-y: auto;
+        height: 92%;
+        width: 48%;
+        float: left;
+        position: relative;
+    }
+
+    .right-div {
+        height: 92%;
+        overflow: auto;
+        width: 50%;
+        float: right;
+        position: relative;
+    }
+
+    .row-drug {
+        text-align: center;
+        color: black;
+        padding-left: 5px;
+        padding-right: 5px;
+        margin-top: 5px;
+        margin-bottom: 5px;
+        font-family: "Nimbus Sans L", "Arial Narrow", sans-serif;
+        font-size: 1.2em;
+        background-color: rgb(221, 221, 221);
+        padding-top: 13px;
+        padding-bottom: 13px;
+        cursor: pointer;
+    }
+
+    .active {
+        font-weight: bold;
+        font-style: italic;
+    }
+
+    #stock {
+        width: 100%;
+        text-align: center;
+    }
+
+    #stock tbody tr {
+        height: 50px;
+        font-size: 0.9em;
+        background-color: rgb(221, 221, 221);
+    }
+
+    .update-stock-button {
+        background-color: #008CBA;
+        display: block;
+        width: 100%;
+        padding-top: 13px;
+        padding-bottom: 13px;
+        cursor: pointer;
+    }
+
+    #clearButton {
+        display: none;
+    }
+
+    .orders-table {
+        display: table;
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 5px 10px;
+    }
+
+    .orders-table-row {
+        display: table-row;
+    }
+
+    .orders-table-cell {
+        display: table-cell;
+    }
+
+    .medication-cells {
+        border-style: solid;
+        border-width: 1px;
+        box-shadow: 0 8px 6px -6px black;
+        vertical-align: middle;
+        height: 75px;
+        line-height: 75px;
+    }
+
+    #tins {
+        width: 100%;
+        height: 60px;
+        text-align: center;
+        font-size: 2.3em;
+    }
+
+    #summary-table {
+        width: 100%;
+        height: 100%;
+        border-collapse: collapse;
+    }
+
+    #header th {
+        vertical-align: middle;
+    }
+
+    #summary-table th {
+        text-align: left;
+        padding-left: 5px;
+
+        border-style: solid;
+        border-width: 1px;
+    }
+
+    .table-headers {
+        background-color: lightslategrey;
+        text-align: left;
+        padding-left: 5px;
+    }
+
+    #days-gone {
+        float: left;
+        padding-left: 2px;
+    }
+
+    .data-row {
+        background-color: white;
+        border-style: solid;
+        border-width: 1px;
+        text-align: right;
+        padding-right: 5px;
+    }
+
+    .keypad-buttons {
+        padding: 20% 0px 0px 0px;
+        float: left;
+        text-align: center;
+        margin-right: auto;
+        margin-left: auto;
+        display: block;
+        margin: 5px;
+        border: 1px solid #5ca6c4;
+        cursor: pointer;
+        /*box-shadow: inset 2px -4px 2px 0px;*/
+        background-color: white;
+        border-radius: 7px;
+        border: solid black 3px;
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+        border: 1px solid #7eb9d0;
+        -webkit-border-radius: 3px;
+        -moz-border-radius: 3px;
+        border-radius: 3px;
+        font-size: 23px;
+        font-family: arial, helvetica, sans-serif;
+        padding: 10px 10px 10px 10px;
+        text-decoration: none;
+        display: inline-block;
+        text-shadow: -1px -1px 0 rgba(0, 0, 0, 0.3);
+        font-weight: bold;
+        color: #FFFFFF;
+        background-color: #a7cfdf;
+        background-image: -webkit-gradient(linear, left top, left bottom, from(#a7cfdf), to(#23538a));
+        background-image: -webkit-linear-gradient(top, #a7cfdf, #23538a);
+        background-image: -moz-linear-gradient(top, #a7cfdf, #23538a);
+        background-image: -ms-linear-gradient(top, #a7cfdf, #23538a);
+        background-image: -o-linear-gradient(top, #a7cfdf, #23538a);
+        background-image: linear-gradient(to bottom, #a7cfdf, #23538a);
+        filter: progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr=#a7cfdf, endColorstr=#23538a);
+
+        text-align: center;
+        width: 75px;
+        height: 65px;
+
+    }
+
+    #summary {
+        top: 60px;
+        overflow: auto;
+        /*height: 450px ! important*/;
+    }
+
+    .remove {
+        margin-left: 58px;
+        padding: 6px;
+    }
+
+    .img-holder {
+        background: white;
+    }
+
+    .scell {
+        height: 35px;
+        font-size: 20px;
+        border-bottom: 0.4px solid gray;
+        border-right: 0.4px solid gray;
+        border-radius: 4px;
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    .drug-label {
+        min-width: 25%;
+        text-align: left;
+        padding-left: 2%;
+        overflow-X: hidden;
+    }
+
+    .drug-value {
+        min-width: 25%;
+        cursor: pointer;
+    }
+
+    .hvalue {
+        border: hidden;
+        background: white;
+        font-size: 22px;
+        font-family: sans-serif;
+        font-weight: bold;
+        cursor: auto;
+        color: gray;
+        text-align: left;
+        padding-left: 9px;
+        text-shadow: 1px 1px black;
+        vertical-align: middle;
+    }
+
+    #small {
+        font-size: 19px;
+        margin-left: 15px;
+    }
+
+    .bar {
+        left: 31%;
+        width: 450px;
+        position: absolute;
+        top: 23%;
+        font-size: 1.9em;
+        text-align: center;
+        background-color: tomato;
+        padding: 10px;
+        z-index: 999;
+        border: 5px outset tomato;
+        display: none;
+        border-radius: 15px;
+    }
+
+    .bar button {
+        font-size: 0.7em;
+        margin: 5px;
+    }
+
+    .barcode {
+        position: absolute;
+        left: 26%;
+        width: 5%;
+        top: 24%;
+        width: 100px;
+    }
+
+</style>
+
+<script type="text/javascript">
+    var tt_cancel_destination = "/";
+
+    var drug_map_hash = {
+        "733": "Abacavir / Lamivudine 60 / 30mg, tin of 60 tablets",
+        "969": "Abacavir sulfate 600mg / Lamivudine 300mg, tin of 30 tablets",
+        "932": "Atazanavir / Ritonavir 300 / 100mg, tin of 30 tablets",
+        "963": "Cotrimoxazole 120mg, blister pack of 1000 dispersible tablets",
+        "297": "Cotrimoxazole 480mg, tin of 1000 tablets",
+        "576": "Cotrimoxazole 960mg, blister pack of 1000 tablets",
+        "30": "Efavirenz 200mg, tin of 90 tablets",
+        "11": "Efavirenz 600mg, tin of 30 tablets",
+        "24": "Isoniazid 100mg, tin of 100 tablets",
+        "931": "Isoniazid 300mg, tin of 1000 tablets",
+        "613": "Lamivudine / Stavudine / Nevirapine 150 / 30 / 200mg, tin of 60 tablets",
+        "734": "Lamivudine / Tenofovir disoproxil fumarate 300 / 300mg, tin of 30 tablets",
+        "74": "Lopinavir / Ritonavir 100 / 25mg, tin of 60 tablets",
+        "73": "Lopinavir / Ritonavir 200 / 50mg, tin of 120 tablets",
+        "971": "Nevirapine 10mg/ml,100ml",
+        "21": "Nevirapine 10mg/ml, 25ml",
+        "22": "Nevirapine 200mg, tin of 60 tablets",
+        "968": "Nevirapine 50mg, tin of 60 tablets",
+        "76": "Pyridoxine 50mg tab, 1000 tablets",
+        "738": "Stavudine / lamivudine 30 / 150mg, tin of 60 tablets",
+        "735": "Tenofovir disoproxil fumarate / Lamivudine / Efavirenz 300 / 300 / 600mg, tin of 30 tablets",
+        "732": "Zidovudine / lamivudine /Nevirapine 30 / 60 / 50mg, tin of 60 tablets",
+        "731": "Zidovudine / lamivudine /Nevirapine 300 / 150 / 200mg, tin of 60 tablets",
+        "39": "Zidovudine / lamivudine 300 / 150mg, tin of 60 tablets",
+        "736": "Zidovudine / lamivudine 60 / 30mg, tin of 60 tablets"
+    };
+
+    var drugs = {
+        "733": {
+            "short_name": "ABC/3TC (Abacavir and Lamivudine 60/30mg tablet)",
+            "full_name": "Abacavir / Lamivudine 60 / 30mg, tin of 60 tablets"
+        },
+        "969": {
+            "short_name": "ABC/3TC (Abacavir and Lamivudine 600/300mg tablet)",
+            "full_name": "Abacavir sulfate 600mg / Lamivudine 300mg, tin of 30 tablets"
+        },
+        "932": {
+            "short_name": "ATV/r (Atazanavir 300mg/Ritonavir 100mg)",
+            "full_name": "Atazanavir / Ritonavir 300 / 100mg, tin of 30 tablets"
+        },
+        "963": {
+            "short_name": "TMP/SMX (Cotrimoxazole 120mg tablet)",
+            "full_name": "Cotrimoxazole 120mg, blister pack of 1000 dispersible tablets"
+        },
+        "297": {
+            "short_name": "Cotrimoxazole (480mg tablet)",
+            "full_name": "Cotrimoxazole 480mg, tin of 1000 tablets"
+        },
+        "576": {
+            "short_name": "Cotrimoxazole (960mg)",
+            "full_name": "Cotrimoxazole 960mg, blister pack of 1000 tablets"
+        },
+        "30": {"short_name": "EFV (Efavirenz 200mg tablet)", "full_name": "Efavirenz 200mg, tin of 90 tablets"},
+        "11": {"short_name": "EFV (Efavirenz 600mg tablet)", "full_name": "Efavirenz 600mg, tin of 30 tablets"},
+        "24": {
+            "short_name": "INH or H (Isoniazid 100mg tablet)",
+            "full_name": "Isoniazid 100mg, tin of 100 tablets"
+        },
+        "931": {
+            "short_name": "INH or H (Isoniazid 300mg tablet)",
+            "full_name": "Isoniazid 300mg, tin of 1000 tablets"
+        },
+        "613": {
+            "short_name": "d4T/3TC/NVP (30/150/200mg tablet)",
+            "full_name": "Lamivudine / Stavudine / Nevirapine 150 / 30 / 200mg, tin of 60 tablets"
+        },
+        "734": {
+            "short_name": "TDF/3TC (Tenofavir and Lamivudine 300/300mg tablet",
+            "full_name": "Lamivudine / Tenofovir disoproxil fumarate 300 / 300mg, tin of 30 tablets"
+        },
+        "74": {
+            "short_name": "LPV/r (Lopinavir and Ritonavir 100/25mg tablet)",
+            "full_name": "Lopinavir / Ritonavir 100 / 25mg, tin of 60 tablets"
+        },
+        "73": {
+            "short_name": "LPV/r (Lopinavir and Ritonavir 200/50mg tablet)",
+            "full_name": "Lopinavir / Ritonavir 200 / 50mg, tin of 120 tablets"
+        },
+        "971": {
+            "short_name": "NVP (Nevirapine syrup 1mL/dose in 100mL bottle)",
+            "full_name": "Nevirapine 10mg/ml,100ml"
+        },
+        "21": {
+            "short_name": "NVP (Nevirapine syrup 1.5mL/dose in 25mL bottle)",
+            "full_name": "Nevirapine 10mg/ml, 25ml"
+        },
+        "22": {"short_name": "NVP (Nevirapine 200 mg tablet)", "full_name": "Nevirapine 200mg, tin of 60 tablets"},
+        "968": {"short_name": "NVP (Nevirapine 50 mg tablet)", "full_name": "Nevirapine 50mg, tin of 60 tablets"},
+        "76": {"short_name": "Pyridoxine (50mg)", "full_name": "Pyridoxine 50mg tab, 1000 tablets"},
+        "738": {
+            "short_name": "d4T/3TC (Stavudine Lamivudine 30/150 tablet)",
+            "full_name": "Stavudine / lamivudine 30 / 150mg, tin of 60 tablets"
+        },
+        "735": {
+            "short_name": "TDF/3TC/EFV (300/300/600mg tablet)",
+            "full_name": "Tenofovir disoproxil fumarate / Lamivudine / Efavirenz 300 / 300 / 600mg, tin of 30 tablets"
+        },
+        "732": {
+            "short_name": "AZT/3TC/NVP (60/30/50mg tablet)",
+            "full_name": "Zidovudine / lamivudine /Nevirapine 30 / 60 / 50mg, tin of 60 tablets"
+        },
+        "731": {
+            "short_name": "AZT/3TC/NVP (300/150/200mg tablet)",
+            "full_name": "Zidovudine / lamivudine /Nevirapine 300 / 150 / 200mg, tin of 60 tablets"
+        },
+        "39": {
+            "short_name": "AZT/3TC (Zidovudine and Lamivudine 300/150mg)",
+            "full_name": "Zidovudine / lamivudine 300 / 150mg, tin of 60 tablets"
+        },
+        "736": {
+            "short_name": "AZT/3TC (Zidovudine and Lamivudine 60/30 tablet)",
+            "full_name": "Cotrimoxazole 120mg, blister pack of 1000 dispersible tablets"
+        }
+    }
+
+    var drug_cms_packsizes = {
+        "Cotrimoxazole (960mg)": 1000,
+        "Cotrimoxazole (480mg tablet)": 1000,
+        "INH or H (Isoniazid 100mg tablet)": 100,
+        "LPV/r (Lopinavir and Ritonavir 100/25mg tablet)": 60,
+        "TMP/SMX (Cotrimoxazole 120mg tablet)": 1000,
+        "AZT/3TC/NVP (300/150/200mg tablet)": 60,
+        "LPV/r (Lopinavir and Ritonavir 200/50mg tablet)": 120,
+        "AZT/3TC (Zidovudine and Lamivudine 300/150mg)": 60,
+        "EFV (Efavirenz 600mg tablet)": 30,
+        "TDF/3TC/EFV (300/300/600mg tablet)": 30,
+        "TDF/3TC (Tenofavir and Lamivudine 300/300mg tablet": 30,
+        "ABC/3TC (Abacavir and Lamivudine 600/300mg tablet)": 30,
+        "NVP (Nevirapine 50 mg tablet)": 60,
+        "INH or H (Isoniazid 300mg tablet)": 1000,
+        "NVP (Nevirapine syrup 1.5mL/dose in 25mL bottle)": 25,
+        "NVP (Nevirapine syrup 1mL/dose in 100mL bottle)": 100,
+        "ATV/r (Atazanavir 300mg/Ritonavir 100mg)": 30,
+        "AZT/3TC/NVP (60/30/50mg tablet)": 60,
+        "AZT/3TC (Zidovudine and Lamivudine 60/30 tablet)": 60,
+        "d4T/3TC/NVP (30/150/200mg tablet)": 60,
+        "EFV (Efavirenz 200mg tablet)": 90,
+        "NVP (Nevirapine 200 mg tablet)": 60,
+        "d4T/3TC (Stavudine Lamivudine 30/150 tablet)": 60,
+        "ABC/3TC (Abacavir and Lamivudine 60/30mg tablet)": 60,
+        "Pyridoxine (50mg)": 1000
+    };
+
+    function showStocVerification() {
+        html = "<table>";
+        html += "</html>";
+        //jQuery("#nextButton").hide();
+        jQuery("#keyboard").hide();
+        jQuery("#clearButton").hide();
+        //jQuery("#cancelButton").hide();
+
+        jQuery(".inputFrameClass").css("width", "96%");
+        jQuery(".inputFrameClass").css("height", "86%");
+        jQuery(".inputFrameClass").css("overflow-x", "auto");
+
+        //finishButtonHtml = '<button class="button navButton green"  onmousedown="gotoHome();"><span>Next</span></button>'
+        //jQuery("#buttons").append(finishButtonHtml);
+
+        var xhttp1 = new XMLHttpRequest();
+
+        var html = "<table id='properties'>";
+        html += "<thead>";
+        html += "<th style='padding-right: 3px;'>Drug</th>";
+        html += "<th>&nbsp;</th>";
+        html += "</thead>";
+        html += "<tbody>";
+        html += "</table>";
+        jQuery(".inputFrameClass").append(html);
+
+        var data = "<div id='data'>";
+        data += "<div class='left-div'>";
+        data += "</div>";
+        data += "<div class='right-div'>";
+        data += "</div>";
+        data += "</div>";
+
+        jQuery(".inputFrameClass").append(data);
+
+        var leftData = "";
+        for (var drugID in drugs) {
+            var short_name = drugs[drugID]["short_name"];
+            var full_name = drugs[drugID]["full_name"];
+            leftData += "<div drug_id='" + drugID + "' class='row-drug even' onclick='showAllDrugStock(this)'>";
+            leftData += short_name;
+            leftData += "</div>";
+        }
+
+        jQuery(".left-div").append(leftData);
+    }
+
+    function showAllDrugStock(obj) {
+        jQuery("div").removeClass("active");
+        jQuery(obj).addClass("active");
+        var drugID = obj.getAttribute("drug_id");
+        selected_drug_id = drugID;
+        var stock_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+        stock_url += "/api/v1/pharmacy/items?drug_id=" + drugID;
+
+        var drugShortName = drugs[drugID]["short_name"];
+        var packSize = drug_cms_packsizes[drugShortName];
+        selected_pack_size = packSize;
+
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                var previous_stock_data = JSON.parse(this.responseText);
+                var rightData = "<table id='stock'>";
+                rightData += "<thead>";
+                rightData += "<th>Date of Delivery</th>";
+                rightData += "<th>Available tins</th>";
+                rightData += "<th>&nbsp;</th>";
+                rightData += "</thead>";
+                rightData += "<tbody>";
+
+                for (var key in previous_stock_data) {
+                    var current_quantity = previous_stock_data[key]["current_quantity"];
+                    current_quantity = parseFloat(current_quantity) / packSize;
+                    var delivery_date = previous_stock_data[key]["delivery_date"];
+                    var expiry_date = previous_stock_data[key]["expiry_date"];
+                    var pharmacy_batch_item_id = previous_stock_data[key]["id"];
+                    var current_quantity_id = "current-quantity-" + pharmacy_batch_item_id;
+                    rightData += "<tr>";
+                    rightData += "<td>" + delivery_date + "</td>";
+
+                    var verifiedQuantity;
+                    try {
+                        verifiedQuantity = verifiedData[selected_drug_id][pharmacy_batch_item_id];
+                    } catch (e) {
+
+                    }
+
+                    if (verifiedQuantity) {
+                        rightData += "<td id='" + current_quantity_id + "' style='color: green; font-weight: bold;' id='" + verifiedQuantity + "'>" + verifiedQuantity + "</td>"
+                    } else {
+                        rightData += "<td id='" + current_quantity_id + "'>" + current_quantity + "</td>";
+                    }
+
+                    rightData += "<td expiry_date='" + expiry_date + "' pharmacy_batch_item_id='" + pharmacy_batch_item_id + "' onclick='enterTins(this)'><span class='update-stock-button'>Update stock</span></td>";
+                    rightData += "</tr>";
+                }
+                rightData += "</tbody>";
+                rightData += "</table>";
+                jQuery(".right-div").html(rightData);
+            }
+        };
+
+        xhttp.open("GET", stock_url, true);
+        xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+        xhttp.setRequestHeader('Content-type', "application/json");
+        xhttp.send();
+
+    }
+
+    function gotoHome() {
+        window.location = "/";
+    }
+
+    var selected_pharmacy_batch_item_id;
+    var selected_expiry_date;
+    var selected_pack_size;
+
+    function enterTins(obj) {
+        jQuery("#confirmatory-test-cover").show();
+        var pharmacy_batch_item_id = obj.getAttribute("pharmacy_batch_item_id");
+        selected_expiry_date = obj.getAttribute("expiry_date");
+        selected_pharmacy_batch_item_id = pharmacy_batch_item_id;
+        var popUpBox = document.getElementById('confirmatory-test-popup-div');
+        popUpBox.style = 'display: inline';
+        popUpBox.innerHTML = null;
+
+        var table = document.createElement('table');
+        table.style = 'width: 99%; height: 98%';
+        popUpBox.appendChild(table);
+
+        var tr = document.createElement('tr');
+        table.appendChild(tr);
+
+        var td = document.createElement('td');
+        td.style = 'vertical-align: top;';
+        tr.appendChild(td);
+
+        var inputBox = document.createElement('input');
+        inputBox.setAttribute('type', 'text');
+        inputBox.setAttribute('id', 'tins');
+        td.appendChild(inputBox);
+
+        var tr = document.createElement('tr');
+        table.appendChild(tr);
+
+        var td = document.createElement('td');
+        td.style = 'vertical-align: top; text-align: center;';
+        tr.appendChild(td);
+        createKeyPad(td);
+    }
+
+    function createKeyPad(e) {
+        var table = document.createElement('table');
+        table.setAttribute("class", "prescription-keypad");
+        var keypad_attributes = [];
+        keypad_attributes.push([1, 2, 3]);
+        keypad_attributes.push([4, 5, 6]);
+        keypad_attributes.push([7, 8, 9]);
+        keypad_attributes.push(["Del.", 0, "Done"]);
+
+        for (var i = 0; i < keypad_attributes.length; i++) {
+            var tr = document.createElement("tr");
+            table.appendChild(tr);
+
+            for (var j = 0; j < keypad_attributes[i].length; j++) {
+                var td = document.createElement('td');
+                tr.appendChild(td);
+
+                var span = document.createElement('span');
+                span.setAttribute("class", "keypad-buttons");
+                span.setAttribute("onmousedown", "enterKeypadValue(this);");
+                span.innerHTML = keypad_attributes[i][j];
+                td.appendChild(span);
+            }
+        }
+
+        e.appendChild(table);
+    }
+
+    var selected_drug_id;
+    var verifiedData = {};
+
+    function enterKeypadValue(e) {
+        var inputBox = document.getElementById('tins');
+        if (e.innerHTML.match(/Del/i)) {
+            inputBox.value = inputBox.value.substring(0, inputBox.value.length - 1);
+        } else if (e.innerHTML.match(/Clear/i)) {
+            inputBox.value = null;
+            //removeFromHash();
+        } else if (e.innerHTML.match(/Done/i)) {
+            closePopUp();
+        } else {
+            inputBox.value += e.innerHTML;
+        }
+
+    }
+
+
+    var updated_data = [];
+    var controlHash = {};
+
+    function closePopUp() {
+        var inputBox = document.getElementById('tins');
+        if (isNumeric(inputBox.value)) {
+            if (!verifiedData[selected_drug_id]) {
+                verifiedData[selected_drug_id] = {}
+            }
+            verifiedData[selected_drug_id][selected_pharmacy_batch_item_id] = inputBox.value;
+            var key = selected_drug_id + "::" + selected_expiry_date;
+
+            if (controlHash[key]) {
+                for (var i = 0; i <= updated_data.length - 1; i++) {
+                    var drug_id = updated_data[i]["drug_id"];
+                    var expiry_date = updated_data[i]["expiry_date"];
+                    if (drug_id == selected_drug_id && expiry_date == selected_expiry_date) {
+                        updated_data[i]["tins"] = inputBox.value;
+                        break
+                    }
+                }
+            } else {
+                controlHash[key] = {
+                    drug_id: selected_drug_id,
+                    expiry_date: selected_expiry_date,
+                    pack_size: selected_pack_size,
+                    tins: inputBox.value,
+                    pharmacy_batch_item_id: selected_pharmacy_batch_item_id
+                };
+
+                controlHash[key] = inputBox.value;
+                updated_data.push({
+                    drug_id: selected_drug_id,
+                    expiry_date: selected_expiry_date,
+                    pack_size: selected_pack_size,
+                    tins: inputBox.value,
+                    pharmacy_batch_item_id: selected_pharmacy_batch_item_id
+                });
+            }
+
+
+            var html = "<span style='color: green; font-weight: bold;'>" + inputBox.value + "</span>";
+            jQuery("#current-quantity-" + selected_pharmacy_batch_item_id).html(html)
+
+        }
+        jQuery("#confirmatory-test-cover").hide();
+        jQuery("#confirmatory-test-popup-div").hide();
+    }
+
+    function isNumeric(n) {
+        return !isNaN(parseFloat(n)) && isFinite(n);
+    }
+
+    function showSummary() {
+        __$("inputFrame" + tstCurrentPage).style.background = "rgba(235, 240, 240, 0.3)";
+        jQuery("#touchscreenInput" + tstCurrentPage).hide();
+        var ii = 2;
+        var header = document.createElement("div");
+        header.id = 'heada';
+        header.style.display = "table";
+        header.style.width = "100%";
+
+        var r = document.createElement("div");
+        r.style.display = "table-row";
+        header.appendChild(r);
+        var label = document.createElement("div");
+        label.className = "drug-label scell hvalue";
+        label.style.display = "table-cell";
+        label.innerHTML = "Drug";
+        r.appendChild(label);
+
+        var label = document.createElement("div");
+        label.className = "drug-value scell hvalue";
+        label.style.display = "table-cell";
+        label.innerHTML = "Total units";
+        r.appendChild(label);
+
+        var label = document.createElement("div");
+        label.className = "drug-value scell hvalue";
+        label.style.display = "table-cell";
+        label.innerHTML = "Date of Expiry";
+        r.appendChild(label);
+
+        __$("inputFrame" + tstCurrentPage).appendChild(header);
+
+
+        var table = document.createElement("div");
+        table.id = "summary";
+        table.style.display = "table";
+        table.style.width = "100%";
+
+        var div = document.createElement("div");
+        div.style.height = "530px";
+        div.style.paddingTOp = "10px";
+        div.style.marginTop = "10px";
+        div.style.overflowY = "auto";
+        div.style.width = "100%";
+        div.appendChild(table);
+
+        __$("inputFrame" + tstCurrentPage).appendChild(div);
+
+        for (var i = 0; i <= updated_data.length - 1; i++) {
+            var drugID = updated_data[i]["drug_id"];
+            var drugShortName = drugs[drugID]["short_name"];
+            //var drugFullName = drugs[drugID]["full_name"];
+
+            var expiry_date = updated_data[i]["expiry_date"];
+            var tins = updated_data[i]["tins"];
+
+            var row = document.createElement("div");
+            row.style.display = "table-row";
+            row.style.background = (ii % 2 == 0) ? "rgb(240, 240, 250)" : "white";
+            table.appendChild(row);
+
+            var label = document.createElement("div");
+            label.className = "drug-label scell";
+            label.style.display = "table-cell";
+            label.innerHTML = drugShortName;
+            row.appendChild(label);
+
+            var label = document.createElement("div");
+            label.className = "drug-value scell editable";
+            label.style.display = "table-cell";
+            label.innerHTML = tins;
+            row.appendChild(label);
+
+            var label = document.createElement("div");
+            label.style.display = "table-cell";
+            label.className = "drug-value scell editable";
+            label.innerHTML = expiry_date;
+            row.appendChild(label);
+        }
+
+        __$("heada").style.width = (table.offsetWidth) + "px";
+        r.style.width = (table.offsetWidth) + "px";
+    }
+
+    function customizeFinishButton() {
+        __$("nextButton").innerHTML = "<span>Save</span>";
+        __$("nextButton").onmousedown = function () {
+
+            if (updated_data.length == 0) {
+                showMessage("No drug selected");
+                return
+            }
+
+            createAJAXRequest(updated_data);
+            window.location = "/";
+        }
+    }
+
+    function createAJAXRequest(data) {
+        if (data.length > 0) {
+            var pharmacyBatchItemID = data[0]["pharmacy_batch_item_id"];
+            var pack_size = data[0]["pack_size"];
+            var tins = parseFloat(data[0]["tins"]);
+            var current_quantity = tins * pack_size;
+            var verification_url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1/pharmacy/items/" + pharmacyBatchItemID;
+            var current_quantity = {
+                "current_quantity": current_quantity,
+            };
+
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                    data.shift();
+                    createAJAXRequest(data);
+                }
+            };
+            xhttp.open("PUT", verification_url, false);
+            xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+            xhttp.setRequestHeader('Content-type', "application/json");
+            xhttp.send(JSON.stringify(current_quantity));
+        }
+    }
+
+
+</script>
+
+<body id="mateme">
+<div id="container">
+    <div id="content">
+        <form>
+
+            <input type="text" name="summary"
+                   tt_onLoad="showStocVerification();"
+                   tt_pageStyleClass="NoControls" helpText="Stock Verification" optional="true"/>
+
+            <input helpText="<span style='color: red;background: white;'>Summary </span>"
+                   id="summary" name="showSummary" optional="true"
+                   tt_onLoad="showSummary(); customizeFinishButton();"
+                   tt_pageStyleClass="NoKeyboard" type="text"/>
+
+        </form>
+
+    </div>
+</div>
+
+<style>
+
+    #confirmatory-test-popup-div {
+        display: none;
+        background-color: #F4F4F4;
+        border: 2px solid #E0E0E0;
+        border-radius: 15px;
+        height: 390px;
+        padding: 5px;
+        position: absolute;
+        margin-top: 25px;
+        width: 280px;
+        /*margin-left: 430px;*/
+        left: 39%;
+        z-index: 991;
+    }
+
+    #confirmatory-test-cover {
+        display: none;
+        position: absolute;
+        background-color: black;
+        width: 100%;
+        height: 102%;
+        left: 0%;
+        top: 0%;
+        z-index: 990;
+        opacity: 0.65;
+    }
+
+</style>
+
+
+<div id="confirmatory-test-popup-div"></div>
+<div id="confirmatory-test-cover"></div>
+</body>
+

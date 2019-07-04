@@ -370,6 +370,10 @@
         function customizeFinishButton() {
             __$("nextButton").onmousedown = function () {
                 var delivery_date = __$('touchscreenInput' + tstCurrentPage).value;
+                if (!isDateValid(delivery_date.replace(/-/g, '/'))) {
+                    showMessage("Input a valid delivery date");
+                    return false
+                }
                 var barcode_value = __$("barcode").value;
                 var data = {drugs: receipts, identifier: barcode_value, delivery_date: delivery_date};
                 data = JSON.stringify(data);
@@ -380,6 +384,10 @@
                 }
                 window.location = "/apps/ART/views/stock_management/set_receipts.html"
             }
+        }
+
+        function isDateValid(date) {
+            return (new Date(date) !== "Invalid Date") && !isNaN(new Date(date));
         }
 
         function resetNextButton() {

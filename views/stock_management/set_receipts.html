@@ -22,6 +22,7 @@
         tstUserKeyboardPref = "abc";
 
         var tstCurrentDate = moment(tstCurrentDate).format("YYYY-MM-DD");
+        var tt_cancel_destination = "/";
         var target;
 
         var formatted_drugs = ["EFV (Efavirenz 600mg tablet)",
@@ -1410,16 +1411,49 @@
             }
         }
 
+        function isNumeric(num) {
+            return !isNaN(num)
+        }
+
+        function isDateValid(date) {
+            return (new Date(date) !== "Invalid Date") && !isNaN(new Date(date));
+        }
+
         function updateNextButton() {
             __$("nextButton").onmousedown = function () {
+                var error_messages = [];
+                for (var key in drugs_hash) {
+                    var drugName = key.split("_")[0];
+                    var row_number = (parseInt(key.split("_")[1]) + 1);
 
-                var message = "";
-                for (var i in unfinished_drugs) {
-                    message += ("<br /> - " + drug_short_names[unfinished_drugs[i]] + (i < (unfinished_drugs.length - 1) ? "," : ""));
+                    var tabs_per_tin = drugs_hash[key]["tabs_per_tin"];
+                    var total_tins = drugs_hash[key]["total_tins"];
+                    var date_of_expiry = drugs_hash[key]["date_of_expiry"];
+
+                    if (!isNumeric(total_tins)) {
+                        error_messages.push("Invalid total tins input for " + drugName);
+                    }
+
+                    if (date_of_expiry) {
+                        if (!isDateValid("01/" + date_of_expiry)) {
+                            error_messages.push("Invalid expiry date for " + drugName);
+                        }
+                    }
+
+                    if (!row_complete(tabs_per_tin, total_tins, date_of_expiry)) {
+                        error_messages.push("Incomplete entries for " + drugName);
+                    }
+
+                    if (parseInt(key.split("_")[1]) == 0) {
+                        if (drugs_hash[key]["tabs_per_tin"].length == 0) {
+                            //The drug has not been clicked yet.
+                            error_messages.push("Incomplete entries for " + drugName);
+                        }
+                    }
                 }
 
-                if (message.length > 0) {
-                    showMessage(("Incomplete entries for:" + message), false, false);
+                if (error_messages.length > 0) {
+                    showMessage(error_messages.join("<br />"));
                 } else {
                     gotoNextPage();
                 }
@@ -1613,7 +1647,12 @@
         function customizeFinishButton() {
             __$("nextButton").innerHTML = "<span>Save</span>";
             __$("nextButton").onmousedown = function () {
-                var data = [];
+
+                var barcode_value = JSON.parse(sessionStorage.receipts)["identifier"];
+                var data = {
+                    "batch_number": barcode_value,
+                    "items": []
+                };
 
                 for (var drug_name in drugs_hash) {
                     var drug = drug_name.split("_")[0];
@@ -1625,22 +1664,17 @@
                     //expire_amount = total_tins
                     //date = date_of_expiry
 
-                    var barcode_value = JSON.parse(sessionStorage.receipts)["identifier"];
                     if (date_of_expiry.length > 0 && tabs_per_tin.length > 0 && total_tins.length > 0) {
-                        data.push({
+                        data["items"].push({
                             drug_id: drug_id,
                             expiry_date: date_of_expiry,
-                            amount: tabs_per_tin,
-                            expire_amount: total_tins,
+                            quantity: parseInt(tabs_per_tin) * parseInt(total_tins),
                             delivery_date: delivery_date,
-                            identifier: barcode_value
                         })
                     }
-
                 }
 
-                var observations = {obs: data};
-                var create_stock_url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1/stock";
+                var create_stock_url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1/pharmacy/batches";
                 var xhttp = new XMLHttpRequest();
                 xhttp.onreadystatechange = function () {
                     if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
@@ -1652,13 +1686,13 @@
                 xhttp.open("POST", create_stock_url, true);
                 xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
                 xhttp.setRequestHeader('Content-type', "application/json");
-                xhttp.send(JSON.stringify(observations));
+                xhttp.send(JSON.stringify(data));
 
             }
         }
 
         window.onresize = function () {
-            loadCSS();
+            //loadCSS();
         }
 
     </script>
@@ -1901,12 +1935,12 @@
             <form action="#">
 
                 <input helpText="Batch details" id="input" name="information" optional="true"
-                       tt_onLoad="$('clearButton').style.display = 'none'; checkContainer(); updateNextButton(); validator = setInterval('validateInputFields();', 350); "
+                       tt_onLoad="$('clearButton').style.display = 'none'; checkContainer(); updateNextButton();"
                        tt_onUnload="clearInterval(validator)" tt_pageStyleClass="NoKeyboard" type="text"/>
 
                 <input helpText="<span style='color: red;background: white;'>Confirm Entry (Touch row to change) </span>"
                        id="summary" name="showSummary" optional="true"
-                       tt_onLoad="clearInterval(validator); showSummary(); customizeFinishButton();"
+                       tt_onLoad="showSummary(); customizeFinishButton();"
                        tt_pageStyleClass="NoKeyboard" type="text"/>
             </form>
         </div>
