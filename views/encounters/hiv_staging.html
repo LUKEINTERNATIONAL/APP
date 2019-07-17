@@ -1248,11 +1248,32 @@ bottom: 0px;
                 submitParameters(encounter, "/encounters", "postHIVStagingObs");
             }
 
+            var whoStageConceptMapHash = {
+                "WHO STAGE 1": 9145,
+                "WHO STAGE 2": 9146,
+                "WHO STAGE 3": 2932,
+                "WHO STAGE 4": 2933,
+                "WHO STAGE I ADULT": 7561,
+                "WHO STAGE I ADULT AND PEDS": 7041,
+                "WHO STAGE I PEDS": 7049,
+                "WHO STAGE II ADULT": 7046,
+                "WHO STAGE II ADULT AND PEDS": 7042,
+                "WHO STAGE II PEDS": 7050,
+                "WHO STAGE III ADULT": 7047,
+                "WHO STAGE III ADULT AND PEDS": 7043,
+                "WHO STAGE III PEDS": 7051,
+                "WHO STAGE IV ADULT": 7048,
+                "WHO STAGE IV ADULT AND PEDS": 7044,
+                "WHO STAGE IV PEDS": 7052
+
+
+
+            }
             function postHIVStagingObs(encounter) {
                 var obs = {
                     encounter_id: encounter.encounter_id,
                     observations: [
-                        {concept_id: 7562, value_text: answers_hash["who_stage"]},
+                        {concept_id: 7562, value_coded: whoStageConceptMapHash[answers_hash["who_stage"].toUpperCase()]},
                         {concept_id: 8262, value_text: answers_hash["cd4_less_than_or_equal_to_250"]},
                         {concept_id: 8207, value_text: answers_hash["cd4_less_than_or_equal_to_350"]},
                         {concept_id: 9389, value_text: answers_hash["cd4_less_than_or_equal_to_500"]},
