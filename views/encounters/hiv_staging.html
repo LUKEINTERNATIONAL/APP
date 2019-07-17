@@ -1472,9 +1472,13 @@ bottom: 0px;
           function updateBreastFeedingPregnancyAnswers() {
                 preganncy_status = yesNo_Hash["Pregnant-Breastfeeding"]["Pregnant?"];
                 breast_feeding_status = yesNo_Hash["Pregnant-Breastfeeding"]["Breastfeeding?"];
+                try {
 
-                answers_hash["is_patient_pregnant"] = preganncy_status;
-                answers_hash["is_patient_breastfeeding"] = breast_feeding_status;
+                }catch(e) {
+                    answers_hash["is_patient_pregnant"] = preganncy_status;
+                    answers_hash["is_patient_breastfeeding"] = breast_feeding_status;
+                }
+                
 
                 $('pregnant').value = preganncy_status.toUpperCase();
                 $("breastfeeding").value = breast_feeding_status.toUpperCase();
