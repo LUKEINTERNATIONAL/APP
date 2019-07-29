@@ -139,6 +139,10 @@ function getOrders(tbody) {
         for (var x = 0; x < results.length; x++) {
           tbody.innerHTML += "<tr><td>"+results[x].lab_sample.lab_parameter.test_type.TestName.replace(/_/g, " ")+"</td><td>"+moment(results[x].OrderDate).format("DD/MMM/YYYY")+"</td><td> "+moment(results[x].OrderDate).format("DD/MMM/YYYY")+"</td><td></td><td></td></tr>" ;
         }
+      }else if(this.status == 500 || this.status == 502) {
+        showMessage("a lims error has occured");
+      }else {
+        showMessage("error " + this.status);
       }
     }
   };

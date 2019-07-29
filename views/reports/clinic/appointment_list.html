@@ -136,7 +136,7 @@ function initDataTable() {
 function getList(sdate) {
   var url = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1";
   url += "/programs/" + sessionStorage.programID;
-  url += "/booked_appointments?date=" + sdate;
+  url += "/scheduled_appointments?date=" + sdate;
   url += "&paginate=false"; 
 
   var xhttp = new XMLHttpRequest();
@@ -160,7 +160,7 @@ function loadClients(data) {
     var family_name = data[i].family_name;
     var gender = data[i].gender;
     var birthdate = moment(data[i].birthdate).format('DD/MMM/YYYY');
-    var npid = data[i].npid;
+    var npid = data[i].arv_number;
     var person_id = data[i].person_id;
 
   /*  setDataTable.row.add([npid, given_name, family_name, gender, birthdate, '']).node().id = 'row-' + person_id;
