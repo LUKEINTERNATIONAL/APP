@@ -35,6 +35,15 @@
 
     }
 
+    function changeNextBTN() {
+        var nextBTN = document.getElementById("nextButton");
+        nextButton.setAttribute("onmousedown", "gotoHome();");
+    }
+
+    function gotoHome() {
+        window.location = "/";
+    }
+
 </script>
 
 
@@ -43,7 +52,7 @@
         display: none;
     }
 
-    #cancelButton{
+    #cancelButton {
         display: none;
     }
 </style>
@@ -58,7 +67,7 @@
                    tt_pageStyleClass="NoControls" helpText="Stock levels" optional="true"/>
 
             <input type="text" name="pediatric_medication"
-                   tt_onLoad="__$('keyboard').style.display = 'none'; plotGraph('Adults');"
+                   tt_onLoad="__$('keyboard').style.display = 'none'; plotGraph('Adults'); changeNextBTN();"
                    tt_pageStyleClass="NoControls" helpText="Stock levels" optional="true"/>
 
         </form>
@@ -74,7 +83,7 @@
     var data_list = {};
 
     var paeds_drug_ids = [733, 968, 732, 736, 30, 74, 979, 963, 24];
-    var adult_drug_ids = [976, 977, 978, 954, 22,969, 731, 39, 11, 735, 734, 932, 73, 576, 297, 931];
+    var adult_drug_ids = [976, 977, 978, 954, 22, 969, 731, 39, 11, 735, 734, 932, 73, 576, 297, 931];
 
     drugs.push('Abacavir sulfate 600mg / Lamivudine 300mg, tin of 30 tablets');
     data_list['Abacavir sulfate 600mg / Lamivudine 300mg, tin of 30 tablets'] = {
@@ -341,51 +350,51 @@
         var correctedWeights = [];
         var correctedWeights_two = [];
 
-        var val = parseFloat(Infinity);
+        var val = parseFloat(4);
         var col = (val <= 2) ? 'red' : (val > 4 ? 'yellow' : 'green');
         correctedWeights.push({y: val, color: col});
 
-        var val = parseFloat(Infinity);
+        var val = parseFloat(2);
         var col = (val <= 2) ? 'red' : (val > 4 ? 'yellow' : 'green');
         correctedWeights.push({y: val, color: col});
 
-        var val = parseFloat(Infinity);
+        var val = parseFloat(6);
         var col = (val <= 2) ? 'red' : (val > 4 ? 'yellow' : 'green');
         correctedWeights.push({y: val, color: col});
 
-        var val = parseFloat(Infinity);
+        var val = parseFloat(3);
         var col = (val <= 2) ? 'red' : (val > 4 ? 'yellow' : 'green');
         correctedWeights.push({y: val, color: col});
 
-        var val = parseFloat(Infinity);
+        var val = parseFloat(2);
         var col = (val <= 2) ? 'red' : (val > 4 ? 'yellow' : 'green');
         correctedWeights.push({y: val, color: col});
 
-        var val = parseFloat(Infinity);
+        var val = parseFloat(5);
         var col = (val <= 2) ? 'red' : (val > 4 ? 'yellow' : 'green');
         correctedWeights.push({y: val, color: col});
 
-        var val = parseFloat(Infinity);
+        var val = parseFloat(6);
         var col = (val <= 2) ? 'red' : (val > 4 ? 'yellow' : 'green');
         correctedWeights.push({y: val, color: col});
 
-        var val = parseFloat(Infinity);
+        var val = parseFloat(3);
         var col = (val <= 2) ? 'red' : (val > 4 ? 'yellow' : 'green');
         correctedWeights.push({y: val, color: col});
 
-        var val = parseFloat(Infinity);
+        var val = parseFloat(2);
         var col = (val <= 2) ? 'red' : (val > 4 ? 'yellow' : 'green');
         correctedWeights.push({y: val, color: col});
 
-        var val = parseFloat(Infinity);
+        var val = parseFloat(8);
         var col = (val <= 2) ? 'red' : (val > 4 ? 'yellow' : 'green');
         correctedWeights.push({y: val, color: col});
 
-        var val = parseFloat(Infinity);
+        var val = parseFloat(9);
         var col = (val <= 2) ? 'red' : (val > 4 ? 'yellow' : 'green');
         correctedWeights.push({y: val, color: col});
 
-        var val = parseFloat(Infinity);
+        var val = parseFloat(10);
         var col = (val <= 2) ? 'red' : (val > 4 ? 'yellow' : 'green');
         correctedWeights.push({y: val, color: col});
 
