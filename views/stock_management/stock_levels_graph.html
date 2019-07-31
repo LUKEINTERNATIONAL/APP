@@ -1,0 +1,450 @@
+<script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js"
+        defer="true"></script>
+<!-- <script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/standard.js" defer="true"></script> -->
+<script type="text/javascript" src="/assets/js/jquery.min.js"></script>
+
+<script type="text/javascript" src="/assets/js/post_parameters.js"></script>
+<script type="text/javascript" src="/assets/js/generic_ajaxrequest.js"></script>
+<script type="text/javascript" src="/apps/ART/assets/js/arv_number.js"></script>
+<script type="text/javascript" src="/assets/js/moment.js"></script>
+<script type="text/javascript" src="/assets/js/alertifyjs/alertify.js"></script>
+<script type="text/javascript" src="/assets/js/does_connection_exist.js"></script>
+
+<link rel="stylesheet" href="/assets/css/alertifyjs/css/alertify.css" type="text/css">
+
+
+<script src="/assets/js/HighCharts/highcharts.js"></script>
+<script src="/assets/js/HighCharts/highcharts-3d.js"></script>
+<script src="/assets/js/HighCharts/exporting.js"></script>
+<script src="/assets/js/HighCharts/export-data.js"></script>
+<script src="/assets/js/moment.js"></script>
+
+<script type="text/javascript">
+
+    function loadAdultsMedicationGraph() {
+        jQuery("#keyboard").hide();
+        jQuery("#clearButton").hide();
+        jQuery("#cancelButton").hide();
+
+        jQuery(".inputFrameClass").css("width", "96%");
+        jQuery(".inputFrameClass").css("height", "80%");
+        jQuery(".inputFrameClass").css("overflow", "scroll");
+    }
+
+    function loadPaedsMedicationGraph() {
+
+    }
+
+</script>
+
+
+<style>
+    #clearButton {
+        display: none;
+    }
+
+    #cancelButton{
+        display: none;
+    }
+</style>
+
+<body id="mateme">
+<div id="container">
+    <div id="content">
+
+        <form>
+            <input type="text" name="adults_medication"
+                   tt_onLoad="__$('keyboard').style.display = 'none'; plotGraph('Paeds');"
+                   tt_pageStyleClass="NoControls" helpText="Stock levels" optional="true"/>
+
+            <input type="text" name="pediatric_medication"
+                   tt_onLoad="__$('keyboard').style.display = 'none'; plotGraph('Adults');"
+                   tt_pageStyleClass="NoControls" helpText="Stock levels" optional="true"/>
+
+        </form>
+
+    </div>
+
+</div>
+</body>
+
+<script type="text/javascript">
+
+    var drugs = [];
+    var data_list = {};
+
+    var paeds_drug_ids = [733, 968, 732, 736, 30, 74, 979, 963, 24];
+    var adult_drug_ids = [976, 977, 978, 954, 22,969, 731, 39, 11, 735, 734, 932, 73, 576, 297, 931];
+
+    drugs.push('Abacavir sulfate 600mg / Lamivudine 300mg, tin of 30 tablets');
+    data_list['Abacavir sulfate 600mg / Lamivudine 300mg, tin of 30 tablets'] = {
+        month_of_stock: Infinity,
+        stock_level: 200,
+        consumption_rate: 0.0,
+        stocked_out: false,
+        expiry_stock: 0,
+        active: false
+    };
+
+
+    drugs.push('Atazanavir / Ritonavir 300 / 100mg, tin of 30 tablets');
+    data_list['Atazanavir / Ritonavir 300 / 100mg, tin of 30 tablets'] = {
+        month_of_stock: Infinity,
+        stock_level: 100,
+        consumption_rate: 0.0,
+        stocked_out: false,
+        expiry_stock: 0,
+        active: false
+    };
+
+
+    drugs.push('Cotrimoxazole 480mg, tin of 1000 tablets');
+    data_list['Cotrimoxazole 480mg, tin of 1000 tablets'] = {
+        month_of_stock: Infinity,
+        stock_level: 250,
+        consumption_rate: 0.0,
+        stocked_out: false,
+        expiry_stock: 0,
+        active: false
+    };
+
+
+    drugs.push('Cotrimoxazole 960mg, blister pack of 1000 tablets');
+    data_list['Cotrimoxazole 960mg, blister pack of 1000 tablets'] = {
+        month_of_stock: Infinity,
+        stock_level: 300,
+        consumption_rate: 0.0,
+        stocked_out: false,
+        expiry_stock: 0,
+        active: false
+    };
+
+
+    drugs.push('Efavirenz 600mg, tin of 30 tablets');
+    data_list['Efavirenz 600mg, tin of 30 tablets'] = {
+        month_of_stock: Infinity,
+        stock_level: 350,
+        consumption_rate: 0.0,
+        stocked_out: false,
+        expiry_stock: 0,
+        active: false
+    };
+
+
+    drugs.push('Isoniazid 300mg, tin of 1000 tablets');
+    data_list['Isoniazid 300mg, tin of 1000 tablets'] = {
+        month_of_stock: Infinity,
+        stock_level: 25,
+        consumption_rate: 0.0,
+        stocked_out: false,
+        expiry_stock: 0,
+        active: false
+    };
+
+
+    drugs.push('Lamivudine / Tenofovir disoproxil fumarate 300 / 300mg, tin of 30 tablets');
+    data_list['Lamivudine / Tenofovir disoproxil fumarate 300 / 300mg, tin of 30 tablets'] = {
+        month_of_stock: Infinity,
+        stock_level: 24,
+        consumption_rate: 0.0,
+        stocked_out: false,
+        expiry_stock: 0,
+        active: false
+    };
+
+
+    drugs.push('Lopinavir / Ritonavir 200 / 50mg, tin of 120 tablets');
+    data_list['Lopinavir / Ritonavir 200 / 50mg, tin of 120 tablets'] = {
+        month_of_stock: Infinity,
+        stock_level: 30,
+        consumption_rate: 0.0,
+        stocked_out: false,
+        expiry_stock: 0,
+        active: false
+    };
+
+
+    drugs.push('Nevirapine 200mg, tin of 60 tablets');
+    data_list['Nevirapine 200mg, tin of 60 tablets'] = {
+        month_of_stock: Infinity,
+        stock_level: 400,
+        consumption_rate: 0.0,
+        stocked_out: false,
+        expiry_stock: 0,
+        active: false
+    };
+
+
+    drugs.push('Tenofovir disoproxil fumarate / Lamivudine / Efavirenz 300 / 300 / 600mg, tin of 30 tablets');
+    data_list['Tenofovir disoproxil fumarate / Lamivudine / Efavirenz 300 / 300 / 600mg, tin of 30 tablets'] = {
+        month_of_stock: Infinity,
+        stock_level: 306,
+        consumption_rate: 0.0,
+        stocked_out: false,
+        expiry_stock: 0,
+        active: false
+    };
+
+
+    drugs.push('Zidovudine / lamivudine /Nevirapine 300 / 150 / 200mg, tin of 60 tablets');
+    data_list['Zidovudine / lamivudine /Nevirapine 300 / 150 / 200mg, tin of 60 tablets'] = {
+        month_of_stock: Infinity,
+        stock_level: 200,
+        consumption_rate: 0.0,
+        stocked_out: false,
+        expiry_stock: 0,
+        active: false
+    };
+
+
+    drugs.push('Zidovudine / lamivudine 300 / 150mg, tin of 60 tablets');
+    data_list['Zidovudine / lamivudine 300 / 150mg, tin of 60 tablets'] = {
+        month_of_stock: Infinity,
+        stock_level: 100,
+        consumption_rate: 0.0,
+        stocked_out: false,
+        expiry_stock: 0,
+        active: false
+    };
+
+    function plotGraph(paedsOrAdult) {
+        jQuery('.inputFrameClass').highcharts({
+            chart: {
+                type: 'bar',
+                borderWidth: 1,
+                plotBorderWidth: 1,
+                // Edit chart spacing
+                spacingBottom: 15,
+                spacingTop: 10,
+                spacingLeft: 10,
+                spacingRight: 10,
+                // Explicitly tell the width and height of a chart
+                height: 620
+
+            },
+            title: {
+                style: {
+                    fontFamily: "'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif",
+                    fontSize: '14px'
+                },
+                text: '<b>Stock Levels for ' + paedsOrAdult + '</b>'
+            },
+            xAxis: {
+                categories: drugs,
+                title: {
+                    text: null,
+                    style: {
+                        font: "12px 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif"
+                    }
+
+                },
+                labels: {
+                    style: {
+                        color: '#000000',
+                        font: "12px Arial, 'Helvetica Neue', Helvetica, sans-serif;"
+                    },
+
+                    formatter: function () {
+                        if (!data_list[this.value]["active"]) {
+                            return '<span style="fill: grey;">' + this.value + '</span>';
+                        }
+                        else if (data_list[this.value]["stocked_out"]) {
+
+                            return '<span style="fill: red;">' + this.value + '</span>';
+
+                        }
+                        else {
+                            return this.value;
+                        }
+                    }
+
+                }
+            },
+            yAxis: {
+                min: 0,
+                max: 9,
+                tickInterval: 1,
+                title: {
+                    text: 'Months of Stock',
+                    align: 'high',
+                    style: {
+                        font: "13px 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif"
+                    }
+                },
+                labels: {
+                    overflow: 'justify',
+                    style: {
+                        color: '#000000',
+                        font: "13px 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif"
+                    }
+                },
+                plotBands: [{ // mark the weekend
+                    color: '#66CDAA',
+                    from: 2,
+                    to: 4
+                },
+                    {
+                        color: 'rgb(225, 225, 225)',
+                        from: 0,
+                        to: 2
+                    },
+                    {
+                        color: 'rgb(225, 225, 225)',
+                        from: 4,
+                        to: 9
+                    }]
+            },
+            tooltip: {
+                shared: true,
+                useHTML: true,
+                valueSuffix: ' ',
+                formatter: function () {
+
+                    var stock_level_string = (this.y == 0) ? ' 0' : ' ' +
+                        ((parseInt(this.y) == 0) ? '' : parseInt(this.y) + (parseInt(this.y) == 1 ? ' month ' : ' months ')) +
+                        parseInt((this.y * 30 % 30)) + (parseInt((this.y * 30 % 30)) == 1 ? " day" : " days");
+
+                    return '<span  style= "font-weight: bold; font-size : 10px;">' +
+                        'Drug Name:  &nbsp&nbsp&nbsp&nbsp<span style="color: #097054; " >' + this.x + '</span> <br />' +
+                        'Months of stock:  &nbsp&nbsp&nbsp<span style="color: #097054; " >' + stock_level_string + '</span> <br />' +
+                        'Stock level:  &nbsp&nbsp&nbsp<span style="color: #097054; ">' + data_list[this.x]['stock_level'] + ' tins</span><br />' +
+                        'Consumption rate:  &nbsp&nbsp&nbsp<span style="color: #097054; ">' + data_list[this.x]['consumption_rate'] + ' tins/month</span> </span>';
+                }
+            },
+            plotOptions: {
+                bar: {
+                    dataLabels: {
+                        enabled: false
+                    }
+                },
+                series: {
+                    showInLegend: false,
+                    pointWidth: 20,
+                    stacking: 'normal'
+                }
+            },
+            credits: {
+                enabled: false
+            },
+            series: dataG(),
+            exporting: {enabled: false}
+
+
+        });
+    }
+
+
+    stock_level = {};
+    expiry_stocks = {};
+
+    function dataG() {
+        var correctedWeights = [];
+        var correctedWeights_two = [];
+
+        var val = parseFloat(Infinity);
+        var col = (val <= 2) ? 'red' : (val > 4 ? 'yellow' : 'green');
+        correctedWeights.push({y: val, color: col});
+
+        var val = parseFloat(Infinity);
+        var col = (val <= 2) ? 'red' : (val > 4 ? 'yellow' : 'green');
+        correctedWeights.push({y: val, color: col});
+
+        var val = parseFloat(Infinity);
+        var col = (val <= 2) ? 'red' : (val > 4 ? 'yellow' : 'green');
+        correctedWeights.push({y: val, color: col});
+
+        var val = parseFloat(Infinity);
+        var col = (val <= 2) ? 'red' : (val > 4 ? 'yellow' : 'green');
+        correctedWeights.push({y: val, color: col});
+
+        var val = parseFloat(Infinity);
+        var col = (val <= 2) ? 'red' : (val > 4 ? 'yellow' : 'green');
+        correctedWeights.push({y: val, color: col});
+
+        var val = parseFloat(Infinity);
+        var col = (val <= 2) ? 'red' : (val > 4 ? 'yellow' : 'green');
+        correctedWeights.push({y: val, color: col});
+
+        var val = parseFloat(Infinity);
+        var col = (val <= 2) ? 'red' : (val > 4 ? 'yellow' : 'green');
+        correctedWeights.push({y: val, color: col});
+
+        var val = parseFloat(Infinity);
+        var col = (val <= 2) ? 'red' : (val > 4 ? 'yellow' : 'green');
+        correctedWeights.push({y: val, color: col});
+
+        var val = parseFloat(Infinity);
+        var col = (val <= 2) ? 'red' : (val > 4 ? 'yellow' : 'green');
+        correctedWeights.push({y: val, color: col});
+
+        var val = parseFloat(Infinity);
+        var col = (val <= 2) ? 'red' : (val > 4 ? 'yellow' : 'green');
+        correctedWeights.push({y: val, color: col});
+
+        var val = parseFloat(Infinity);
+        var col = (val <= 2) ? 'red' : (val > 4 ? 'yellow' : 'green');
+        correctedWeights.push({y: val, color: col});
+
+        var val = parseFloat(Infinity);
+        var col = (val <= 2) ? 'red' : (val > 4 ? 'yellow' : 'green');
+        correctedWeights.push({y: val, color: col});
+
+
+        var val = parseFloat(0);
+        var col = (val <= 2) ? 'red' : (val > 4 ? 'yellow' : 'green');
+        correctedWeights_two.push({y: val, color: '#8B8989'});
+
+        var val = parseFloat(0);
+        var col = (val <= 2) ? 'red' : (val > 4 ? 'yellow' : 'green');
+        correctedWeights_two.push({y: val, color: '#8B8989'});
+
+        var val = parseFloat(0);
+        var col = (val <= 2) ? 'red' : (val > 4 ? 'yellow' : 'green');
+        correctedWeights_two.push({y: val, color: '#8B8989'});
+
+        var val = parseFloat(0);
+        var col = (val <= 2) ? 'red' : (val > 4 ? 'yellow' : 'green');
+        correctedWeights_two.push({y: val, color: '#8B8989'});
+
+        var val = parseFloat(0);
+        var col = (val <= 2) ? 'red' : (val > 4 ? 'yellow' : 'green');
+        correctedWeights_two.push({y: val, color: '#8B8989'});
+
+        var val = parseFloat(0);
+        var col = (val <= 2) ? 'red' : (val > 4 ? 'yellow' : 'green');
+        correctedWeights_two.push({y: val, color: '#8B8989'});
+
+        var val = parseFloat(0);
+        var col = (val <= 2) ? 'red' : (val > 4 ? 'yellow' : 'green');
+        correctedWeights_two.push({y: val, color: '#8B8989'});
+
+        var val = parseFloat(0);
+        var col = (val <= 2) ? 'red' : (val > 4 ? 'yellow' : 'green');
+        correctedWeights_two.push({y: val, color: '#8B8989'});
+
+        var val = parseFloat(0);
+        var col = (val <= 2) ? 'red' : (val > 4 ? 'yellow' : 'green');
+        correctedWeights_two.push({y: val, color: '#8B8989'});
+
+        var val = parseFloat(0);
+        var col = (val <= 2) ? 'red' : (val > 4 ? 'yellow' : 'green');
+        correctedWeights_two.push({y: val, color: '#8B8989'});
+
+        var val = parseFloat(0);
+        var col = (val <= 2) ? 'red' : (val > 4 ? 'yellow' : 'green');
+        correctedWeights_two.push({y: val, color: '#8B8989'});
+
+        var val = parseFloat(0);
+        var col = (val <= 2) ? 'red' : (val > 4 ? 'yellow' : 'green');
+        correctedWeights_two.push({y: val, color: '#8B8989'});
+
+
+        stock_level.data = correctedWeights;
+        expiry_stocks.data = correctedWeights_two;
+
+        data = [{data: expiry_stocks.data}, {data: stock_level.data}];
+        return data;
+        return [{name: 'Month(s) of stock', showInLegend: false, data: correctedWeights, pointWidth: 20}];
+    }
+
+</script>

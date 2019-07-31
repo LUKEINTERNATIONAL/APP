@@ -1,6 +1,5 @@
-
-
-<script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js" defer="true"></script>
+<script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/touchScreenToolkit.js"
+        defer="true"></script>
 <!--script type="text/javascript" src="/public/touchscreentoolkit/lib/javascripts/standard.js" defer="true"></script-->
 <script type="text/javascript" src="/assets/js/jquery.min.js"></script>
 
@@ -15,141 +14,169 @@
 
 <style>
 
-.inputFrameClass {
-  width: 96% !important;
-}
+    .inputFrameClass {
+        width: 96% !important;
+    }
 
-#clearButton {
-  display: none;
-}
+    #clearButton {
+        display: none;
+    }
 
 </style>
 
 <script>
 
-var patientID = sessionStorage.getItem("patientID");
-var programID = sessionStorage.getItem("programID");
-var tt_cancel_destination = document.referrer;
-var apiProtocol = sessionStorage.apiProtocol;
-var apiURL = sessionStorage.apiURL;
-var apiPort = sessionStorage.apiPort;
-var patient_id = sessionStorage.patientID;
-var previousActivities = null;
-function getActivities(){
-  var url = sessionStorage.apiProtocol+ '://'+apiURL+':'+apiPort+'/api/v1/user_properties?property=activities';
-  var req = new XMLHttpRequest();
-  req.onreadystatechange = function(){
+    var patientID = sessionStorage.getItem("patientID");
+    var programID = sessionStorage.getItem("programID");
+    var tt_cancel_destination = document.referrer;
+    var apiProtocol = sessionStorage.apiProtocol;
+    var apiURL = sessionStorage.apiURL;
+    var apiPort = sessionStorage.apiPort;
+    var patient_id = sessionStorage.patientID;
+    var previousActivities = null;
 
-  if (this.readyState == 4) {
-    if (this.status == 200) {
-      var results = JSON.parse(this.responseText);
-        previousActivities = results.property_value;
-        loadActivities(previousActivities);
-    }else {
+    function getActivities() {
+        var url = sessionStorage.apiProtocol + '://' + apiURL + ':' + apiPort + '/api/v1/user_properties?property=activities';
+        var req = new XMLHttpRequest();
+        req.onreadystatechange = function () {
 
-        loadActivities("");
+            if (this.readyState == 4) {
+                if (this.status == 200) {
+                    var results = JSON.parse(this.responseText);
+                    previousActivities = results.property_value;
+                    loadActivities(previousActivities);
+                } else {
+
+                    loadActivities("");
+                }
+            }
+        };
+        try {
+            req.open('GET', url, true);
+            req.setRequestHeader('Authorization', sessionStorage.getItem('authorization'));
+            req.send(null);
+        } catch (e) {
+
+        }
     }
+
+    function loadActivities(previousActivities) {
+        var activities = [];
+        jQuery.getJSON("/apps/ART/application.json")
+            .done(function (data) {
+                activities = data.activities.tasks;
+                renderActivities(activities, previousActivities);
+
+            })
+            .fail(function () {
+                console.log("The application " + applicationName + "'s application.json file is not available");
+            });
+
     }
-    };
-    try {
-      req.open('GET', url, true);
-      req.setRequestHeader('Authorization',sessionStorage.getItem('authorization'));
-      req.send(null);
-    } catch (e) {
-    
+
+    /*
+    <li id="0" tstvalue="vitals" class="even" tag="even" onmousedown="" onclick="null; updateTouchscreenInputForSelect(__$('optionValue' + this.id), this); " style=""><div style="display: table; border-spacing: 0px;"><div style="display: table-row"><div style="display: table-cell;"><img id="img0" src="/public/touchscreentoolkit/lib/images/unticked.jpg" alt="[ ]"></div><div style="display: table-cell; vertical-align: middle; text-align: left; padding-left: 15px;" id="optionValue0">Vitals</div></div></div></li
+    */
+
+    function renderActivities(activities, previousActivities) {
+        var ul = document.getElementById("tt_currentUnorderedListOptions");
+        for (var i = 0; i < activities.sort().length; i++) {
+            var innerHTML = '<div style="display: table; border-spacing: 0px;"><div style="display: table-row"><div style="display: table-cell;"><img id="img';
+            innerHTML += i + '" src="/public/touchscreentoolkit/lib/images/unticked.jpg" alt="[ ]"></div><div style="display: table-cell; vertical-align: middle; text-align: left; padding-left: 15px;"';
+            innerHTML += ' id="optionValue' + i + '">';
+            innerHTML += activities[i][0] + "</div></div></div>";
+
+            var li = document.createElement("li");
+            li.setAttribute("id", i);
+            li.setAttribute("tstvalue", activities[i][1]);
+            li.setAttribute("onmousedown", "null; updateTouchscreenInputForSelect(__$('optionValue' + this.id), this); ");
+            li.setAttribute("style", "");
+            li.setAttribute("class", "even");
+            li.innerHTML = innerHTML;
+            ul.appendChild(li);
+            if (previousActivities.search(activities[i][0]) >= 0) {
+                updateInputs(i);
+            }
+        }
     }
-}
 
-function loadActivities(previousActivities) {
-  var activities = [];
-  jQuery.getJSON("/apps/ART/application.json")
-    .done(function (data) {
-      activities = data.activities.tasks;
-      renderActivities(activities, previousActivities);
-
-    })
-    .fail(function () {
-      console.log("The application " + applicationName + "'s application.json file is not available");
-  });
-
-}
-/*
-<li id="0" tstvalue="vitals" class="even" tag="even" onmousedown="" onclick="null; updateTouchscreenInputForSelect(__$('optionValue' + this.id), this); " style=""><div style="display: table; border-spacing: 0px;"><div style="display: table-row"><div style="display: table-cell;"><img id="img0" src="/public/touchscreentoolkit/lib/images/unticked.jpg" alt="[ ]"></div><div style="display: table-cell; vertical-align: middle; text-align: left; padding-left: 15px;" id="optionValue0">Vitals</div></div></div></li
-*/
-
-function renderActivities(activities, previousActivities) {
-  var ul = document.getElementById("tt_currentUnorderedListOptions");
-  for(var i = 0 ; i < activities.sort().length ; i++){
-    var innerHTML = '<div style="display: table; border-spacing: 0px;"><div style="display: table-row"><div style="display: table-cell;"><img id="img';
-    innerHTML += i + '" src="/public/touchscreentoolkit/lib/images/unticked.jpg" alt="[ ]"></div><div style="display: table-cell; vertical-align: middle; text-align: left; padding-left: 15px;"';
-    innerHTML += ' id="optionValue' + i + '">';
-    innerHTML+= activities[i][0] + "</div></div></div>";
-    
-    var li = document.createElement("li");
-    li.setAttribute("id", i );
-    li.setAttribute("tstvalue", activities[i][1]);
-    li.setAttribute("onmousedown", "null; updateTouchscreenInputForSelect(__$('optionValue' + this.id), this); ");
-    li.setAttribute("style","");
-    li.setAttribute("class","even");
-    li.innerHTML = innerHTML;
-    ul.appendChild(li); 
-     if(previousActivities.search(activities[i][0]) >= 0) {
-      updateInputs(i);
+    function updateInputs(i) {
+        updateTouchscreenInputForSelect(__$('optionValue' + i), document.getElementById(i));
     }
-  } 
-}
 
-function updateInputs(i) {
-  updateTouchscreenInputForSelect(__$('optionValue' + i), document.getElementById(i)); 
-}
-function changeNextBTN() {
-  var nextBTN = document.getElementById("nextButton");
-  nextButton.setAttribute("onmousedown","setActivities();");
-}
+    function changeNextBTN() {
+        var nextBTN = document.getElementById("nextButton");
+        nextButton.setAttribute("onmousedown", "setActivities();");
+    }
 
-function setActivities() {
-  var values = document.getElementById("touchscreenInput0").value;
-  if(isEmpty(values))
-    return;
+    function setActivities() {
+        var values = document.getElementById("touchscreenInput0").value;
+        if (isEmpty(values))
+            return;
 
-  var regex = new RegExp(";", "g");
-  values = values.replace(regex, ",");
+        var regex = new RegExp(";", "g");
+        values = values.replace(regex, ",");
 
-  var parameters = { property: "Activities", property_value: values }
+        var parameters = {property: "Activities", property_value: values}
 
-  submitParameters(parameters, "/user_properties", "redirectTo"); 
-  
-}
+        submitParameters(parameters, "/user_properties", "redirectTo");
 
-function redirectTo(obj) {
-  sessionStorage.setItem("userActivities", obj.property_value);
-  document.location = document.referrer;
-}
+    }
 
-function isEmpty(str){
-  try {
-    return (str.replace(/\s+/g, '').length < 1);
-  }catch(e){
-    return true;
-  }
-}
+    var activateDrugManagement = false;
+
+    function redirectTo(obj) {
+        sessionStorage.setItem("userActivities", obj.property_value);
+        var drug_management_property_url = apiProtocol + "://" + apiURL + ":" + apiPort;
+        drug_management_property_url += "/api/v1/global_properties?property=activate.drug.management";
+
+        var xhttp1 = new XMLHttpRequest();
+        xhttp1.onreadystatechange = function () {
+            if (this.readyState == 4 && (this.status == 201 || this.status == 200 || this.status == 404)) {
+                var property = JSON.parse(this.responseText);
+                try {
+                    property = property["activate.drug.management"];
+                    if (property == "true") {
+                        window.location = "/apps/ART/views/stock_management/stock_levels_graph.html";
+                    } else {
+                        window.location = document.referrer;
+                    }
+                } catch (e) {
+                    window.location = document.referrer;
+                }
+            }
+        };
+        xhttp1.open("GET", drug_management_property_url, true);
+        xhttp1.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+        xhttp1.setRequestHeader('Content-type', "application/json");
+        xhttp1.send();
+    }
+
+    function isEmpty(str) {
+        try {
+            return (str.replace(/\s+/g, '').length < 1);
+        } catch (e) {
+            return true;
+        }
+    }
 
 </script>
 
 <body id="mateme">
-  <div id="container">
+<div id="container">
     <div id="content">
 
 
-      <form action="post">
+        <form action="post">
 
-        <select id="activity" tt_pageStyleClass="NoKeyboard NoInput small" 
-          multiple="multiple" helpText="Select Activities" name="activities" tt_onLoad="changeNextBTN();getActivities();">
-        </select>
+            <select id="activity" tt_pageStyleClass="NoKeyboard NoInput small"
+                    multiple="multiple" helpText="Select Activities" name="activities"
+                    tt_onLoad="changeNextBTN();getActivities();">
+            </select>
 
-      </form>
+        </form>
 
-   </div>
- </div>
+    </div>
+</div>
 </body>
 
