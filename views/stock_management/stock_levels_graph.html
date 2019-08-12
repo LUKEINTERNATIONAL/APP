@@ -76,11 +76,104 @@
 
 </div>
 </body>
+<script type="text/javascript">
+    var paeds_drug_ids = [733, 968, 732, 736, 30, 74, 979, 963, 24];
+    var paedsDrugsHash = {
+        "733": "Abacavir / Lamivudine 60 / 30mg, tin of 60 tablets",
+        "968": "Nevirapine 50mg, tin of 60 tablets",
+        "732": "Zidovudine / lamivudine /Nevirapine 30 / 60 / 50mg, tin of 60 tablets",
+        "736": "Zidovudine / lamivudine 60 / 30mg, tin of 60 tablets",
+        "30": "Efavirenz 200mg, tin of 90 tablets",
+        "74": "Lopinavir / Ritonavir 100 / 25mg, tin of 60 tablets",
+        "979": "LPV/r pellets",
+        "963": "Cotrimoxazole 120mg, blister pack of 1000 dispersible tablets",
+        "24": "Isoniazid 100mg, tin of 100 tablets"
+    };
+
+    function loadPaedsGraph() {
+        if (paeds_drug_ids.length > 0) {
+            var drugID = paeds_drug_ids.pop();
+            var drugName = paedsDrugsHash[drugID];
+            drugs.push(drugName);
+            var stockLevelsUrl = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1/pharmacy/drug_consumption?drug_id=" + drugID;
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                    var stockLevels = JSON.parse(this.responseText);
+                    var consumptionRate = stockLevels["consumption_rate"];
+                    var stockLevel = stockLevels["stock_level"];
+                    var stockLevelInMonths = stockLevels["stock_level_in_months"];
+                    var active = true;
+                    var stockedOut = false;
+
+                    if (parseInt(stockLevels) != 0 && parseInt(consumptionRate) == 0) {
+                        active = false;
+                    }
+
+                    if (parseInt(consumptionRate) != 0 && parseInt(stockLevelInMonths) == 0) {
+                        stockedOut = true;
+                    }
+
+                    data_list[drugName] = {
+                        month_of_stock: stockLevelInMonths,
+                        stock_level: stockLevel,
+                        consumption_rate: consumptionRate,
+                        stocked_out: stockedOut,
+                        expiry_stock: 0,
+                        active: active
+                    };
+
+                    loadPaedsGraph();
+                }
+            };
+
+            xhttp.open("GET", stockLevelsUrl, true);
+            xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+            xhttp.setRequestHeader('Content-type', "application/json");
+            xhttp.send();
+        }
+    }
+
+</script>
 
 <script type="text/javascript">
 
+
     var drugs = [];
     var data_list = {};
+
+
+    var paeds_drugs_hash = {
+        "733": "Abacavir / Lamivudine 60 / 30mg, tin of 60 tablets",
+        "968": "Nevirapine 50mg, tin of 60 tablets",
+        "732": "Zidovudine / lamivudine /Nevirapine 30 / 60 / 50mg, tin of 60 tablets",
+        "736": "Zidovudine / lamivudine 60 / 30mg, tin of 60 tablets",
+        "30": "Efavirenz 200mg, tin of 90 tablets",
+        "74": "Lopinavir / Ritonavir 100 / 25mg, tin of 60 tablets",
+        "979": "LPV/r pellets",
+        "963": "Cotrimoxazole 120mg, blister pack of 1000 dispersible tablets",
+        "24": "Isoniazid 100mg, tin of 100 tablets"
+    };
+
+    var adults_drugs_hash = {
+        "976": "Darunavir 600mg",
+        "977": "Ritonavir 100mg",
+        "978": "Etravirine 100mg",
+        "954": "RAL (Raltegravir 400mg)",
+        "22": "NVP (Nevirapine 200 mg tablet)",
+        "969": "ABC/3TC (Abacavir and Lamivudine 600/300mg tablet)",
+        "731": "AZT/3TC/NVP (300/150/200mg tablet)",
+        "39": "AZT/3TC (Zidovudine and Lamivudine 300/150mg)",
+        "11": "EFV (Efavirenz 600mg tablet)",
+        "735": "TDF/3TC/EFV (300/300/600mg tablet)",
+        "734": "TDF/3TC (Tenofavir and Lamivudine 300/300mg tablet",
+        "932": "ATV/r (Atazanavir 300mg/Ritonavir 100mg)",
+        "73": "LPV/r (Lopinavir and Ritonavir 200/50mg tablet)",
+        "576": "Cotrimoxazole (960mg)",
+        "297": "Cotrimoxazole (480mg tablet)",
+        "931": "INH or H (Isoniazid 300mg tablet)"
+    };
+
 
     var paeds_drug_ids = [733, 968, 732, 736, 30, 74, 979, 963, 24];
     var adult_drug_ids = [976, 977, 978, 954, 22, 969, 731, 39, 11, 735, 734, 932, 73, 576, 297, 931];
@@ -184,37 +277,6 @@
     };
 
 
-    drugs.push('Tenofovir disoproxil fumarate / Lamivudine / Efavirenz 300 / 300 / 600mg, tin of 30 tablets');
-    data_list['Tenofovir disoproxil fumarate / Lamivudine / Efavirenz 300 / 300 / 600mg, tin of 30 tablets'] = {
-        month_of_stock: Infinity,
-        stock_level: 306,
-        consumption_rate: 0.0,
-        stocked_out: false,
-        expiry_stock: 0,
-        active: false
-    };
-
-
-    drugs.push('Zidovudine / lamivudine /Nevirapine 300 / 150 / 200mg, tin of 60 tablets');
-    data_list['Zidovudine / lamivudine /Nevirapine 300 / 150 / 200mg, tin of 60 tablets'] = {
-        month_of_stock: Infinity,
-        stock_level: 200,
-        consumption_rate: 0.0,
-        stocked_out: false,
-        expiry_stock: 0,
-        active: false
-    };
-
-
-    drugs.push('Zidovudine / lamivudine 300 / 150mg, tin of 60 tablets');
-    data_list['Zidovudine / lamivudine 300 / 150mg, tin of 60 tablets'] = {
-        month_of_stock: Infinity,
-        stock_level: 100,
-        consumption_rate: 0.0,
-        stocked_out: false,
-        expiry_stock: 0,
-        active: false
-    };
 
     function plotGraph(paedsOrAdult) {
         jQuery('.inputFrameClass').highcharts({
