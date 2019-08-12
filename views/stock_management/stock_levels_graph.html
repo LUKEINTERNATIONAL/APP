@@ -76,84 +76,13 @@
 
 </div>
 </body>
-<script type="text/javascript">
-    var paeds_drug_ids = [733, 968, 732, 736, 30, 74, 979, 963, 24];
-    var paedsDrugsHash = {
-        "733": "Abacavir / Lamivudine 60 / 30mg, tin of 60 tablets",
-        "968": "Nevirapine 50mg, tin of 60 tablets",
-        "732": "Zidovudine / lamivudine /Nevirapine 30 / 60 / 50mg, tin of 60 tablets",
-        "736": "Zidovudine / lamivudine 60 / 30mg, tin of 60 tablets",
-        "30": "Efavirenz 200mg, tin of 90 tablets",
-        "74": "Lopinavir / Ritonavir 100 / 25mg, tin of 60 tablets",
-        "979": "LPV/r pellets",
-        "963": "Cotrimoxazole 120mg, blister pack of 1000 dispersible tablets",
-        "24": "Isoniazid 100mg, tin of 100 tablets"
-    };
 
-    function loadPaedsGraph() {
-        if (paeds_drug_ids.length > 0) {
-            var drugID = paeds_drug_ids.pop();
-            var drugName = paedsDrugsHash[drugID];
-            drugs.push(drugName);
-            var stockLevelsUrl = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1/pharmacy/drug_consumption?drug_id=" + drugID;
-            var xhttp = new XMLHttpRequest();
-            xhttp.onreadystatechange = function () {
-                if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
-                    var stockLevels = JSON.parse(this.responseText);
-                    var consumptionRate = stockLevels["consumption_rate"];
-                    var stockLevel = stockLevels["stock_level"];
-                    var stockLevelInMonths = stockLevels["stock_level_in_months"];
-                    var active = true;
-                    var stockedOut = false;
-
-                    if (parseInt(stockLevels) != 0 && parseInt(consumptionRate) == 0) {
-                        active = false;
-                    }
-
-                    if (parseInt(consumptionRate) != 0 && parseInt(stockLevelInMonths) == 0) {
-                        stockedOut = true;
-                    }
-
-                    data_list[drugName] = {
-                        month_of_stock: stockLevelInMonths,
-                        stock_level: stockLevel,
-                        consumption_rate: consumptionRate,
-                        stocked_out: stockedOut,
-                        expiry_stock: 0,
-                        active: active
-                    };
-
-                    loadPaedsGraph();
-                }
-            };
-
-            xhttp.open("GET", stockLevelsUrl, true);
-            xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
-            xhttp.setRequestHeader('Content-type', "application/json");
-            xhttp.send();
-        }
-    }
-
-</script>
 
 <script type="text/javascript">
-
-
     var drugs = [];
     var data_list = {};
-
-
-    var paeds_drugs_hash = {
-        "733": "Abacavir / Lamivudine 60 / 30mg, tin of 60 tablets",
-        "968": "Nevirapine 50mg, tin of 60 tablets",
-        "732": "Zidovudine / lamivudine /Nevirapine 30 / 60 / 50mg, tin of 60 tablets",
-        "736": "Zidovudine / lamivudine 60 / 30mg, tin of 60 tablets",
-        "30": "Efavirenz 200mg, tin of 90 tablets",
-        "74": "Lopinavir / Ritonavir 100 / 25mg, tin of 60 tablets",
-        "979": "LPV/r pellets",
-        "963": "Cotrimoxazole 120mg, blister pack of 1000 dispersible tablets",
-        "24": "Isoniazid 100mg, tin of 100 tablets"
-    };
+    var paeds_drug_ids = [];
+    var adult_drug_ids = [];
 
     var adults_drugs_hash = {
         "976": "Darunavir 600mg",
@@ -174,111 +103,128 @@
         "931": "INH or H (Isoniazid 300mg tablet)"
     };
 
-
-    var paeds_drug_ids = [733, 968, 732, 736, 30, 74, 979, 963, 24];
-    var adult_drug_ids = [976, 977, 978, 954, 22, 969, 731, 39, 11, 735, 734, 932, 73, 576, 297, 931];
-
-    drugs.push('Abacavir sulfate 600mg / Lamivudine 300mg, tin of 30 tablets');
-    data_list['Abacavir sulfate 600mg / Lamivudine 300mg, tin of 30 tablets'] = {
-        month_of_stock: Infinity,
-        stock_level: 200,
-        consumption_rate: 0.0,
-        stocked_out: false,
-        expiry_stock: 0,
-        active: false
+    var paedsDrugsHash = {
+        "733": "Abacavir / Lamivudine 60 / 30mg, tin of 60 tablets",
+        "968": "Nevirapine 50mg, tin of 60 tablets",
+        "732": "Zidovudine / lamivudine /Nevirapine 30 / 60 / 50mg, tin of 60 tablets",
+        "736": "Zidovudine / lamivudine 60 / 30mg, tin of 60 tablets",
+        "30": "Efavirenz 200mg, tin of 90 tablets",
+        "74": "Lopinavir / Ritonavir 100 / 25mg, tin of 60 tablets",
+        "979": "LPV/r pellets",
+        "963": "Cotrimoxazole 120mg, blister pack of 1000 dispersible tablets",
+        "24": "Isoniazid 100mg, tin of 100 tablets"
     };
 
+    function getPaedsDrugsData() {
+        if (paeds_drug_ids.length == 0) {
+            graph("Paeds");
+        }
 
-    drugs.push('Atazanavir / Ritonavir 300 / 100mg, tin of 30 tablets');
-    data_list['Atazanavir / Ritonavir 300 / 100mg, tin of 30 tablets'] = {
-        month_of_stock: Infinity,
-        stock_level: 100,
-        consumption_rate: 0.0,
-        stocked_out: false,
-        expiry_stock: 0,
-        active: false
-    };
+        if (paeds_drug_ids.length > 0) {
+            var drugID = paeds_drug_ids.pop();
+            var drugName = paedsDrugsHash[drugID];
 
+            var stockLevelsUrl = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1/pharmacy/drug_consumption?drug_id=" + drugID;
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                    var stockLevels = JSON.parse(this.responseText);
+                    var consumptionRate = stockLevels["consumption_rate"];
+                    var stockLevel = stockLevels["stock_level"];
+                    var stockLevelInMonths = stockLevels["stock_level_in_months"];
+                    var active = true;
+                    var stockedOut = false;
 
-    drugs.push('Cotrimoxazole 480mg, tin of 1000 tablets');
-    data_list['Cotrimoxazole 480mg, tin of 1000 tablets'] = {
-        month_of_stock: Infinity,
-        stock_level: 250,
-        consumption_rate: 0.0,
-        stocked_out: false,
-        expiry_stock: 0,
-        active: false
-    };
+                    if (parseInt(stockLevels) != 0 && parseInt(consumptionRate) == 0) {
+                        active = false;
+                    }
 
+                    if (parseInt(consumptionRate) != 0 && parseInt(stockLevelInMonths) == 0) {
+                        stockedOut = true;
+                    }
+                    drugs.push(drugName);
+                    data_list[drugName] = {
+                        month_of_stock: stockLevelInMonths,
+                        stock_level: stockLevel,
+                        consumption_rate: consumptionRate,
+                        stocked_out: stockedOut,
+                        expiry_stock: 0,
+                        active: active
+                    };
+                    console.log(stockLevels);
+                    getPaedsDrugsData();
+                }
+            };
 
-    drugs.push('Cotrimoxazole 960mg, blister pack of 1000 tablets');
-    data_list['Cotrimoxazole 960mg, blister pack of 1000 tablets'] = {
-        month_of_stock: Infinity,
-        stock_level: 300,
-        consumption_rate: 0.0,
-        stocked_out: false,
-        expiry_stock: 0,
-        active: false
-    };
+            xhttp.open("GET", stockLevelsUrl, true);
+            xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+            xhttp.setRequestHeader('Content-type', "application/json");
+            xhttp.send();
+        }
+    }
 
+    function getAdultsDrugsData() {
+        if (adult_drug_ids.length == 0) {
+            graph("Adults");
+        }
 
-    drugs.push('Efavirenz 600mg, tin of 30 tablets');
-    data_list['Efavirenz 600mg, tin of 30 tablets'] = {
-        month_of_stock: Infinity,
-        stock_level: 350,
-        consumption_rate: 0.0,
-        stocked_out: false,
-        expiry_stock: 0,
-        active: false
-    };
+        if (adult_drug_ids.length > 0) {
+            var drugID = adult_drug_ids.pop();
+            var drugName = adults_drugs_hash[drugID];
 
+            var stockLevelsUrl = apiProtocol + "://" + apiURL + ":" + apiPort + "/api/v1/pharmacy/drug_consumption?drug_id=" + drugID;
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && (this.status == 201 || this.status == 200)) {
+                    var stockLevels = JSON.parse(this.responseText);
+                    var consumptionRate = stockLevels["consumption_rate"];
+                    var stockLevel = stockLevels["stock_level"];
+                    var stockLevelInMonths = stockLevels["stock_level_in_months"];
+                    var active = true;
+                    var stockedOut = false;
 
-    drugs.push('Isoniazid 300mg, tin of 1000 tablets');
-    data_list['Isoniazid 300mg, tin of 1000 tablets'] = {
-        month_of_stock: Infinity,
-        stock_level: 25,
-        consumption_rate: 0.0,
-        stocked_out: false,
-        expiry_stock: 0,
-        active: false
-    };
+                    if (parseInt(stockLevels) != 0 && parseInt(consumptionRate) == 0) {
+                        active = false;
+                    }
 
+                    if (parseInt(consumptionRate) != 0 && parseInt(stockLevelInMonths) == 0) {
+                        stockedOut = true;
+                    }
+                    drugs.push(drugName);
+                    data_list[drugName] = {
+                        month_of_stock: stockLevelInMonths,
+                        stock_level: stockLevel,
+                        consumption_rate: consumptionRate,
+                        stocked_out: stockedOut,
+                        expiry_stock: 0,
+                        active: active
+                    };
 
-    drugs.push('Lamivudine / Tenofovir disoproxil fumarate 300 / 300mg, tin of 30 tablets');
-    data_list['Lamivudine / Tenofovir disoproxil fumarate 300 / 300mg, tin of 30 tablets'] = {
-        month_of_stock: Infinity,
-        stock_level: 24,
-        consumption_rate: 0.0,
-        stocked_out: false,
-        expiry_stock: 0,
-        active: false
-    };
+                    getAdultsDrugsData();
+                }
+            };
 
-
-    drugs.push('Lopinavir / Ritonavir 200 / 50mg, tin of 120 tablets');
-    data_list['Lopinavir / Ritonavir 200 / 50mg, tin of 120 tablets'] = {
-        month_of_stock: Infinity,
-        stock_level: 30,
-        consumption_rate: 0.0,
-        stocked_out: false,
-        expiry_stock: 0,
-        active: false
-    };
-
-
-    drugs.push('Nevirapine 200mg, tin of 60 tablets');
-    data_list['Nevirapine 200mg, tin of 60 tablets'] = {
-        month_of_stock: Infinity,
-        stock_level: 400,
-        consumption_rate: 0.0,
-        stocked_out: false,
-        expiry_stock: 0,
-        active: false
-    };
-
-
+            xhttp.open("GET", stockLevelsUrl, true);
+            xhttp.setRequestHeader('Authorization', sessionStorage.getItem("authorization"));
+            xhttp.setRequestHeader('Content-type', "application/json");
+            xhttp.send();
+        }
+    }
 
     function plotGraph(paedsOrAdult) {
+        paeds_drug_ids = [733, 968, 732, 736, 30, 74, 979, 963, 24];
+        adult_drug_ids = [976, 977, 978, 954, 22, 969, 731, 39, 11, 735, 734, 932, 73, 576, 297, 931];
+        drugs = [];
+        data_list = [];
+
+        if (paedsOrAdult.match(/Paeds/i)) {
+            getPaedsDrugsData();
+        } else {
+            getAdultsDrugsData();
+        }
+    }
+
+    function graph(paedsOrAdult){
         jQuery('.inputFrameClass').highcharts({
             chart: {
                 type: 'bar',
@@ -401,9 +347,8 @@
             exporting: {enabled: false}
 
 
-        });
+        })
     }
-
 
     stock_level = {};
     expiry_stocks = {};
@@ -412,110 +357,23 @@
         var correctedWeights = [];
         var correctedWeights_two = [];
 
-        var val = parseFloat(4);
-        var col = (val <= 2) ? 'red' : (val > 4 ? 'yellow' : 'green');
-        correctedWeights.push({y: val, color: col});
+        for (var key in data_list) {
+            var val = parseFloat(data_list[key]["month_of_stock"]);
+            var col = (val <= 2) ? 'red' : (val > 4 ? 'yellow' : 'green');
+            correctedWeights.push({y: val, color: col});
+        }
 
-        var val = parseFloat(2);
-        var col = (val <= 2) ? 'red' : (val > 4 ? 'yellow' : 'green');
-        correctedWeights.push({y: val, color: col});
-
-        var val = parseFloat(6);
-        var col = (val <= 2) ? 'red' : (val > 4 ? 'yellow' : 'green');
-        correctedWeights.push({y: val, color: col});
-
-        var val = parseFloat(3);
-        var col = (val <= 2) ? 'red' : (val > 4 ? 'yellow' : 'green');
-        correctedWeights.push({y: val, color: col});
-
-        var val = parseFloat(2);
-        var col = (val <= 2) ? 'red' : (val > 4 ? 'yellow' : 'green');
-        correctedWeights.push({y: val, color: col});
-
-        var val = parseFloat(5);
-        var col = (val <= 2) ? 'red' : (val > 4 ? 'yellow' : 'green');
-        correctedWeights.push({y: val, color: col});
-
-        var val = parseFloat(6);
-        var col = (val <= 2) ? 'red' : (val > 4 ? 'yellow' : 'green');
-        correctedWeights.push({y: val, color: col});
-
-        var val = parseFloat(3);
-        var col = (val <= 2) ? 'red' : (val > 4 ? 'yellow' : 'green');
-        correctedWeights.push({y: val, color: col});
-
-        var val = parseFloat(2);
-        var col = (val <= 2) ? 'red' : (val > 4 ? 'yellow' : 'green');
-        correctedWeights.push({y: val, color: col});
-
-        var val = parseFloat(8);
-        var col = (val <= 2) ? 'red' : (val > 4 ? 'yellow' : 'green');
-        correctedWeights.push({y: val, color: col});
-
-        var val = parseFloat(9);
-        var col = (val <= 2) ? 'red' : (val > 4 ? 'yellow' : 'green');
-        correctedWeights.push({y: val, color: col});
-
-        var val = parseFloat(10);
-        var col = (val <= 2) ? 'red' : (val > 4 ? 'yellow' : 'green');
-        correctedWeights.push({y: val, color: col});
-
-
-        var val = parseFloat(0);
-        var col = (val <= 2) ? 'red' : (val > 4 ? 'yellow' : 'green');
-        correctedWeights_two.push({y: val, color: '#8B8989'});
-
-        var val = parseFloat(0);
-        var col = (val <= 2) ? 'red' : (val > 4 ? 'yellow' : 'green');
-        correctedWeights_two.push({y: val, color: '#8B8989'});
-
-        var val = parseFloat(0);
-        var col = (val <= 2) ? 'red' : (val > 4 ? 'yellow' : 'green');
-        correctedWeights_two.push({y: val, color: '#8B8989'});
-
-        var val = parseFloat(0);
-        var col = (val <= 2) ? 'red' : (val > 4 ? 'yellow' : 'green');
-        correctedWeights_two.push({y: val, color: '#8B8989'});
-
-        var val = parseFloat(0);
-        var col = (val <= 2) ? 'red' : (val > 4 ? 'yellow' : 'green');
-        correctedWeights_two.push({y: val, color: '#8B8989'});
-
-        var val = parseFloat(0);
-        var col = (val <= 2) ? 'red' : (val > 4 ? 'yellow' : 'green');
-        correctedWeights_two.push({y: val, color: '#8B8989'});
-
-        var val = parseFloat(0);
-        var col = (val <= 2) ? 'red' : (val > 4 ? 'yellow' : 'green');
-        correctedWeights_two.push({y: val, color: '#8B8989'});
-
-        var val = parseFloat(0);
-        var col = (val <= 2) ? 'red' : (val > 4 ? 'yellow' : 'green');
-        correctedWeights_two.push({y: val, color: '#8B8989'});
-
-        var val = parseFloat(0);
-        var col = (val <= 2) ? 'red' : (val > 4 ? 'yellow' : 'green');
-        correctedWeights_two.push({y: val, color: '#8B8989'});
-
-        var val = parseFloat(0);
-        var col = (val <= 2) ? 'red' : (val > 4 ? 'yellow' : 'green');
-        correctedWeights_two.push({y: val, color: '#8B8989'});
-
-        var val = parseFloat(0);
-        var col = (val <= 2) ? 'red' : (val > 4 ? 'yellow' : 'green');
-        correctedWeights_two.push({y: val, color: '#8B8989'});
-
-        var val = parseFloat(0);
-        var col = (val <= 2) ? 'red' : (val > 4 ? 'yellow' : 'green');
-        correctedWeights_two.push({y: val, color: '#8B8989'});
-
+        for (var key in data_list) {
+            var val = parseFloat(data_list[key]["expiry_stock"]);
+            var col = (val <= 2) ? 'red' : (val > 4 ? 'yellow' : 'green');
+            correctedWeights_two.push({y: val, color: col});
+        }
 
         stock_level.data = correctedWeights;
         expiry_stocks.data = correctedWeights_two;
 
-        data = [{data: expiry_stocks.data}, {data: stock_level.data}];
+        var data = [{data: expiry_stocks.data}, {data: stock_level.data}];
         return data;
-        return [{name: 'Month(s) of stock', showInLegend: false, data: correctedWeights, pointWidth: 20}];
     }
 
 </script>
