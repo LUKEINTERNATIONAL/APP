@@ -31,10 +31,6 @@
         jQuery(".inputFrameClass").css("overflow", "scroll");
     }
 
-    function loadPaedsMedicationGraph() {
-
-    }
-
     function changeNextBTN() {
         var nextBTN = document.getElementById("nextButton");
         nextButton.setAttribute("onmousedown", "gotoHome();");
@@ -151,7 +147,7 @@
                         expiry_stock: 0,
                         active: active
                     };
-                    console.log(stockLevels);
+                    console.log(data_list[drugName]);
                     getPaedsDrugsData();
                 }
             };
@@ -359,6 +355,7 @@
 
         for (var key in data_list) {
             var val = parseFloat(data_list[key]["month_of_stock"]);
+            console.log(val);
             var col = (val <= 2) ? 'red' : (val > 4 ? 'yellow' : 'green');
             correctedWeights.push({y: val, color: col});
         }
