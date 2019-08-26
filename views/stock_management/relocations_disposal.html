@@ -843,8 +843,18 @@
         }
 
         function isDateValid(date) {
+            date = formatTsDate(date);
             return (new Date(date) !== "Invalid Date") && !isNaN(new Date(date));
         }
+
+        function formatTsDate(date) {
+            var day = date.substr(0, 2);
+            var month = date.substr(3,2);
+            var year = date.substr(6,4);
+
+            return month + "/" + day + "/" + year;
+        }
+
     </script>
 
 </head>
